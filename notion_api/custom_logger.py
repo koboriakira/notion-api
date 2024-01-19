@@ -19,12 +19,12 @@ def get_logger(name: Optional[str] = None) -> Logger:
         "%(asctime)s %(levelname)8s %(message)s"))
     logger.addHandler(handler1)
 
-    if os.getenv("ENVIRONMENT") == "dev":
-        # handler2を作成: ファイル出力
-        handler2 = logging.FileHandler(filename=LOG_FILE_NAME)
-        handler2.setLevel(logging.DEBUG)
-        handler2.setFormatter(logging.Formatter(
-            "%(asctime)s %(levelname)8s %(message)s"))
-        logger.addHandler(handler2)
+    # if os.getenv("ENVIRONMENT") == "dev":
+    #     # handler2を作成: ファイル出力
+    #     handler2 = logging.FileHandler(filename=LOG_FILE_NAME)
+    #     handler2.setLevel(logging.DEBUG)
+    #     handler2.setFormatter(logging.Formatter(
+    #         "%(asctime)s %(levelname)8s %(message)s"))
+    #     logger.addHandler(handler2)
 
     return logger
