@@ -1,5 +1,6 @@
-run:
-	cd notion_api && open http://localhost:10119/docs && uvicorn main:app --reload --port 10111
+dev:
+	docker compose up -d
+	open http://localhost:10119/docs
 
 cdk-test:
 	cd cdk && npm run test
