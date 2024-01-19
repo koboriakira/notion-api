@@ -8,7 +8,7 @@ RUN apt update && \
 RUN apt clean
 
 # Python dependencies
-COPY ./requirements.txt .
-RUN pip install -U pip \
-    && pip install --no-cache-dir --upgrade -r requirements.txt
-RUN pip install uvicorn
+RUN pip install --upgrade pip && \
+    pip install pipenv
+COPY Pipfile Pipfile.lock ./
+RUN pipenv install --dev
