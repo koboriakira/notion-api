@@ -40,11 +40,19 @@ app.add_middleware(
 
 @app.get("/projects/")
 def get_projects(status: Optional[str] = None, remind_date: Optional[DateObject] = None, is_thisweek: Optional[bool] = None):
-    return project.get_projects(status, remind_date, is_thisweek)
+    result = project.get_projects(status, remind_date, is_thisweek)
+    logger.info(result)
+    return {
+        'status': 'ok',
+    }
 
 @app.post("/projects/")
 def post_projects():
-    return project.get_projects()
+    result = project.get_projects()
+    logger.info(result)
+    return {
+        'status': 'ok',
+    }
 
 @app.get("/test/")
 def test():
@@ -57,7 +65,9 @@ def test():
     response = requests.get("https://api.notion.com/v1/users",
                  headers=headers)
     print(response.json())
-    return []
+    return {
+        'status': 'ok',
+    }
 
 
 @app.get("/healthcheck")
