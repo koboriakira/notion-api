@@ -104,13 +104,10 @@ export class NotionApi extends Stack {
     // REST API の定義
     const restapi = new apigateway.RestApi(this, "Notion-Api");
     // ルートとインテグレーションの設定
-    restapi.root
-      .addResource("/")
-      .addMethod("GET", new apigateway.LambdaIntegration(fn));
-
-    restapi.root
-      .addResource("/")
-      .addMethod("POST", new apigateway.LambdaIntegration(fn));
+    restapi.root.addMethod("ANY", new apigateway.LambdaIntegration(fn));
+    // restapi.root
+    //   .addResource("{proxy+}")
+    //   .addMethod("GET", new apigateway.LambdaIntegration(fn));
     return restapi;
   }
 }
