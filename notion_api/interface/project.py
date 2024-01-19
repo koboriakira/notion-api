@@ -6,7 +6,7 @@ from custom_logger import get_logger
 
 logger = get_logger(__name__)
 
-async def get_projects(status: Optional[str] = None, remind_date: Optional[DateObject] = None, is_thisweek: bool = False):
+def get_projects(status: Optional[str] = None, remind_date: Optional[DateObject] = None, is_thisweek: bool = False):
     """ プロジェクト一覧を取得 """
     status_list = ProjectStatus.get_status_list(status)
     logger.debug(status_list)

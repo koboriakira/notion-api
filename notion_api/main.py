@@ -1,5 +1,6 @@
 from mangum import Mangum
 from fastapi import FastAPI, Header
+from starlette.middleware.cors import CORSMiddleware
 from datetime import date as DateObject
 from datetime import datetime as DateTimeObject
 from datetime import time as TimeObject
@@ -28,10 +29,35 @@ app = FastAPI(
     title="My Notion API",
     version="0.0.1",
 )
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
+
 
 @app.get("/projects/")
-async def get_projects(status: Optional[str] = None, remind_date: Optional[DateObject] = None, is_thisweek: Optional[bool] = None):
-    return await project.get_projects(status, remind_date, is_thisweek)
+def get_projects(status: Optional[str] = None, remind_date: Optional[DateObject] = None, is_thisweek: Optional[bool] = None):
+    return project.get_projects(status, remind_date, is_thisweek)
+
+@app.post("/projects/")
+def post_projects():
+    return project.get_projects()
+
+@app.get("/test/")
+def test():
+    import requests
+    AUTHORIZATION = os.environ.get("NOTION_SECRET")
+    headers = {
+        'Authorization': 'Bearer ' + AUTHORIZATION,
+        'Notion-Version': '2022-06-28'
+    }
+    response = requests.get("https://api.notion.com/v1/users",
+                 headers=headers)
+    print(response.json())
+    return []
 
 
 @app.get("/healthcheck")
