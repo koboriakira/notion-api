@@ -6,6 +6,7 @@ import {
   Duration,
   aws_lambda as lambda,
   aws_iam as iam,
+  aws_apigateway as apigateway,
   aws_apigatewayv2,
   aws_apigatewayv2_integrations,
 } from "aws-cdk-lib";
@@ -100,26 +101,16 @@ export class NotionApi extends Stack {
    * @param {lambda.Function} fn The Lambda function to be integrated.
    */
   makeApiGateway(fn: lambda.Function) {
-    // HTTP API の定義
-    const httpApi = new aws_apigatewayv2.HttpApi(this, "ApiGateway");
+    // REST API の定義
+    const restapi = new apigateway.RestApi(this, "Notion-Api");
     // ルートとインテグレーションの設定
-    httpApi.addRoutes({
-      path: "/",
-      methods: [aws_apigatewayv2.HttpMethod.POST],
-      integration: new aws_apigatewayv2_integrations.HttpLambdaIntegration(
-        "AppIntegration",
-        fn
-      ),
-    });
-    // ルートとインテグレーションの設定
-    httpApi.addRoutes({
-      path: "/",
-      methods: [aws_apigatewayv2.HttpMethod.GET],
-      integration: new aws_apigatewayv2_integrations.HttpLambdaIntegration(
-        "AppIntegration",
-        fn
-      ),
-    });
-    return httpApi;
+    restapi.root
+      .addResource("/")
+      .addMethod("GET", new apigateway.LambdaIntegration(fn));
+
+    restapi.root
+      .addResource("/")
+      .addMethod("POST", new apigateway.LambdaIntegration(fn));
+    return restapi;
   }
 }
