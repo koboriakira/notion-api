@@ -15,9 +15,11 @@ logger = get_logger(__name__)
 logger.info("start")
 logger.debug("debug: ON")
 
+NOTION_SECRET = os.environ.get("NOTION_SECRET")
+
 def valid_saccess_token(secret: str) -> None:
-    # GASのデプロイIDを使って、アクセストークンを検証する
-    if secret != GAS_DEPLOY_ID:
+    # NOTION_SECRETを使って、アクセストークンを検証する
+    if secret != NOTION_SECRET:
         raise Exception("invalid secret: " + secret)
 
 
