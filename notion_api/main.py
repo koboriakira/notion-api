@@ -5,12 +5,9 @@ from datetime import datetime as DateTimeObject
 from datetime import time as TimeObject
 from datetime import timedelta
 from typing import Optional
-import requests
 import os
-import json
-import yaml
 from custom_logger import get_logger
-from notion_executer import NotionClient
+from interface import project
 
 logger = get_logger(__name__)
 logger.info("start")
@@ -28,36 +25,22 @@ def valid_saccess_token(secret: str) -> None:
 
 
 app = FastAPI(
-    title="Example Test API",
-    description="Describe API documentation to be served; types come from "
-    "pydantic, routes from the decorators, and docs from the fastapi internal",
+    title="My Notion API",
     version="0.0.1",
 )
 
 @app.get("/projects/")
 async def get_projects(status: Optional[str] = None, remind_date: Optional[DateObject] = None, is_thisweek: Optional[bool] = None):
-    """ NotionのZettlekastenに新しいページを追加する """
-    notion_client = NotionClient()
-    notion_client.test()
+    return await project.get_projects(status, remind_date, is_thisweek)
 
-    return {
-        'status': 'ok',
-    }
 
-    # status_list = _get_status_list(status)
-    # get_detail_flag = True if status is not None else False
-    # projects = notion_client.retrieve_projects(status_list=status_list,
-    #                                            get_detail=get_detail_flag,
-    #                                            remind_date=remind_date,
-    #                                            filter_thisweek=is_thisweek)
-    # return convert_to_project_model(projects)
-
-@app.get("/hello")
+@app.get("/healthcheck")
 def hello():
     """
     Return a greeting
     """
-    logger.info("hello")
+    logger.debug("healthcheck")
+    logger.info("healthcheck")
     return {
         'status': 'ok',
     }
