@@ -6,6 +6,8 @@ import {
   Duration,
   aws_lambda as lambda,
   aws_iam as iam,
+  aws_apigatewayv2,
+  aws_apigatewayv2_integrations,
 } from "aws-cdk-lib";
 import { Construct } from "constructs";
 
@@ -22,7 +24,8 @@ export class NotionApi extends Stack {
 
     const role = this.makeRole();
     const myLayer = this.makeLayer();
-    /*const fn = */ this.createLambdaFunction(role, myLayer);
+    const fn = this.createLambdaFunction(role, myLayer);
+    this.makeApiGateway(fn);
   }
 
   /**
@@ -90,5 +93,33 @@ export class NotionApi extends Stack {
     });
 
     return fn;
+  }
+
+  /**
+   * Create an API Gateway.
+   * @param {lambda.Function} fn The Lambda function to be integrated.
+   */
+  makeApiGateway(fn: lambda.Function) {
+    // HTTP API の定義
+    const httpApi = new aws_apigatewayv2.HttpApi(this, "ApiGateway");
+    // ルートとインテグレーションの設定
+    httpApi.addRoutes({
+      path: "/",
+      methods: [aws_apigatewayv2.HttpMethod.POST],
+      integration: new aws_apigatewayv2_integrations.HttpLambdaIntegration(
+        "AppIntegration",
+        fn
+      ),
+    });
+    // ルートとインテグレーションの設定
+    httpApi.addRoutes({
+      path: "/",
+      methods: [aws_apigatewayv2.HttpMethod.GET],
+      integration: new aws_apigatewayv2_integrations.HttpLambdaIntegration(
+        "AppIntegration",
+        fn
+      ),
+    });
+    return httpApi;
   }
 }
