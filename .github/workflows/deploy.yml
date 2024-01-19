@@ -1,0 +1,38 @@
+# @format
+
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "環境名"
+        required: true
+        type: choice
+        options:
+          - "production"
+        default: "production"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Generate Lambda Layer
+        uses: koboriakira/gh-actions/aws/generate-lambda-layer@main
+
+      - name: CDK Deploy
+        uses: koboriakira/gh-actions/aws/deploy_cdk@main
+        with:
+          workdir: cdk
+          aws-role: ${{ secrets.AWS_ROLE }}
+        env:
+          NOTION_SECRET: ${{ secrets.NOTION_SECRET }}
