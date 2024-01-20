@@ -32,9 +32,12 @@ app = FastAPI(
 
 
 @app.get("/projects")
-def get_projects(status: Optional[str] = None, remind_date: Optional[DateObject] = None, is_thisweek: Optional[bool] = None):
-    result = project.get_projects(status, remind_date, is_thisweek)
-    return result
+def get_projects(status: Optional[str] = None,
+                 remind_date: Optional[DateObject] = None,
+                 is_thisweek: Optional[bool] = None,
+                 notion_secret: Optional[str] = Header(None)):
+    valid_saccess_token(notion_secret)
+    return project.get_projects(status, remind_date, is_thisweek)
 
 
 @app.get("/healthcheck")
