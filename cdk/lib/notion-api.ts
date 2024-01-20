@@ -102,7 +102,12 @@ export class NotionApi extends Stack {
    */
   makeApiGateway(fn: lambda.Function) {
     // REST API の定義
-    const restapi = new apigateway.RestApi(this, "Notion-Api");
+    const restapi = new apigateway.RestApi(this, "Notion-Api", {
+      deployOptions: {
+        stageName: "v1",
+      },
+      restApiName: "Notion-Api",
+    });
     // ルートとインテグレーションの設定
     restapi.root.addMethod("ANY", new apigateway.LambdaIntegration(fn));
     restapi.root
