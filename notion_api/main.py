@@ -35,8 +35,8 @@ app = FastAPI(
 def get_projects(status: Optional[str] = None,
                  remind_date: Optional[DateObject] = None,
                  is_thisweek: Optional[bool] = None,
-                 notion_secret: Optional[str] = Header(None)):
-    valid_saccess_token(notion_secret)
+                 access_token: Optional[str] = Header(None)):
+    valid_saccess_token(access_token)
     return project.get_projects(status, remind_date, is_thisweek)
 
 
