@@ -1,7 +1,7 @@
 from typing import Optional
 from datetime import date as DateObject
 from usecase.project_list_usecase import ProjectListUseCase
-from model.project.project_status import ProjectStatus
+from domain.project.project_status import ProjectStatus
 from custom_logger import get_logger
 
 logger = get_logger(__name__)

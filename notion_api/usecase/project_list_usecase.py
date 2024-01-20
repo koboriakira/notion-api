@@ -2,8 +2,8 @@ import os
 from typing import Optional
 from datetime import date as DateObject
 from notion_client_wrapper.client_wrapper import ClientWrapper, BasePage
-from model.database_type import DatabaseType
-from model.project.project_status import ProjectStatus
+from domain.database_type import DatabaseType
+from domain.project.project_status import ProjectStatus
 
 class ProjectListUseCase:
     def __init__(self):
