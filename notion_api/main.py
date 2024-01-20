@@ -29,45 +29,12 @@ app = FastAPI(
     title="My Notion API",
     version="0.0.1",
 )
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"]
-)
 
 
-@app.get("/projects/")
+@app.get("/projects")
 def get_projects(status: Optional[str] = None, remind_date: Optional[DateObject] = None, is_thisweek: Optional[bool] = None):
     result = project.get_projects(status, remind_date, is_thisweek)
-    logger.info(result)
-    return {
-        'status': 'ok',
-    }
-
-@app.post("/projects/")
-def post_projects():
-    result = project.get_projects()
-    logger.info(result)
-    return {
-        'status': 'ok',
-    }
-
-@app.get("/test/")
-def test():
-    import requests
-    AUTHORIZATION = os.environ.get("NOTION_SECRET")
-    headers = {
-        'Authorization': 'Bearer ' + AUTHORIZATION,
-        'Notion-Version': '2022-06-28'
-    }
-    response = requests.get("https://api.notion.com/v1/users",
-                 headers=headers)
-    print(response.json())
-    return {
-        'status': 'ok',
-    }
+    return result
 
 
 @app.get("/healthcheck")
