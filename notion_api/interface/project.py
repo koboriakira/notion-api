@@ -1,6 +1,7 @@
 from typing import Optional
 from datetime import date as DateObject
 from usecase.project_list_usecase import ProjectListUseCase
+from usecase.project_find_usecase import ProjectFindUsecase
 from domain.project.project_status import ProjectStatus
 from custom_logger import get_logger
 
@@ -17,4 +18,11 @@ def get_projects(status: Optional[str] = None, remind_date: Optional[DateObject]
                     remind_date=remind_date,
                     detail_enabled=detail_enabled,
                     thisweek_filter_enabled=is_thisweek)
+    return result
+
+
+def find_project(project_id: str):
+    """ プロジェクト一覧を取得 """
+    usecase = ProjectFindUsecase()
+    result = usecase.execute(project_id=project_id)
     return result
