@@ -1,7 +1,7 @@
 from mangum import Mangum
 from fastapi import FastAPI
 import logging
-from router import projects, healthcheck
+from router import projects, healthcheck, recipes
 from util.environment import Environment
 
 # ログ
@@ -15,6 +15,7 @@ app = FastAPI(
     version="0.0.1",
 )
 app.include_router(projects.router, prefix="/projects", tags=["projects"])
+app.include_router(recipes.router, prefix="/recipes", tags=["recipes"])
 app.include_router(healthcheck.router, prefix="/healthcheck", tags=["healthcheck"])
 
 
