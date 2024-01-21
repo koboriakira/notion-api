@@ -28,7 +28,7 @@ class ProjectStatus(Enum):
         result: list[ProjectStatus] = []
         for s in str_list:
             try:
-                result.append(ProjectStatus.of(s))
+                result.append(ProjectStatus(s))
             except ValueError:
                 raise Exception("invalid status: " + status_str)
         return result
