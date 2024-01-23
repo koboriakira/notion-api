@@ -18,6 +18,10 @@ class ClientWrapper:
     def __init__(self, notion_secret: str):
         self.client = Client(auth=notion_secret)
 
+    @staticmethod
+    def get_instance() -> "ClientWrapper":
+        return ClientWrapper(notion_secret=os.getenv("NOTION_SECRET"))
+
 
     def retrieve_page(self, page_id: str) -> BasePage:
         """ 指定されたページを取得する """
