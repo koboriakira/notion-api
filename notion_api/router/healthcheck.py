@@ -1,16 +1,15 @@
 from fastapi import APIRouter, Header
 import logging
+from router.response import BaseResponse
 
 router = APIRouter()
 
 
-@router.get("")
+@router.get("", response_model=BaseResponse)
 def healthcheck():
     """
     Return a greeting
     """
     logging.debug("healthcheck")
     logging.info("healthcheck")
-    return {
-        'status': 'ok',
-    }
+    return BaseResponse(message="Healthcheck OK")
