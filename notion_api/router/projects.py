@@ -3,7 +3,7 @@ from typing import Optional
 from datetime import date as Date
 from interface import project
 from util.access_token import valid_access_token
-from router.response.projects_response import ProjectsResponse, Project
+from router.response.projects_response import ProjectsResponse, ProjectResponse, Project
 
 router = APIRouter()
 
@@ -17,8 +17,9 @@ def get_projects(status: Optional[str] = None,
     projects = project.get_projects(status, remind_date, is_thisweek)
     return ProjectsResponse(data=[Project.from_params(p) for p in projects])
 
-@router.get("/{project_id}")
+@router.get("/{project_id}", response_model=ProjectResponse)
 def find_project(project_id: str,
                  access_token: Optional[str] = Header(None)):
     valid_access_token(access_token)
-    return project.find_project(project_id)
+    project_result = project.find_project(project_id)
+    return ProjectResponse(data=Project.from_params(project_result))

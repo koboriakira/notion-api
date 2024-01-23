@@ -34,6 +34,8 @@ class Project(BaseNotionPageModel):
             is_thisweek=params["is_thisweek"],
         )
 
+class ProjectResponse(BaseResponse):
+    data: Optional[Project]
 
 class ProjectsResponse(BaseResponse):
     data: list[Project] = Field(default=[])
