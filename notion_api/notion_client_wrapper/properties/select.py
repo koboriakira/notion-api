@@ -13,13 +13,13 @@ class Select(Property):
     def __init__(self,
                  name: str,
                  selected_name: str,
-                 selected_id: str,
-                 selected_color: str,
+                 selected_id: Optional[str] = None,
+                 selected_color: Optional[str] = None,
                  id: Optional[str] = None,):
         self.name = name
         self.selected_name = selected_name
-        self.selected_id = selected_id if selected_id is not None else "undefined"
-        self.selected_color = selected_color if selected_color is not None else "undefined"
+        self.selected_id = selected_id if selected_id is not None else "default"
+        self.selected_color = selected_color if selected_color is not None else "default"
         self.id = id
 
     @ staticmethod
