@@ -7,8 +7,8 @@ import {
   aws_lambda as lambda,
   aws_iam as iam,
   aws_apigateway as apigateway,
-  aws_apigatewayv2,
-  aws_apigatewayv2_integrations,
+  aws_events as events,
+  aws_events_targets as targets,
 } from "aws-cdk-lib";
 import { Construct } from "constructs";
 
@@ -16,7 +16,6 @@ import { Construct } from "constructs";
 const RUNTIME = lambda.Runtime.PYTHON_3_11;
 const TIMEOUT = 30;
 const APP_DIR_PATH = "../notion_api";
-const HANDLER_NAME = "main.handler";
 const LAYER_ZIP_PATH = "../dependencies.zip";
 
 export class NotionApi extends Stack {
@@ -25,8 +24,38 @@ export class NotionApi extends Stack {
 
     const role = this.makeRole();
     const myLayer = this.makeLayer();
-    const fn = this.createLambdaFunction(role, myLayer);
+    const fn = this.createLambdaFunction(
+      "Lambda",
+      "main.handler",
+      role,
+      myLayer,
+      false
+    );
     this.makeApiGateway(fn);
+
+    // Lambda: create_daily_log
+    const createDailyLog = this.createLambdaFunction(
+      "CreateDailyLog",
+      "create_daily_log.handler",
+      role,
+      myLayer,
+      false
+    );
+    new events.Rule(this, "CreateDailyLogEventRule", {
+      // 毎週月曜日10:00に実行
+      schedule: events.Schedule.cron({
+        minute: "0",
+        hour: "1",
+        month: "*",
+        year: "*",
+        weekDay: "MON",
+      }),
+      targets: [
+        new targets.LambdaFunction(createDailyLog, {
+          retryAttempts: 0,
+        }),
+      ],
+    });
   }
 
   /**
@@ -75,12 +104,15 @@ export class NotionApi extends Stack {
    * @returns {lambda.Function} The created Lambda function.
    */
   createLambdaFunction(
+    name: string,
+    handler_name: string,
     role: iam.Role,
-    myLayer: lambda.LayerVersion
+    myLayer: lambda.LayerVersion,
+    function_url_enabled: boolean = false
   ): lambda.Function {
-    const fn = new lambda.Function(this, "Lambda", {
+    const fn = new lambda.Function(this, name, {
       runtime: RUNTIME,
-      handler: HANDLER_NAME,
+      handler: handler_name,
       code: lambda.Code.fromAsset(APP_DIR_PATH),
       role: role,
       layers: [myLayer],
@@ -89,9 +121,11 @@ export class NotionApi extends Stack {
 
     fn.addEnvironment("NOTION_SECRET", process.env.NOTION_SECRET || "");
 
-    fn.addFunctionUrl({
-      authType: lambda.FunctionUrlAuthType.NONE, // 認証なし
-    });
+    if (function_url_enabled) {
+      fn.addFunctionUrl({
+        authType: lambda.FunctionUrlAuthType.NONE, // 認証なし
+      });
+    }
 
     return fn;
   }
