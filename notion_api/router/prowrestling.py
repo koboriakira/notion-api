@@ -21,6 +21,7 @@ def add_prowrestling_page(request: AddProwrestlingRequest,
         title=request.title,
         date=request.date,
         promotion=request.promotion,
+        text=request.text,
         tags=request.tags,
         cover=request.cover,
     )

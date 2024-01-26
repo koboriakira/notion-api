@@ -9,13 +9,15 @@ def add_page(url: str,
              title: str,
              date: Date,
              promotion: str,
-             tags: list[str],
+             text: str = "",
+             tags: list[str] = [],
              cover: Optional[str] = None,
              ) -> dict:
     logger.debug(f"url: {url}")
     logger.debug(f"title: {title}")
     logger.debug(f"date: {date}")
     logger.debug(f"promotion: {promotion}")
+    logger.debug(f"text: {text}")
     logger.debug(f"tags: {tags}")
     logger.debug(f"cover: {cover}")
     usecase = AddProwrestlingUsecase()
@@ -23,6 +25,7 @@ def add_page(url: str,
                             title=title,
                             date=date,
                             promotion=promotion,
+                            text=text,
                             tags=tags,
                             cover=cover,
                             )

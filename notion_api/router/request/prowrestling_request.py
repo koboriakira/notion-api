@@ -7,5 +7,6 @@ class AddProwrestlingRequest(BaseModel):
     title: str
     date: Date
     promotion: str
-    tags: list[str]
+    text: Optional[str] = None
+    tags: list[str] = []
     cover: Optional[str] = None

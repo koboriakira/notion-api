@@ -1,10 +1,12 @@
 from typing import Optional
 from datetime import date as DateObject
-from domain.database_type import DatabaseType
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper.base_page import BasePage
 from notion_client_wrapper.properties import Title, Relation, Url, Cover, Date, Select
+from notion_client_wrapper.block.rich_text.rich_text_builder import RichTextBuilder
+from notion_client_wrapper.block import Paragraph
 from usecase.service.tag_create_service import TagCreateService
+from domain.database_type import DatabaseType
 from custom_logger import get_logger
 
 logger = get_logger(__name__)
@@ -26,6 +28,7 @@ class AddProwrestlingUsecase:
                 title: str,
                 date: DateObject,
                 promotion: str,
+                text: str,
                 tags: list[str],
                 cover: Optional[str] = None,
                 ) -> dict:
@@ -69,7 +72,21 @@ class AddProwrestlingUsecase:
             cover=Cover.from_external_url(cover) if cover is not None else None,
             properties=properties
         )
-        return {
+        page = {
             "id": result["id"],
             "url": result["url"]
         }
+
+        # ページ本文を追加
+        if text is not None or text != "":
+            # textが1500文字を超える場合は、1500文字ずつ分割して追加する
+            if len(text) > 1500:
+                for i in range(0, len(text), 1500):
+                    rich_text = RichTextBuilder.get_instance().add_text(text[i:i+1500]).build()
+                    paragraph = Paragraph.from_rich_text(rich_text=rich_text)
+                    self.client.append_block(block_id=page["id"], block=paragraph)
+            else:
+                rich_text = RichTextBuilder.get_instance().add_text(text).build()
+                paragraph = Paragraph.from_rich_text(rich_text=rich_text)
+                self.client.append_block(block_id=page["id"], block=paragraph)
+        return page
