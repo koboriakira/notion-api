@@ -1,6 +1,4 @@
 from datetime import date, timedelta
-from mangum import Mangum
-from fastapi import FastAPI
 import logging
 from interface import daily_log
 from util.environment import Environment

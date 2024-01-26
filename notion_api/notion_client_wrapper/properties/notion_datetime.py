@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime as DatetimeObject
+from datetime import date as DateObject
 from datetime import timedelta
 from enum import Enum
 
@@ -40,6 +41,10 @@ class NotionDatetime:
             return datetime
         except Exception as e:
             raise Exception(f"Invalid datetime format: {value} {e}")
+
+    @property
+    def date(self) -> DateObject:
+        return self.value.date()
 
     def __dict__(self):
         return {self.kind.value: self.value.isoformat() + "Z"}
