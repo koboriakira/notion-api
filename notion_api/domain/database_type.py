@@ -21,6 +21,7 @@ class DatabaseType(Enum):
     BOOK = "cbe1dc60-5cb7-4c4a-9519-0accaea737df"
     WEBCLIP = "b5e701d7-75d0-4355-8c59-dc3e2f0c09ac"
     MONTHLY_LOG = "043ecb87-268c-48d8-93e7-18702808b3be"
+    VIDEO =       "e84f3d8b-7cf3-4e3c-b55e-7ff251064149"
 
     @staticmethod
     def ignore_updated_at() -> list[str]:

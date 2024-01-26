@@ -17,6 +17,7 @@ DATABASE_DICT = {
     "今日更新したZettlekasten": DatabaseType.ZETTLEKASTEN,
     "今日更新したwebclip": DatabaseType.WEBCLIP,
     "今日更新・登録したレシピ": DatabaseType.RECIPE,
+    "今日観た動画": DatabaseType.VIDEO,
 }
 
 def filter_in_day(date: DateObject, page: BasePage) -> bool:
