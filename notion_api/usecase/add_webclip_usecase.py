@@ -67,8 +67,14 @@ class AddWebclipUsecase:
 
         # ページ本文を追加
         if text is not None:
-            rich_text = RichTextBuilder.get_instance().add_text(text).build()
-            paragraph = Paragraph.from_rich_text(rich_text=rich_text)
-            self.client.append_block(block_id=page["id"], block=paragraph)
-
+            # textが1500文字を超える場合は、1500文字ずつ分割して追加する
+            if len(text) > 1500:
+                for i in range(0, len(text), 1500):
+                    rich_text = RichTextBuilder.get_instance().add_text(text[i:i+1500]).build()
+                    paragraph = Paragraph.from_rich_text(rich_text=rich_text)
+                    self.client.append_block(block_id=page["id"], block=paragraph)
+            else:
+                rich_text = RichTextBuilder.get_instance().add_text(text).build()
+                paragraph = Paragraph.from_rich_text(rich_text=rich_text)
+                self.client.append_block(block_id=page["id"], block=paragraph)
         return page
