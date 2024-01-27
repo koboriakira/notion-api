@@ -10,17 +10,14 @@ class TaskStatus(Enum):
     DONE = "Done"
 
     @staticmethod
-    def get_status_list(status_str: Optional[str] = None) -> list['TaskStatus']:
-        if status_str is None:
-            return [s for s in TaskStatus]
-        if status_str.lower() == "all":
+    def get_status_list(status_list: list[str]) -> list['TaskStatus']:
+        if len(status_list) == 0:
             return [s for s in TaskStatus]
 
-        str_list = status_str.split(",")
         result: list[TaskStatus] = []
-        for s in str_list:
-            try:
-                result.append(TaskStatus(s))
-            except ValueError:
-                raise Exception("invalid status: " + status_str)
+        for status_str in status_list:
+            for status in TaskStatus:
+                if status.value.upper() == status_str.upper():
+                    result.append(status)
+                    break
         return result

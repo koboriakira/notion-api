@@ -10,7 +10,10 @@ router = APIRouter()
 
 @router.get("", response_model=TasksResponse)
 def get_tasks(start_date: Optional[Date] = None,
+              status: Optional[str] = None,
               access_token: Optional[str] = Header(None)):
     valid_access_token(access_token)
-    tasks = task.fetch_tasks(start_date=start_date)
+    status_list: list[str] = status.split(",") if status else []
+    tasks = task.fetch_tasks(start_date=start_date,
+                             status_list=status_list)
     return TasksResponse(data=[Task.from_params(t) for t in tasks])
