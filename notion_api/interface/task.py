@@ -2,6 +2,7 @@ from typing import Optional
 from datetime import date as DateObject
 from custom_logger import get_logger
 from usecase.fetch_tasks_usecase import FetchTasksUsecase
+from usecase.find_task_usecase import FindTaskUsecase
 
 logger = get_logger(__name__)
 
@@ -14,3 +15,8 @@ def fetch_tasks(start_date: Optional[DateObject] = None,
     return usecase.execute(status_list=status_list,
                            start_date=start_date
                            )
+
+def find_task(id: str) -> dict:
+    """ タスクを取得 """
+    usecase = FindTaskUsecase()
+    return usecase.execute(id=id)

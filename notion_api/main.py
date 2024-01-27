@@ -1,7 +1,7 @@
 from mangum import Mangum
 from fastapi import FastAPI
 import logging
-from router import projects, healthcheck, recipes, music, webclip, video, prowrestling, tasks, page
+from router import projects, healthcheck, recipes, music, webclip, video, prowrestling, tasks, page, task
 from util.environment import Environment
 
 # ログ
@@ -22,6 +22,7 @@ app.include_router(webclip.router, prefix="/webclip", tags=["webclip"])
 app.include_router(video.router, prefix="/video", tags=["video"])
 app.include_router(prowrestling.router, prefix="/prowrestling", tags=["prowrestling"])
 app.include_router(tasks.router, prefix="/tasks", tags=["tasks"])
+app.include_router(task.router, prefix="/task", tags=["tasks"])
 app.include_router(page.router, prefix="/page", tags=["page"])
 
 
