@@ -3,7 +3,7 @@ from typing import Optional
 from interface import page
 from util.access_token import valid_access_token
 from router.response import BaseResponse
-from router.request import AddFeelingRequest, AddPomodoroCountRequest
+from router.request import AddFeelingRequest, AddPomodoroCountRequest, UpdateStatusRequest
 from custom_logger import get_logger
 
 logger = get_logger(__name__)
@@ -27,4 +27,13 @@ def add_pomodoro_count(request: AddPomodoroCountRequest,
     logger.debug(request)
     # 一応requestにカウントを入れているが、現状はただ+1するだけとする
     page.add_pomodoro_count(page_id=request.page_id)
+    return BaseResponse()
+
+@router.post("/status", response_model=BaseResponse)
+def update_status(request: UpdateStatusRequest,
+                  access_token: Optional[str] = Header(None),):
+    valid_access_token(access_token)
+    logger.debug(request)
+    page.update_status(page_id=request.page_id,
+                       value=request.value)
     return BaseResponse()
