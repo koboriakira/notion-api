@@ -6,11 +6,19 @@ from typing import Optional
 @dataclass
 class Number(Property):
     number: Optional[int]
+    type: str = "number"
 
     def __init__(self, name: str, id: Optional[str] = None, number: Optional[int] = None):
         self.name = name
         self.id = id
         self.number = number
+
+    def add(self, count: int) -> "Number":
+        return Number(
+            name=self.name,
+            id=self.id,
+            number=self.number + count
+        )
 
     @staticmethod
     def of(name: str, param: dict) -> "Number":
@@ -27,6 +35,9 @@ class Number(Property):
         }
         if self.id is not None:
             result["id"] = self.id
+        if self.number is not None:
+            result["type"] = self.type
+            result["number"] = self.number
         return {
             self.name: result
         }
