@@ -5,6 +5,9 @@ from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper import block
 from domain.database_type import DatabaseType
 from notion_client_wrapper.block.rich_text.rich_text_builder import RichTextBuilder
+from custom_logger import get_logger
+
+logger = get_logger(__name__)
 
 DATABASE_DICT = {
     "今日更新したタスク": DatabaseType.TASK,
@@ -30,12 +33,18 @@ class CollectUpdatedPagesUsecase:
     def __init__(self):
         self.client = ClientWrapper(notion_secret=os.getenv("NOTION_SECRET"))
 
-    def execute(self, date: DateObject = DateObject.today()):
-        daily_log = self.client.retrieve_database(
+    def execute(self, date: DateObject = DateObject.today()) -> None:
+        daily_log = self.client.find_page(
             database_id=DatabaseType.DAILY_LOG.value,
             title=date.isoformat()
         )
-        daily_log_id = daily_log[0].id
+        if daily_log is None:
+            raise Exception("指定された日付のデイリーログは存在しません")
+        daily_log_id = daily_log.id
+        daily_log_content = self.client.list_blocks(block_id=daily_log_id)
+        if len(daily_log_content) > 0:
+            logger.warning("指定された日付のデイリーログは既に更新されています")
+            return None
 
         for title, database_type in DATABASE_DICT.items():
             pages = self._get_latest_items(date=date, database_type=database_type)
@@ -70,4 +79,4 @@ class CollectUpdatedPagesUsecase:
 if __name__ == "__main__":
     # python -m usecase.collect_updated_pages_usecase
     usecase = CollectUpdatedPagesUsecase()
-    usecase.execute()
+    usecase.execute(date=DateObject(2024, 1, 27))

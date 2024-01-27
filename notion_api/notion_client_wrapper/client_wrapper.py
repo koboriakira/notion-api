@@ -68,6 +68,15 @@ class ClientWrapper:
             result = list(filter(lambda p: p.properties.get_title().text == title, result))
         return result
 
+    def find_page(self, database_id: str, title: str) -> Optional[BasePage]:
+        """ 指定されたデータベースのページを取得する。1ページのみ取得する。複数ある場合は最初に見つかったページを返す """
+        data = self.client.databases.query(database_id=database_id)
+        for page_entity in data["results"]:
+            page = self.__convert_page_model(page_entity=page_entity, include_children=False)
+            if page.properties.get_title().text == title:
+                return page
+        return None
+
     def list_blocks(self, block_id: str) -> list[Block]:
         """ 指定されたブロックの子ブロックを取得する """
         return self.__get_block_children(page_id=block_id)
@@ -132,7 +141,7 @@ class ClientWrapper:
 if __name__ == "__main__":
     # python -m notion_client_wrapper.client_wrapper
     from notion_client_wrapper.properties.title import Title
-    client = ClientWrapper()
+    client = ClientWrapper(notion_secret=os.getenv("NOTION_SECRET"))
     # page = client.retrieve_page(page_id="b7576fbdde9b476f913924c1bd90b250")
     # print(page)
     # pages = client.retrieve_database(database_id="986876c2e7f8457abd4437334835d0db", title="テストA")
@@ -141,5 +150,6 @@ if __name__ == "__main__":
     # print(blocks)
     # result = client.append_blocks(block_id="b7576fbdde9b476f913924c1bd90b250", blocks=[Paragraph.from_plain_text("test")])
     # print(result)
-    result = client.create_page_in_database(database_id="986876c2e7f8457abd4437334835d0db", properties=[Title.from_plain_text("title", "test")])
+    from domain.database_type import DatabaseType
+    result = client.retrieve_page(page_id="4228ed1981d040bdb4c68cfc1ee6d0bc")
     print(result)
