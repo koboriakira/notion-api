@@ -14,10 +14,11 @@ class Number(Property):
         self.number = number
 
     def add(self, count: int) -> "Number":
+        prev = self.number if self.number is not None else 0
         return Number(
             name=self.name,
             id=self.id,
-            number=self.number + count
+            number=prev + count
         )
 
     @staticmethod
