@@ -14,3 +14,4 @@ from .notion_datetime import NotionDatetime
 from .cover import Cover
 from .icon import Icon
 from .parent import Parent
+from .rollup import Rollup

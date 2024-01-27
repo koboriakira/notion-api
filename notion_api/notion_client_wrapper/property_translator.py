@@ -11,6 +11,7 @@ from notion_client_wrapper.properties.date import Date
 from notion_client_wrapper.properties.url import Url
 from notion_client_wrapper.properties.relation import Relation
 from notion_client_wrapper.properties.notion_datetime import NotionDatetime
+from notion_client_wrapper.properties.rollup import Rollup
 
 from typing import Any
 
@@ -50,5 +51,7 @@ class PropertyTranslator:
                 return NotionDatetime.last_edited_time(property["last_edited_time"])
             case "created_time":
                 return NotionDatetime.created_time(property["created_time"])
+            case "rollup":
+                return Rollup.of(key, property)
             case _:
                 raise Exception(f"Unsupported property type: {type} {property}")
