@@ -16,4 +16,4 @@ def collect_updated_pages(date: Optional[Date] = None):
 
 if __name__ == "__main__":
     # python -m interface.daily_log
-    create_daily_log()
+    collect_updated_pages(date=Date(2024, 1, 26))
