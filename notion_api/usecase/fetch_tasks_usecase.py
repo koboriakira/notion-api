@@ -5,6 +5,7 @@ from notion_client_wrapper.client_wrapper import ClientWrapper, BasePage
 from domain.database_type import DatabaseType
 from domain.task import TaskStatus
 from custom_logger import get_logger
+from usecase.service.base_page_converter import BasePageConverter
 
 logger = get_logger(__name__)
 
@@ -17,8 +18,8 @@ class FetchTasksUsecase:
                 start_date: Optional[DateObject] = None,
                 ) -> list[dict]:
         # まず全てのタスクを集める
-        all_tasks = self.client.retrieve_database(database_id=DatabaseType.TASK.value)
-        all_tasks = [self._convert_project(task) for task in all_tasks]
+        all_pages = self.client.retrieve_database(database_id=DatabaseType.TASK.value)
+        all_tasks = [BasePageConverter.to_task(p) for p in all_pages]
 
         # ステータス条件を取得
         status_cond_list = TaskStatus.get_status_list(status_list)
@@ -39,18 +40,3 @@ class FetchTasksUsecase:
             tasks.append(task)
 
         return tasks
-
-    def _convert_project(self, task: BasePage) -> dict:
-        status = task.get_status(name="ステータス")
-        start_date = task.get_date(name="実施日")
-        task_kind = task.get_select(name="タスク種別")
-        return {
-            "id": task.id,
-            "url": task.url,
-            "title": task.get_title().text,
-            "created_at": task.created_time.value,
-            "updated_at": task.last_edited_time.value,
-            "status": status.status_name,
-            "task_kind": task_kind.name if task_kind is not None else None,
-            "start_date": start_date.start if start_date is not None else None,
-        }

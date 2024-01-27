@@ -12,6 +12,7 @@ class Task(BaseNotionPageModel):
     status: TaskStatus
     task_kind: Optional[str]
     start_date: Optional[Date]
+    feeling: Optional[str]
 
     @staticmethod
     def from_params(params: dict) -> "Task":
@@ -26,6 +27,7 @@ class Task(BaseNotionPageModel):
             status=TaskStatus(params["status"]),
             task_kind=params.get("task_kind"),
             start_date=params.get("start_date"),
+            feeling=params.get("feeling"),
         )
 
 class TaskResponse(BaseResponse):
