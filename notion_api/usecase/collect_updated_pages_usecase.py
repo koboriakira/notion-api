@@ -11,13 +11,15 @@ from domain.database_type import DatabaseType
 from notion_client_wrapper.block.rich_text.rich_text_builder import RichTextBuilder
 
 DATABASE_DICT = {
-    "今日聴いた音楽": DatabaseType.MUSIC,
-    "今日観たプロレス": DatabaseType.PROWRESTLING,
-    "今日読んだ・登録した書籍": DatabaseType.BOOK,
+    "今日更新したタスク": DatabaseType.TASK,
+    "今日更新したプロジェクト": DatabaseType.PROJECT,
     "今日更新したZettlekasten": DatabaseType.ZETTLEKASTEN,
+    "今日読んだ・登録した書籍": DatabaseType.BOOK,
     "今日更新したwebclip": DatabaseType.WEBCLIP,
+    "今日観たプロレス": DatabaseType.PROWRESTLING,
     "今日更新・登録したレシピ": DatabaseType.RECIPE,
     "今日観た動画": DatabaseType.VIDEO,
+    "今日聴いた音楽": DatabaseType.MUSIC,
 }
 
 def filter_in_day(date: DateObject, page: BasePage) -> bool:
