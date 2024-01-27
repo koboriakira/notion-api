@@ -3,18 +3,14 @@ from custom_logger import get_logger
 
 logger = get_logger(__name__)
 
-class AppendFeelingUsecase:
+class AddPomodoroCountUsecase:
     def __init__(self):
         self.client = ClientWrapper.get_instance()
 
-    def execute(self,
-                page_id: str,
-                value: str,
-                ) -> dict:
-        logger.info("AppendFeelingUsecase start")
+    def execute(self, page_id: str) -> dict:
         page = self.client.retrieve_page(page_id=page_id)
-        feeling = page.get_text(name="気持ち").append_text(text=value)
+        pomodoro_count = page.get_number(name="ポモドーロカウンター").add(1)
         self.client.update_page(
             page_id=page_id,
-            properties=[feeling]
+            properties=[pomodoro_count]
         )
