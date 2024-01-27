@@ -1,9 +1,5 @@
 import os
-from typing import Optional
 from datetime import date as DateObject
-from datetime import timedelta
-from datetime import datetime as Datetime
-from notion_client_wrapper.properties import Title, Date, Relation
 from notion_client_wrapper.base_page import BasePage
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper import block
