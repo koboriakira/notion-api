@@ -31,3 +31,4 @@ jobs:
           aws-role: ${{ secrets.AWS_ROLE }}
         env:
           NOTION_SECRET: ${{ secrets.NOTION_SECRET }}
+          UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}

@@ -120,6 +120,10 @@ export class NotionApi extends Stack {
     });
 
     fn.addEnvironment("NOTION_SECRET", process.env.NOTION_SECRET || "");
+    fn.addEnvironment(
+      "UNSPLASH_ACCESS_KEY",
+      process.env.UNSPLASH_ACCESS_KEY || ""
+    );
 
     if (function_url_enabled) {
       fn.addFunctionUrl({
