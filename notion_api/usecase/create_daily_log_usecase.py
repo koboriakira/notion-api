@@ -1,4 +1,5 @@
 import os
+import requests
 from typing import Optional
 from datetime import date as DateObject
 from datetime import timedelta
@@ -7,7 +8,6 @@ from notion_client_wrapper.properties import Title, Date, Relation, Cover
 from notion_client_wrapper.base_page import BasePage
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from domain.database_type import DatabaseType
-
 class CreateDailyLogUsecase:
     def __init__(self):
         self.client = ClientWrapper(notion_secret=os.getenv("NOTION_SECRET"))
@@ -76,17 +76,30 @@ class CreateDailyLogUsecase:
         return daily_logs[0]
 
     def _create_daily_log_page(self, date: DateObject, weekly_log_id: str) -> dict:
-        cover_unsplash_url = "https://picsum.photos/1600"
+        cover_url = get_random_photo_url()
         return self.client.create_page_in_database(
             database_id=DatabaseType.DAILY_LOG.value,
-            cover=Cover.from_external_url(external_url=cover_unsplash_url),
+            cover=Cover.from_external_url(external_url=cover_url),
             properties=[
                 Date.from_start_date(name="日付", start_date=date),
                 Title.from_plain_text(name="名前", text=date.isoformat()),
                 Relation.from_id_list(name="💭 ウィークリーログ", id_list=[weekly_log_id])]
         )
 
+def get_random_photo_url() -> Optional[str]:
+    query = "bird,flower"
+    UNSPLASH_ACCESS_KEY = os.getenv("UNSPLASH_ACCESS_KEY")
+    unsplash_api_url = f"https://api.unsplash.com/photos/random/?client_id={UNSPLASH_ACCESS_KEY}&query={query}"
+    response = requests.get(unsplash_api_url)
+    if response.status_code != 200:
+        return None
+    data = response.json()
+    return data["urls"]["full"]
+
+
+
 if __name__ == "__main__":
     # python -m usecase.create_daily_log_usecase
     usecase = CreateDailyLogUsecase()
-    usecase.handle(year=2024, isoweeknum=3)
+    # usecase.handle(year=2024, isoweeknum=3)
+    print(get_random_photo_url())
