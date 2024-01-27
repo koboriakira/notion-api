@@ -3,7 +3,7 @@ from typing import Optional
 from datetime import date as DateObject
 from datetime import timedelta
 from datetime import datetime as Datetime
-from notion_client_wrapper.properties import Title, Date, Relation
+from notion_client_wrapper.properties import Title, Date, Relation, Cover
 from notion_client_wrapper.base_page import BasePage
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from domain.database_type import DatabaseType
@@ -76,8 +76,10 @@ class CreateDailyLogUsecase:
         return daily_logs[0]
 
     def _create_daily_log_page(self, date: DateObject, weekly_log_id: str) -> dict:
+        cover_unsplash_url = "https://picsum.photos/1600"
         return self.client.create_page_in_database(
             database_id=DatabaseType.DAILY_LOG.value,
+            cover=Cover.from_external_url(external_url=cover_unsplash_url),
             properties=[
                 Date.from_start_date(name="日付", start_date=date),
                 Title.from_plain_text(name="名前", text=date.isoformat()),
