@@ -29,7 +29,9 @@ class FetchTasksUsecase:
         tasks = []
         for task in all_tasks:
             # 実施日が指定されている場合は、実施日が一致するもののみを返す
-            if start_date is not None and task["start_date"] is not None:
+            if start_date is not None:
+                if task["start_date"] is None:
+                    continue
                 if DateObject.fromisoformat(task["start_date"]) != start_date:
                     continue
 
