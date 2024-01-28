@@ -7,7 +7,7 @@ name = "pypi"
 fastapi = "==0.99.0"
 pydantic = "==1.10.9"
 mangum = "==0.17.0"
-requests = "==2.31.0"
+requests = "*"
 pyyaml = "==6.0"
 notion_client = "*"
 
