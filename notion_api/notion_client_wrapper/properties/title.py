@@ -5,9 +5,10 @@ from typing import Optional
 
 @dataclass
 class Title(Property):
-    text: str = ""
+    text: str
     value: list[dict]
     type: str = "title"
+    mentioned_page_id: Optional[str] = None
 
     def __init__(self, name: str, id: Optional[str] = None, value: list[dict] = [], text: Optional[str] = None):
         self.name = name
@@ -37,6 +38,18 @@ class Title(Property):
                 "content": self.text
             }
         })
+        if self.mentioned_page_id is not None:
+            values.append({
+                "type": "mention",
+                "mention": {
+                    "type": "page",
+                    "page": {
+                        "id": self.mentioned_page_id
+                    }
+                },
+                # "plain_text": self.text,
+                # "href": f"https://www.notion.so/{self.mentioned_page_id}"
+            })
         result = {
             "title": values
         }
