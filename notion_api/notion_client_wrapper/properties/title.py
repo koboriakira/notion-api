@@ -10,11 +10,12 @@ class Title(Property):
     type: str = "title"
     mentioned_page_id: Optional[str] = None
 
-    def __init__(self, name: str, id: Optional[str] = None, value: list[dict] = [], text: Optional[str] = None):
+    def __init__(self, name: str, id: Optional[str] = None, value: list[dict] = [], text: Optional[str] = None, mentioned_page_id: Optional[str] = None):
         self.name = name
         self.id = id
         self.value = value
         self.text = text
+        self.mentioned_page_id = mentioned_page_id
 
     @classmethod
     def from_properties(cls, properties: dict) -> "Title":
@@ -73,4 +74,12 @@ class Title(Property):
         return Title(
             name=name,
             text=text,
+        )
+
+    @ staticmethod
+    def from_mentioned_page_id(name: str, page_id: str) -> "Title":
+        return Title(
+            name=name,
+            text="",
+            mentioned_page_id=page_id,
         )
