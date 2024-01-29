@@ -28,6 +28,10 @@ class FetchTasksUsecase:
 
         tasks = []
         for task in all_tasks:
+            # タスク種別:ゴミ箱は除外する
+            if task.get("task_kind") == "ゴミ箱":
+                continue
+
             # 実施日が指定されている場合は、実施日が一致するもののみを返す
             if start_date is not None:
                 if task["start_date"] is None:
