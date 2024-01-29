@@ -22,7 +22,7 @@ def find_task(id: str) -> dict:
     usecase = FindTaskUsecase()
     return usecase.execute(id=id)
 
-def create_new_page(title: str, start_date: Optional[DateObject] = None) -> dict:
+def create_new_page(title: Optional[str] = None, mentioned_page_id: Optional[str] = None, start_date: Optional[DateObject] = None) -> dict:
     """ タスクを作成 """
     usecase = CreateNewTaskUsecase()
-    return usecase.handle(title=title, start_date=start_date)
+    return usecase.handle(title=title, mentioned_page_id=mentioned_page_id, start_date=start_date)

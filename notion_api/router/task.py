@@ -20,6 +20,7 @@ def create_task(request: CreateNewTaskRequest,
                 access_token: Optional[str] = Header(None)):
     valid_access_token(access_token)
     result = task.create_new_page(title=request.title,
+                                  mentioned_page_id=request.mentioned_page_id,
                                   start_date=request.start_date,
                                   )
     return BaseResponse(data=result)

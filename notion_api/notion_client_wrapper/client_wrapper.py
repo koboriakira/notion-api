@@ -142,6 +142,7 @@ if __name__ == "__main__":
     # python -m notion_client_wrapper.client_wrapper
     from notion_client_wrapper.properties.title import Title
     client = ClientWrapper(notion_secret=os.getenv("NOTION_SECRET"))
+    import json
     # page = client.retrieve_page(page_id="b7576fbdde9b476f913924c1bd90b250")
     # print(page)
     # pages = client.retrieve_database(database_id="986876c2e7f8457abd4437334835d0db", title="テストA")
@@ -151,5 +152,3 @@ if __name__ == "__main__":
     # result = client.append_blocks(block_id="b7576fbdde9b476f913924c1bd90b250", blocks=[Paragraph.from_plain_text("test")])
     # print(result)
     from domain.database_type import DatabaseType
-    result = client.retrieve_page(page_id="4228ed1981d040bdb4c68cfc1ee6d0bc")
-    print(result)
