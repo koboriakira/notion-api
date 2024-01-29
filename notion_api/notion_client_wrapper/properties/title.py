@@ -5,7 +5,7 @@ from typing import Optional
 
 @dataclass
 class Title(Property):
-    text: str
+    text: str = ""
     value: list[dict]
     type: str = "title"
 
@@ -30,18 +30,18 @@ class Title(Property):
         return cls.__of(key, property)
 
     def __dict__(self):
+        values = []
+        values.append({
+            "type": "text",
+            "text": {
+                "content": self.text
+            }
+        })
         result = {
-            "title": [
-                {
-                    "type": "text",
-                    "text": {
-                        "content": self.text
-                    }
-                }
-            ]
+            "title": values
         }
         if self.id is not None:
-            result["title"]["id"] = self.id
+            result["id"] = self.id
         return {
             self.name: result
         }
