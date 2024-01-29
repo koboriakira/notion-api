@@ -8,12 +8,17 @@ from notion_client_wrapper.base_page import BasePage
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from domain.database_type import DatabaseType
 
+
 class CreateNewTaskUsecase:
     def __init__(self):
         self.client = ClientWrapper(notion_secret=os.getenv("NOTION_SECRET"))
 
-    def handle(self, title: str, start_date: Optional[DateObject] = None) -> dict:
-        properties = [Title.from_plain_text(name="名前", text=title),]
+    def handle(self, title: Optional[str], mentioned_page_id: Optional[str], start_date: Optional[DateObject] = None) -> dict:
+        if title is None and mentioned_page_id is None:
+            raise ValueError("title と mentioned_page_id のどちらかは必須です")
+
+        title = self._generate_title(title=title, mentioned_page_id=mentioned_page_id)
+        properties = [title]
         if start_date is not None:
             properties.append(Date.from_start_date(name="実施日", start_date=start_date))
 
@@ -25,6 +30,14 @@ class CreateNewTaskUsecase:
             "id": page["id"],
             "url": page["url"],
         }
+
+    def _generate_title(self, title: Optional[str], mentioned_page_id: Optional[str]) -> Title:
+        if mentioned_page_id is None:
+            return Title.from_plain_text(name="名前", text=title)
+        if mentioned_page_id is not None:
+            return Title.from_mentioned_page_id(name="名前", page_id=mentioned_page_id)
+        raise NotImplementedError()
+
 
 
     def _find_weekly_log(self, year: int, isoweeknum: int) -> Optional[dict]:
