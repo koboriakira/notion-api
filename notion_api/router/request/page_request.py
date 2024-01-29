@@ -12,3 +12,7 @@ class AddPomodoroCountRequest(BaseModel):
 class UpdateStatusRequest(BaseModel):
     page_id: str
     value: str
+
+class AppendTextBlockRequest(BaseModel):
+    page_id: str
+    value: str
