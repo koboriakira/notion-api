@@ -99,6 +99,13 @@ class ClientWrapper:
             rich_text=[{"text": {"content": text}}],
         )
 
+    def remove_page(self, page_id: str) -> None:
+        """ 指定されたページを削除する """
+        self.client.pages.update(
+            page_id=page_id,
+            archived=True
+        )
+
     def __append_block_children(self, block_id: str, children=list[dict]) -> dict:
         return self.client.blocks.children.append(
             block_id=block_id, children=children)
