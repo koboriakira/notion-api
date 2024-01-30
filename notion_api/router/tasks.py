@@ -16,4 +16,7 @@ def get_tasks(start_date: Optional[Date] = None,
     status_list: list[str] = status.split(",") if status else []
     tasks = task.fetch_tasks(start_date=start_date,
                              status_list=status_list)
-    return TasksResponse(data=[Task.from_params(t) for t in tasks])
+    print(tasks)
+    response = TasksResponse(data=[Task.from_params(t) for t in tasks])
+    print(response)
+    return response

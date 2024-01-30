@@ -1,6 +1,7 @@
 import os
 from typing import Optional
 from datetime import date as DateObject
+from datetime import datetime as DatetimeObject
 from notion_client_wrapper.client_wrapper import ClientWrapper, BasePage
 from domain.database_type import DatabaseType
 from domain.task import TaskStatus
@@ -36,7 +37,8 @@ class FetchTasksUsecase:
             if start_date is not None:
                 if task["start_date"] is None:
                     continue
-                if DateObject.fromisoformat(task["start_date"]) != start_date:
+                task_start_date = _convert_to_date(task["start_date"])
+                if task_start_date != start_date:
                     continue
 
             # ステータスが指定されている場合は、ステータスが一致するもののみを返す
@@ -44,5 +46,10 @@ class FetchTasksUsecase:
                 if task["status"] not in status_cond_name_list:
                     continue
             tasks.append(task)
-
         return tasks
+
+def _convert_to_date(value: str) -> DateObject:
+    if len(value) == 10:
+        return DateObject.fromisoformat(value)
+    else:
+        return DatetimeObject.fromisoformat(value).date()

@@ -16,5 +16,6 @@ class BasePageConverter:
             "status": status.status_name,
             "task_kind": task_kind.name if task_kind is not None else None,
             "start_date": start_date.start if start_date is not None else None,
+            "end_date": start_date.end if start_date is not None else None,
             "feeling": feeling.text,
         }
