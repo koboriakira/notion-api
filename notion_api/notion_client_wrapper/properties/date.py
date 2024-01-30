@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from notion_client_wrapper.properties.property import Property
 from typing import Optional
 from datetime import date
+from datetime import datetime as DatetimeObject
 
 
 @dataclass
@@ -31,14 +32,15 @@ class Date(Property):
         )
 
     @staticmethod
-    def from_start_date(name: str, start_date: Optional[date] = None) -> "Date":
+    def from_start_date(name: str, start_date: Optional[date|DatetimeObject] = None) -> "Date":
         return Date(
             name=name,
             start=start_date.isoformat() if start_date is not None else None,
         )
 
+
     @staticmethod
-    def from_range(name: str, start: date, end: date) -> "Date":
+    def from_range(name: str, start: date|DatetimeObject, end: date|DatetimeObject) -> "Date":
         return Date(
             name=name,
             start=start.isoformat(),

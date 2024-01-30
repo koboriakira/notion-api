@@ -3,6 +3,7 @@ from typing import Optional
 from datetime import date as DateObject
 from datetime import timedelta
 from datetime import datetime as Datetime
+from datetime import datetime as DatetimeObject
 from notion_client_wrapper.properties import Title, Date, Relation
 from notion_client_wrapper.base_page import BasePage
 from notion_client_wrapper.client_wrapper import ClientWrapper
@@ -13,14 +14,20 @@ class CreateNewTaskUsecase:
     def __init__(self):
         self.client = ClientWrapper(notion_secret=os.getenv("NOTION_SECRET"))
 
-    def handle(self, title: Optional[str], mentioned_page_id: Optional[str], start_date: Optional[DateObject] = None) -> dict:
+    def handle(self,
+               title: Optional[str],
+               mentioned_page_id: Optional[str],
+               start_date: Optional[DateObject|DatetimeObject] = None,
+               end_date: Optional[DateObject|DatetimeObject] = None) -> dict:
         if title is None and mentioned_page_id is None:
             raise ValueError("title と mentioned_page_id のどちらかは必須です")
 
         title = self._generate_title(title=title, mentioned_page_id=mentioned_page_id)
         properties = [title]
-        if start_date is not None:
+        if start_date is not None and end_date is None:
             properties.append(Date.from_start_date(name="実施日", start_date=start_date))
+        elif start_date is not None and end_date is not None:
+            properties.append(Date.from_range(name="実施日", start=start_date, end=end_date))
 
         page = self.client.create_page_in_database(
             database_id=DatabaseType.TASK.value,
