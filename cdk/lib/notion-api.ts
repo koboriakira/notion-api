@@ -56,6 +56,30 @@ export class NotionApi extends Stack {
         }),
       ],
     });
+
+    // Lambda: clean_empty_title_page
+    const cleanEmptyTitlePage = this.createLambdaFunction(
+      "CleanEmptyTitlePage",
+      "clean_empty_title_page.handler",
+      role,
+      myLayer,
+      false
+    );
+    new events.Rule(this, "CleanEmptyTitlePageRule", {
+      // 10分ごとに実行
+      schedule: events.Schedule.cron({
+        minute: "*/10",
+        hour: "*",
+        month: "*",
+        year: "*",
+        weekDay: "*",
+      }),
+      targets: [
+        new targets.LambdaFunction(cleanEmptyTitlePage, {
+          retryAttempts: 0,
+        }),
+      ],
+    });
   }
 
   /**

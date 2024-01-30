@@ -1,6 +1,5 @@
-from datetime import date, timedelta
 import logging
-from interface import daily_log
+from interface import batch
 from util.environment import Environment
 
 # ログ
@@ -9,5 +8,4 @@ if Environment.is_dev():
     logging.basicConfig(level=logging.DEBUG)
 
 def handler(event, context):
-    next_week_day = date.today() + timedelta(days=7)
-    daily_log.create_daily_log(target_date=next_week_day)
+    batch.clean_empty_title_page()
