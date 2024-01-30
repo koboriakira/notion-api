@@ -159,3 +159,4 @@ if __name__ == "__main__":
     # result = client.append_blocks(block_id="b7576fbdde9b476f913924c1bd90b250", blocks=[Paragraph.from_plain_text("test")])
     # print(result)
     from domain.database_type import DatabaseType
+    print(client.retrieve_page(page_id="56049c410c1748b9b035584cf576744f"))
