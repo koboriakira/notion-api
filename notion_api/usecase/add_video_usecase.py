@@ -2,6 +2,7 @@ from typing import Optional
 from domain.database_type import DatabaseType
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper.properties import Title, Relation, Url, Cover
+from notion_client_wrapper.block import Paragraph
 from usecase.service.tag_create_service import TagCreateService
 from custom_logger import get_logger
 
@@ -51,7 +52,35 @@ class AddVideoUsecase:
             cover=Cover.from_external_url(cover) if cover is not None else None,
             properties=properties
         )
+
+        self._append_embed_code(block_id=result["id"], url=url)
+
         return {
             "id": result["id"],
             "url": result["url"]
         }
+
+    def _append_embed_code(self, block_id: str, url: str) -> None:
+        if "youtube.com" not in url:
+            return
+
+        video_id = None
+        for query_param in url.split("?")[1].split("&"):
+            key, value = query_param.split("=")
+            if key == "v":
+                video_id = value
+                break
+        if video_id is None:
+            raise ValueError("Invalid URL")
+
+        embed_code = f"""<iframe width="560" height="315" src="https://www.youtube.com/embed/{video_id}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>"""
+        paragraph = Paragraph.from_plain_text(text=embed_code)
+        self.client.append_block(block_id=block_id, block=paragraph)
+
+if __name__ == "__main__":
+    # python -m usecase.add_video_usecase
+    usecase = AddVideoUsecase()
+    usecase._append_embed_code(
+        url="https://youtube.com/watch?v=7u1EehDMwF4&amp;si=rqajmV4iuicBKDfD",
+        block_id="cd97c02a25e94bb980fe67a02c874ac2"
+    )

@@ -12,7 +12,7 @@ router = APIRouter()
 
 
 @router.post("", response_model=BaseResponse)
-def add_webclip_page(request: AddVideoRequest,
+def add_video_page(request: AddVideoRequest,
                    access_token: Optional[str] = Header(None),
                 ):
     valid_access_token(access_token)
