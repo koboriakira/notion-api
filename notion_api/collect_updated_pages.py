@@ -16,4 +16,4 @@ def handler(event: dict, context):
 
 if __name__ == "__main__":
     # python -m collect_updated_pages
-    handler(event={"date": "2024-01-31"}, context={})
+    handler(event={"date": Date.today().isoformat()}, context={})
