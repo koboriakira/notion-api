@@ -13,3 +13,7 @@ def handler(event: dict, context):
     date_str: Optional[str] = event.get("date")
     date = Date.fromisoformat(date_str) if date_str else None
     daily_log.collect_updated_pages(date=date)
+
+if __name__ == "__main__":
+    # python -m collect_updated_pages
+    handler(event={"date": "2024-01-31"}, context={})
