@@ -42,6 +42,10 @@ class NotionDatetime:
         except Exception as e:
             raise Exception(f"Invalid datetime format: {value} {e}")
 
+    def is_between(self, start: DatetimeObject, end: DatetimeObject) -> bool:
+        return start.timestamp() <= self.value.timestamp() <= end.timestamp()
+
+
     @property
     def date(self) -> DateObject:
         return self.value.date()

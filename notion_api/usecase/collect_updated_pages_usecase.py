@@ -1,17 +1,20 @@
 import os
 from datetime import date as DateObject
+from datetime import datetime as DatetimeObject
+from datetime import timedelta
 from notion_client_wrapper.base_page import BasePage
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper import block
 from domain.database_type import DatabaseType
 from notion_client_wrapper.block.rich_text.rich_text_builder import RichTextBuilder
 from custom_logger import get_logger
+from util.datetime import JST
 
 logger = get_logger(__name__)
 
 DATABASE_DICT = {
-    "今日更新したタスク": DatabaseType.TASK,
-    "今日更新したプロジェクト": DatabaseType.PROJECT,
+    # "今日更新したタスク": DatabaseType.TASK,
+    # "今日更新したプロジェクト": DatabaseType.PROJECT,
     "今日更新したZettlekasten": DatabaseType.ZETTLEKASTEN,
     "今日読んだ・登録した書籍": DatabaseType.BOOK,
     "今日更新したwebclip": DatabaseType.WEBCLIP,
@@ -23,11 +26,15 @@ DATABASE_DICT = {
 
 def filter_in_day(date: DateObject, page: BasePage) -> bool:
     """ 指定された日付に作成もしくは更新されたページかどうかを判定する """
-    return page.created_time.date == date or page.last_edited_time.date == date
+    end = DatetimeObject(date.year, date.month, date.day, 22, 0, 0, tzinfo=JST)
+    start = end - timedelta(hours=24)
+    return page.created_time.is_between(start=start, end=end) or page.last_edited_time.is_between(start=start, end=end)
 
 def filter_in_day_with_only_created(date: DateObject, page: BasePage) -> bool:
     """ 指定された日付に作成されたページかどうかを判定する"""
-    return page.created_time.date == date
+    start = DatetimeObject(date.year, date.month, date.day, 22, 0, 0, tzinfo=JST)
+    end = start + timedelta(hours=24)
+    return page.created_time.is_between(start=start, end=end)
 
 class CollectUpdatedPagesUsecase:
     def __init__(self):
@@ -41,10 +48,6 @@ class CollectUpdatedPagesUsecase:
         if daily_log is None:
             raise Exception("指定された日付のデイリーログは存在しません")
         daily_log_id = daily_log.id
-        daily_log_content = self.client.list_blocks(block_id=daily_log_id)
-        if len(daily_log_content) > 0:
-            logger.warning("指定された日付のデイリーログは既に更新されています")
-            return None
 
         for title, database_type in DATABASE_DICT.items():
             pages = self._get_latest_items(date=date, database_type=database_type)
