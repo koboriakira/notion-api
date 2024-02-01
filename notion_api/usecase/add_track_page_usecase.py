@@ -3,6 +3,8 @@ from datetime import date as Date
 from domain.database_type import DatabaseType
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper.properties import Title, Text, Relation, Url, Date, Cover
+from notion_client_wrapper.block.rich_text.rich_text_builder import RichTextBuilder
+from notion_client_wrapper.block import Paragraph
 from usecase.service.tag_create_service import TagCreateService
 from custom_logger import get_logger
 
@@ -64,7 +66,31 @@ class AddTrackPageUsecase:
             cover=Cover.from_external_url(cover_url) if cover_url is not None else None,
             properties=properties
         )
+        page_id = result["id"]
+        page_url = result["url"]
+
+        iframe_html = _spotify_iframe_html(spotify_url=spotify_url)
+        if iframe_html is not None:
+            self.client.append_block(
+                block_id=page_id,
+                block=iframe_html
+            )
         return {
-            "id": result["id"],
-            "url": result["url"]
+            "id": page_id,
+            "url": page_url
         }
+
+def _spotify_iframe_html(spotify_url: Optional[str] = None) -> Optional[Paragraph]:
+    if spotify_url is None:
+        return None
+    track_id = spotify_url.split("/")[-1].split("?")[0]
+    iframe_html = f"""<iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/{track_id}?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>"""
+    rich_text_builder = RichTextBuilder()
+    rich_text_builder.add_text(iframe_html)
+    rich_text = rich_text_builder.build()
+    paragraph = Paragraph.from_rich_text(rich_text=rich_text)
+    return paragraph
+
+if __name__ == "__main__":
+    # python -m usecase.add_track_page_usecase
+    print(_spotify_iframe_html("https://open.spotify.com/intl-ja/track/5yCjgnILdfwZkNsh50eFGc?si=0faaf39670834b5c"))
