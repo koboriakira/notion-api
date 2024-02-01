@@ -85,10 +85,7 @@ def _spotify_iframe_html(spotify_url: Optional[str] = None) -> Optional[Paragrap
         return None
     track_id = spotify_url.split("/")[-1].split("?")[0]
     iframe_html = f"""<iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/{track_id}?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>"""
-    rich_text_builder = RichTextBuilder()
-    rich_text_builder.add_text(iframe_html)
-    rich_text = rich_text_builder.build()
-    paragraph = Paragraph.from_rich_text(rich_text=rich_text)
+    paragraph = Paragraph.from_plain_text(iframe_html)
     return paragraph
 
 if __name__ == "__main__":
