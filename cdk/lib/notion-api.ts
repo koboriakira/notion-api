@@ -72,6 +72,22 @@ export class NotionApi extends Stack {
         weekDay: "*",
       })
     );
+
+    // Lambda: collect_updated_pages
+    const collectUpdatedPages = this.createEventLambda(
+      "CollectUpdatedPages",
+      "collect_updated_pages.handler",
+      role,
+      myLayer,
+      // 毎日22時に実行
+      events.Schedule.cron({
+        minute: "0",
+        hour: "13",
+        month: "*",
+        year: "*",
+        weekDay: "*",
+      })
+    );
   }
 
   createEventLambda(
