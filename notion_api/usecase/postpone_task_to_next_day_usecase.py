@@ -36,8 +36,9 @@ class PostponeTaskToNextDayUsecase:
         # 実施日を翌日に更新
         tomorrow = date + timedelta(days=1)
         for task in filtered_tasks:
+            print(f"postpone: {task['url']}")
             page_id = task["id"]
-            date_property = Date.from_start_date(name="実施日", start=tomorrow)
+            date_property = Date.from_start_date(name="実施日", start_date=tomorrow)
             self.client.update_page(
                 page_id=page_id,
                 properties=[date_property]
