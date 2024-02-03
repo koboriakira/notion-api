@@ -5,6 +5,7 @@ from custom_logger import get_logger
 from usecase.fetch_tasks_usecase import FetchTasksUsecase
 from usecase.find_task_usecase import FindTaskUsecase
 from usecase.create_new_task_usecase import CreateNewTaskUsecase
+from usecase.postpone_task_to_next_day_usecase import PostponeTaskToNextDayUsecase
 
 logger = get_logger(__name__)
 
@@ -30,3 +31,9 @@ def create_new_page(title: Optional[str] = None,
     """ タスクを作成 """
     usecase = CreateNewTaskUsecase()
     return usecase.handle(title=title, mentioned_page_id=mentioned_page_id, start_date=start_date, end_date=end_date)
+
+def postpone_to_next_day(date: Optional[DateObject] = None) -> list[dict]:
+    """ 実施日を翌日に延期 """
+    logger.debug(f"date: {date}")
+    usecase = PostponeTaskToNextDayUsecase()
+    return usecase.execute(date=date)
