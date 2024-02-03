@@ -11,7 +11,7 @@ if Environment.is_dev():
 
 def handler(event: dict, context):
     date_str: Optional[str] = event.get("date")
-    date = Date.fromisoformat(date_str) if date_str else None
+    date = Date.fromisoformat(date_str) if date_str is not None else None
     daily_log.collect_updated_pages(date=date)
 
 if __name__ == "__main__":
