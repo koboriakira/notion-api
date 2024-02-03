@@ -80,6 +80,22 @@ export class NotionApi extends Stack {
         weekDay: "*",
       })
     );
+
+    // Lambda: collect_updated_pages
+    const postponeTask = this.createEventLambda(
+      "PostponeTask",
+      "postpone_task.handler",
+      role,
+      myLayer,
+      // 毎日2時に実行
+      events.Schedule.cron({
+        minute: "0",
+        hour: "17",
+        month: "*",
+        year: "*",
+        weekDay: "*",
+      })
+    );
   }
 
   createEventLambda(
