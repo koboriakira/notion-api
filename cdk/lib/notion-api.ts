@@ -34,28 +34,20 @@ export class NotionApi extends Stack {
     this.makeApiGateway(fn);
 
     // Lambda: create_daily_log
-    const createDailyLog = this.createLambdaFunction(
+    const createDailyLog = this.createEventLambda(
       "CreateDailyLog",
       "create_daily_log.handler",
       role,
       myLayer,
-      false
-    );
-    new events.Rule(this, "CreateDailyLogEventRule", {
       // 毎週月曜日10:00に実行
-      schedule: events.Schedule.cron({
+      events.Schedule.cron({
         minute: "0",
         hour: "1",
         month: "*",
         year: "*",
         weekDay: "MON",
-      }),
-      targets: [
-        new targets.LambdaFunction(createDailyLog, {
-          retryAttempts: 0,
-        }),
-      ],
-    });
+      })
+    );
 
     // Lambda: clean_empty_title_page
     const cleanEmptyTitlePage = this.createEventLambda(
