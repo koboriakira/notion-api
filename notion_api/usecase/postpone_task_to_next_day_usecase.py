@@ -17,7 +17,8 @@ class PostponeTaskToNextDayUsecase:
 
     def execute(self,
                 date: Optional[DateObject] = None) -> list[dict]:
-        date = date if date is not None else DateObject.today()
+        # 指定日がない場合は前日を指定
+        date = date if date is not None else DateObject.today() - timedelta(days=1)
 
         # まず全てのタスクを集める
         all_pages = self.client.retrieve_database(database_id=DatabaseType.TASK.value)
