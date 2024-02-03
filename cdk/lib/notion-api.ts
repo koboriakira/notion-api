@@ -58,28 +58,41 @@ export class NotionApi extends Stack {
     });
 
     // Lambda: clean_empty_title_page
-    const cleanEmptyTitlePage = this.createLambdaFunction(
+    const cleanEmptyTitlePage = this.createEventLambda(
       "CleanEmptyTitlePage",
       "clean_empty_title_page.handler",
       role,
       myLayer,
-      false
-    );
-    new events.Rule(this, "CleanEmptyTitlePageRule", {
       // 10分ごとに実行
-      schedule: events.Schedule.cron({
+      events.Schedule.cron({
         minute: "*/10",
         hour: "*",
         month: "*",
         year: "*",
         weekDay: "*",
-      }),
-      targets: [
-        new targets.LambdaFunction(cleanEmptyTitlePage, {
-          retryAttempts: 0,
-        }),
-      ],
+      })
+    );
+  }
+
+  createEventLambda(
+    name: string,
+    handler_name: string,
+    role: iam.Role,
+    myLayer: lambda.LayerVersion,
+    schedule: events.Schedule
+  ): lambda.Function {
+    const fn = this.createLambdaFunction(
+      name,
+      handler_name,
+      role,
+      myLayer,
+      false
+    );
+    new events.Rule(this, `${name}Rule`, {
+      schedule: schedule,
+      targets: [new targets.LambdaFunction(fn, { retryAttempts: 0 })],
     });
+    return fn;
   }
 
   /**
