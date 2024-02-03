@@ -40,7 +40,8 @@ class CollectUpdatedPagesUsecase:
     def __init__(self):
         self.client = ClientWrapper(notion_secret=os.getenv("NOTION_SECRET"))
 
-    def execute(self, date: DateObject = DateObject.today()) -> None:
+    def execute(self, date: Optional[DateObject] = None) -> None:
+        date = date if date is not None else DateObject.today()
         daily_log = self.client.find_page(
             database_id=DatabaseType.DAILY_LOG.value,
             title=date.isoformat()
