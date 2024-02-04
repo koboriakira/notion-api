@@ -31,12 +31,18 @@ def _get_google_book_info(id: str):
     data:dict = response.json()
     info: dict = data["volumeInfo"]
     logger.debug(json.dumps(info, ensure_ascii=False))
+    published_date = None
+    try:
+        published_date = DateObject.fromisoformat(info["publishedDate"])
+    except:
+        logger.error(f"cannot parse publishedDate: {info.get('publishedDate')}")
+
     return {
         "title": info["title"],
         "authors": info["authors"],
-        "publisher": info["publisher"],
-        "published_date": DateObject.fromisoformat(info["publishedDate"]),
-        "image_url": info["imageLinks"]["medium"],
+        "publisher": info.get("publisher"),
+        "published_date": published_date,
+        "image_url": info["imageLinks"].get("medium"),
         "url": info["infoLink"],
     }
 

@@ -16,5 +16,5 @@ def add_track_page(request: AddBookRequest,
                    access_token: Optional[str] = Header(None),
                 ):
     valid_access_token(access_token)
-    book.add_book_by_google_book_id(id=request.google_book_id, title=request.title)
-    return BaseResponse()
+    result = book.add_book_by_google_book_id(id=request.google_book_id, title=request.title)
+    return BaseResponse(data=result)
