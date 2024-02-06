@@ -10,6 +10,7 @@ mangum = "==0.17.0"
 requests = "*"
 pyyaml = "==6.0"
 notion_client = "*"
+boto3 = "*"
 
 [dev-packages]
 uvicorn = "*"
