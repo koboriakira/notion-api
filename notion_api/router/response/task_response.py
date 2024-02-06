@@ -14,7 +14,6 @@ logger = get_logger(__name__)
 def convert_to_datetime(value: Optional[str]) -> Optional[Datetime]:
     if value is None:
         return None
-    logger.debug(value)
     if len(value) == 10:
         date = Date.fromisoformat(value)
         return Datetime(date.year, date.month, date.day, tzinfo=JST)
