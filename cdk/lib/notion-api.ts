@@ -4,11 +4,13 @@ import {
   Stack,
   StackProps,
   Duration,
+  RemovalPolicy,
   aws_lambda as lambda,
   aws_iam as iam,
   aws_apigateway as apigateway,
   aws_events as events,
   aws_events_targets as targets,
+  aws_s3 as s3,
 } from "aws-cdk-lib";
 import { Construct } from "constructs";
 
@@ -22,7 +24,13 @@ export class NotionApi extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    const role = this.makeRole();
+    // S3バケットを作成
+    const bucket = new s3.Bucket(this, "NotionApiBucket", {
+      bucketName: "notion-api-bucket-koboriakira",
+      removalPolicy: RemovalPolicy.DESTROY,
+    });
+
+    const role = this.makeRole(bucket.bucketArn);
     const myLayer = this.makeLayer();
     const fn = this.createLambdaFunction(
       "Lambda",
@@ -123,7 +131,7 @@ export class NotionApi extends Stack {
    * Create or retrieve an IAM role for the Lambda function.
    * @returns {iam.Role} The created or retrieved IAM role.
    */
-  makeRole() {
+  makeRole(bucketArn: string) {
     // Lambdaの実行ロールを取得または新規作成
     const role = new iam.Role(this, "LambdaRole", {
       assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
@@ -141,6 +149,12 @@ export class NotionApi extends Stack {
       new iam.PolicyStatement({
         actions: ["lambda:InvokeFunction", "lambda:InvokeAsync"],
         resources: ["*"],
+      })
+    );
+    role.addToPrincipalPolicy(
+      new iam.PolicyStatement({
+        actions: ["s3:*"],
+        resources: [bucketArn, bucketArn + "/*"],
       })
     );
 
