@@ -19,6 +19,11 @@ def fetch_tasks(start_date: Optional[DateObject] = None,
                            start_date=start_date
                            )
 
+def get_current_tasks() -> list[dict]:
+    """ 今日のタスクを取得 """
+    usecase = FetchTasksUsecase()
+    return usecase.current()
+
 def find_task(id: str) -> dict:
     """ タスクを取得 """
     usecase = FindTaskUsecase()

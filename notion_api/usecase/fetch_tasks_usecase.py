@@ -7,12 +7,14 @@ from domain.database_type import DatabaseType
 from domain.task import TaskStatus
 from custom_logger import get_logger
 from usecase.service.base_page_converter import BasePageConverter
+from infrastructure.current_task_s3_repository import CurrentTaskS3Repository
 
 logger = get_logger(__name__)
 
 class FetchTasksUsecase:
     def __init__(self):
         self.client = ClientWrapper(notion_secret=os.getenv("NOTION_SECRET"))
+        self.current_task_repository = CurrentTaskS3Repository()
 
     def execute(self,
                 status_list: list[str],
@@ -46,6 +48,15 @@ class FetchTasksUsecase:
                 if task["status"] not in status_cond_name_list:
                     continue
             tasks.append(task)
+        return tasks
+
+    def current(self) -> list[dict]:
+        tasks = self.current_task_repository.load()
+        if tasks is not None:
+            return tasks
+        today = DateObject.today()
+        tasks = self.execute(status_list=["ToDo", "InProgress"], start_date=today)
+        self.current_task_repository.save(tasks)
         return tasks
 
 def _convert_to_date(value: str) -> DateObject:

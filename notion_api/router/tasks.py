@@ -18,3 +18,10 @@ def get_tasks(start_date: Optional[Date] = None,
                              status_list=status_list)
     response = TasksResponse(data=[Task.from_params(t) for t in tasks])
     return response
+
+@router.get("/current", response_model=TasksResponse)
+def get_current_tasks(access_token: Optional[str] = Header(None)):
+    valid_access_token(access_token)
+    tasks = task.get_current_tasks()
+    response = TasksResponse(data=[Task.from_params(t) for t in tasks])
+    return response
