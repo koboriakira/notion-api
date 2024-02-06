@@ -40,10 +40,8 @@ export class NotionApi extends Stack {
     );
     this.makeApiGateway(fn);
 
-    // Lambda: create_daily_log
-    const createDailyLog = this.createEventLambda(
-      "CreateDailyLog",
-      "create_daily_log.handler",
+    this.createEventLambda(
+      "create_daily_log",
       role,
       myLayer,
       // 毎週月曜日10:00に実行
@@ -56,10 +54,8 @@ export class NotionApi extends Stack {
       })
     );
 
-    // Lambda: clean_empty_title_page
-    const cleanEmptyTitlePage = this.createEventLambda(
-      "CleanEmptyTitlePage",
-      "clean_empty_title_page.handler",
+    this.createEventLambda(
+      "clean_empty_title_page",
       role,
       myLayer,
       // 10分ごとに実行
@@ -72,10 +68,8 @@ export class NotionApi extends Stack {
       })
     );
 
-    // Lambda: collect_updated_pages
-    const collectUpdatedPages = this.createEventLambda(
-      "CollectUpdatedPages",
-      "collect_updated_pages.handler",
+    this.createEventLambda(
+      "collect_updated_pages",
       role,
       myLayer,
       // 毎日22時に実行
@@ -88,10 +82,8 @@ export class NotionApi extends Stack {
       })
     );
 
-    // Lambda: collect_updated_pages
-    const postponeTask = this.createEventLambda(
-      "PostponeTask",
-      "postpone_task.handler",
+    this.createEventLambda(
+      "postpone_task",
       role,
       myLayer,
       // 毎日2時に実行
@@ -106,20 +98,27 @@ export class NotionApi extends Stack {
   }
 
   createEventLambda(
-    name: string,
-    handler_name: string,
+    handlerName: string,
     role: iam.Role,
     myLayer: lambda.LayerVersion,
     schedule: events.Schedule
   ): lambda.Function {
+    // スネークケースであるhandler_nameをキャメルケースに変換
+    const resourceName = handlerName
+      .split("_")
+      .map((word, index) =>
+        index === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1)
+      )
+      .join("");
+
     const fn = this.createLambdaFunction(
-      name,
-      handler_name,
+      resourceName,
+      `${handlerName}.handler`,
       role,
       myLayer,
       false
     );
-    new events.Rule(this, `${name}Rule`, {
+    new events.Rule(this, `${resourceName}Rule`, {
       schedule: schedule,
       targets: [new targets.LambdaFunction(fn, { retryAttempts: 0 })],
     });
