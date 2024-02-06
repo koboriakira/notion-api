@@ -25,8 +25,9 @@ class CurrentTaskS3Repository(CurrentTaskRepository):
             "expires_at": five_minutes_later.isoformat(),
             "tasks": tasks
         }
+        print(data)
         with open(FILE_PATH, 'w') as f:
-            json.dump(tasks, f, indent=4)
+            json.dump(data, f, indent=4)
 
         # S3にアップロード
         is_success = self.upload_to_s3()
@@ -83,5 +84,5 @@ class CurrentTaskS3Repository(CurrentTaskRepository):
         return True
 
 if __name__ == '__main__':
-    # python -m infrastructure.tasks_s3_repository
-    print(TokenInfoS3Repository().save({"access_token": "test", "refresh_token": "test"}))
+    # python -m infrastructure.current_task_s3_repository
+    print(CurrentTaskS3Repository().save([{"test": "test"}]))
