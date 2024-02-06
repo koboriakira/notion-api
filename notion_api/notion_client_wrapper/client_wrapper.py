@@ -46,7 +46,6 @@ class ClientWrapper:
         """ データベース上にページを新規作成する """
         logger.info("create_page_in_database")
         logger.info(properties)
-
         return self.client.pages.create(
             parent={
                 "type": "database_id",
@@ -59,14 +58,27 @@ class ClientWrapper:
 
     def retrieve_database(self, database_id: str, title: Optional[str] = None) -> list[BasePage]:
         """ 指定されたデータベースのページを取得する """
-        data = self.client.databases.query(database_id=database_id)
-        result: list[BasePage] = []
-        for page_entity in data["results"]:
+        results = self._database_query(database_id=database_id)
+        print(results)
+        pages: list[BasePage] = []
+        for page_entity in results:
             page = self.__convert_page_model(page_entity=page_entity, include_children=False)
-            result.append(page)
+            pages.append(page)
         if title is not None:
-            result = list(filter(lambda p: p.properties.get_title().text == title, result))
-        return result
+            pages = list(filter(lambda p: p.properties.get_title().text == title, pages))
+        return pages
+
+    def _database_query(self, database_id: str, start_cursor: Optional[str] = None) -> dict:
+        results = []
+        while True:
+            data:dict = self.client.databases.query(
+                database_id=database_id,
+                start_cursor=start_cursor
+            )
+            results += data.get("results")
+            if not data.get("has_more"):
+                return results
+            start_cursor = data.get("next_cursor")
 
     def find_page(self, database_id: str, title: str) -> Optional[BasePage]:
         """ 指定されたデータベースのページを取得する。1ページのみ取得する。複数ある場合は最初に見つかったページを返す """
