@@ -36,8 +36,7 @@ export class NotionApi extends Stack {
       "Lambda",
       "main.handler",
       role,
-      myLayer,
-      false
+      myLayer
     );
     this.makeApiGateway(fn);
 
