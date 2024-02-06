@@ -59,7 +59,6 @@ class ClientWrapper:
     def retrieve_database(self, database_id: str, title: Optional[str] = None) -> list[BasePage]:
         """ 指定されたデータベースのページを取得する """
         results = self._database_query(database_id=database_id)
-        print(results)
         pages: list[BasePage] = []
         for page_entity in results:
             page = self.__convert_page_model(page_entity=page_entity, include_children=False)
