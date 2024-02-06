@@ -95,6 +95,20 @@ export class NotionApi extends Stack {
         weekDay: "*",
       })
     );
+
+    this.createEventLambda(
+      "update_current_tasks",
+      role,
+      myLayer,
+      // 3分ごとに実行(8時から24時まで)
+      events.Schedule.cron({
+        minute: "*/3",
+        hour: "23-15",
+        month: "*",
+        year: "*",
+        weekDay: "*",
+      })
+    );
   }
 
   createEventLambda(
