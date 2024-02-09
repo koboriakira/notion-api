@@ -13,6 +13,7 @@ notion_client = "*"
 boto3 = "*"
 slack_sdk = "*"
 openai = "==1.10.0"
+trafilatura = "*"
 
 [dev-packages]
 uvicorn = "*"
