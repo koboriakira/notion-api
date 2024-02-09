@@ -175,6 +175,7 @@ export class NotionApi extends Stack {
     );
     fn.addEnvironment("SLACK_BOT_TOKEN", process.env.SLACK_BOT_TOKEN || "");
     fn.addEnvironment("SLACK_USER_TOKEN", process.env.SLACK_USER_TOKEN || "");
+    fn.addEnvironment("AWS_ACCOUNT_ID", process.env.AWS_ACCOUNT_ID || "");
 
     if (function_url_enabled) {
       fn.addFunctionUrl({
