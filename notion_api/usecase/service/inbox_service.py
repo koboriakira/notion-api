@@ -28,6 +28,6 @@ class InboxService:
             )
             self.slack_bot_client.send_message(
                 channel=slack_channel,
-                text=f"動画を追加しました: {page_url}",
+                text=f"ページを作成しました: {page_url}",
                 thread_ts=slack_thread_ts,
             )
