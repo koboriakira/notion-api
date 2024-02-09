@@ -4,6 +4,8 @@ from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper.properties import Title, Relation, Url, Cover
 from notion_client_wrapper.block import Paragraph
 from usecase.service.tag_create_service import TagCreateService
+from infrastructure.slack_bot_client import SlackBotClient
+from infrastructure.slack_user_client import SlackUserClient
 from custom_logger import get_logger
 
 logger = get_logger(__name__)
@@ -11,14 +13,19 @@ logger = get_logger(__name__)
 class AddVideoUsecase:
     def __init__(self):
         self.client = ClientWrapper.get_instance()
+        self.slack_bot_client = SlackBotClient()
+        self.slack_user_client = SlackUserClient()
         self.tag_create_service = TagCreateService()
 
-    def execute(self,
-                url: str,
-                title: str,
-               tags: list[str],
-               cover: Optional[str] = None,
-               ) -> dict:
+    def execute(
+            self,
+            url: str,
+            title: str,
+            tags: list[str],
+            cover: Optional[str] = None,
+            slack_channel: Optional[str] = None,
+            slack_thread_ts: Optional[str] = None,
+            ) -> dict:
         searched_videos = self.client.retrieve_database(
             database_id=DatabaseType.VIDEO.value,
             title=title,

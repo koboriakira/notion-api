@@ -21,4 +21,6 @@ def handler(event, context):
             title=params["title"],
             tags=params["tags"] if "tags" in params else [],
             cover=params.get("cover") or None,
+            slack_channel=params.get("slack_channel") or None,
+            slack_thread_ts=params.get("slack_thread_ts") or None,
         )

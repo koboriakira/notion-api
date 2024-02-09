@@ -25,6 +25,8 @@ def add_video_page(request: AddVideoRequest,
             "title": request.title,
             "tags": request.tags,
             "cover": request.cover,
+            "slack_channel": request.slack_channel,
+            "slack_thread_ts": request.slack_thread_ts,
         }
     )
     return BaseResponse()

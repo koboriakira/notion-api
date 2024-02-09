@@ -6,3 +6,5 @@ class AddVideoRequest(BaseModel):
     title: str
     tags: list[str]
     cover: Optional[str] = None
+    slack_channel: Optional[str] = None
+    slack_thread_ts: Optional[str] = None
