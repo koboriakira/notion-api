@@ -5,6 +5,7 @@ from util.access_token import valid_access_token
 from router.response import BaseResponse
 from router.request import AddVideoRequest
 from custom_logger import get_logger
+from interface import sqs
 
 logger = get_logger(__name__)
 
@@ -17,10 +18,13 @@ def add_video_page(request: AddVideoRequest,
                 ):
     valid_access_token(access_token)
     logger.debug(request)
-    result = video.add_page(
-        url=request.url,
-        title=request.title,
-        tags=request.tags,
-        cover=request.cover,
+    sqs.create_page(
+        mode="video",
+        params={
+            "url": request.url,
+            "title": request.title,
+            "tags": request.tags,
+            "cover": request.cover,
+        }
     )
-    return BaseResponse(data=result)
+    return BaseResponse()
