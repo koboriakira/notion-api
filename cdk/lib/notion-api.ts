@@ -14,26 +14,13 @@ import {
 } from "aws-cdk-lib";
 import { Construct } from "constructs";
 import { SCHEDULER_CONFIG } from "./event_bridge_scheduler";
+import { convertToCamelCase } from "./utils";
 
 // CONFIG
 const RUNTIME = lambda.Runtime.PYTHON_3_11;
 const TIMEOUT = 30;
 const APP_DIR_PATH = "../notion_api";
 const LAYER_ZIP_PATH = "../dependencies.zip";
-
-/**
- * Convert a string to camel case.
- * @param text
- * @returns
- */
-const convertToCamelCase = (text: string): string => {
-  return text
-    .split("_")
-    .map((word, index) =>
-      index === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1)
-    )
-    .join("");
-};
 
 export class NotionApi extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -47,6 +34,8 @@ export class NotionApi extends Stack {
 
     const role = this.makeRole(bucket.bucketArn);
     const myLayer = this.makeLayer();
+
+    // FastAPI(API Gateway)の作成
     const main = this.createLambdaFunction("main", role, myLayer);
     this.makeApiGateway(main);
 
