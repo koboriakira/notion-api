@@ -1,8 +1,7 @@
 import logging
 import json
 from util.environment import Environment
-from interface import video
-
+from interface import video, webclip
 
 # ログ
 logging.basicConfig(level=logging.INFO)
@@ -17,6 +16,14 @@ def handler(event, context):
     params: dict = request["params"]
     if request["mode"] == "video":
         video.add_page(
+            url=params["url"],
+            title=params["title"],
+            cover=params.get("cover") or None,
+            slack_channel=params.get("slack_channel") or None,
+            slack_thread_ts=params.get("slack_thread_ts") or None,
+        )
+    if request["mode"] == "webclip":
+        webclip.add_page(
             url=params["url"],
             title=params["title"],
             cover=params.get("cover") or None,

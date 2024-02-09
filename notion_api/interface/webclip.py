@@ -4,30 +4,26 @@ from custom_logger import get_logger
 
 logger = get_logger(__name__)
 
-def add_page(url: str,
-             title: str,
-            summary: str,
-            tags: list[str],
-            status: str = "Inbox",
-            cover: Optional[str] = None,
-            text: Optional[str] = None,
-            ) -> dict:
-    logger.debug(f"url: {url}")
-    logger.debug(f"title: {title}")
-    logger.debug(f"summary: {summary}")
-    logger.debug(f"tags: {tags}")
-    logger.debug(f"cover: {cover}")
-    logger.debug(f"status: {status}")
-    logger.debug(f"text: {text}")
+def add_page(
+        url: str,
+        title: str,
+        cover: Optional[str] = None,
+        slack_channel: Optional[str] = None,
+        slack_thread_ts: Optional[str] = None,
+        ) -> dict:
+        logger.debug(f"url: {url}")
+        logger.debug(f"title: {title}")
+        logger.debug(f"cover: {cover}")
+        logger.debug(f"slack_channel: {slack_channel}")
+        logger.debug(f"slack_thread_ts: {slack_thread_ts}")
 
-    usecase = AddWebclipUsecase()
-    result = usecase.execute(url=url,
-                            title=title,
-                            summary=summary,
-                            tags=tags,
-                            status=status,
-                            cover=cover,
-                            text=text,
-                            )
-    logger.debug(result)
-    return result
+        usecase = AddWebclipUsecase()
+        result = usecase.execute(
+                url=url,
+                title=title,
+                cover=cover,
+                slack_channel=slack_channel,
+                slack_thread_ts=slack_thread_ts,
+                )
+        logger.debug(result)
+        return result
