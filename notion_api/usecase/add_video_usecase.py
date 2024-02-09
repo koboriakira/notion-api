@@ -4,8 +4,7 @@ from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper.properties import Title, Relation, Url, Cover
 from notion_client_wrapper.block import Paragraph
 from usecase.service.tag_create_service import TagCreateService
-from infrastructure.slack_bot_client import SlackBotClient
-from infrastructure.slack_user_client import SlackUserClient
+from usecase.service.inbox_service import InboxService
 from custom_logger import get_logger
 
 logger = get_logger(__name__)
@@ -13,8 +12,7 @@ logger = get_logger(__name__)
 class AddVideoUsecase:
     def __init__(self):
         self.client = ClientWrapper.get_instance()
-        self.slack_bot_client = SlackBotClient()
-        self.slack_user_client = SlackUserClient()
+        self.inbox_service = InboxService()
         self.tag_create_service = TagCreateService()
 
     def execute(
@@ -60,18 +58,11 @@ class AddVideoUsecase:
 
         self._append_embed_code(block_id=result["id"], url=url)
 
-        self.slack_user_client.update_context(
-            channel=slack_channel,
-            ts=slack_thread_ts,
-            context={
-                "page_id": result["id"]
-            }
-        )
-
-        self.slack_bot_client.send_message(
-            channel=slack_channel,
-            text=f"動画を追加しました: {result['url']}",
-            thread_ts=slack_thread_ts,
+        self.inbox_service.add_inbox_task_by_page_id(
+            page_id=result["id"],
+            page_url=result["url"],
+            slack_channel=slack_channel,
+            slack_thread_ts=slack_thread_ts
         )
 
         return {
