@@ -14,9 +14,11 @@ def handler(event, context):
     print("records", event["Records"])
     request:dict = json.loads(event["Records"][0]["body"])
     print("request", request)
-    video.add_page(
-        url=request["url"],
-        title=request["title"],
-        tags=request["tags"] if "tags" in request else [],
-        cover=request.get("cover"),
-    )
+    params = request["params"]
+    if request["mode"] == "video":
+        video.add_page(
+            url=params["url"],
+            title=params["title"],
+            tags=params["tags"] if "tags" in params else [],
+            cover=params.get("cover"),
+        )
