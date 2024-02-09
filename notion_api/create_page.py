@@ -20,5 +20,5 @@ def handler(event, context):
             url=params["url"],
             title=params["title"],
             tags=params["tags"] if "tags" in params else [],
-            cover=params.get("cover"),
+            cover=params.get("cover") or None,
         )

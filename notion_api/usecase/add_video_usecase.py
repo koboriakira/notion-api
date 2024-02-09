@@ -19,8 +19,6 @@ class AddVideoUsecase:
                tags: list[str],
                cover: Optional[str] = None,
                ) -> dict:
-        logger.info("execute")
-
         searched_videos = self.client.retrieve_database(
             database_id=DatabaseType.VIDEO.value,
             title=title,
