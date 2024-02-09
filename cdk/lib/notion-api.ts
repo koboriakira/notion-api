@@ -211,6 +211,8 @@ export class NotionApi extends Stack {
       "UNSPLASH_ACCESS_KEY",
       process.env.UNSPLASH_ACCESS_KEY || ""
     );
+    fn.addEnvironment("SLACK_BOT_TOKEN", process.env.SLACK_BOT_TOKEN || "");
+    fn.addEnvironment("SLACK_USER_TOKEN", process.env.SLACK_USER_TOKEN || "");
 
     if (function_url_enabled) {
       fn.addFunctionUrl({

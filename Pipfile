@@ -11,6 +11,7 @@ requests = "*"
 pyyaml = "==6.0"
 notion_client = "*"
 boto3 = "*"
+slack_sdk = "*"
 
 [dev-packages]
 uvicorn = "*"
