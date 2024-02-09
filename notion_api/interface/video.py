@@ -8,7 +8,6 @@ logger = get_logger(__name__)
 def add_page(
         url: str,
         title: str,
-        tags: list[str],
         cover: Optional[str] = None,
         slack_channel: Optional[str] = None,
         slack_thread_ts: Optional[str] = None,
@@ -16,7 +15,6 @@ def add_page(
     try:
         logger.debug(f"url: {url}")
         logger.debug(f"title: {title}")
-        logger.debug(f"tags: {tags}")
         logger.debug(f"cover: {cover}")
         logger.debug(f"slack_channel: {slack_channel}")
         logger.debug(f"slack_thread_ts: {slack_thread_ts}")
@@ -25,7 +23,6 @@ def add_page(
         result = usecase.execute(
             url=url,
             title=title,
-            tags=tags,
             cover=cover,
             slack_channel=slack_channel,
             slack_thread_ts=slack_thread_ts,

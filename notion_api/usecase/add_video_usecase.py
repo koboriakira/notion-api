@@ -5,6 +5,7 @@ from notion_client_wrapper.properties import Title, Relation, Url, Cover
 from notion_client_wrapper.block import Paragraph
 from usecase.service.tag_create_service import TagCreateService
 from usecase.service.inbox_service import InboxService
+from usecase.service.tag_analyzer import TagAnalyzer
 from custom_logger import get_logger
 
 logger = get_logger(__name__)
@@ -13,13 +14,13 @@ class AddVideoUsecase:
     def __init__(self):
         self.client = ClientWrapper.get_instance()
         self.inbox_service = InboxService()
+        self.tag_analyzer = TagAnalyzer()
         self.tag_create_service = TagCreateService()
 
     def execute(
             self,
             url: str,
             title: str,
-            tags: list[str],
             cover: Optional[str] = None,
             slack_channel: Optional[str] = None,
             slack_thread_ts: Optional[str] = None,
@@ -36,6 +37,8 @@ class AddVideoUsecase:
                 "url": page.url
             }
         logger.info("Create a Video")
+
+        tags = self.tag_analyzer.handle(text=title)
 
         # タグを作成
         tag_page_ids:list[str] = []
