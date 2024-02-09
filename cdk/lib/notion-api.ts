@@ -68,6 +68,7 @@ export class NotionApi extends Stack {
     const queue = new sqs.Queue(this, `${appName}Queue`, {
       visibilityTimeout: Duration.seconds(300),
     });
+    queue.grantConsumeMessages(fn);
     queue.grantSendMessages(send_message_function);
     fn.addEventSourceMapping(`${appName}EventSource`, {
       eventSourceArn: queue.queueArn,
