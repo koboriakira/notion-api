@@ -1,6 +1,7 @@
 from typing import Optional
 from slack_sdk import WebClient
 import os
+import json
 from domain.infrastructure.slack_client import SlackClient
 
 class SlackUserClient(SlackClient):
@@ -12,6 +13,18 @@ class SlackUserClient(SlackClient):
 
     def update_message(self, channel: str, ts: str, text: str, blocks: Optional[list] = None) -> dict:
         return self.client.chat_update(channel=channel, ts=ts, text=text, blocks=blocks)
+
+    def update_context(self, channel: str, ts: str, context: dict) -> dict:
+        context_block = {
+            "type": "context",
+            "elements": [
+                {
+                    "type": "plain_text",
+                    "text": json.dumps(context, ensure_ascii=False)
+                }
+            ]
+        }
+        return self.client.chat_update(channel=channel, ts=ts, blocks=[context_block])
 
 TEST = "C05H3USHAJU"
 

@@ -60,6 +60,20 @@ class AddVideoUsecase:
 
         self._append_embed_code(block_id=result["id"], url=url)
 
+        self.slack_user_client.update_context(
+            channel=slack_channel,
+            ts=slack_thread_ts,
+            context={
+                "page_id": result["id"]
+            }
+        )
+
+        self.slack_bot_client.send_message(
+            channel=slack_channel,
+            text=f"動画を追加しました: {result['url']}",
+            thread_ts=slack_thread_ts,
+        )
+
         return {
             "id": result["id"],
             "url": result["url"]
