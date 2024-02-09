@@ -11,10 +11,12 @@ import {
   aws_events as events,
   aws_events_targets as targets,
   aws_s3 as s3,
+  aws_sqs as sqs,
 } from "aws-cdk-lib";
 import { Construct } from "constructs";
 import { SCHEDULER_CONFIG } from "./event_bridge_scheduler";
 import { convertToCamelCase } from "./utils";
+import { Timeout } from "aws-cdk-lib/aws-stepfunctions";
 
 // CONFIG
 const RUNTIME = lambda.Runtime.PYTHON_3_11;
@@ -43,6 +45,35 @@ export class NotionApi extends Stack {
     Object.entries(SCHEDULER_CONFIG).forEach(([key, schedule]) => {
       this.createEventLambda(key, role, myLayer, schedule);
     });
+
+    // SQSから呼び出されるイベントの作成
+    this.createLambdaAndSqs("create_page", role, myLayer, main);
+  }
+
+  createLambdaAndSqs(
+    handlerName: string,
+    role: iam.Role,
+    myLayer: lambda.LayerVersion,
+    send_message_function: lambda.Function,
+    timeout: number = 300
+  ) {
+    const fn = this.createLambdaFunction(
+      handlerName,
+      role,
+      myLayer,
+      false,
+      timeout
+    );
+    const appName = convertToCamelCase(handlerName);
+    const queue = new sqs.Queue(this, `${appName}Queue`, {
+      visibilityTimeout: Duration.seconds(300),
+    });
+    queue.grantSendMessages(send_message_function);
+    fn.addEventSourceMapping(`${appName}EventSource`, {
+      eventSourceArn: queue.queueArn,
+      batchSize: 1,
+    });
+    return fn;
   }
 
   createEventLambda(
@@ -114,7 +145,8 @@ export class NotionApi extends Stack {
     handlerName: string,
     role: iam.Role,
     myLayer: lambda.LayerVersion,
-    function_url_enabled: boolean = false
+    function_url_enabled: boolean = false,
+    timeout: number = TIMEOUT
   ): lambda.Function {
     const resourceNameCamel = convertToCamelCase(handlerName);
 
@@ -124,7 +156,7 @@ export class NotionApi extends Stack {
       code: lambda.Code.fromAsset(APP_DIR_PATH),
       role: role,
       layers: [myLayer],
-      timeout: Duration.seconds(TIMEOUT),
+      timeout: Duration.seconds(timeout),
     });
 
     fn.addEnvironment("NOTION_SECRET", process.env.NOTION_SECRET || "");
