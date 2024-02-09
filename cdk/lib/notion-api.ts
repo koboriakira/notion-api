@@ -121,6 +121,14 @@ export class NotionApi extends Stack {
       })
     );
 
+    // SQSにメッセージを送信するために必要な権限
+    role.addToPrincipalPolicy(
+      new iam.PolicyStatement({
+        actions: ["sqs:sendMessage"],
+        resources: ["*"],
+      })
+    );
+
     return role;
   }
 
