@@ -46,6 +46,15 @@ class AddWebclipUsecase:
             }
         logger.info("Create a Webclip")
 
+        if "twitter.com" in url:
+            return self._handle_for_twitter(
+                url=url,
+                title=title,
+                cover=cover,
+                slack_channel=slack_channel,
+                slack_thread_ts=slack_thread_ts,
+            )
+
         # スクレイピングして要約を作成
         page_text, formatted_page_text = self.simple_scraper.handle(url=url)
         if page_text is None:
@@ -97,4 +106,47 @@ class AddWebclipUsecase:
                 rich_text = RichTextBuilder.get_instance().add_text(page_text).build()
                 paragraph = Paragraph.from_rich_text(rich_text=rich_text)
                 self.client.append_block(block_id=page["id"], block=paragraph)
+        return page
+
+    def _handle_for_twitter(
+            self,
+            url: str,
+            title: str, # ツイート本文
+            cover: Optional[str] = None,
+            slack_channel: Optional[str] = None,
+            slack_thread_ts: Optional[str] = None,
+            ) -> dict:
+        # Twitter本文からタグを抽出して、タグを作成
+        tag_page_ids:list[str] = []
+        tags = self.tag_analyzer.handle(text=title)
+        for tas in tags:
+            page_id = self.tag_create_service.add_tag(name=tas)
+            tag_page_ids.append(page_id)
+
+        # 新しいページを作成
+        properties=[
+                Title.from_plain_text(name="名前", text=title[:50]),
+                Url.from_url(name="URL", url=url),
+                Text.from_plain_text(name="概要", text=title)
+            ]
+        if len(tag_page_ids) > 0:
+            properties.append(Relation.from_id_list(name="タグ", id_list=tag_page_ids))
+
+        result = self.client.create_page_in_database(
+            database_id=DatabaseType.WEBCLIP.value,
+            cover=Cover.from_external_url(cover) if cover is not None else None,
+            properties=properties
+        )
+        page = {
+            "id": result["id"],
+            "url": result["url"]
+        }
+
+        self.inbox_service.add_inbox_task_by_page_id(
+            page_id=result["id"],
+            page_url=result["url"],
+            slack_channel=slack_channel,
+            slack_thread_ts=slack_thread_ts
+        )
+
         return page
