@@ -13,59 +13,13 @@ import {
   aws_s3 as s3,
 } from "aws-cdk-lib";
 import { Construct } from "constructs";
+import { SCHEDULER_CONFIG } from "./event_bridge_scheduler";
 
 // CONFIG
 const RUNTIME = lambda.Runtime.PYTHON_3_11;
 const TIMEOUT = 30;
 const APP_DIR_PATH = "../notion_api";
 const LAYER_ZIP_PATH = "../dependencies.zip";
-
-// SHCEDULER
-
-// 月曜10時に実行
-const CRON_SCHEDULE_CREATE_DAILY_LOG = events.Schedule.cron({
-  minute: "0",
-  hour: "1",
-  month: "*",
-  year: "*",
-  weekDay: "MON",
-});
-
-// 10分ごとに実行
-const CRON_SCHEDULE_CLEAN_EMPTY_TITLE_PAG = events.Schedule.cron({
-  minute: "*/10",
-  hour: "*",
-  month: "*",
-  year: "*",
-  weekDay: "*",
-});
-
-// 毎日22時に実行
-const CRON_SCHEDULE_COLLECT_UPDATED_PAGES = events.Schedule.cron({
-  minute: "0",
-  hour: "13",
-  month: "*",
-  year: "*",
-  weekDay: "*",
-});
-
-// 毎日2時に実行
-const CRON_SCHEDULE_POSTPONE_TASK = events.Schedule.cron({
-  minute: "0",
-  hour: "17",
-  month: "*",
-  year: "*",
-  weekDay: "*",
-});
-
-// 3分ごとに実行(8時から24時まで)
-const CRON_SCHEDULE_UPDATE_CURRENT_TASKS = events.Schedule.cron({
-  minute: "*/3",
-  hour: "23-15",
-  month: "*",
-  year: "*",
-  weekDay: "*",
-});
 
 /**
  * Convert a string to camel case.
@@ -96,40 +50,10 @@ export class NotionApi extends Stack {
     const main = this.createLambdaFunction("main", role, myLayer);
     this.makeApiGateway(main);
 
-    this.createEventLambda(
-      "create_daily_log",
-      role,
-      myLayer,
-      CRON_SCHEDULE_CREATE_DAILY_LOG
-    );
-
-    this.createEventLambda(
-      "clean_empty_title_page",
-      role,
-      myLayer,
-      CRON_SCHEDULE_CLEAN_EMPTY_TITLE_PAG
-    );
-
-    this.createEventLambda(
-      "collect_updated_pages",
-      role,
-      myLayer,
-      CRON_SCHEDULE_COLLECT_UPDATED_PAGES
-    );
-
-    this.createEventLambda(
-      "postpone_task",
-      role,
-      myLayer,
-      CRON_SCHEDULE_POSTPONE_TASK
-    );
-
-    this.createEventLambda(
-      "update_current_tasks",
-      role,
-      myLayer,
-      CRON_SCHEDULE_UPDATE_CURRENT_TASKS
-    );
+    // イベントルールとLambdaの作成
+    Object.entries(SCHEDULER_CONFIG).forEach(([key, schedule]) => {
+      this.createEventLambda(key, role, myLayer, schedule);
+    });
   }
 
   createEventLambda(
