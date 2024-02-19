@@ -38,8 +38,9 @@ def filter_in_day_with_only_created(date: DateObject, page: BasePage) -> bool:
     return page.created_time.is_between(start=start, end=end)
 
 class CollectUpdatedPagesUsecase:
-    def __init__(self):
+    def __init__(self, is_debug: bool = False):
         self.client = ClientWrapper(notion_secret=os.getenv("NOTION_SECRET"))
+        self.is_debug = is_debug
 
     def execute(self, date: Optional[DateObject] = None) -> None:
         date = date if date is not None else jst_today()
@@ -70,18 +71,21 @@ class CollectUpdatedPagesUsecase:
             return
         # 見出しタグをつける
         heading = block.Heading.from_plain_text(heading_size=2, text=title)
-        self.client.append_block(block_id=daily_log_id,block=heading)
+        if not self.is_debug:
+            self.client.append_block(block_id=daily_log_id,block=heading)
 
         # バックリンクを記録する
         for page in pages:
             rich_text = RichTextBuilder.get_instance().add_page_mention(page_id=page.id).build()
             paragraph = block.Paragraph.from_rich_text(rich_text=rich_text)
-            self.client.append_block(
-                block_id=daily_log_id,
-                block=paragraph
-            )
+            if not self.is_debug:
+                self.client.append_block(
+                    block_id=daily_log_id,
+                    block=paragraph
+                )
+            logger.info(f"ページを追加しました: {page.get_title().text}")
 
 if __name__ == "__main__":
     # python -m usecase.collect_updated_pages_usecase
-    usecase = CollectUpdatedPagesUsecase()
-    usecase.execute(date=DateObject(2024, 1, 27))
+    usecase = CollectUpdatedPagesUsecase(is_debug=True)
+    usecase.execute()
