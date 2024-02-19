@@ -9,7 +9,7 @@ from notion_client_wrapper import block
 from domain.database_type import DatabaseType
 from notion_client_wrapper.block.rich_text.rich_text_builder import RichTextBuilder
 from custom_logger import get_logger
-from util.datetime import JST
+from util.datetime import jst_today, JST
 
 logger = get_logger(__name__)
 
@@ -42,7 +42,7 @@ class CollectUpdatedPagesUsecase:
         self.client = ClientWrapper(notion_secret=os.getenv("NOTION_SECRET"))
 
     def execute(self, date: Optional[DateObject] = None) -> None:
-        date = date if date is not None else DateObject.today()
+        date = date if date is not None else jst_today()
         daily_log = self.client.find_page(
             database_id=DatabaseType.DAILY_LOG.value,
             title=date.isoformat()

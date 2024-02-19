@@ -8,6 +8,7 @@ from domain.database_type import DatabaseType
 from domain.task import TaskStatus
 from custom_logger import get_logger
 from usecase.service.base_page_converter import BasePageConverter
+from util.datetime import jst_today
 
 logger = get_logger(__name__)
 
@@ -18,7 +19,7 @@ class PostponeTaskToNextDayUsecase:
     def execute(self,
                 date: Optional[DateObject] = None) -> list[dict]:
         # 指定日がない場合は前日を指定
-        date = date if date is not None else DateObject.today() - timedelta(days=1)
+        date = date if date is not None else jst_today() - timedelta(days=1)
 
         # まず全てのタスクを集める
         all_pages = self.client.retrieve_database(database_id=DatabaseType.TASK.value)
