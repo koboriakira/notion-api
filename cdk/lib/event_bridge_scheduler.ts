@@ -47,4 +47,13 @@ export const SCHEDULER_CONFIG = {
     year: "*",
     weekDay: "*",
   }),
+  // 毎日2時5分に実行
+  move_completed_task_to_backup: events.Schedule.cron({
+    minute: "5",
+    hour: "17",
+    month: "*",
+    year: "*",
+    weekDay: "*",
+  }),
+
 };
