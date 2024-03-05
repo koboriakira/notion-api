@@ -51,12 +51,12 @@ class FetchTasksUsecase:
         return tasks
 
     def current(self) -> list[dict]:
-        tasks = self.current_task_repository.load()
-        if tasks is not None:
-            return tasks
+        # tasks = self.current_task_repository.load()
+        # if tasks is not None:
+        #     return tasks
         today = DateObject.today()
         tasks = self.execute(status_list=["ToDo", "InProgress"], start_date=today)
-        self.current_task_repository.save(tasks)
+        # self.current_task_repository.save(tasks)
         return tasks
 
 def _convert_to_date(value: str) -> DateObject:
