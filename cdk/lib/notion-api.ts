@@ -29,12 +29,12 @@ export class NotionApi extends Stack {
     super(scope, id, props);
 
     // S3バケットを作成
-    const bucket = new s3.Bucket(this, "NotionApiBucket", {
-      bucketName: "notion-api-bucket-koboriakira",
-      removalPolicy: RemovalPolicy.DESTROY,
-    });
+    // const bucket = new s3.Bucket(this, "NotionApiBucket", {
+    //   bucketName: "notion-api-bucket-koboriakira",
+    //   removalPolicy: RemovalPolicy.DESTROY,
+    // });
 
-    const role = this.makeRole(bucket.bucketArn);
+    const role = this.makeRole(/*bucket.bucketArn*/);
     const myLayer = this.makeLayer();
 
     // FastAPI(API Gateway)の作成
@@ -95,7 +95,7 @@ export class NotionApi extends Stack {
    * Create or retrieve an IAM role for the Lambda function.
    * @returns {iam.Role} The created or retrieved IAM role.
    */
-  makeRole(bucketArn: string) {
+  makeRole(/*bucketArn: string*/) {
     // Lambdaの実行ロールを取得または新規作成
     const role = new iam.Role(this, "LambdaRole", {
       assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
@@ -115,12 +115,12 @@ export class NotionApi extends Stack {
         resources: ["*"],
       })
     );
-    role.addToPrincipalPolicy(
-      new iam.PolicyStatement({
-        actions: ["s3:*"],
-        resources: [bucketArn, bucketArn + "/*"],
-      })
-    );
+    // role.addToPrincipalPolicy(
+    //   new iam.PolicyStatement({
+    //     actions: ["s3:*"],
+    //     resources: [bucketArn, bucketArn + "/*"],
+    //   })
+    // );
 
     // SQSにメッセージを送信するために必要な権限
     role.addToPrincipalPolicy(
