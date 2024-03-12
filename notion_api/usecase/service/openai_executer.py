@@ -1,5 +1,4 @@
 from openai import OpenAI
-from openai.error import RateLimitError
 from typing import Optional, Callable, Any
 import logging
 import json
