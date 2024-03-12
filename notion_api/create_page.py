@@ -1,8 +1,9 @@
-import logging
 import json
-from util.environment import Environment
-from interface import video, webclip
+import logging
+
 from infrastructure.slack_bot_client import SlackBotClient
+from interface import video, webclip
+from util.environment import Environment
 
 # ログ
 logging.basicConfig(level=logging.INFO)
@@ -13,7 +14,7 @@ if Environment.is_dev():
 def find_request(event: dict) -> dict:
     try:
         return json.loads(event["Records"][0]["body"])
-    except Exception as e:
+    except Exception:
         print("event", event)
         print("records", event["Records"])
         raise

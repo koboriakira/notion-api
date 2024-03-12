@@ -1,14 +1,16 @@
-from openai import OpenAI
-from typing import Optional, Callable, Any
-import logging
 import json
+import logging
+from collections.abc import Callable
+from typing import Any
+
+from openai import OpenAI
 
 OPENAI_MODEL_DEFAULT = "gpt-3.5-turbo-1106"
 
 
 class OpenaiExecuter:
     def __init__(
-        self, model: str = OPENAI_MODEL_DEFAULT, logger: Optional[logging.Logger] = None
+        self, model: str = OPENAI_MODEL_DEFAULT, logger: logging.Logger | None = None,
     ):
         self.model = model
         self.logger = logger or logging.getLogger(__name__)
@@ -22,7 +24,7 @@ class OpenaiExecuter:
         return response_message.content
 
     def simple_function_calling(
-        self, user_content: str, func: Callable, func_description: str, parameters: dict
+        self, user_content: str, func: Callable, func_description: str, parameters: dict,
     ) -> Any:
         """
         シンプルな単一のfunction callingを実行して、実行結果を受け取る
@@ -41,10 +43,10 @@ class OpenaiExecuter:
                     "description": func_description,
                     "parameters": parameters,
                 },
-            }
+            },
         ]
         response_message = self.__chat_completions_create(
-            messages=messages, tools=tools, tool_choice="auto"
+            messages=messages, tools=tools, tool_choice="auto",
         )
         tool_calls = response_message.tool_calls
         if not tool_calls or len(tool_calls) == 0:
@@ -65,8 +67,8 @@ class OpenaiExecuter:
     def __chat_completions_create(
         self,
         messages: list[dict],
-        tools: Optional[list[dict]] = None,
-        tool_choice: Optional[str] = None,
+        tools: list[dict] | None = None,
+        tool_choice: str | None = None,
     ):
         """OpenAIのchat_completions.createを呼び出す"""
         if tools is None or tool_choice is None:
