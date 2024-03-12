@@ -70,38 +70,21 @@ class OpenaiExecuter:
         tool_choice: Optional[str] = None,
     ):
         """OpenAIのchat_completions.createを呼び出す"""
-        try:
-            if tools is None or tool_choice is None:
-                response = self.client.chat.completions.create(
-                    model=self.model,
-                    messages=messages,
-                )
-                self.logger.debug(response)
-                response_message = response.choices[0].message
-                return response_message
-            else:
-                response = self.client.chat.completions.create(
-                    model=self.model,
-                    messages=messages,
-                    tools=tools,
-                    tool_choice="auto",
-                )
-                self.logger.debug(response)
-                response_message = response.choices[0].message
-                return response_message
-        except RateLimitError as e:
-            from infrastructure.slack_bot_client import SlackBotClient
-
-            # SlackにRateLimitErrorを通知する
-            slack_bot_client = SlackBotClient()
-            slack_bot_client.send_message(
-                channel="C04Q3AV4TA5", text="OpenAIのRateLimitErrorが発生しました。"
+        if tools is None or tool_choice is None:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=messages,
             )
-            slack_bot_client.send_message(
-                channel="C04Q3AV4TA5",
-                text="OpenAIのRateLimitErrorが発生しました。",
-                is_enabled_mention=True,
+            self.logger.debug(response)
+            response_message = response.choices[0].message
+            return response_message
+        else:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=messages,
+                tools=tools,
+                tool_choice="auto",
             )
-            raise e
-        except Exception as e:
-            raise e
+            self.logger.debug(response)
+            response_message = response.choices[0].message
+            return response_message
