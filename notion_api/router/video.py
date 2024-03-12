@@ -13,9 +13,10 @@ router = APIRouter()
 
 
 @router.post("", response_model=BaseResponse)
-def add_video_page(request: AddVideoRequest,
-                   access_token: Optional[str] = Header(None),
-                ):
+def add_video_page(
+    request: AddVideoRequest,
+    access_token: Optional[str] = Header(None),
+):
     valid_access_token(access_token)
     logger.debug(request)
     sqs.create_page(
@@ -23,10 +24,9 @@ def add_video_page(request: AddVideoRequest,
         params={
             "url": request.url,
             "title": request.title,
-            "tags": request.tags,
             "cover": request.cover,
             "slack_channel": request.slack_channel,
             "slack_thread_ts": request.slack_thread_ts,
-        }
+        },
     )
     return BaseResponse()
