@@ -1,8 +1,9 @@
 import json
 import logging
 
-from infrastructure.slack_bot_client import SlackBotClient
-from interface import video, webclip
+from usecase.add_video_usecase import AddVideoUsecase
+from usecase.add_webclip_usecase import AddWebclipUsecase
+from usecase.service.error_reporter import ErrorReporter
 from util.environment import Environment
 
 # ログ
@@ -20,29 +21,36 @@ def find_request(event: dict) -> dict:
         raise
 
 
-def handler(event, context):
+def handler(event:dict, context:dict) -> dict:  # noqa: ARG001
     request: dict = json.loads(event["Records"][0]["body"])
     print("request", request)
     mode: str = request["mode"]
     params: dict = request["params"]
+    slack_channel=params.get("slack_channel")
+    slack_thread_ts=params.get("slack_thread_ts")
     try:
         if mode == "video":
-            video.add_page(
+            usecase = AddVideoUsecase()
+            _ = usecase.execute(
                 url=params["url"],
                 title=params["title"],
-                cover=params.get("cover") or None,
-                slack_channel=params.get("slack_channel") or None,
-                slack_thread_ts=params.get("slack_thread_ts") or None,
-            )
+                cover=params.get("cover"),
+                slack_channel=slack_channel,
+                slack_thread_ts=slack_thread_ts,
+                )
         if mode == "webclip":
-            webclip.add_page(
+            usecase = AddWebclipUsecase()
+            usecase.execute(
                 url=params["url"],
                 title=params["title"],
-                cover=params.get("cover") or None,
-                slack_channel=params.get("slack_channel") or None,
-                slack_thread_ts=params.get("slack_thread_ts") or None,
+                cover=params.get("cover"),
+                slack_channel=slack_channel,
+                slack_thread_ts=slack_thread_ts,
             )
-    except Exception as e:
-        slack_bot_client = SlackBotClient()
-        error_message = f"エラーが発生しました: {e}"
-        slack_bot_client.send_message(channel="C04Q3AV4TA5", text=error_message)
+        return {}
+    except Exception as e:  # noqa: BLE001
+        ErrorReporter().report_error(
+            err=e,
+            channel=slack_channel,
+            thread_ts=slack_thread_ts,
+        )
