@@ -1,11 +1,12 @@
-from fastapi import APIRouter, Header
-from typing import Optional
 from datetime import date as Date
-from interface import music
-from util.access_token import valid_access_token
-from router.response import BaseResponse
-from router.request import AddTrackPageRequest
+
+from fastapi import APIRouter, Header
+
 from custom_logger import get_logger
+from interface import music
+from router.request import AddTrackPageRequest
+from router.response import BaseResponse
+from util.access_token import valid_access_token
 
 logger = get_logger(__name__)
 
@@ -14,7 +15,7 @@ router = APIRouter()
 
 @router.post("", response_model=BaseResponse)
 def add_track_page(request: AddTrackPageRequest,
-                   access_token: Optional[str] = Header(None),
+                   access_token: str | None = Header(None),
                 ):
     valid_access_token(access_token)
     logger.debug(request)

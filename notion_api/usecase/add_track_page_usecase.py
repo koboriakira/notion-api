@@ -1,12 +1,11 @@
-from typing import Optional
 from datetime import date as Date
-from domain.database_type import DatabaseType
-from notion_client_wrapper.client_wrapper import ClientWrapper
-from notion_client_wrapper.properties import Title, Text, Relation, Url, Date, Cover
-from notion_client_wrapper.block.rich_text.rich_text_builder import RichTextBuilder
-from notion_client_wrapper.block import Paragraph
-from usecase.service.tag_create_service import TagCreateService
+
 from custom_logger import get_logger
+from domain.database_type import DatabaseType
+from notion_client_wrapper.block import Paragraph
+from notion_client_wrapper.client_wrapper import ClientWrapper
+from notion_client_wrapper.properties import Cover, Relation, Text, Title, Url
+from usecase.service.tag_create_service import TagCreateService
 
 logger = get_logger(__name__)
 
@@ -18,9 +17,9 @@ class AddTrackPageUsecase:
     def execute(self,
                 track_name: str,
                 artists: list[str],
-                spotify_url: Optional[str] = None,
-                cover_url: Optional[str] = None,
-                release_date: Optional[Date] = None,
+                spotify_url: str | None = None,
+                cover_url: str | None = None,
+                release_date: Date | None = None,
                 ) -> dict:
         logger.info("execute")
         logger.info(f"track_name: {track_name}")
@@ -39,7 +38,7 @@ class AddTrackPageUsecase:
             music = searched_musics[0]
             return {
                 "id": music.id,
-                "url": music.url
+                "url": music.url,
             }
         logger.info("Create a track page")
 
@@ -64,7 +63,7 @@ class AddTrackPageUsecase:
         result = self.client.create_page_in_database(
             database_id=DatabaseType.MUSIC.value,
             cover=Cover.from_external_url(cover_url) if cover_url is not None else None,
-            properties=properties
+            properties=properties,
         )
         page_id = result["id"]
         page_url = result["url"]
@@ -73,14 +72,14 @@ class AddTrackPageUsecase:
         if iframe_html is not None:
             self.client.append_block(
                 block_id=page_id,
-                block=iframe_html
+                block=iframe_html,
             )
         return {
             "id": page_id,
-            "url": page_url
+            "url": page_url,
         }
 
-def _spotify_iframe_html(spotify_url: Optional[str] = None) -> Optional[Paragraph]:
+def _spotify_iframe_html(spotify_url: str | None = None) -> Paragraph | None:
     if spotify_url is None:
         return None
     track_id = spotify_url.split("/")[-1].split("?")[0]
