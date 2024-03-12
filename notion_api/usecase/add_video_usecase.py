@@ -1,12 +1,12 @@
-from typing import Optional
+
+from custom_logger import get_logger
 from domain.database_type import DatabaseType
-from notion_client_wrapper.client_wrapper import ClientWrapper
-from notion_client_wrapper.properties import Title, Relation, Url, Cover
 from notion_client_wrapper.block import Paragraph
-from usecase.service.tag_create_service import TagCreateService
+from notion_client_wrapper.client_wrapper import ClientWrapper
+from notion_client_wrapper.properties import Cover, Relation, Title, Url
 from usecase.service.inbox_service import InboxService
 from usecase.service.tag_analyzer import TagAnalyzer
-from custom_logger import get_logger
+from usecase.service.tag_create_service import TagCreateService
 
 logger = get_logger(__name__)
 
@@ -21,9 +21,9 @@ class AddVideoUsecase:
             self,
             url: str,
             title: str,
-            cover: Optional[str] = None,
-            slack_channel: Optional[str] = None,
-            slack_thread_ts: Optional[str] = None,
+            cover: str | None = None,
+            slack_channel: str | None = None,
+            slack_thread_ts: str | None = None,
             ) -> dict:
         searched_videos = self.client.retrieve_database(
             database_id=DatabaseType.VIDEO.value,
@@ -34,7 +34,7 @@ class AddVideoUsecase:
             page = searched_videos[0]
             return {
                 "id": page.id,
-                "url": page.url
+                "url": page.url,
             }
         logger.info("Create a Video")
 
@@ -56,7 +56,7 @@ class AddVideoUsecase:
         result = self.client.create_page_in_database(
             database_id=DatabaseType.VIDEO.value,
             cover=Cover.from_external_url(cover) if cover is not None else None,
-            properties=properties
+            properties=properties,
         )
 
         self._append_embed_code(block_id=result["id"], url=url)
@@ -65,12 +65,12 @@ class AddVideoUsecase:
             page_id=result["id"],
             page_url=result["url"],
             slack_channel=slack_channel,
-            slack_thread_ts=slack_thread_ts
+            slack_thread_ts=slack_thread_ts,
         )
 
         return {
             "id": result["id"],
-            "url": result["url"]
+            "url": result["url"],
         }
 
     def _append_embed_code(self, block_id: str, url: str) -> None:
@@ -95,5 +95,5 @@ if __name__ == "__main__":
     usecase = AddVideoUsecase()
     usecase._append_embed_code(
         url="https://youtube.com/watch?v=7u1EehDMwF4&amp;si=rqajmV4iuicBKDfD",
-        block_id="cd97c02a25e94bb980fe67a02c874ac2"
+        block_id="cd97c02a25e94bb980fe67a02c874ac2",
     )
