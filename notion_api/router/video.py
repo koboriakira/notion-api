@@ -1,11 +1,11 @@
+
 from fastapi import APIRouter, Header
-from typing import Optional
-from interface import video
-from util.access_token import valid_access_token
-from router.response import BaseResponse
-from router.request import AddVideoRequest
+
 from custom_logger import get_logger
 from interface import sqs
+from router.request import AddVideoRequest
+from router.response import BaseResponse
+from util.access_token import valid_access_token
 
 logger = get_logger(__name__)
 
@@ -15,7 +15,7 @@ router = APIRouter()
 @router.post("", response_model=BaseResponse)
 def add_video_page(
     request: AddVideoRequest,
-    access_token: Optional[str] = Header(None),
+    access_token: str | None = Header(None),
 ):
     valid_access_token(access_token)
     logger.debug(request)
