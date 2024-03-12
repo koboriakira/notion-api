@@ -1,17 +1,19 @@
-from typing import Optional
-from slack_sdk import WebClient
-import os
 import json
+import os
+
+from slack_sdk import WebClient
+
 from domain.infrastructure.slack_client import SlackClient
+
 
 class SlackUserClient(SlackClient):
     def __init__(self):
         self.client = WebClient(token=os.environ["SLACK_USER_TOKEN"])
 
-    def send_message(self, channel: str, text: str, blocks: Optional[list] = None, thread_ts: Optional[str] = None) -> dict:
+    def send_message(self, channel: str, text: str, blocks: list | None = None, thread_ts: str | None = None) -> dict:
         return self.client.chat_postMessage(channel=channel, text=text, blocks=blocks, thread_ts=thread_ts)
 
-    def update_message(self, channel: str, ts: str, text: str, blocks: Optional[list] = None) -> dict:
+    def update_message(self, channel: str, ts: str, text: str, blocks: list | None = None) -> dict:
         return self.client.chat_update(channel=channel, ts=ts, text=text, blocks=blocks)
 
     def update_context(self, channel: str, ts: str, context: dict) -> dict:
@@ -20,9 +22,9 @@ class SlackUserClient(SlackClient):
             "elements": [
                 {
                     "type": "plain_text",
-                    "text": json.dumps(context, ensure_ascii=False)
-                }
-            ]
+                    "text": json.dumps(context, ensure_ascii=False),
+                },
+            ],
         }
         return self.client.chat_update(channel=channel, ts=ts, blocks=[context_block])
 
