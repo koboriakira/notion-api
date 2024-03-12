@@ -1,16 +1,15 @@
-from typing import Optional
-from datetime import date as Date
-from domain.database_type import DatabaseType
-from notion_client_wrapper.client_wrapper import ClientWrapper
-from notion_client_wrapper.properties import Title, Text, Relation, Url, Date, Cover, Status
-from notion_client_wrapper.block.rich_text.rich_text_builder import RichTextBuilder
-from notion_client_wrapper.block import Paragraph
-from usecase.service.tag_create_service import TagCreateService
-from usecase.service.tag_analyzer import TagAnalyzer
-from usecase.service.simple_scraper import SimpleScraper
-from usecase.service.text_summarizer import TextSummarizer
-from usecase.service.inbox_service import InboxService
+
 from custom_logger import get_logger
+from domain.database_type import DatabaseType
+from notion_client_wrapper.block import Paragraph
+from notion_client_wrapper.block.rich_text.rich_text_builder import RichTextBuilder
+from notion_client_wrapper.client_wrapper import ClientWrapper
+from notion_client_wrapper.properties import Cover, Relation, Text, Title, Url
+from usecase.service.inbox_service import InboxService
+from usecase.service.simple_scraper import SimpleScraper
+from usecase.service.tag_analyzer import TagAnalyzer
+from usecase.service.tag_create_service import TagCreateService
+from usecase.service.text_summarizer import TextSummarizer
 
 logger = get_logger(__name__)
 
@@ -27,9 +26,9 @@ class AddWebclipUsecase:
             self,
             url: str,
             title: str,
-            cover: Optional[str] = None,
-            slack_channel: Optional[str] = None,
-            slack_thread_ts: Optional[str] = None,
+            cover: str | None = None,
+            slack_channel: str | None = None,
+            slack_thread_ts: str | None = None,
             ) -> dict:
         logger.info("execute")
 
@@ -42,7 +41,7 @@ class AddWebclipUsecase:
             page = searched_webclips[0]
             return {
                 "id": page.id,
-                "url": page.url
+                "url": page.url,
             }
         logger.info("Create a Webclip")
 
@@ -80,18 +79,18 @@ class AddWebclipUsecase:
         result = self.client.create_page_in_database(
             database_id=DatabaseType.WEBCLIP.value,
             cover=Cover.from_external_url(cover) if cover is not None else None,
-            properties=properties
+            properties=properties,
         )
         page = {
             "id": result["id"],
-            "url": result["url"]
+            "url": result["url"],
         }
 
         self.inbox_service.add_inbox_task_by_page_id(
             page_id=result["id"],
             page_url=result["url"],
             slack_channel=slack_channel,
-            slack_thread_ts=slack_thread_ts
+            slack_thread_ts=slack_thread_ts,
         )
 
         # ページ本文を追加
@@ -112,9 +111,9 @@ class AddWebclipUsecase:
             self,
             url: str,
             title: str, # ツイート本文
-            cover: Optional[str] = None,
-            slack_channel: Optional[str] = None,
-            slack_thread_ts: Optional[str] = None,
+            cover: str | None = None,
+            slack_channel: str | None = None,
+            slack_thread_ts: str | None = None,
             ) -> dict:
         # Twitter本文からタグを抽出して、タグを作成
         tag_page_ids:list[str] = []
@@ -127,7 +126,7 @@ class AddWebclipUsecase:
         properties=[
                 Title.from_plain_text(name="名前", text=title[:50]),
                 Url.from_url(name="URL", url=url),
-                Text.from_plain_text(name="概要", text=title)
+                Text.from_plain_text(name="概要", text=title),
             ]
         if len(tag_page_ids) > 0:
             properties.append(Relation.from_id_list(name="タグ", id_list=tag_page_ids))
@@ -135,18 +134,18 @@ class AddWebclipUsecase:
         result = self.client.create_page_in_database(
             database_id=DatabaseType.WEBCLIP.value,
             cover=Cover.from_external_url(cover) if cover is not None else None,
-            properties=properties
+            properties=properties,
         )
         page = {
             "id": result["id"],
-            "url": result["url"]
+            "url": result["url"],
         }
 
         self.inbox_service.add_inbox_task_by_page_id(
             page_id=result["id"],
             page_url=result["url"],
             slack_channel=slack_channel,
-            slack_thread_ts=slack_thread_ts
+            slack_thread_ts=slack_thread_ts,
         )
 
         return page

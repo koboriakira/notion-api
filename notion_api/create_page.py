@@ -1,6 +1,7 @@
 import json
 import logging
 
+from infrastructure.slack_user_client import SlackUserClient
 from usecase.add_video_usecase import AddVideoUsecase
 from usecase.add_webclip_usecase import AddWebclipUsecase
 from usecase.service.error_reporter import ErrorReporter
@@ -29,23 +30,35 @@ def handler(event:dict, context:dict) -> dict:  # noqa: ARG001
     slack_channel=params.get("slack_channel")
     slack_thread_ts=params.get("slack_thread_ts")
     try:
+        result_page_id = None
         if mode == "video":
             usecase = AddVideoUsecase()
-            _ = usecase.execute(
+            result = usecase.execute(
                 url=params["url"],
                 title=params["title"],
                 cover=params.get("cover"),
                 slack_channel=slack_channel,
                 slack_thread_ts=slack_thread_ts,
                 )
+            result_page_id = result["id"]
         if mode == "webclip":
             usecase = AddWebclipUsecase()
-            usecase.execute(
+            result = usecase.execute(
                 url=params["url"],
                 title=params["title"],
                 cover=params.get("cover"),
                 slack_channel=slack_channel,
                 slack_thread_ts=slack_thread_ts,
+            )
+            result_page_id = result["id"]
+        if slack_channel and slack_thread_ts:
+            slack_user_client = SlackUserClient()
+            slack_user_client.update_context(
+                channel=slack_channel,
+                ts=slack_thread_ts,
+                context={
+                    "page_id": result_page_id,
+                },
             )
         return {}
     except Exception as e:  # noqa: BLE001
@@ -53,4 +66,4 @@ def handler(event:dict, context:dict) -> dict:  # noqa: ARG001
             err=e,
             channel=slack_channel,
             thread_ts=slack_thread_ts,
-        )
+    )
