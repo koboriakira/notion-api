@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date as DateObject
 
 from fastapi import APIRouter, Header
 
@@ -19,7 +19,7 @@ def add_track_page(request: AddTrackPageRequest,
                 ) -> BaseResponse:
     valid_access_token(access_token)
     logger.debug(request)
-    release_date = date.fromisoformat(request.release_date) if request.release_date else None
+    release_date = DateObject.fromisoformat(request.release_date) if request.release_date else None
     usecase = AddTrackPageUsecase()
     usecase.execute(
         track_name=request.track_name,

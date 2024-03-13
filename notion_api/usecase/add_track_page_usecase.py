@@ -1,12 +1,11 @@
-from datetime import date as Date
+from datetime import date as DateObject
 
 from custom_logger import get_logger
 from domain.database_type import DatabaseType
-from infrastructure.slack_bot_client import SlackBotClient
-from infrastructure.slack_user_client import SlackUserClient
+from infrastructure.slack_tmp_client import SlackTmpClient
 from notion_client_wrapper.block import Paragraph
 from notion_client_wrapper.client_wrapper import ClientWrapper
-from notion_client_wrapper.properties import Cover, Relation, Text, Title, Url
+from notion_client_wrapper.properties import Cover, Date, Relation, Text, Title, Url
 from usecase.service.tag_create_service import TagCreateService
 
 logger = get_logger(__name__)
@@ -15,15 +14,15 @@ class AddTrackPageUsecase:
     def __init__(self):
         self.client = ClientWrapper.get_instance()
         self.tag_create_service = TagCreateService()
-        self.slack_user_client = SlackUserClient()
-        self.slack_bot_client = SlackBotClient()
+        self.slack_user_client = SlackTmpClient.get_user_client()
+        self.slack_bot_client = SlackTmpClient.get_bot_client()
 
     def execute(self,
                 track_name: str,
                 artists: list[str],
                 spotify_url: str | None = None,
                 cover_url: str | None = None,
-                release_date: Date | None = None,
+                release_date: DateObject | None = None,
                 slack_channel: str | None = None,
                 slack_thread_ts: str | None = None,
                 ) -> dict:
@@ -82,7 +81,7 @@ class AddTrackPageUsecase:
             )
 
         if slack_channel and slack_thread_ts:
-            self.slack_user_client.update_context(
+            self.slack_bot_client.update_context(
                 channel=slack_channel,
                 ts=slack_thread_ts,
                 context={
