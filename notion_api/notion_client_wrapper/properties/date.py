@@ -1,18 +1,18 @@
 from dataclasses import dataclass
-from notion_client_wrapper.properties.property import Property
-from typing import Optional
 from datetime import date
 from datetime import datetime as DatetimeObject
+
+from notion_client_wrapper.properties.property import Property
 
 
 @dataclass
 class Date(Property):
-    start: Optional[str] = None
-    end: Optional[str] = None
-    time_zone: Optional[str] = None
+    start: str | None = None
+    end: str | None = None
+    time_zone: str | None = None
     type: str = "date"
 
-    def __init__(self, name: str, id: Optional[str] = None, start: str = None, end: str = None, time_zone: str = None):
+    def __init__(self, name: str, id: str | None = None, start: str = None, end: str = None, time_zone: str = None):
         self.name = name
         self.id = id
         self.start = start
@@ -28,11 +28,11 @@ class Date(Property):
             id=param["id"],
             start=param["date"]["start"],
             end=param["date"]["end"],
-            time_zone=param["date"]["time_zone"]
+            time_zone=param["date"]["time_zone"],
         )
 
     @staticmethod
-    def from_start_date(name: str, start_date: Optional[date|DatetimeObject] = None) -> "Date":
+    def from_start_date(name: str, start_date: date | DatetimeObject | None = None) -> "Date":
         return Date(
             name=name,
             start=start_date.isoformat() if start_date is not None else None,
@@ -54,7 +54,7 @@ class Date(Property):
                 "date": {
                     "start": self.start,
                     "end": self.end,
-                    "time_zone": self.time_zone
-                }
-            }
+                    "time_zone": self.time_zone,
+                },
+            },
         }
