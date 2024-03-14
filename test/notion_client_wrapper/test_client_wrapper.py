@@ -2,7 +2,7 @@ from unittest import TestCase
 
 from notion_api.domain.database_type import DatabaseType
 from notion_api.notion_client_wrapper.client_wrapper import ClientWrapper
-from notion_api.notion_client_wrapper.properties.properties import Url
+from notion_api.notion_client_wrapper.properties.url import Url
 
 
 class TestClientWrapper(TestCase):

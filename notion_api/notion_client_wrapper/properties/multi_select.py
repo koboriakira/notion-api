@@ -1,6 +1,6 @@
 from dataclasses import dataclass
+
 from notion_client_wrapper.properties.property import Property
-from typing import Optional
 
 
 @dataclass(frozen=True)
@@ -13,7 +13,7 @@ class MultiSelectElement(Property):
         return {
             "id": self.id,
             "name": self.name,
-            "color": self.color
+            "color": self.color,
         }
 
 
@@ -25,7 +25,7 @@ class MultiSelect(Property):
     def __init__(self,
                  name: str,
                  values: list[dict[str, str]],
-                 id: Optional[str] = None,):
+                 id: str | None = None):
         self.name = name
         self.values = values
         self.id = id
@@ -36,7 +36,7 @@ class MultiSelect(Property):
             MultiSelectElement(
                 id=element["id"],
                 name=element["name"],
-                color=element["color"]
+                color=element["color"],
             ) for element in param["multi_select"]]
 
         return MultiSelect(
@@ -48,3 +48,6 @@ class MultiSelect(Property):
     def __dict__(self):
         result = [e.__dict__() for e in self.values]
         return {self.name: result}
+
+    def value_for_filter(self) -> str:
+        raise NotImplementedError

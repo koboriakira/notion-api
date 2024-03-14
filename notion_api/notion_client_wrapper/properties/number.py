@@ -1,14 +1,14 @@
 from dataclasses import dataclass
+
 from notion_client_wrapper.properties.property import Property
-from typing import Optional
 
 
 @dataclass
 class Number(Property):
-    number: Optional[int]
+    number: int | None
     type: str = "number"
 
-    def __init__(self, name: str, id: Optional[str] = None, number: Optional[int] = None):
+    def __init__(self, name: str, id: str | None = None, number: int | None = None):
         self.name = name
         self.id = id
         self.number = number
@@ -18,7 +18,7 @@ class Number(Property):
         return Number(
             name=self.name,
             id=self.id,
-            number=prev + count
+            number=prev + count,
         )
 
     @staticmethod
@@ -28,7 +28,7 @@ class Number(Property):
         return Number(
             name=name,
             id=param["id"],
-            number=param["number"]
+            number=param["number"],
         )
 
     def __dict__(self):
@@ -40,12 +40,15 @@ class Number(Property):
             result["type"] = self.type
             result["number"] = self.number
         return {
-            self.name: result
+            self.name: result,
         }
 
     @ staticmethod
     def from_num(name: str, value: int) -> "Number":
         return Number(
             name=name,
-            number=value
+            number=value,
         )
+
+    def value_for_filter(self) -> str:
+        raise NotImplementedError

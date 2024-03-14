@@ -1,7 +1,7 @@
 from dataclasses import dataclass
-from notion_client_wrapper.properties.property import Property
+
 from notion_client_wrapper.block.rich_text import RichText
-from typing import Optional
+from notion_client_wrapper.properties.property import Property
 
 
 @dataclass
@@ -9,7 +9,7 @@ class Text(Property):
     rich_text: RichText
     type: str = "rich_text"
 
-    def __init__(self, name: str, rich_text: RichText, id: Optional[str] = None):
+    def __init__(self, name: str, rich_text: RichText, id: str | None = None):
         self.name = name
         self.id = id
         self.rich_text = rich_text
@@ -31,7 +31,7 @@ class Text(Property):
     def __dict__(self):
         result = {
             "type": self.type,
-            "rich_text": self.rich_text.to_dict()
+            "rich_text": self.rich_text.to_dict(),
         }
         return {self.name: result}
 
@@ -52,3 +52,6 @@ class Text(Property):
     @property
     def text(self) -> str:
         return self.rich_text.to_plain_text()
+
+    def value_for_filter(self) -> str:
+        raise NotImplementedError

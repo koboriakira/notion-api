@@ -1,21 +1,21 @@
 from dataclasses import dataclass
+
 from notion_client_wrapper.properties.property import Property
-from typing import Optional
 
 
 @dataclass
 class Status(Property):
-    status_id: Optional[str]
+    status_id: str | None
     status_name: str
-    status_color: Optional[str]
+    status_color: str | None
     type: str = "status"
 
     def __init__(self,
                  name: str,
                  status_name: str,
-                 id: Optional[str] = None,
-                 status_id: Optional[str] = None,
-                 status_color: Optional[str] = None):
+                 id: str | None = None,
+                 status_id: str | None = None,
+                 status_color: str | None = None):
         self.name = name
         self.status_name = status_name
         self.id = id
@@ -29,14 +29,14 @@ class Status(Property):
             status_name=param["status"]["name"],
             id=param["id"],
             status_id=param["status"]["id"],
-            status_color=param["status"]["color"]
+            status_color=param["status"]["color"],
         )
 
     @staticmethod
     def from_status_name(name: str, status_name: str) -> "Status":
         return Status(
             name=name,
-            status_name=status_name
+            status_name=status_name,
         )
 
     def is_today(self) -> bool:
@@ -46,11 +46,14 @@ class Status(Property):
         result = {
             "type": self.type,
             "status": {
-                "name": self.status_name
-            }
+                "name": self.status_name,
+            },
         }
         if self.status_id is not None:
             result["status"]["id"] = self.status_id
         if self.status_color is not None:
             result["status"]["color"] = self.status_color
         return {self.name: result}
+
+    def value_for_filter(self) -> str:
+        raise NotImplementedError

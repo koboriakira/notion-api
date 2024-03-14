@@ -1,6 +1,7 @@
 from dataclasses import dataclass
-from notion_client_wrapper.properties.property import Property
 from typing import Optional
+
+from notion_client_wrapper.properties.property import Property
 
 
 @dataclass
@@ -13,9 +14,9 @@ class Select(Property):
     def __init__(self,
                  name: str,
                  selected_name: str,
-                 selected_id: Optional[str] = None,
-                 selected_color: Optional[str] = None,
-                 id: Optional[str] = None,):
+                 selected_id: str | None = None,
+                 selected_color: str | None = None,
+                 id: str | None = None):
         self.name = name
         self.selected_name = selected_name
         self.selected_id = selected_id if selected_id is not None else "default"
@@ -41,9 +42,12 @@ class Select(Property):
             "select": {
                 "id": self.selected_id,
                 "name": self.selected_name,
-                "color": self.selected_color
-            }
+                "color": self.selected_color,
+            },
         }
         if self.id is not None:
             result["id"] = self.id
         return {self.name: result}
+
+    def value_for_filter(self) -> str:
+        raise NotImplementedError

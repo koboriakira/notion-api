@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-from datetime import datetime as DatetimeObject
 from datetime import date as DateObject
+from datetime import datetime as DatetimeObject
 from datetime import timedelta
 from enum import Enum
 
@@ -52,3 +52,6 @@ class NotionDatetime:
 
     def __dict__(self):
         return {self.kind.value: self.value.isoformat() + "Z"}
+
+    def value_for_filter(self) -> str:
+        raise NotImplementedError

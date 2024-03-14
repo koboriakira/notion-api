@@ -7,9 +7,9 @@ class Property(metaclass=ABCMeta):
     type: str
 
     @abstractmethod
-    def __dict__(self):
+    def __dict__(self) -> dict:
         pass
 
-    # @abstractmethod
-    # def value_for_filter(self) -> str:
-    #     pass
+    @abstractmethod
+    def value_for_filter(self) -> str:
+        pass

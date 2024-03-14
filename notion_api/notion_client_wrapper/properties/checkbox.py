@@ -1,6 +1,6 @@
 from dataclasses import dataclass
+
 from notion_client_wrapper.properties.property import Property
-from typing import Optional
 
 
 @dataclass
@@ -11,7 +11,7 @@ class Checkbox(Property):
     def __init__(self,
                  name: str,
                  checked: bool,
-                 id: Optional[str] = None,):
+                 id: str | None = None):
         self.name = name
         self.checked = checked
         self.id = id
@@ -20,7 +20,7 @@ class Checkbox(Property):
     def of(name: str, param: dict) -> "Checkbox":
         return Checkbox(
             name=name,
-            checked=param['checkbox'],
+            checked=param["checkbox"],
             id=param["id"],
         )
 
@@ -28,7 +28,7 @@ class Checkbox(Property):
     def from_bool(name: str, checked: bool) -> "Checkbox":
         return Checkbox(
             name=name,
-            checked=checked
+            checked=checked,
         )
 
     def __dict__(self):
@@ -39,3 +39,6 @@ class Checkbox(Property):
         if self.id is not None:
             result["id"] = self.id
         return {self.name: result}
+
+    def value_for_filter(self) -> str:
+        raise NotImplementedError

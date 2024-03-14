@@ -1,8 +1,10 @@
 from dataclasses import dataclass
-from typing import Optional
 
 
 @dataclass
-class Parent():
+class Parent:
     type: str
-    workspace: Optional[bool] = None
+    workspace: bool | None = None
+
+    def value_for_filter(self) -> str:
+        raise NotImplementedError

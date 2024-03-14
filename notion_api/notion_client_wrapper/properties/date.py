@@ -58,3 +58,6 @@ class Date(Property):
                 },
             },
         }
+
+    def value_for_filter(self) -> str:
+        raise NotImplementedError

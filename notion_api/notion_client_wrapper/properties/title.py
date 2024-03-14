@@ -83,3 +83,6 @@ class Title(Property):
             text="",
             mentioned_page_id=page_id,
         )
+
+    def value_for_filter(self) -> str:
+        raise NotImplementedError
