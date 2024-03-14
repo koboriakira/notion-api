@@ -82,13 +82,27 @@ class ClientWrapper:
             pages = list(filter(lambda p: p.properties.get_title().text == title, pages))
         return pages
 
-    def _database_query(self, database_id: str, start_cursor: str | None = None, filter_param: dict|None=None) -> dict:
+    def _database_query(self, database_id: str, filter_param: dict|None=None, start_cursor: str | None = None) -> dict:
+        if filter_param is None:
+            return self._database_query_without_filter(database_id=database_id, start_cursor=start_cursor)
         results = []
         while True:
             data:dict = self.client.databases.query(
                 database_id=database_id,
                 start_cursor=start_cursor,
-                filter=filter_param if filter_param is not None and filter_param != {} else None,
+                filter=filter_param,
+            )
+            results += data.get("results")
+            if not data.get("has_more"):
+                return results
+            start_cursor = data.get("next_cursor")
+
+    def _database_query_without_filter(self, database_id: str, start_cursor: str | None = None ) -> dict:
+        results = []
+        while True:
+            data:dict = self.client.databases.query(
+                database_id=database_id,
+                start_cursor=start_cursor,
             )
             results += data.get("results")
             if not data.get("has_more"):
