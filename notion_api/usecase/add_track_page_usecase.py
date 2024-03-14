@@ -6,6 +6,7 @@ from infrastructure.slack_tmp_client import SlackTmpClient
 from notion_client_wrapper.block import Paragraph
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper.properties import Cover, Date, Relation, Text, Title, Url
+from usecase.service.append_page_id_to_slack_context import AppendPageIdToSlackContext
 from usecase.service.tag_create_service import TagCreateService
 
 logger = get_logger(__name__)
@@ -16,6 +17,7 @@ class AddTrackPageUsecase:
         self.tag_create_service = TagCreateService()
         self.slack_user_client = SlackTmpClient.get_user_client()
         self.slack_bot_client = SlackTmpClient.get_bot_client()
+        self.append_page_id_to_slack_context = AppendPageIdToSlackContext()
 
     def execute(self,
                 track_name: str,
@@ -81,12 +83,10 @@ class AddTrackPageUsecase:
             )
 
         if slack_channel and slack_thread_ts:
-            self.slack_bot_client.update_context(
+            self.append_page_id_to_slack_context.execute(
                 channel=slack_channel,
-                ts=slack_thread_ts,
-                context={
-                    "page_id": page_id,
-                },
+                event_ts=slack_thread_ts,
+                page_id=page_id,
             )
             self.slack_bot_client.send_message(
                 channel=slack_channel,
