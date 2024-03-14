@@ -8,6 +8,7 @@ from .condition import Condition
 
 class StringConditionType(Enum):
     EQUALS= "equals"
+    NOT_EQUAL = "does_not_equal"
 
 @dataclass(frozen=True)
 class StringCondition(Condition):
@@ -18,10 +19,18 @@ class StringCondition(Condition):
 
     @staticmethod
     def equal(property: Property) -> "StringCondition":
+        return StringCondition._from_property(property, StringConditionType.EQUALS)
+
+    @staticmethod
+    def not_equal(property: Property) -> "StringCondition":
+        return StringCondition._from_property(property, StringConditionType.NOT_EQUAL)
+    
+    @staticmethod
+    def _from_property(property: Property, condition_type: StringConditionType) -> "StringCondition":
         return StringCondition(
             property_name=property.name,
             property_type=property.type,
-            condition_type=StringConditionType.EQUALS,
+            condition_type=condition_type,
             value=property.value_for_filter(),
         )
 

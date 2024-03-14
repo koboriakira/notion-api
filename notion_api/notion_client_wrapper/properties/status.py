@@ -56,4 +56,4 @@ class Status(Property):
         return {self.name: result}
 
     def value_for_filter(self) -> str:
-        raise NotImplementedError
+        return self.status_name

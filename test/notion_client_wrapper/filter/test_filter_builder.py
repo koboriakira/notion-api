@@ -4,6 +4,7 @@ from notion_api.notion_client_wrapper.filter.condition.number_condition import N
 from notion_api.notion_client_wrapper.filter.condition.string_condition import StringCondition
 from notion_api.notion_client_wrapper.filter.filter_builder import FilterBuilder
 from notion_api.notion_client_wrapper.properties.number import Number
+from notion_api.notion_client_wrapper.properties.status import Status
 from notion_api.notion_client_wrapper.properties.url import Url
 
 # https://developers.notion.com/reference/post-database-query-filter
@@ -56,4 +57,21 @@ class TestFilterBuilder(TestCase):
                 }
             ]
         }
+        self.assertEqual(expected, actual)
+
+    def test_ステータス(self):
+        # Given
+        status = Status.from_status_name(name="ステータス", status_name="ゴミ箱")
+
+        # When
+        actual = FilterBuilder().add_condition(StringCondition.not_equal(status)).build()
+
+        # Then
+        expected = {
+            "property": "ステータス",
+            "status": {
+                "does_not_equal": "ゴミ箱"
+            }
+        }
+
         self.assertEqual(expected, actual)
