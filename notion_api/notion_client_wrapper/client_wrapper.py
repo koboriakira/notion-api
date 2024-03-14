@@ -1,16 +1,17 @@
-from notion_client import Client
+import logging
 import os
-from notion_client_wrapper.property_translator import PropertyTranslator
-from notion_client_wrapper.block import BlockFactory, Block, Paragraph
-from notion_client_wrapper.base_page import BasePage
+
+from notion_client import Client
+
 from notion_client_wrapper.base_operator import BaseOperator
+from notion_client_wrapper.base_page import BasePage
+from notion_client_wrapper.block import Block, BlockFactory
 from notion_client_wrapper.properties.cover import Cover
 from notion_client_wrapper.properties.icon import Icon
+from notion_client_wrapper.properties.notion_datetime import NotionDatetime
 from notion_client_wrapper.properties.properties import Properties
 from notion_client_wrapper.properties.property import Property
-from notion_client_wrapper.properties.notion_datetime import NotionDatetime
-from typing import Optional
-import logging
+from notion_client_wrapper.property_translator import PropertyTranslator
 
 logger = logging.getLogger(__name__)
 
@@ -32,31 +33,31 @@ class ClientWrapper:
         """ 指定されたページを更新する """
         return self.client.pages.update(
             page_id=page_id,
-            properties=Properties(values=properties).__dict__()
+            properties=Properties(values=properties).__dict__(),
         )
 
     def retrieve_comments(self, page_id: str) -> list[dict]:
         """ 指定されたページのコメントを取得する """
         comments = self.client.comments.list(
-            block_id=page_id
+            block_id=page_id,
         )
         return comments["results"]
 
-    def create_page_in_database(self, database_id: str, cover: Optional[Cover] = None, properties: list[Property] = []) -> dict:
+    def create_page_in_database(self, database_id: str, cover: Cover | None = None, properties: list[Property] = []) -> dict:
         """ データベース上にページを新規作成する """
         logger.info("create_page_in_database")
         logger.info(properties)
         return self.client.pages.create(
             parent={
                 "type": "database_id",
-                "database_id": database_id
+                "database_id": database_id,
             },
             cover=cover.__dict__() if cover is not None else None,
             properties=Properties(values=properties).__dict__() if len(
-                properties) > 0 else None
+                properties) > 0 else None,
         )
 
-    def retrieve_database(self, database_id: str, title: Optional[str] = None) -> list[BasePage]:
+    def retrieve_database(self, database_id: str, title: str | None = None) -> list[BasePage]:
         """ 指定されたデータベースのページを取得する """
         results = self._database_query(database_id=database_id)
         pages: list[BasePage] = []
@@ -67,19 +68,19 @@ class ClientWrapper:
             pages = list(filter(lambda p: p.properties.get_title().text == title, pages))
         return pages
 
-    def _database_query(self, database_id: str, start_cursor: Optional[str] = None) -> dict:
+    def _database_query(self, database_id: str, start_cursor: str | None = None) -> dict:
         results = []
         while True:
             data:dict = self.client.databases.query(
                 database_id=database_id,
-                start_cursor=start_cursor
+                start_cursor=start_cursor,
             )
             results += data.get("results")
             if not data.get("has_more"):
                 return results
             start_cursor = data.get("next_cursor")
 
-    def find_page(self, database_id: str, title: str) -> Optional[BasePage]:
+    def find_page(self, database_id: str, title: str) -> BasePage | None:
         """ 指定されたデータベースのページを取得する。1ページのみ取得する。複数ある場合は最初に見つかったページを返す """
         data = self.client.databases.query(database_id=database_id)
         for page_entity in data["results"]:
@@ -100,7 +101,7 @@ class ClientWrapper:
         """ 指定されたブロックに子ブロックを追加する """
         return self.__append_block_children(
             block_id=block_id,
-            children=list(map(lambda b: b.to_dict(), blocks))
+            children=list(map(lambda b: b.to_dict(), blocks)),
         )
 
     def append_comment(self, page_id: str, text: str):
@@ -114,7 +115,7 @@ class ClientWrapper:
         """ 指定されたページを削除する """
         self.client.pages.update(
             page_id=page_id,
-            archived=True
+            archived=True,
         )
 
     def __append_block_children(self, block_id: str, children=list[dict]) -> dict:
@@ -158,9 +159,8 @@ class ClientWrapper:
 
 if __name__ == "__main__":
     # python -m notion_client_wrapper.client_wrapper
-    from notion_client_wrapper.properties.title import Title
     client = ClientWrapper(notion_secret=os.getenv("NOTION_SECRET"))
-    import json
+
     # page = client.retrieve_page(page_id="b7576fbdde9b476f913924c1bd90b250")
     # print(page)
     # pages = client.retrieve_database(database_id="986876c2e7f8457abd4437334835d0db", title="テストA")
@@ -169,5 +169,4 @@ if __name__ == "__main__":
     # print(blocks)
     # result = client.append_blocks(block_id="b7576fbdde9b476f913924c1bd90b250", blocks=[Paragraph.from_plain_text("test")])
     # print(result)
-    from domain.database_type import DatabaseType
     print(client.retrieve_page(page_id="56049c410c1748b9b035584cf576744f"))
