@@ -2,6 +2,7 @@ from unittest import TestCase
 
 import pytest
 from notion_api.domain.database_type import DatabaseType
+from notion_api.notion_client_wrapper.base_page import BasePage
 from notion_api.notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_api.notion_client_wrapper.properties.title import Title
 from notion_api.notion_client_wrapper.properties.url import Url
@@ -58,3 +59,20 @@ class TestClientWrapper(TestCase):
         )
         self.assertEqual(1, len(pages))
         self.assertEqual("タバコロード 20", pages[0].get_title().text)
+
+    @pytest.mark.use_genuine_api()
+    @pytest.mark.learning()
+    def test_返却値のモデルを指定できるようにする(self):
+        class OriginalBasePage(BasePage):
+            pass
+
+        # Given
+        title = Title.from_plain_text(name="名前", text="タバコロード 20")
+
+        # When: モデルを指定して取得
+        pages = self.suite.retrieve_database(
+            database_id=DatabaseType.MUSIC.value,
+            properties=[title],
+            page_model=OriginalBasePage
+        )
+        self.assertIsInstance(pages[0], OriginalBasePage)

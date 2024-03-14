@@ -64,7 +64,9 @@ class ClientWrapper:
             self,
             database_id: str,
             title: str | None = None,
-            properties: list[Property]|None = None) -> list[BasePage]:
+            properties: list[Property]|None = None,
+            page_model: BasePage|None = None,
+            ) -> list[BasePage]:
         """ 指定されたデータベースのページを取得する """
         filter_builder = FilterBuilder()
         if properties is not None:
@@ -74,7 +76,7 @@ class ClientWrapper:
         results = self._database_query(database_id=database_id, filter_param=filter_param)
         pages: list[BasePage] = []
         for page_entity in results:
-            page = self.__convert_page_model(page_entity=page_entity, include_children=False)
+            page = self.__convert_page_model(page_entity=page_entity, include_children=False, page_model=page_model)
             pages.append(page)
         if title is not None:
             pages = list(filter(lambda p: p.properties.get_title().text == title, pages))
@@ -135,7 +137,11 @@ class ClientWrapper:
         return self.client.blocks.children.append(
             block_id=block_id, children=children)
 
-    def __convert_page_model(self, page_entity: dict, include_children: bool = True) -> BasePage:
+    def __convert_page_model(
+            self,
+            page_entity: dict,
+            include_children: bool = True,
+            page_model: BasePage|None = None) -> BasePage:
         id = page_entity["id"]
         url = page_entity["url"]
         created_time = NotionDatetime.created_time(page_entity["created_time"])
@@ -147,17 +153,20 @@ class ClientWrapper:
         archived = page_entity["archived"]
         properties=PropertyTranslator.from_dict(page_entity["properties"])
         block_children = self.__get_block_children(page_id=id) if include_children else []
-        return BasePage(id=id,
-                        url=url,
-                        created_time=created_time,
-                        last_edited_time=last_edited_time,
-                        created_by=created_by,
-                        last_edited_by=last_edited_by,
-                        cover=cover,
-                        icon=icon,
-                        archived=archived,
-                        properties=properties,
-                        block_children=block_children)
+
+        page_model_cls = page_model or BasePage
+        return page_model_cls(
+            id=id,
+            url=url,
+            created_time=created_time,
+            last_edited_time=last_edited_time,
+            created_by=created_by,
+            last_edited_by=last_edited_by,
+            cover=cover,
+            icon=icon,
+            archived=archived,
+            properties=properties,
+            block_children=block_children)
 
     def __retrieve_page(self, page_id: str) -> dict:
         return self.client.pages.retrieve(page_id=page_id)
