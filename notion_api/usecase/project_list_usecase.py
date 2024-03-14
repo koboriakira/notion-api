@@ -1,21 +1,21 @@
-import os
-from typing import Optional
 from datetime import date as DateObject
-from notion_client_wrapper.client_wrapper import ClientWrapper, BasePage
+
 from domain.database_type import DatabaseType
 from domain.project.project_status import ProjectStatus
+from notion_client_wrapper.client_wrapper import BasePage, ClientWrapper
+
 
 class ProjectListUseCase:
     def __init__(self):
-        self.client = ClientWrapper(notion_secret=os.getenv("NOTION_SECRET"))
+        self.client = ClientWrapper.get_instance()
 
     def execute(self,
                 status_list: list[ProjectStatus] = [],
-                remind_date: Optional[DateObject] = None,
-                goal_id: Optional[str] = None,
+                remind_date: DateObject | None = None,
+                goal_id: str | None = None,
                 detail_enabled: bool = True,
                 thisweek_filter_enabled: bool = False,
-                completed_at: Optional[DateObject] = None,
+                completed_at: DateObject | None = None,
                 ):
         status_name_list = [status.value for status in status_list]
         # まずプロジェクトを検索する

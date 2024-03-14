@@ -1,24 +1,23 @@
-import os
-from typing import Optional
 from datetime import date as DateObject
-from datetime import timedelta
 from datetime import datetime as Datetime
 from datetime import datetime as DatetimeObject
-from notion_client_wrapper.properties import Title, Date, Relation
+from datetime import timedelta
+
+from domain.database_type import DatabaseType
 from notion_client_wrapper.base_page import BasePage
 from notion_client_wrapper.client_wrapper import ClientWrapper
-from domain.database_type import DatabaseType
+from notion_client_wrapper.properties import Date, Relation, Title
 
 
 class CreateNewTaskUsecase:
     def __init__(self):
-        self.client = ClientWrapper(notion_secret=os.getenv("NOTION_SECRET"))
+        self.client = ClientWrapper.get_instance()
 
     def handle(self,
-               title: Optional[str],
-               mentioned_page_id: Optional[str],
-               start_date: Optional[DateObject|DatetimeObject] = None,
-               end_date: Optional[DateObject|DatetimeObject] = None) -> dict:
+               title: str | None,
+               mentioned_page_id: str | None,
+               start_date: DateObject | DatetimeObject | None = None,
+               end_date: DateObject | DatetimeObject | None = None) -> dict:
         if title is None and mentioned_page_id is None:
             raise ValueError("title と mentioned_page_id のどちらかは必須です")
 
@@ -38,20 +37,20 @@ class CreateNewTaskUsecase:
             "url": page["url"],
         }
 
-    def _generate_title(self, title: Optional[str], mentioned_page_id: Optional[str]) -> Title:
+    def _generate_title(self, title: str | None, mentioned_page_id: str | None) -> Title:
         if mentioned_page_id is None:
             return Title.from_plain_text(name="名前", text=title)
         if mentioned_page_id is not None:
             return Title.from_mentioned_page_id(name="名前", page_id=mentioned_page_id)
-        raise NotImplementedError()
+        raise NotImplementedError
 
 
 
-    def _find_weekly_log(self, year: int, isoweeknum: int) -> Optional[dict]:
+    def _find_weekly_log(self, year: int, isoweeknum: int) -> dict | None:
         title=f"{year}-Week{isoweeknum}"
         weekly_logs = self.client.retrieve_database(
             database_id=DatabaseType.WEEKLY_LOG.value,
-            title=title
+            title=title,
         )
         if len(weekly_logs) == 0:
             return None
@@ -80,13 +79,13 @@ class CreateNewTaskUsecase:
                 Title.from_plain_text(
                     name="名前", text=title_text),
                 Date.from_range(name="期間", start=start_date, end=end_date),
-            ]
+            ],
         )
 
-    def _find_daily_log(self, date: DateObject) -> Optional[BasePage]:
+    def _find_daily_log(self, date: DateObject) -> BasePage | None:
         daily_logs = self.client.retrieve_database(
             database_id=DatabaseType.DAILY_LOG.value,
-            title=date.isoformat()
+            title=date.isoformat(),
         )
         if len(daily_logs) == 0:
             return None
@@ -98,7 +97,7 @@ class CreateNewTaskUsecase:
             properties=[
                 Date.from_start_date(name="日付", start_date=date),
                 Title.from_plain_text(name="名前", text=date.isoformat()),
-                Relation.from_id_list(name="💭 ウィークリーログ", id_list=[weekly_log_id])]
+                Relation.from_id_list(name="💭 ウィークリーログ", id_list=[weekly_log_id])],
         )
 
 if __name__ == "__main__":

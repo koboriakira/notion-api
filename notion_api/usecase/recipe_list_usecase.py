@@ -1,13 +1,10 @@
-import os
-from typing import Optional
-from datetime import date as DateObject
-from notion_client_wrapper.client_wrapper import ClientWrapper, BasePage
 from domain.database_type import DatabaseType
-from domain.project.project_status import ProjectStatus
+from notion_client_wrapper.client_wrapper import ClientWrapper
+
 
 class RecipeListUsecase:
     def __init__(self):
-        self.client = ClientWrapper(notion_secret=os.getenv("NOTION_SECRET"))
+        self.client = ClientWrapper.get_instance()
 
     def execute(self,
                 detail_enabled: bool = False,

@@ -1,15 +1,12 @@
-import os
-from typing import Optional
 from datetime import datetime as DatetimeObject
 from datetime import timedelta
-from notion_client_wrapper.client_wrapper import ClientWrapper
-from notion_client_wrapper.properties import Date
+
+from custom_logger import get_logger
 from domain.database_type import DatabaseType
 from domain.task import TaskStatus
-from custom_logger import get_logger
-from usecase.service.base_page_converter import BasePageConverter
-from util.datetime import jst_now
 from notion_client_wrapper.base_page import BasePage
+from notion_client_wrapper.client_wrapper import ClientWrapper
+from util.datetime import jst_now
 
 logger = get_logger(__name__)
 
@@ -17,7 +14,7 @@ DATETIME_2000 = DatetimeObject(2000, 1, 1)
 
 class MoveTasksToBackupUsecase:
     def __init__(self):
-        self.client = ClientWrapper(notion_secret=os.getenv("NOTION_SECRET"))
+        self.client = ClientWrapper.get_instance()
 
     def execute(self) -> None:
         datetime = jst_now() - timedelta(days=2)

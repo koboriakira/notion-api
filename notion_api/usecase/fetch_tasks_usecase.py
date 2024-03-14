@@ -1,25 +1,22 @@
-import os
-from typing import Optional
-from datetime import date as DateObject
-from datetime import datetime as DatetimeObject
-from notion_client_wrapper.client_wrapper import ClientWrapper, BasePage
+from datetime import date, datetime
+
+from custom_logger import get_logger
 from domain.database_type import DatabaseType
 from domain.task import TaskStatus
-from custom_logger import get_logger
+from notion_client_wrapper.client_wrapper import ClientWrapper
 from usecase.service.base_page_converter import BasePageConverter
-from infrastructure.current_task_s3_repository import CurrentTaskS3Repository
+from util.datetime import jst_today
 
 logger = get_logger(__name__)
 
 class FetchTasksUsecase:
-    def __init__(self):
-        self.client = ClientWrapper(notion_secret=os.getenv("NOTION_SECRET"))
-        self.current_task_repository = CurrentTaskS3Repository()
+    def __init__(self, notion_client_wrapper: ClientWrapper|None=None) -> None:
+        self.client = notion_client_wrapper or ClientWrapper.get_instance()
 
-    def execute(self,
-                status_list: list[str],
-                start_date: Optional[DateObject] = None,
-                ) -> list[dict]:
+    def execute(
+            self,
+            status_list: list[str],
+            start_date: date | None = None) -> list[dict]:
         # まず全てのタスクを集める
         all_pages = self.client.retrieve_database(database_id=DatabaseType.TASK.value)
         all_tasks = [BasePageConverter.to_task(p) for p in all_pages]
@@ -44,23 +41,15 @@ class FetchTasksUsecase:
                     continue
 
             # ステータスが指定されている場合は、ステータスが一致するもののみを返す
-            if len(status_cond_list) > 0:
-                if task["status"] not in status_cond_name_list:
-                    continue
+            if len(status_cond_list) > 0 and task["status"] not in status_cond_name_list:
+                continue
             tasks.append(task)
         return tasks
 
     def current(self) -> list[dict]:
-        # tasks = self.current_task_repository.load()
-        # if tasks is not None:
-        #     return tasks
-        today = DateObject.today()
-        tasks = self.execute(status_list=["ToDo", "InProgress"], start_date=today)
-        # self.current_task_repository.save(tasks)
-        return tasks
+        return self.execute(status_list=["ToDo", "InProgress"], start_date=jst_today())
 
-def _convert_to_date(value: str) -> DateObject:
+def _convert_to_date(value: str) -> date:
     if len(value) == 10:
-        return DateObject.fromisoformat(value)
-    else:
-        return DatetimeObject.fromisoformat(value).date()
+        return date.fromisoformat(value)
+    return datetime.fromisoformat(value).date()

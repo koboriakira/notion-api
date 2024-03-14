@@ -1,12 +1,11 @@
-import os
-from typing import Optional
 from datetime import date as DateObject
 from datetime import timedelta
-from notion_client_wrapper.client_wrapper import ClientWrapper
-from notion_client_wrapper.properties import Date
+
+from custom_logger import get_logger
 from domain.database_type import DatabaseType
 from domain.task import TaskStatus
-from custom_logger import get_logger
+from notion_client_wrapper.client_wrapper import ClientWrapper
+from notion_client_wrapper.properties import Date
 from usecase.service.base_page_converter import BasePageConverter
 from util.datetime import jst_today
 
@@ -14,10 +13,10 @@ logger = get_logger(__name__)
 
 class PostponeTaskToNextDayUsecase:
     def __init__(self):
-        self.client = ClientWrapper(notion_secret=os.getenv("NOTION_SECRET"))
+        self.client = ClientWrapper.get_instance()
 
     def execute(self,
-                date: Optional[DateObject] = None) -> list[dict]:
+                date: DateObject | None = None) -> list[dict]:
         # 指定日がない場合は前日を指定
         date = date if date is not None else jst_today() - timedelta(days=1)
 
@@ -43,7 +42,7 @@ class PostponeTaskToNextDayUsecase:
             date_property = Date.from_start_date(name="実施日", start_date=tomorrow)
             self.client.update_page(
                 page_id=page_id,
-                properties=[date_property]
+                properties=[date_property],
             )
 
         return filtered_tasks

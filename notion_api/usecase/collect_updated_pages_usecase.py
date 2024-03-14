@@ -1,15 +1,14 @@
-import os
-from typing import Optional
 from datetime import date as DateObject
 from datetime import datetime as DatetimeObject
 from datetime import timedelta
-from notion_client_wrapper.base_page import BasePage
-from notion_client_wrapper.client_wrapper import ClientWrapper
-from notion_client_wrapper import block
-from domain.database_type import DatabaseType
-from notion_client_wrapper.block.rich_text.rich_text_builder import RichTextBuilder
+
 from custom_logger import get_logger
-from util.datetime import jst_today, JST
+from domain.database_type import DatabaseType
+from notion_client_wrapper import block
+from notion_client_wrapper.base_page import BasePage
+from notion_client_wrapper.block.rich_text.rich_text_builder import RichTextBuilder
+from notion_client_wrapper.client_wrapper import ClientWrapper
+from util.datetime import JST, jst_today
 
 logger = get_logger(__name__)
 
@@ -39,14 +38,14 @@ def filter_in_day_with_only_created(date: DateObject, page: BasePage) -> bool:
 
 class CollectUpdatedPagesUsecase:
     def __init__(self, is_debug: bool = False):
-        self.client = ClientWrapper(notion_secret=os.getenv("NOTION_SECRET"))
+        self.client = ClientWrapper.get_instance()
         self.is_debug = is_debug
 
-    def execute(self, date: Optional[DateObject] = None) -> None:
+    def execute(self, date: DateObject | None = None) -> None:
         date = date if date is not None else jst_today()
         daily_log = self.client.find_page(
             database_id=DatabaseType.DAILY_LOG.value,
-            title=date.isoformat()
+            title=date.isoformat(),
         )
         if daily_log is None:
             raise Exception("指定された日付のデイリーログは存在しません")
@@ -60,7 +59,7 @@ class CollectUpdatedPagesUsecase:
     def _get_latest_items(self, date: DateObject, database_type: DatabaseType, only_created: bool = False) -> list[BasePage]:
         """ 指定されたカテゴリの、最近更新されたページIDを取得する """
         pages = self.client.retrieve_database(
-            database_id=database_type.value
+            database_id=database_type.value,
         )
         filter_func = filter_in_day_with_only_created if only_created else filter_in_day
         pages = list(filter(lambda page: filter_func(date=date, page=page), pages))
@@ -81,7 +80,7 @@ class CollectUpdatedPagesUsecase:
             if not self.is_debug:
                 self.client.append_block(
                     block_id=daily_log_id,
-                    block=paragraph
+                    block=paragraph,
                 )
             logger.info(f"ページを追加しました: {page.get_title().text}")
 
