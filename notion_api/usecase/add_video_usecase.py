@@ -4,6 +4,7 @@ from domain.database_type import DatabaseType
 from notion_client_wrapper.block import Paragraph
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper.properties import Cover, Relation, Title, Url
+from usecase.service.append_page_id_to_slack_context import AppendPageIdToSlackContext
 from usecase.service.inbox_service import InboxService
 from usecase.service.tag_analyzer import TagAnalyzer
 from usecase.service.tag_create_service import TagCreateService
@@ -16,6 +17,7 @@ class AddVideoUsecase:
         self.inbox_service = InboxService()
         self.tag_analyzer = TagAnalyzer()
         self.tag_create_service = TagCreateService()
+        self.append_page_id_to_slack_context = AppendPageIdToSlackContext()
 
     def execute(
             self,
@@ -58,19 +60,26 @@ class AddVideoUsecase:
             cover=Cover.from_external_url(cover) if cover is not None else None,
             properties=properties,
         )
+        page_id = result["id"]
+        page_url = result["url"]
 
-        self._append_embed_code(block_id=result["id"], url=url)
+        self._append_embed_code(block_id=page_id, url=url)
 
         self.inbox_service.add_inbox_task_by_page_id(
-            page_id=result["id"],
-            page_url=result["url"],
+            page_id=page_id,
+            page_url=page_url,
             slack_channel=slack_channel,
             slack_thread_ts=slack_thread_ts,
         )
+        self.append_page_id_to_slack_context.execute(
+            channel=slack_channel,
+            event_ts=slack_thread_ts,
+            page_id=page_id,
+        )
 
         return {
-            "id": result["id"],
-            "url": result["url"],
+            "id": page_id,
+            "url": page_url,
         }
 
     def _append_embed_code(self, block_id: str, url: str) -> None:

@@ -5,6 +5,7 @@ from notion_client_wrapper.block import Paragraph
 from notion_client_wrapper.block.rich_text.rich_text_builder import RichTextBuilder
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper.properties import Cover, Relation, Text, Title, Url
+from usecase.service.append_page_id_to_slack_context import AppendPageIdToSlackContext
 from usecase.service.inbox_service import InboxService
 from usecase.service.simple_scraper import SimpleScraper
 from usecase.service.tag_analyzer import TagAnalyzer
@@ -21,6 +22,7 @@ class AddWebclipUsecase:
         self.simple_scraper = SimpleScraper()
         self.text_summarizer = TextSummarizer()
         self.inbox_service = InboxService()
+        self.append_page_id_to_slack_context = AppendPageIdToSlackContext()
 
     def execute(
             self,
@@ -81,16 +83,19 @@ class AddWebclipUsecase:
             cover=Cover.from_external_url(cover) if cover is not None else None,
             properties=properties,
         )
-        page = {
-            "id": result["id"],
-            "url": result["url"],
-        }
+        page_id = result["id"]
+        page_url = result["url"]
 
         self.inbox_service.add_inbox_task_by_page_id(
-            page_id=result["id"],
-            page_url=result["url"],
+            page_id=page_id,
+            page_url=page_url,
             slack_channel=slack_channel,
             slack_thread_ts=slack_thread_ts,
+        )
+        self.append_page_id_to_slack_context.execute(
+            channel=slack_channel,
+            event_ts=slack_thread_ts,
+            page_id=page_id,
         )
 
         # ページ本文を追加
@@ -100,12 +105,15 @@ class AddWebclipUsecase:
                 for i in range(0, len(page_text), 1500):
                     rich_text = RichTextBuilder.get_instance().add_text(page_text[i:i+1500]).build()
                     paragraph = Paragraph.from_rich_text(rich_text=rich_text)
-                    self.client.append_block(block_id=page["id"], block=paragraph)
+                    self.client.append_block(block_id=page_id, block=paragraph)
             else:
                 rich_text = RichTextBuilder.get_instance().add_text(page_text).build()
                 paragraph = Paragraph.from_rich_text(rich_text=rich_text)
-                self.client.append_block(block_id=page["id"], block=paragraph)
-        return page
+                self.client.append_block(block_id=page_id, block=paragraph)
+        return {
+            "id": page_id,
+            "url": page_url,
+        }
 
     def _handle_for_twitter(
             self,
@@ -136,16 +144,22 @@ class AddWebclipUsecase:
             cover=Cover.from_external_url(cover) if cover is not None else None,
             properties=properties,
         )
-        page = {
-            "id": result["id"],
-            "url": result["url"],
-        }
+        page_id = result["id"]
+        page_url = result["url"]
 
         self.inbox_service.add_inbox_task_by_page_id(
-            page_id=result["id"],
-            page_url=result["url"],
+            page_id=page_id,
+            page_url=page_url,
             slack_channel=slack_channel,
             slack_thread_ts=slack_thread_ts,
         )
+        self.append_page_id_to_slack_context.execute(
+            channel=slack_channel,
+            event_ts=slack_thread_ts,
+            page_id=page_id,
+        )
 
-        return page
+        return {
+            "id": page_id,
+            "url": page_url,
+        }
