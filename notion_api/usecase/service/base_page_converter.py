@@ -1,5 +1,6 @@
 from notion_client_wrapper.base_page import BasePage
 
+
 class BasePageConverter:
     @staticmethod
     def to_task(page: BasePage) -> dict:
@@ -9,9 +10,9 @@ class BasePageConverter:
         return {
             "id": page.id,
             "url": page.url,
-            "title": page.get_title().text,
-            "created_at": page.created_time.value.isoformat(),
-            "updated_at": page.last_edited_time.value.isoformat(),
+            "title": page.get_title_text(),
+            "created_at": page.get_created_at().isoformat(),
+            "updated_at": page.get_updated_at().isoformat(),
             "status": status.status_name,
             "task_kind": task_kind.name if task_kind is not None else None,
             "start_date": start_date.start if start_date is not None else None,
