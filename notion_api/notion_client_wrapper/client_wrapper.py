@@ -16,12 +16,13 @@ from notion_client_wrapper.property_translator import PropertyTranslator
 logger = logging.getLogger(__name__)
 
 class ClientWrapper:
-    def __init__(self, notion_secret: str):
-        self.client = Client(auth=notion_secret)
+    def __init__(self, client: Client) -> None:
+        self.client = client
 
     @staticmethod
     def get_instance() -> "ClientWrapper":
-        return ClientWrapper(notion_secret=os.getenv("NOTION_SECRET"))
+        client = Client(auth=os.getenv("NOTION_SECRET"))
+        return ClientWrapper(client)
 
 
     def retrieve_page(self, page_id: str) -> BasePage:
@@ -57,9 +58,22 @@ class ClientWrapper:
                 properties) > 0 else None,
         )
 
-    def retrieve_database(self, database_id: str, title: str | None = None) -> list[BasePage]:
+    def retrieve_database(
+            self,
+            database_id: str,
+            title: str | None = None,
+            properties: list[Property]|None = None) -> list[BasePage]:
         """ 指定されたデータベースのページを取得する """
-        results = self._database_query(database_id=database_id)
+        filter_param = {}
+        if properties is not None:
+            for prop in properties:
+                filter_param = {
+                    "property": prop.name,
+                    prop.type: {
+                        "equals": prop.value_for_filter(),
+                    },
+                }
+        results = self._database_query(database_id=database_id, filter_param=filter_param)
         pages: list[BasePage] = []
         for page_entity in results:
             page = self.__convert_page_model(page_entity=page_entity, include_children=False)
@@ -68,12 +82,13 @@ class ClientWrapper:
             pages = list(filter(lambda p: p.properties.get_title().text == title, pages))
         return pages
 
-    def _database_query(self, database_id: str, start_cursor: str | None = None) -> dict:
+    def _database_query(self, database_id: str, start_cursor: str | None = None, filter_param: dict|None=None) -> dict:
         results = []
         while True:
             data:dict = self.client.databases.query(
                 database_id=database_id,
                 start_cursor=start_cursor,
+                filter=filter_param if filter_param is not None and filter_param != {} else None,
             )
             results += data.get("results")
             if not data.get("has_more"):
@@ -159,7 +174,7 @@ class ClientWrapper:
 
 if __name__ == "__main__":
     # python -m notion_client_wrapper.client_wrapper
-    client = ClientWrapper(notion_secret=os.getenv("NOTION_SECRET"))
+    client = ClientWrapper(client=Client(auth=os.getenv("NOTION_SECRET")))
 
     # page = client.retrieve_page(page_id="b7576fbdde9b476f913924c1bd90b250")
     # print(page)
