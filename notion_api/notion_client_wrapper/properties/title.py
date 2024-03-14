@@ -1,6 +1,6 @@
 from dataclasses import dataclass
+
 from notion_client_wrapper.properties.property import Property
-from typing import Optional
 
 
 @dataclass
@@ -8,9 +8,9 @@ class Title(Property):
     text: str
     value: list[dict]
     type: str = "title"
-    mentioned_page_id: Optional[str] = None
+    mentioned_page_id: str | None = None
 
-    def __init__(self, name: str, id: Optional[str] = None, value: list[dict] = [], text: Optional[str] = None, mentioned_page_id: Optional[str] = None):
+    def __init__(self, name: str, id: str | None = None, value: list[dict] = [], text: str | None = None, mentioned_page_id: str | None = None):
         self.name = name
         self.id = id
         self.value = value
@@ -36,8 +36,8 @@ class Title(Property):
         values.append({
             "type": "text",
             "text": {
-                "content": self.text
-            }
+                "content": self.text,
+            },
         })
         if self.mentioned_page_id is not None:
             values.append({
@@ -45,19 +45,19 @@ class Title(Property):
                 "mention": {
                     "type": "page",
                     "page": {
-                        "id": self.mentioned_page_id
-                    }
+                        "id": self.mentioned_page_id,
+                    },
                 },
                 # "plain_text": self.text,
                 # "href": f"https://www.notion.so/{self.mentioned_page_id}"
             })
         result = {
-            "title": values
+            "title": values,
         }
         if self.id is not None:
             result["id"] = self.id
         return {
-            self.name: result
+            self.name: result,
         }
 
     @staticmethod
@@ -66,7 +66,7 @@ class Title(Property):
             name=name,
             id=param["id"],
             value=param["title"],
-            text="".join([item["plain_text"] for item in param["title"]])
+            text="".join([item["plain_text"] for item in param["title"]]),
         )
 
     @ staticmethod
