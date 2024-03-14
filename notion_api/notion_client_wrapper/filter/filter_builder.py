@@ -9,7 +9,9 @@ class FilterBuilder:
     def add_condition(self, condition: StringCondition) -> "FilterBuilder":
         return FilterBuilder(conditions=[*self.conditions, condition])
 
-    def build(self) -> dict:
+    def build(self) -> dict|None:
+        if len(self.conditions) == 0:
+            return None
         if len(self.conditions) == 1:
             return self.conditions[0].__dict__()
         return {
