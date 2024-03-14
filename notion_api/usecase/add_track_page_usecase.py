@@ -36,9 +36,10 @@ class AddTrackPageUsecase:
         logger.info(f"release_date: {release_date}")
 
         # データベースの取得
+        title = Title.from_plain_text(name="名前", text=track_name)
         searched_musics = self.client.retrieve_database(
             database_id=DatabaseType.MUSIC.value,
-            title=track_name,
+            properties=[title],
         )
         if len(searched_musics) > 0:
             logger.info("Track is already registered")
@@ -58,7 +59,7 @@ class AddTrackPageUsecase:
         # 新しいページを作成
         artist_name = ",".join(artists)
         properties=[
-                Title.from_plain_text(name="名前", text=track_name),
+                title,
                 Text.from_plain_text(name="Artist", text=artist_name),
             ]
         if spotify_url is not None:
