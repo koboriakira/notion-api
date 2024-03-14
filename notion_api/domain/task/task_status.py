@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Optional
+
 
 class TaskStatus(Enum):
     """
@@ -10,9 +10,9 @@ class TaskStatus(Enum):
     DONE = "Done"
 
     @staticmethod
-    def get_status_list(status_list: list[str]) -> list['TaskStatus']:
-        if len(status_list) == 0:
-            return [s for s in TaskStatus]
+    def get_status_list(status_list: list[str]|None) -> list["TaskStatus"]:
+        if status_list is not None or len(status_list) == 0:
+            return list(TaskStatus)
 
         result: list[TaskStatus] = []
         for status_str in status_list:
