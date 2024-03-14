@@ -50,5 +50,5 @@ class Number(Property):
             number=value,
         )
 
-    def value_for_filter(self) -> str:
-        raise NotImplementedError
+    def value_for_filter(self) -> int:
+        return self.number

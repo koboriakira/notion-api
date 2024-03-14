@@ -11,5 +11,5 @@ class Property(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def value_for_filter(self) -> str:
+    def value_for_filter(self):  # noqa: ANN201
         pass
