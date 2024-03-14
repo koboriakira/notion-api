@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from enum import Enum
 
-from notion_api.notion_client_wrapper.properties.property import Property
+from notion_client_wrapper.properties.property import Property
 
 from .condition import Condition
 
