@@ -85,4 +85,4 @@ class Title(Property):
         )
 
     def value_for_filter(self) -> str:
-        raise NotImplementedError
+        return self.text
