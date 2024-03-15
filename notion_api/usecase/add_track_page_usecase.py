@@ -5,6 +5,8 @@ from domain.database_type import DatabaseType
 from infrastructure.slack_tmp_client import SlackTmpClient
 from notion_client_wrapper.block import Paragraph
 from notion_client_wrapper.client_wrapper import ClientWrapper
+from notion_client_wrapper.filter.condition.string_condition import StringCondition
+from notion_client_wrapper.filter.filter_builder import FilterBuilder
 from notion_client_wrapper.properties import Cover, Date, Relation, Text, Title, Url
 from usecase.service.append_page_id_to_slack_context import AppendPageIdToSlackContext
 from usecase.service.tag_create_service import TagCreateService
@@ -37,9 +39,10 @@ class AddTrackPageUsecase:
 
         # データベースの取得
         title = Title.from_plain_text(name="名前", text=track_name)
+        filter_builder = FilterBuilder().add_condition(StringCondition.equal(property=title))
         searched_musics = self.client.retrieve_database(
             database_id=DatabaseType.MUSIC.value,
-            properties=[title],
+            filter_param=filter_builder.build(),
         )
         if len(searched_musics) > 0:
             logger.info("Track is already registered")

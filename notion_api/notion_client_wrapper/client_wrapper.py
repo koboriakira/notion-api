@@ -6,8 +6,6 @@ from notion_client import Client
 from notion_client_wrapper.base_operator import BaseOperator
 from notion_client_wrapper.base_page import BasePage
 from notion_client_wrapper.block import Block, BlockFactory
-from notion_client_wrapper.filter.condition.string_condition import StringCondition
-from notion_client_wrapper.filter.filter_builder import FilterBuilder
 from notion_client_wrapper.properties.cover import Cover
 from notion_client_wrapper.properties.icon import Icon
 from notion_client_wrapper.properties.notion_datetime import NotionDatetime
@@ -64,15 +62,10 @@ class ClientWrapper:
             self,
             database_id: str,
             title: str | None = None,
-            properties: list[Property]|None = None,
+            filter_param: dict|None = None,
             page_model: BasePage|None = None,
             ) -> list[BasePage]:
         """ 指定されたデータベースのページを取得する """
-        filter_builder = FilterBuilder()
-        if properties is not None:
-            for prop in properties:
-                filter_builder = filter_builder.add_condition(StringCondition.equal(property=prop))
-        filter_param = filter_builder.build()
         results = self._database_query(database_id=database_id, filter_param=filter_param)
         pages: list[BasePage] = []
         for page_entity in results:

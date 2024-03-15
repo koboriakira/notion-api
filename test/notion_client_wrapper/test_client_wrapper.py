@@ -4,6 +4,8 @@ import pytest
 from notion_api.domain.database_type import DatabaseType
 from notion_api.notion_client_wrapper.base_page import BasePage
 from notion_api.notion_client_wrapper.client_wrapper import ClientWrapper
+from notion_api.notion_client_wrapper.filter.condition.string_condition import StringCondition
+from notion_api.notion_client_wrapper.filter.filter_builder import FilterBuilder
 from notion_api.notion_client_wrapper.properties.title import Title
 from notion_api.notion_client_wrapper.properties.url import Url
 
@@ -25,11 +27,12 @@ class TestClientWrapper(TestCase):
     def test_1つの条件で絞り込む(self):
         # Given
         url = Url.from_url(name="Spotify", url="https://open.spotify.com/track/6tPlPsvzSM74vRVn9O5v9K")
+        filter_param = FilterBuilder().add_condition(StringCondition.equal(url)).build()
 
         # 音楽のページを取得してみる
         pages = self.suite.retrieve_database(
             database_id=DatabaseType.MUSIC.value,
-            properties=[url],
+            filter_param=filter_param,
         )
         self.assertEqual(1, len(pages))
         self.assertEqual("タバコロード 20", pages[0].get_title().text)
@@ -51,11 +54,12 @@ class TestClientWrapper(TestCase):
     def test_タイトルを使って絞り込む_titleをpropertyで(self):
         # Given
         title = Title.from_plain_text(name="名前", text="タバコロード 20")
+        filter_param = FilterBuilder().add_condition(StringCondition.equal(title)).build()
 
         # 音楽のページを取得してみる
         pages = self.suite.retrieve_database(
             database_id=DatabaseType.MUSIC.value,
-            properties=[title],
+            filter_param=filter_param,
         )
         self.assertEqual(1, len(pages))
         self.assertEqual("タバコロード 20", pages[0].get_title().text)
@@ -67,11 +71,13 @@ class TestClientWrapper(TestCase):
 
         # Given
         title = Title.from_plain_text(name="名前", text="タバコロード 20")
+        filter_param = FilterBuilder().add_condition(StringCondition.equal(title)).build()
+
 
         # When: モデルを指定して取得
         pages = self.suite.retrieve_database(
             database_id=DatabaseType.MUSIC.value,
-            properties=[title],
+            filter_param=filter_param,
             page_model=OriginalBasePage
         )
         self.assertIsInstance(pages[0], OriginalBasePage)
