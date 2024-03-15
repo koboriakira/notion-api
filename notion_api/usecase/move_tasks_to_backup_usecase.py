@@ -17,7 +17,7 @@ class MoveTasksToBackupUsecase:
         self.client = ClientWrapper.get_instance()
 
     def execute(self) -> None:
-        datetime = jst_now() - timedelta(days=2)
+        datetime = jst_now() - timedelta(days=14)
 
         # まず全てのタスクを集める
         all_pages = self.client.retrieve_database(database_id=DatabaseType.TASK.value)
