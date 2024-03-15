@@ -1,5 +1,7 @@
 from enum import Enum
 
+from notion_client_wrapper.properties.status import Status
+
 
 class TaskStatusType(Enum):
     """
@@ -21,3 +23,11 @@ class TaskStatusType(Enum):
                     result.append(status)
                     break
         return result
+
+class TaskStatus(Status):
+    def __init__(self, name: str, status_name: str) -> None:
+        super().__init__(name, status_name)
+
+    @staticmethod
+    def from_status_type(status_type: TaskStatusType) -> "TaskStatus":
+        return TaskStatus(name="ステータス", status_name=status_type.value)
