@@ -4,6 +4,7 @@ from notion_api.notion_client_wrapper.filter.condition.number_condition import N
 from notion_api.notion_client_wrapper.filter.condition.string_condition import StringCondition
 from notion_api.notion_client_wrapper.filter.filter_builder import FilterBuilder
 from notion_api.notion_client_wrapper.properties.number import Number
+from notion_api.notion_client_wrapper.properties.select import Select
 from notion_api.notion_client_wrapper.properties.status import Status
 from notion_api.notion_client_wrapper.properties.url import Url
 
@@ -61,7 +62,7 @@ class TestFilterBuilder(TestCase):
 
     def test_ステータス(self):
         # Given
-        status = Status.from_status_name(name="ステータス", status_name="ゴミ箱")
+        status = Status.from_status_name(name="ステータス", status_name="Done")
 
         # When
         actual = FilterBuilder().add_condition(StringCondition.not_equal(status)).build()
@@ -70,6 +71,27 @@ class TestFilterBuilder(TestCase):
         expected = {
             "property": "ステータス",
             "status": {
+                "does_not_equal": "Done"
+            }
+        }
+
+        self.assertEqual(expected, actual)
+
+    def test_セレクト(self):
+        # Given
+        status = Select(
+            name="タスク種別",
+            selected_name="ゴミ箱",
+            selected_id="123"
+        )
+
+        # When
+        actual = FilterBuilder().add_condition(StringCondition.not_equal(status)).build()
+
+        # Then
+        expected = {
+            "property": "タスク種別",
+            "select": {
                 "does_not_equal": "ゴミ箱"
             }
         }

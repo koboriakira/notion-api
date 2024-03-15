@@ -24,7 +24,7 @@ class StringCondition(Condition):
     @staticmethod
     def not_equal(property: Property) -> "StringCondition":
         return StringCondition._from_property(property, StringConditionType.NOT_EQUAL)
-    
+
     @staticmethod
     def _from_property(property: Property, condition_type: StringConditionType) -> "StringCondition":
         return StringCondition(
