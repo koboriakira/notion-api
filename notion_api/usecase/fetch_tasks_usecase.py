@@ -1,7 +1,7 @@
 from datetime import date
 
 from custom_logger import get_logger
-from domain.task.task_repository import TaskRepository, TaskRepositoryImpl
+from domain.task.task_repository import TaskRepository
 from usecase.service.base_page_converter import BasePageConverter
 from util.datetime import jst_today
 
@@ -9,6 +9,7 @@ logger = get_logger(__name__)
 
 class FetchTasksUsecase:
     def __init__(self, task_repository: TaskRepository|None=None) -> None:
+        from infrastructure.task.task_repository_impl import TaskRepositoryImpl
         self.task_repository = task_repository or TaskRepositoryImpl()
 
     def execute(

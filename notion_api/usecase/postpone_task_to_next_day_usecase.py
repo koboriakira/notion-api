@@ -48,6 +48,6 @@ class PostponeTaskToNextDayUsecase:
         return filtered_tasks
 
 if __name__ == "__main__":
-    # python -m usecase.postpone_task_to_next_day_usecase
+    # python -m notion_api.usecase.postpone_task_to_next_day_usecase
     usecase = PostponeTaskToNextDayUsecase()
     print(usecase.execute())
