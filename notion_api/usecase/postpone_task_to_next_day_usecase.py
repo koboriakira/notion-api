@@ -3,7 +3,7 @@ from datetime import timedelta
 
 from custom_logger import get_logger
 from domain.database_type import DatabaseType
-from domain.task import TaskStatus
+from domain.task.task_status import TaskStatusType
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper.properties import Date
 from usecase.service.base_page_converter import BasePageConverter
@@ -26,7 +26,7 @@ class PostponeTaskToNextDayUsecase:
         # 実施日が過去のタスクに絞る
         filtered_tasks = []
         for page in all_pages:
-            if page.get_status("ステータス").status_name == TaskStatus.DONE.value:
+            if page.get_status("ステータス").status_name == TaskStatusType.DONE.value:
                 continue
             start_date = page.get_date("実施日")
             if start_date.start is None:

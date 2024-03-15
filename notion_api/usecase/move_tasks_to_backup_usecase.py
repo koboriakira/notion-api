@@ -3,7 +3,7 @@ from datetime import timedelta
 
 from custom_logger import get_logger
 from domain.database_type import DatabaseType
-from domain.task import TaskStatus
+from domain.task.task_status import TaskStatusType
 from notion_client_wrapper.base_page import BasePage
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from util.datetime import jst_now
@@ -24,7 +24,7 @@ class MoveTasksToBackupUsecase:
         tasks: list[BasePage] = []
         for page in all_pages:
             # 未了のタスクは無視
-            if page.get_status("ステータス").status_name != TaskStatus.DONE.value:
+            if page.get_status("ステータス").status_name != TaskStatusType.DONE.value:
                 continue
             # 直近更新されたものは無視
             if not page.last_edited_time.is_between(DATETIME_2000, datetime):

@@ -5,7 +5,7 @@ from domain.task.task import Task
 from domain.task.task_kind import TaskKind
 from domain.task.task_repository import TaskRepository
 from domain.task.task_start_date import TaskStartDate
-from domain.task.task_status import TaskStatus
+from domain.task.task_status import TaskStatusType
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper.filter.condition.date_condition import DateCondition
 from notion_client_wrapper.filter.condition.string_condition import StringCondition
@@ -21,7 +21,7 @@ class TaskRepositoryImpl(TaskRepository):
             self,
             status_list: list[str]|None=None,
             start_date: date | None = None) -> list[Task]:
-        status_cond_list = TaskStatus.get_status_list(status_list)
+        status_cond_list = TaskStatusType.get_status_list(status_list)
         status_cond_name_list = [s.value for s in status_cond_list]
 
         # FIXME: 最終的にはretrieve_databaseのなかで検索が終わるようにする
