@@ -18,10 +18,10 @@ class Select(Property):
                  selected_color: str | None = None,
                  id: str | None = None):
         self.name = name
+        self.id = id
         self.selected_name = selected_name
         self.selected_id = selected_id if selected_id is not None else "default"
         self.selected_color = selected_color if selected_color is not None else "default"
-        self.id = id
 
     @ staticmethod
     def of(name: str, param: dict) -> Optional["Select"]:
@@ -50,4 +50,4 @@ class Select(Property):
         return {self.name: result}
 
     def value_for_filter(self) -> str:
-        raise NotImplementedError
+        return self.selected_name
