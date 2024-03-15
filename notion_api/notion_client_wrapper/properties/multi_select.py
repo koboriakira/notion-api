@@ -4,12 +4,12 @@ from notion_client_wrapper.properties.property import Property
 
 
 @dataclass(frozen=True)
-class MultiSelectElement(Property):
+class MultiSelectElement:
     id: str
     name: str
     color: str
 
-    def __dict__(self):
+    def __dict__(self) -> dict:
         return {
             "id": self.id,
             "name": self.name,
@@ -22,10 +22,11 @@ class MultiSelect(Property):
     values: list[MultiSelectElement]
     type: str = "multi_select"
 
-    def __init__(self,
-                 name: str,
-                 values: list[dict[str, str]],
-                 id: str | None = None):
+    def __init__(
+            self,
+            name: str,
+            values: list[dict[str, str]],
+            id: str | None = None) -> None:  # noqa: A002
         self.name = name
         self.values = values
         self.id = id
@@ -45,7 +46,7 @@ class MultiSelect(Property):
             id=param["id"],
         )
 
-    def __dict__(self):
+    def __dict__(self) -> dict:
         result = [e.__dict__() for e in self.values]
         return {self.name: result}
 
