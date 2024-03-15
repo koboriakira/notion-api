@@ -25,10 +25,10 @@ class TaskRepositoryImpl(TaskRepository):
         # FIXME: 最終的にはretrieve_databaseのなかで検索が終わるようにする
         task_kind = TaskKind.trash()
         filter_builder = FilterBuilder()
-        filter_builder = filter_builder.add_condition(StringCondition.not_equal(task_kind))
+        filter_builder = filter_builder.add_condition(StringCondition.not_equal(property=task_kind))
         all_tasks:list[Task] = self.client.retrieve_database(
             database_id=DatabaseType.TASK.value,
-            properties=filter_builder.build(),
+            filter_param=filter_builder.build(),
             page_model=Task)
         tasks = []
         for task in all_tasks:

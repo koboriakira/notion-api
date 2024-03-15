@@ -38,4 +38,4 @@ class TaskKind(Select):
 
     @staticmethod
     def trash() -> "TaskKind":
-        return TaskKind(name="種別", kind_type=TaskKindType.TRASH)
+        return TaskKind(name="タスク種別", kind_type=TaskKindType.TRASH)
