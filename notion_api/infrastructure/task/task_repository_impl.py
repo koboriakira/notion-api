@@ -2,9 +2,12 @@ from datetime import date
 
 from domain.database_type import DatabaseType
 from domain.task.task import Task
+from domain.task.task_kind import TaskKind
 from domain.task.task_repository import TaskRepository
 from domain.task.task_status import TaskStatus
 from notion_client_wrapper.client_wrapper import ClientWrapper
+from notion_client_wrapper.filter.condition.string_condition import StringCondition
+from notion_client_wrapper.filter.filter_builder import FilterBuilder
 
 
 class TaskRepositoryImpl(TaskRepository):
@@ -20,14 +23,15 @@ class TaskRepositoryImpl(TaskRepository):
         status_cond_name_list = [s.value for s in status_cond_list]
 
         # FIXME: 最終的にはretrieve_databaseのなかで検索が終わるようにする
+        task_kind = TaskKind.trash()
+        filter_builder = FilterBuilder()
+        filter_builder = filter_builder.add_condition(StringCondition.not_equal(task_kind))
         all_tasks:list[Task] = self.client.retrieve_database(
             database_id=DatabaseType.TASK.value,
+            properties=filter_builder.build(),
             page_model=Task)
         tasks = []
         for task in all_tasks:
-            if task.is_kind_trash():
-                continue
-
             if start_date is not None:
                 if not task.has_start_datetime():
                     continue

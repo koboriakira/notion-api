@@ -61,7 +61,6 @@ class TestClientWrapper(TestCase):
         self.assertEqual("タバコロード 20", pages[0].get_title().text)
 
     @pytest.mark.use_genuine_api()
-    @pytest.mark.learning()
     def test_返却値のモデルを指定できるようにする(self):
         class OriginalBasePage(BasePage):
             pass
@@ -76,3 +75,28 @@ class TestClientWrapper(TestCase):
             page_model=OriginalBasePage
         )
         self.assertIsInstance(pages[0], OriginalBasePage)
+
+    @pytest.mark.skip()
+    def test_select(self):
+        """Selectの選択肢を集めるためのテスト"""
+        target_database = DatabaseType.TASK
+        target_select_name = "タスク種別"
+
+        pages = self.suite.retrieve_database(
+            database_id=target_database.value,
+        )
+
+        result = {}
+        for page in pages:
+            select_property = page.get_select(name=target_select_name)
+            if select_property is None:
+                continue
+            if select_property.selected_id in result:
+                continue
+            selected_name = select_property.selected_name
+            selected_id = select_property.selected_id
+            result[selected_id] = selected_name
+        print(result)
+
+        # 内容を確認したいので、無理やりfailさせる
+        self.fail("動作確認用。テストは失敗しても問題ありません。")
