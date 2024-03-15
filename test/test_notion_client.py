@@ -10,7 +10,7 @@ class TestNotionClient(TestCase):
     def setUp(self):
         self.client = Client(auth=os.getenv("NOTION_SECRET"))
 
-    @pytest.mark.learning()
+    @pytest.mark.skip()
     def test_find_page(self):
         spotify_url = "https://open.spotify.com/track/6tPlPsvzSM74vRVn9O5v9K"
         # 音楽のページを取得してみる
@@ -24,3 +24,36 @@ class TestNotionClient(TestCase):
                 })
         print(data)
         self.assertEqual(1, len(data["results"]))
+
+    @pytest.mark.learning()
+    def test_current_tasks(self):
+        # 現在のタスクを取得してみる
+        filter_param = {
+            "and": [
+                {
+                    "property": "タスク種別",
+                    "select": {"does_not_equal": "ゴミ箱"}
+                },
+                {
+                    "property": "実施日",
+                    "date": {"equals": "2024-03-15"}
+                },
+                {
+                    "or": [
+                        {
+                            "property": "ステータス",
+                            "status": {"equals": "InProgress"}
+                        },
+                        {
+                            "property": "ステータス",
+                            "status": {"equals": "ToDo"}
+                        }
+                    ]
+                }
+            ]
+        }
+        data = self.client.databases.query(
+                database_id=DatabaseType.TASK.value,
+                filter=filter_param)
+        print(data)
+        self.fail()
