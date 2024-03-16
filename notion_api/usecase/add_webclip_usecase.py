@@ -89,6 +89,7 @@ class AddWebclipUsecase:
         self.inbox_service.add_inbox_task_by_page_id(
             page_id=page_id,
             page_url=page_url,
+            original_url=url,
             slack_channel=slack_channel,
             slack_thread_ts=slack_thread_ts,
         )
@@ -150,6 +151,7 @@ class AddWebclipUsecase:
         self.inbox_service.add_inbox_task_by_page_id(
             page_id=page_id,
             page_url=page_url,
+            original_url=url,
             slack_channel=slack_channel,
             slack_thread_ts=slack_thread_ts,
         )
