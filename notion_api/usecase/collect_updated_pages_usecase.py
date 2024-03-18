@@ -1,6 +1,5 @@
 from datetime import date as DateObject
-from datetime import datetime as DatetimeObject
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from custom_logger import get_logger
 from domain.database_type import DatabaseType
@@ -24,15 +23,15 @@ DATABASE_DICT = {
     "今日聴いた音楽": DatabaseType.MUSIC,
 }
 
-def filter_in_day(date: DateObject, page: BasePage) -> bool:
+def filter_in_day(target_date: DateObject, page: BasePage) -> bool:
     """ 指定された日付に作成もしくは更新されたページかどうかを判定する """
-    end = DatetimeObject(date.year, date.month, date.day, 22, 0, 0, tzinfo=JST)
+    end = datetime(target_date.year, target_date.month, target_date.day, 22, 0, 0, tzinfo=JST)
     start = end - timedelta(hours=24)
     return page.created_time.is_between(start=start, end=end) or page.last_edited_time.is_between(start=start, end=end)
 
-def filter_in_day_with_only_created(date: DateObject, page: BasePage) -> bool:
+def filter_in_day_with_only_created(target_date: DateObject, page: BasePage) -> bool:
     """ 指定された日付に作成されたページかどうかを判定する"""
-    start = DatetimeObject(date.year, date.month, date.day, 22, 0, 0, tzinfo=JST)
+    start = datetime(target_date.year, target_date.month, target_date.day, 22, 0, 0, tzinfo=JST)
     end = start + timedelta(hours=24)
     return page.created_time.is_between(start=start, end=end)
 
@@ -41,28 +40,33 @@ class CollectUpdatedPagesUsecase:
         self.client = ClientWrapper.get_instance()
         self.is_debug = is_debug
 
-    def execute(self, date: DateObject | None = None) -> None:
-        date = date if date is not None else jst_today()
-        daily_log = self.client.find_page(
-            database_id=DatabaseType.DAILY_LOG.value,
-            title=date.isoformat(),
-        )
-        if daily_log is None:
-            raise Exception("指定された日付のデイリーログは存在しません")
+    def execute(self, target_date: DateObject | None = None) -> None:
+        # 初期値の整理
+        target_date = target_date if target_date is not None else jst_today()
+
+        # デイリーログを取得
+        daily_log = self._find_daily_log(target_date=target_date)
         daily_log_id = daily_log.id
 
         for title, database_type in DATABASE_DICT.items():
-            pages = self._get_latest_items(date=date, database_type=database_type)
+            pages = self._get_latest_items(target_date=target_date, database_type=database_type)
             self._append_relation_to_daily_log(daily_log_id=daily_log_id, title=title, pages=pages)
 
-
-    def _get_latest_items(self, date: DateObject, database_type: DatabaseType, only_created: bool = False) -> list[BasePage]:
-        """ 指定されたカテゴリの、最近更新されたページIDを取得する """
-        pages = self.client.retrieve_database(
-            database_id=database_type.value,
+    def _find_daily_log(self, target_date: DateObject) -> BasePage:
+        """ 指定された日付のデイリーログを取得する """
+        daily_log = self.client.find_page(
+            database_id=DatabaseType.DAILY_LOG.value,
+            title=target_date.isoformat(),
         )
+        if daily_log is None:
+            raise Exception("指定された日付のデイリーログは存在しません")
+        return daily_log
+
+    def _get_latest_items(self, target_date: DateObject, database_type: DatabaseType, only_created: bool|None = None) -> list[BasePage]:
+        """ 指定されたカテゴリの、最近更新されたページIDを取得する """
+        pages = self.client.retrieve_database(database_id=database_type.value)
         filter_func = filter_in_day_with_only_created if only_created else filter_in_day
-        pages = list(filter(lambda page: filter_func(date=date, page=page), pages))
+        pages = list(filter(lambda page: filter_func(date=target_date, page=page), pages))
         return pages
 
     def _append_relation_to_daily_log(self, daily_log_id: str, title: str, pages: list[BasePage]) -> None:
@@ -85,6 +89,6 @@ class CollectUpdatedPagesUsecase:
             logger.info(f"ページを追加しました: {page.get_title().text}")
 
 if __name__ == "__main__":
-    # python -m usecase.collect_updated_pages_usecase
+    # python -m notion_api.usecase.collect_updated_pages_usecase
     usecase = CollectUpdatedPagesUsecase(is_debug=True)
-    usecase.execute()
+    usecase.execute(date=datetime(2024, 3, 18, tzinfo=JST).date())

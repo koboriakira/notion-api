@@ -6,11 +6,14 @@ from notion_client import Client
 from notion_client_wrapper.base_operator import BaseOperator
 from notion_client_wrapper.base_page import BasePage
 from notion_client_wrapper.block import Block, BlockFactory
+from notion_client_wrapper.filter.condition.string_condition import StringCondition
+from notion_client_wrapper.filter.filter_builder import FilterBuilder
 from notion_client_wrapper.properties.cover import Cover
 from notion_client_wrapper.properties.icon import Icon
 from notion_client_wrapper.properties.notion_datetime import NotionDatetime
 from notion_client_wrapper.properties.properties import Properties
 from notion_client_wrapper.properties.property import Property
+from notion_client_wrapper.properties.title import Title
 from notion_client_wrapper.property_translator import PropertyTranslator
 
 logger = logging.getLogger(__name__)
@@ -103,13 +106,19 @@ class ClientWrapper:
             start_cursor = data.get("next_cursor")
 
     def find_page(self, database_id: str, title: str) -> BasePage | None:
-        """ 指定されたデータベースのページを取得する。1ページのみ取得する。複数ある場合は最初に見つかったページを返す """
-        data = self.client.databases.query(database_id=database_id)
-        for page_entity in data["results"]:
-            page = self.__convert_page_model(page_entity=page_entity, include_children=False)
-            if page.properties.get_title().text == title:
-                return page
-        return None
+        """指定されたデータベースのページを取得する。1ページのみ取得する。複数ある場合は最初に見つかったページを返す"""
+        title_property = Title.from_plain_text(text=title)
+        filter_param = FilterBuilder().add_condition(
+            StringCondition.equal(property=title_property),
+        ).build()
+
+        pages = self.retrieve_database(
+            database_id=database_id,
+            filter_param=filter_param,
+        )
+        if len(pages) == 0:
+            return None
+        return pages[0]
 
     def list_blocks(self, block_id: str) -> list[Block]:
         """ 指定されたブロックの子ブロックを取得する """
