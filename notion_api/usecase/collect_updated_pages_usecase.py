@@ -1,4 +1,3 @@
-from datetime import date as DateObject
 from datetime import datetime, timedelta
 
 from custom_logger import get_logger
@@ -12,7 +11,7 @@ from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper.filter.condition.string_condition import StringCondition
 from notion_client_wrapper.properties.last_edited_time import LastEditedTime
 from notion_client_wrapper.properties.title import Title
-from util.datetime import JST, jst_today
+from util.datetime import JST, jst_now
 
 logger = get_logger(__name__)
 
@@ -37,44 +36,54 @@ class CollectUpdatedPagesUsecase:
         self.client = ClientWrapper.get_instance()
         self.is_debug = is_debug
 
-    def execute(self, target_date: DateObject | None = None) -> None:
+    def execute(self, target_datetime: datetime | None = None) -> None:
+        """
+        指定された日付のデイリーログに、指定されたカテゴリの最新ページを追加する
+
+        Args:
+            target_datetime (datetime, optional):
+                時刻。この時刻の24時間以内に更新されたページを取得する。
+                指定しない場合は現在時刻を使用する。
+        """
         # 初期値の整理
-        target_date = target_date if target_date is not None else jst_today()
+        target_datetime = target_datetime if target_datetime is not None else jst_now()
 
         # デイリーログを取得
-        daily_log = self._find_daily_log(target_date=target_date)
+        daily_log = self._find_daily_log(target_datetime=target_datetime)
         daily_log_id = daily_log.id
 
         for title, database_type in DATABASE_DICT.items():
-            pages = self._get_latest_items(target_date=target_date, database_type=database_type)
+            pages = self._get_latest_items(target_datetime=target_datetime, database_type=database_type)
             self._append_relation_to_daily_log(daily_log_id=daily_log_id, title=title, pages=pages)
 
-    def _find_daily_log(self, target_date: DateObject) -> BasePage:
+    def _find_daily_log(self, target_datetime: datetime) -> BasePage:
         """ 指定された日付のデイリーログを取得する """
-        title_property = Title.from_plain_text(name=DATABASE_TYPE_DAILY_LOG.title_name(), text=target_date.isoformat())
-        filter_param = FilterBuilder().add_condition(
-            StringCondition.equal(property=title_property),
-        ).build()
+        title_text = target_datetime.date().isoformat()
+        title_property = Title.from_plain_text(name=DATABASE_TYPE_DAILY_LOG.title_name(), text=title_text)
+        filter_param = FilterBuilder().add_condition(StringCondition.equal(property=title_property)).build()
 
         pages = self.client.retrieve_database(
             database_id=DATABASE_TYPE_DAILY_LOG.value,
             filter_param=filter_param,
         )
         if len(pages) == 0:
-            error_message = f"指定された日付のデイリーログは存在しません。デイリーログを作成してから再実行してください。: {target_date.isoformat()}"
+            error_message = f"指定された日付のデイリーログは存在しません。デイリーログを作成してから再実行してください。: {title_text}"
             raise ValueError(error_message)
         return pages[0]
 
-    def _get_latest_items(self, target_date: DateObject, database_type: DatabaseType) -> list[BasePage]:
+    def _get_latest_items(self, target_datetime: datetime, database_type: DatabaseType) -> list[BasePage]:
         """ 指定されたカテゴリの、最近更新されたページIDを取得する """
-        start = datetime(target_date.year, target_date.month, target_date.day, 0, 0, 0, tzinfo=JST)
-        last_edited_time_start = LastEditedTime.create(
-            name=database_type.name_last_edited_time(), value=start)
-        end = start + timedelta(hours=24)
-        last_edited_time_end = LastEditedTime.create(
-            name=database_type.name_last_edited_time(),value=end)
-        filter_param = FilterBuilder().add_condition(DateCondition.on_or_after(last_edited_time_start)).add_condition(DateCondition.on_or_before(last_edited_time_end)).build()
-        return self.client.retrieve_database(database_id=database_type.value, filter_param=filter_param)
+        start = target_datetime - timedelta(hours=24)
+        last_edited_time_start = LastEditedTime.create(value=start)
+        last_edited_time_end = LastEditedTime.create(value=target_datetime)
+
+        filter_builder = FilterBuilder()
+        filter_builder = filter_builder.add_condition(DateCondition.on_or_after(last_edited_time_start))
+        filter_builder = filter_builder.add_condition(DateCondition.on_or_before(last_edited_time_end))
+        filter_param = filter_builder.build()
+        return self.client.retrieve_database(
+            database_id=database_type.value,
+            filter_param=filter_param)
 
     def _append_relation_to_daily_log(self, daily_log_id: str, title: str, pages: list[BasePage]) -> None:
         if len(pages) == 0:
@@ -104,4 +113,4 @@ class CollectUpdatedPagesUsecase:
 if __name__ == "__main__":
     # python -m notion_api.usecase.collect_updated_pages_usecase
     usecase = CollectUpdatedPagesUsecase(is_debug=True)
-    usecase.execute(target_date=datetime(2024, 3, 18, tzinfo=JST).date())
+    usecase.execute(target_datetime=datetime(2024, 3, 18, 21, 0, 0, tzinfo=JST))
