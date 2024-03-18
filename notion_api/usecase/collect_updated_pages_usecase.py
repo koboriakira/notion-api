@@ -30,20 +30,10 @@ DATABASE_DICT = {
     "今日聴いた音楽": DatabaseType.MUSIC,
 }
 
-def filter_in_day(target_date: DateObject, page: BasePage) -> bool:
-    """ 指定された日付に作成もしくは更新されたページかどうかを判定する """
-    end = datetime(target_date.year, target_date.month, target_date.day, 22, 0, 0, tzinfo=JST)
-    start = end - timedelta(hours=24)
-    return page.created_time.is_between(start=start, end=end) or page.last_edited_time.is_between(start=start, end=end)
-
-def filter_in_day_with_only_created(target_date: DateObject, page: BasePage) -> bool:
-    """ 指定された日付に作成されたページかどうかを判定する"""
-    start = datetime(target_date.year, target_date.month, target_date.day, 22, 0, 0, tzinfo=JST)
-    end = start + timedelta(hours=24)
-    return page.created_time.is_between(start=start, end=end)
+LOG_FORMAT_APPEND_PAGE = "ページを追加しました: %s"
 
 class CollectUpdatedPagesUsecase:
-    def __init__(self, is_debug: bool = False):
+    def __init__(self, is_debug: bool|None = None) -> None:
         self.client = ClientWrapper.get_instance()
         self.is_debug = is_debug
 
@@ -71,7 +61,8 @@ class CollectUpdatedPagesUsecase:
             filter_param=filter_param,
         )
         if len(pages) == 0:
-            raise Exception("指定された日付のデイリーログは存在しません")
+            error_message = f"指定された日付のデイリーログは存在しません。デイリーログを作成してから再実行してください。: {target_date.isoformat()}"
+            raise ValueError(error_message)
         return pages[0]
 
     def _get_latest_items(self, target_date: DateObject, database_type: DatabaseType) -> list[BasePage]:
@@ -89,20 +80,26 @@ class CollectUpdatedPagesUsecase:
         if len(pages) == 0:
             return
         # 見出しタグをつける
-        heading = block.Heading.from_plain_text(heading_size=2, text=title)
-        if not self.is_debug:
-            self.client.append_block(block_id=daily_log_id,block=heading)
+        self._append_heading(block_id=daily_log_id, title=title)
 
         # バックリンクを記録する
         for page in pages:
-            rich_text = RichTextBuilder.get_instance().add_page_mention(page_id=page.id).build()
-            paragraph = block.Paragraph.from_rich_text(rich_text=rich_text)
-            if not self.is_debug:
-                self.client.append_block(
-                    block_id=daily_log_id,
-                    block=paragraph,
-                )
-            logger.info(f"ページを追加しました: {page.get_title().text}")
+            self._append_backlink(block_id=daily_log_id, page=page)
+
+    def _append_heading(self, block_id: str, title: str) -> None:
+        heading = block.Heading.from_plain_text(heading_size=2, text=title)
+        if not self.is_debug:
+            self.client.append_block(block_id=block_id, block=heading)
+
+    def _append_backlink(self, block_id: str, page: BasePage) -> None:
+        rich_text = RichTextBuilder.get_instance().add_page_mention(page_id=page.id).build()
+        paragraph = block.Paragraph.from_rich_text(rich_text=rich_text)
+        if not self.is_debug:
+            self.client.append_block(
+                block_id=block_id,
+                block=paragraph,
+            )
+        logger.info(LOG_FORMAT_APPEND_PAGE, page.get_title().text)
 
 if __name__ == "__main__":
     # python -m notion_api.usecase.collect_updated_pages_usecase
