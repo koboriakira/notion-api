@@ -8,6 +8,8 @@ from .condition import Condition
 
 class DateConditionType(Enum):
     EQUALS= "equals"
+    ON_OR_AFTER = "on_or_after"
+    ON_OR_BEFORE = "on_or_before"
 
 @dataclass(frozen=True)
 class DateCondition(Condition):
@@ -22,6 +24,24 @@ class DateCondition(Condition):
             property_name=property.name,
             property_type=property.type,
             condition_type=DateConditionType.EQUALS,
+            value=property.value_for_filter(),
+        )
+
+    @staticmethod
+    def on_or_after(property: Property) -> "DateCondition":
+        return DateCondition(
+            property_name=property.name,
+            property_type=property.type,
+            condition_type=DateConditionType.ON_OR_AFTER,
+            value=property.value_for_filter(),
+        )
+
+    @staticmethod
+    def on_or_before(property: Property) -> "DateCondition":
+        return DateCondition(
+            property_name=property.name,
+            property_type=property.type,
+            condition_type=DateConditionType.ON_OR_BEFORE,
             value=property.value_for_filter(),
         )
 
