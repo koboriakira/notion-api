@@ -1,13 +1,17 @@
+from datetime import datetime
 from unittest import TestCase
 
 import pytest
 from notion_api.domain.database_type import DatabaseType
 from notion_api.notion_client_wrapper.base_page import BasePage
 from notion_api.notion_client_wrapper.client_wrapper import ClientWrapper
+from notion_api.notion_client_wrapper.filter.condition.date_condition import DateCondition
 from notion_api.notion_client_wrapper.filter.condition.string_condition import StringCondition
 from notion_api.notion_client_wrapper.filter.filter_builder import FilterBuilder
+from notion_api.notion_client_wrapper.properties.last_edited_time import LastEditedTime
 from notion_api.notion_client_wrapper.properties.title import Title
 from notion_api.notion_client_wrapper.properties.url import Url
+from notion_api.util.datetime import JST
 
 
 class TestClientWrapper(TestCase):
@@ -81,6 +85,25 @@ class TestClientWrapper(TestCase):
             page_model=OriginalBasePage
         )
         self.assertIsInstance(pages[0], OriginalBasePage)
+
+    @pytest.mark.use_genuine_api()
+    def test_更新日時でしぼりこむ(self):
+        class OriginalBasePage(BasePage):
+            pass
+
+        # Given
+        date_property = LastEditedTime.create(value=datetime(2024, 3, 17, tzinfo=JST))
+        date_property2 = LastEditedTime.create(value=datetime(2024, 3, 18, tzinfo=JST))
+        filter_param = FilterBuilder().add_condition(DateCondition.on_or_after(date_property)).add_condition(DateCondition.on_or_before(date_property2)).build()
+
+        # When: モデルを指定して取得
+        pages = self.suite.retrieve_database(
+            database_id=DatabaseType.WEBCLIP.value,
+            filter_param=filter_param,
+        )
+        print(pages)
+        print(len(pages))
+
 
     @pytest.mark.skip()
     def test_select(self):
