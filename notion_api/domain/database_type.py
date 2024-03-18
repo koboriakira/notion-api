@@ -25,6 +25,64 @@ class DatabaseType(Enum):
     TASK =        "3b97e3ba-a84e-40a9-bdc8-99ee25d8e99d"
     TASK_BK =     "26594969-6394-41d8-b4bd-88ed801a2bdd"
 
+    def title_name(self) -> str:
+        """
+        タイトルのプロパティ名を返す
+        """
+        match self:
+            case DatabaseType.DAILY_LOG:
+                return "名前"
+            case DatabaseType.MUSIC:
+                return "名前"
+            case DatabaseType.TAG:
+                return "名前"
+            case DatabaseType.HABIT_TRACKER_ALLDAY:
+                return "名前"
+            case DatabaseType.HABIT_TRACKER_MORNING:
+                return "名前"
+            case DatabaseType.HABIT_TRACKER_NIGHT:
+                return "名前"
+            case DatabaseType.INGREDIENTS:
+                return "名前"
+            case DatabaseType.WEEKLY_LOG:
+                return "名前"
+            case DatabaseType.PROJECT:
+                return "名前"
+            case DatabaseType.ZETTLEKASTEN:
+                return "名前"
+            case DatabaseType.RECIPE:
+                return "名前"
+            case DatabaseType.PROWRESTLING:
+                return "名前"
+            case DatabaseType.BOOK:
+                return "名前"
+            case DatabaseType.WEBCLIP:
+                return "名前"
+            case DatabaseType.MONTHLY_LOG:
+                return "日付"
+            case DatabaseType.VIDEO:
+                return "名前"
+            case DatabaseType.TASK:
+                return "名前"
+            case DatabaseType.TASK_BK:
+                return "名前"
+
+    def name_last_edited_time(self) -> str:
+        """
+        更新日時のプロパティ名を返す
+        """
+        match self:
+            case _:
+                return "最終更新日時"
+
+    def name_created_time(self) -> str:
+        """
+        作成日時のプロパティ名を返す
+        """
+        match self:
+            case _:
+                return "作成日時"
+
     @staticmethod
     def ignore_updated_at() -> list[str]:
         """
