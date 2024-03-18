@@ -1,6 +1,5 @@
 import logging
-from typing import Optional
-from datetime import date as Date
+
 from interface import daily_log
 from util.environment import Environment
 
@@ -9,11 +8,12 @@ logging.basicConfig(level=logging.INFO)
 if Environment.is_dev():
     logging.basicConfig(level=logging.DEBUG)
 
-def handler(event: dict, context):
-    date_str: Optional[str] = event.get("date")
-    date = Date.fromisoformat(date_str) if date_str is not None else None
-    daily_log.collect_updated_pages(date=date)
+def handler(event: dict, context:dict) -> dict:  # noqa: ARG001
+    daily_log.collect_updated_pages()
+    return {
+        "statusCode": 200,
+    }
 
 if __name__ == "__main__":
-    # python -m collect_updated_pages
-    handler(event={"date": Date.today().isoformat()}, context={})
+    # python -m notion_api.collect_updated_pages
+    handler()
