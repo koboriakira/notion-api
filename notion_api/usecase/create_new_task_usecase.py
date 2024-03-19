@@ -6,18 +6,21 @@ from datetime import timedelta
 from domain.database_type import DatabaseType
 from notion_client_wrapper.base_page import BasePage
 from notion_client_wrapper.client_wrapper import ClientWrapper
-from notion_client_wrapper.properties import Date, Relation, Title
+from notion_client_wrapper.properties import Date, Relation, Status, Title
 
 
 class CreateNewTaskUsecase:
     def __init__(self):
         self.client = ClientWrapper.get_instance()
 
-    def handle(self,
-               title: str | None,
-               mentioned_page_id: str | None,
-               start_date: DateObject | DatetimeObject | None = None,
-               end_date: DateObject | DatetimeObject | None = None) -> dict:
+    def handle(
+            self,
+            title: str | None,
+            mentioned_page_id: str | None,
+            start_date: DateObject | DatetimeObject | None = None,
+            end_date: DateObject | DatetimeObject | None = None,
+            task_id: str | None = None,
+            status: str | None = None) -> dict:
         if title is None and mentioned_page_id is None:
             raise ValueError("title と mentioned_page_id のどちらかは必須です")
 
@@ -27,11 +30,22 @@ class CreateNewTaskUsecase:
             properties.append(Date.from_start_date(name="実施日", start_date=start_date))
         elif start_date is not None and end_date is not None:
             properties.append(Date.from_range(name="実施日", start=start_date, end=end_date))
+        if status is not None:
+            properties.append(Status.from_status_name(name="ステータス", status_name=status))
+
+        if task_id is not None:
+            page = self.client.retrieve_page(page_id=task_id)
+            _ = self.client.update_page(
+                page_id=task_id,
+                properties=properties)
+            return {
+                "id": page.id,
+                "url": page.url,
+            }
 
         page = self.client.create_page_in_database(
             database_id=DatabaseType.TASK.value,
             properties=properties)
-
         return {
             "id": page["id"],
             "url": page["url"],

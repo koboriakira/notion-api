@@ -1,10 +1,14 @@
-from pydantic import BaseModel
 from datetime import date as Date
 from datetime import datetime as Datetime
-from typing import Optional
+
+from pydantic import BaseModel
+
 
 class CreateNewTaskRequest(BaseModel):
-    title: Optional[str] = None
-    mentioned_page_id: Optional[str] = None
-    start_date: Optional[Date|Datetime] = None
-    end_date: Optional[Date|Datetime] = None
+    task_id: str | None = None
+    title: str | None = None
+    mentioned_page_id: str | None = None
+    start_date: Date | Datetime | None = None
+    end_date: Date | Datetime | None = None
+    status: str | None = None
+    url: str | None = None
