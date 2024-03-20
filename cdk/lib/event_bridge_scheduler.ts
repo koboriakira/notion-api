@@ -55,5 +55,12 @@ export const SCHEDULER_CONFIG = {
     year: "*",
     weekDay: "*",
   }),
-
+  // 毎日5時に実行
+  create_routine_task: events.Schedule.cron({
+    minute: "0",
+    hour: "20",
+    month: "*",
+    year: "*",
+    weekDay: "*",
+  }),
 };
