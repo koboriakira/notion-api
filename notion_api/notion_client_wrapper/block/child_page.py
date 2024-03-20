@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from notion_client_wrapper.block.block import Block
 
 
@@ -20,7 +19,7 @@ class ChildPage(Block):
             last_edited_time=block["last_edited_time"],
             has_children=block["has_children"],
             parent=block["parent"],
-            title=title
+            title=title,
         )
 
     @property
@@ -29,3 +28,6 @@ class ChildPage(Block):
 
     def to_dict_sub(self) -> dict:
         raise NotImplementedError
+
+    def to_slack_text(self) -> str:
+        raise ""

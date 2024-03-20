@@ -40,3 +40,7 @@ class Block(metaclass=ABCMeta):
     @abstractmethod
     def type(self) -> str:
         pass
+
+    @abstractmethod
+    def to_slack_text(self) -> str:
+        pass

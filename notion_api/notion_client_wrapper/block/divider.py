@@ -30,3 +30,6 @@ class Divider(Block):
 
     def to_dict_sub(self) -> dict:
         raise NotImplementedError
+
+    def to_slack_text(self) -> str:
+        raise "---"

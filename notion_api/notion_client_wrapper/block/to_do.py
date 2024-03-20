@@ -1,6 +1,6 @@
+
 from notion_client_wrapper.block.block import Block
 from notion_client_wrapper.block.rich_text import RichText
-from dataclasses import dataclass
 
 
 class ToDo(Block):
@@ -28,7 +28,7 @@ class ToDo(Block):
             parent=block["parent"],
             rich_text=rich_text,
             color=to_do["color"],
-            checked=to_do["checked"]
+            checked=to_do["checked"],
         )
 
     def type(self) -> str:
@@ -36,3 +36,6 @@ class ToDo(Block):
 
     def to_dict_sub(self) -> dict:
         raise NotImplementedError
+
+    def to_slack_text(self) -> str:
+        raise "[ ] " + self.rich_text.to_slack_text() if not self.checked else "[x] " + self.rich_text.to_slack_text()

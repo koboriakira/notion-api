@@ -1,5 +1,5 @@
+
 from notion_client_wrapper.block.block import Block
-from dataclasses import dataclass
 
 
 class Bookmark(Block):
@@ -23,7 +23,7 @@ class Bookmark(Block):
             has_children=block["has_children"],
             parent=block["parent"],
             caption=bookmark["caption"],
-            bookmark_url=bookmark["url"] if "url" in bookmark else ""
+            bookmark_url=bookmark["url"] if "url" in bookmark else "",
         )
 
     @property
@@ -32,3 +32,6 @@ class Bookmark(Block):
 
     def to_dict_sub(self) -> dict:
         raise NotImplementedError
+
+    def to_slack_text(self) -> str:
+        raise self.bookmark_url

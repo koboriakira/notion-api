@@ -1,5 +1,5 @@
+
 from notion_client_wrapper.block.block import Block
-from dataclasses import dataclass
 
 
 class Embed(Block):
@@ -23,7 +23,7 @@ class Embed(Block):
             has_children=block["has_children"],
             parent=block["parent"],
             caption=embed["caption"],
-            embed_url=embed["url"] if "url" in embed else ""
+            embed_url=embed["url"] if "url" in embed else "",
         )
 
     @property
@@ -32,3 +32,6 @@ class Embed(Block):
 
     def to_dict_sub(self) -> dict:
         raise NotImplementedError
+
+    def to_slack_text(self) -> str:
+        raise self.embed_url

@@ -1,6 +1,5 @@
+
 from notion_client_wrapper.block.block import Block
-from notion_client_wrapper.block.rich_text import RichText
-from dataclasses import dataclass
 
 
 class Table(Block):
@@ -30,7 +29,7 @@ class Table(Block):
             parent=block["parent"],
             table_width=table_width,
             has_column_header=has_column_header,
-            has_row_header=has_row_header
+            has_row_header=has_row_header,
         )
 
     @property
@@ -39,3 +38,6 @@ class Table(Block):
 
     def to_dict_sub(self) -> dict:
         raise NotImplementedError
+
+    def to_slack_text(self) -> str:
+        raise ""

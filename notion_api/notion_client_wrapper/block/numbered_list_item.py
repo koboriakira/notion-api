@@ -1,6 +1,6 @@
+
 from notion_client_wrapper.block.block import Block
 from notion_client_wrapper.block.rich_text import RichText
-from dataclasses import dataclass
 
 
 class NumberedListItem(Block):
@@ -25,7 +25,7 @@ class NumberedListItem(Block):
             has_children=block["has_children"],
             parent=block["parent"],
             rich_text=rich_text,
-            color=numbered_list_item["color"]
+            color=numbered_list_item["color"],
         )
 
     @property
@@ -34,3 +34,6 @@ class NumberedListItem(Block):
 
     def to_dict_sub(self) -> dict:
         raise NotImplementedError
+
+    def to_slack_text(self) -> str:
+        raise "1. " + self.rich_text.to_slack_text()

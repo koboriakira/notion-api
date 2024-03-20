@@ -28,8 +28,12 @@ class RichTextElement(metaclass=ABCMeta):
         result[self.get_type()] = self.to_dict_sub()
         return result
 
+    @abstractmethod
+    def to_slack_text(self) -> str:
+        pass
+
     @staticmethod
-    def from_entity(rich_text_element: dict) -> "RichTextElement":
+    def from_entity(rich_text_element: dict) -> "RichTextElement":  # noqa: C901
         """ dictからRichTextElementを生成する """
         type = rich_text_element["type"]
         if type == "text":
@@ -79,11 +83,9 @@ class RichTextElement(metaclass=ABCMeta):
         """ plain_textからRichTextElementを生成する """
         return RichTextTextElement.of(content=text)
 
+    @abstractmethod
     def to_plain_text(self) -> str:
         """ plain_textに変換する """
-        if isinstance(self, RichTextTextElement):
-            return self.content
-        raise NotImplementedError("not implemented yet")
 
     @ abstractmethod
     def get_type(self) -> str:
@@ -115,6 +117,12 @@ class RichTextTextElement(RichTextElement):
             content=content,
             link_url=link_url,
         )
+
+    def to_slack_text(self) -> str:
+        return self.content
+
+    def to_plain_text(self) -> str:
+        return self.content
 
     def get_type(self) -> str:
         return "text"
@@ -154,6 +162,12 @@ class RichTextMentionElement(RichTextElement):
         self.end_date = end_date
         self.link_preview_url = link_preview_url
         super().__init__(annotations, plain_text, href)
+
+    def to_slack_text(self) -> str:
+        raise NotImplementedError("not implemented yet")
+
+    def to_plain_text(self) -> str:
+        raise NotImplementedError("not implemented yet")
 
     @ staticmethod
     def of_database(database_id: str) -> "RichTextMentionElement":

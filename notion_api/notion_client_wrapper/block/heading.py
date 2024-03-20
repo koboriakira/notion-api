@@ -1,24 +1,23 @@
+
 from notion_client_wrapper.block.block import Block
 from notion_client_wrapper.block.rich_text import RichText
-from dataclasses import dataclass
-from typing import Optional
 
 
 class Heading(Block):
     heading_type: str  # heading_1, heading_2, heading_3
     rich_text: RichText
-    color: Optional[str] = None
+    color: str | None = None
 
     def __init__(self,
                  heading_type: str,
                  rich_text: RichText,
-                 color: Optional[str] = None,
-                 id: Optional[str] = None,
-                 archived: Optional[bool] = None,
-                 created_time: Optional[str] = None,
-                 last_edited_time: Optional[str] = None,
-                 has_children: Optional[bool] = None,
-                 parent: Optional[dict] = None):
+                 color: str | None = None,
+                 id: str | None = None,
+                 archived: bool | None = None,
+                 created_time: str | None = None,
+                 last_edited_time: str | None = None,
+                 has_children: bool | None = None,
+                 parent: dict | None = None):
         super().__init__(id, archived, created_time, last_edited_time, has_children, parent)
         self.heading_type = heading_type
         self.rich_text = rich_text
@@ -38,7 +37,7 @@ class Heading(Block):
             parent=block["parent"],
             heading_type=heading_type,
             rich_text=rich_text,
-            color=heading["color"]
+            color=heading["color"],
         )
 
     @staticmethod
@@ -61,3 +60,6 @@ class Heading(Block):
         if self.color is not None:
             result["color"] = self.color
         return result
+
+    def to_slack_text(self) -> str:
+        raise self.rich_text.to_slack_text()

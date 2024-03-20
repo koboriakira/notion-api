@@ -1,5 +1,5 @@
+
 from notion_client_wrapper.block.block import Block
-from dataclasses import dataclass
 
 
 class Video(Block):
@@ -25,7 +25,7 @@ class Video(Block):
             has_children=block["has_children"],
             parent=block["parent"],
             caption=video["caption"],
-            external_url=video_external["url"] if "url" in video_external else ""
+            external_url=video_external["url"] if "url" in video_external else "",
         )
 
     @property
@@ -34,3 +34,6 @@ class Video(Block):
 
     def to_dict_sub(self) -> dict:
         raise NotImplementedError
+
+    def to_slack_text(self) -> str:
+        raise self.external_url

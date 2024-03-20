@@ -1,6 +1,6 @@
+
 from notion_client_wrapper.block.block import Block
 from notion_client_wrapper.block.rich_text import RichText
-from dataclasses import dataclass
 
 
 class Callout(Block):
@@ -25,7 +25,7 @@ class Callout(Block):
             has_children=block["has_children"],
             parent=block["parent"],
             rich_text=rich_text,
-            color=callout["color"]
+            color=callout["color"],
         )
 
     @property
@@ -34,3 +34,6 @@ class Callout(Block):
 
     def to_dict_sub(self) -> dict:
         raise NotImplementedError
+
+    def to_slack_text(self) -> str:
+        raise self.rich_text.to_slack_text()

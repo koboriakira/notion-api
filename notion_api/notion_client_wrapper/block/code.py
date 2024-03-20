@@ -1,5 +1,5 @@
+
 from notion_client_wrapper.block.block import Block
-from dataclasses import dataclass
 
 
 class Code(Block):
@@ -24,3 +24,6 @@ class Code(Block):
 
     def to_dict_sub(self) -> dict:
         raise NotImplementedError
+
+    def to_slack_text(self) -> str:
+        raise ""

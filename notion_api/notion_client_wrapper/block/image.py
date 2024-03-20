@@ -1,5 +1,5 @@
+
 from notion_client_wrapper.block.block import Block
-from dataclasses import dataclass
 
 
 class Image(Block):
@@ -30,7 +30,7 @@ class Image(Block):
             parent=block["parent"],
             image_caption=image_caption,
             image_type=image_type,
-            image_file=image_file
+            image_file=image_file,
         )
 
     @property
@@ -39,3 +39,6 @@ class Image(Block):
 
     def to_dict_sub(self) -> dict:
         raise NotImplementedError
+
+    def to_slack_text(self) -> str:
+        raise ""

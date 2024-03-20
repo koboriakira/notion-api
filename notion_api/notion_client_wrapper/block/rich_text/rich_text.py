@@ -1,5 +1,6 @@
-from notion_client_wrapper.block.rich_text.rich_text_element import RichTextElement
 from dataclasses import dataclass
+
+from notion_client_wrapper.block.rich_text.rich_text_element import RichTextElement
 
 
 @dataclass(frozen=True)
@@ -20,3 +21,6 @@ class RichText:
 
     def to_dict(self) -> list[dict]:
         return list(map(lambda x: x.to_dict(), self.elements))
+
+    def to_slack_text(self) -> str:
+        return "".join([x.to_slack_text() for x in self.elements])

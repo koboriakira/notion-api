@@ -1,22 +1,21 @@
+
 from notion_client_wrapper.block.block import Block
 from notion_client_wrapper.block.rich_text import RichText
-from dataclasses import dataclass
-from typing import Optional
 
 
 class Paragraph(Block):
     rich_text: RichText
-    color: Optional[str] = None
+    color: str | None = None
 
     def __init__(self,
                  rich_text: RichText,
-                 color: Optional[str] = None,
-                 id: Optional[str] = None,
-                 archived: Optional[bool] = None,
-                 created_time: Optional[str] = None,
-                 last_edited_time: Optional[str] = None,
-                 has_children: Optional[bool] = None,
-                 parent: Optional[dict] = None):
+                 color: str | None = None,
+                 id: str | None = None,
+                 archived: bool | None = None,
+                 created_time: str | None = None,
+                 last_edited_time: str | None = None,
+                 has_children: bool | None = None,
+                 parent: dict | None = None):
         super().__init__(id, archived, created_time, last_edited_time, has_children, parent)
         self.rich_text = rich_text
         self.color = color
@@ -33,7 +32,7 @@ class Paragraph(Block):
             last_edited_time=block["last_edited_time"],
             has_children=block["has_children"],
             parent=block["parent"],
-            color=paragraph["color"]
+            color=paragraph["color"],
         )
 
     @staticmethod
@@ -56,3 +55,6 @@ class Paragraph(Block):
         if self.color is not None:
             result["color"] = self.color
         return result
+
+    def to_slack_text(self) -> str:
+        raise self.rich_text.to_slack_text()
