@@ -13,3 +13,9 @@ class TaskRepository(metaclass=ABCMeta):
             task_kind: TaskKindType|None=None,
             start_date: date | None = None) -> list[Task]:
         pass
+
+    @abstractmethod
+    def save(
+            self,
+            task: Task) -> Task:
+        pass

@@ -46,3 +46,8 @@ class TaskRepositoryImpl(TaskRepository):
             filter_param=filter_builder.build(),
             page_model=Task,
         )
+
+    def save(
+            self,
+            task: Task) -> Task:
+        pass
