@@ -15,7 +15,9 @@ class TaskRepository(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def save(
-            self,
-            task: Task) -> Task:
+    def save(self, task: Task) -> Task:
+        pass
+
+    @abstractmethod
+    def find_by_id(self, task_id: str) -> Task:
         pass

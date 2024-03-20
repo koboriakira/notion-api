@@ -55,9 +55,7 @@ class TaskRepositoryImpl(TaskRepository):
             page_model=Task,
         )
 
-    def save(
-            self,
-            task: Task) -> Task:
+    def save(self, task: Task) -> Task:
         if task.id is not None:
             _ = self.client.update_page(
                 page_id=task.id,
@@ -68,3 +66,6 @@ class TaskRepositoryImpl(TaskRepository):
             properties=task.properties.values,
             blocks=task.block_children)
         return self.client.retrieve_page(page_id=page["id"], page_model=Task)
+
+    def find_by_id(self, task_id: str) -> Task:
+        return self.client.retrieve_page(page_id=task_id, page_model=Task)
