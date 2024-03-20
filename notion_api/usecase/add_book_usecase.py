@@ -1,10 +1,10 @@
-from typing import Optional
 from datetime import date as Date
+
+from custom_logger import get_logger
 from domain.database_type import DatabaseType
 from notion_client_wrapper.client_wrapper import ClientWrapper
-from notion_client_wrapper.properties import Title, Text, Relation, Url, Date, Cover
+from notion_client_wrapper.properties import Relation, Text, Title, Url
 from usecase.service.tag_create_service import TagCreateService
-from custom_logger import get_logger
 
 logger = get_logger(__name__)
 
@@ -16,10 +16,10 @@ class AddBookUsecase:
     def execute(self,
                 title: str,
                 authors: list[str],
-                publisher: Optional[str] = None,
-                published_date: Optional[Date] = None,
-                image_url: Optional[str] = None,
-                url: Optional[str] = None,
+                publisher: str | None = None,
+                published_date: Date | None = None,
+                image_url: str | None = None,
+                url: str | None = None,
                 ) -> dict:
         logger.info("execute")
         logger.info(f"title: {title}")
@@ -39,7 +39,7 @@ class AddBookUsecase:
             book = searched_books[0]
             return {
                 "id": book.id,
-                "url": book.url
+                "url": book.url,
             }
         logger.info("Create a book page")
 
@@ -62,12 +62,12 @@ class AddBookUsecase:
 
         result = self.client.create_page_in_database(
             database_id=DatabaseType.BOOK.value,
-            properties=properties
+            properties=properties,
         )
         page_id = result["id"]
         page_url = result["url"]
 
         return {
             "id": page_id,
-            "url": page_url
+            "url": page_url,
         }
