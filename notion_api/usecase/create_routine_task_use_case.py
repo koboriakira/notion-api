@@ -23,12 +23,13 @@ class CreateRoutineTaskUseCase:
         next_task_titles = [task.get_title().text for task in next_tasks]
 
         for routine_task in routine_tasks:
-            if routine_task.title in next_task_titles:
-                print(f"Routine task {routine_task.title} is already exists.")
+            title = routine_task.get_title_text()
+            if title in next_task_titles:
+                print(f"Routine task {title} is already exists.")
                 continue
             next_date = routine_task.get_next_date()
             task = Task.create(
-                title=routine_task.title,
+                title=title,
                 task_kind_type=TaskKindType.SCHEDULE,
                 start_date=datetime.combine(next_date, datetime.min.time(), JST),
             )

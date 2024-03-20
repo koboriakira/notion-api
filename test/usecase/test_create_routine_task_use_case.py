@@ -17,7 +17,7 @@ class TestCreateRoutineTaskUseCase(TestCase):
         mock_task_repository = Mock(spec=TaskRepository)
         mock_routine_repository = Mock(spec=RoutineRepositoryImpl)
         mock_routine_repository.fetch_all.return_value = [
-            RoutineTask(title="ルーティンタスク", routine_type=RoutineType.DAILY)
+            RoutineTask.create(title="ルーティンタスク", routine_type=RoutineType.DAILY)
         ]
         mock_task_repository.search.return_value = []
         self.suite = CreateRoutineTaskUseCase(

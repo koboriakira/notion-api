@@ -22,10 +22,10 @@ class RoutineRepositoryImpl:
         self.client = notion_client_wrapper or ClientWrapper.get_instance()
 
     def fetch_all(self) -> list[RoutineTask]:
-        pages = self.client.retrieve_database(
+        return self.client.retrieve_database(
             database_id=DatabaseType.TASK_ROUTINE.value,
+            page_model=RoutineTask,
         )
-        return [RoutineConverter.convert(page) for page in pages]
 
 
 if __name__ == "__main__":
