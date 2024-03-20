@@ -1,8 +1,12 @@
-from mangum import Mangum
-from fastapi import FastAPI
 import logging
-from router import projects, healthcheck, recipes, music, webclip, video, prowrestling, tasks, page, task, books
+import time
+
+from fastapi import FastAPI, Request
+from mangum import Mangum
+
+from router import books, healthcheck, music, page, projects, prowrestling, recipes, task, tasks, video, webclip
 from util.environment import Environment
+from util.error_reporter import ErrorReporter
 
 # ログ
 logging.basicConfig(level=logging.INFO)
@@ -28,3 +32,16 @@ app.include_router(books.router, prefix="/books", tags=["books"])
 
 
 handler = Mangum(app, lifespan="off")
+
+# ミドルウェア
+@app.middleware("http")
+async def add_process_time_header(request: Request, call_next):  # noqa: ANN001, ANN201
+    try:
+        start_time = time.time()
+        response = await call_next(request)
+        process_time = int((time.time() - start_time) * 1000) # 整数値のミリ秒
+        response.headers["X-Process-Time"] = str(process_time)
+        return response
+    except:
+        ErrorReporter().execute()
+        raise
