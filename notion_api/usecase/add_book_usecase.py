@@ -7,6 +7,7 @@ from domain.database_type import DatabaseType
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper.filter.condition.string_condition import StringCondition
 from notion_client_wrapper.filter.filter_builder import FilterBuilder
+from usecase.service.inbox_service import InboxService
 from usecase.service.tag_create_service import TagCreateService
 
 logger = get_logger(__name__)
@@ -18,6 +19,7 @@ class AddBookUsecase:
             client_wrapper: ClientWrapper|None = None,
             tag_create_service: TagCreateService|None = None) -> None:
         self.book_api = book_api
+        self.inbox_service = InboxService()
         self.client = client_wrapper or ClientWrapper.get_instance()
         self.tag_create_service = tag_create_service or TagCreateService()
 
@@ -36,7 +38,9 @@ class AddBookUsecase:
             self,
             google_book_id: str | None = None,
             title: str | None = None,
-            isbn: str | None = None) -> dict:
+            isbn: str | None = None,
+            slack_channel: str|None = None,
+            slack_thread_ts: str|None = None) -> dict:
         book = self._find_book(google_book_id=google_book_id, title=title, isbn=isbn)
 
         # データベースの取得
@@ -72,6 +76,17 @@ class AddBookUsecase:
             cover=book.cover,
             properties=properties,
         )
+        page_id = result["id"]
+        page_url = result["url"]
+
+        self.inbox_service.add_inbox_task_by_page_id(
+            page_id=page_id,
+            page_url=page_url,
+            original_url=book.url.url if book.url else "",
+            slack_channel=slack_channel,
+            slack_thread_ts=slack_thread_ts,
+        )
+
         return {
             "id": result["id"],
             "url": result["url"],
