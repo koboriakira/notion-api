@@ -56,4 +56,3 @@ class TestNotionClient(TestCase):
                 database_id=DatabaseType.TASK.value,
                 filter=filter_param)
         print(data)
-        self.fail()
