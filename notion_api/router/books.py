@@ -1,10 +1,11 @@
+
 from fastapi import APIRouter, Header
-from typing import Optional
-from util.access_token import valid_access_token
-from router.response import BaseResponse
+
 from custom_logger import get_logger
-from router.request import AddBookRequest
 from interface import book
+from router.request import AddBookRequest
+from router.response import BaseResponse
+from util.access_token import valid_access_token
 
 logger = get_logger(__name__)
 
@@ -12,9 +13,12 @@ router = APIRouter()
 
 
 @router.post("/regist", response_model=BaseResponse)
-def add_track_page(request: AddBookRequest,
-                   access_token: Optional[str] = Header(None),
-                ):
+def add_track_page(
+        request: AddBookRequest,
+        access_token: str | None = Header(None)) -> BaseResponse:
     valid_access_token(access_token)
-    result = book.add_book_by_google_book_id(id=request.google_book_id, title=request.title)
+    result = book.add_book_by_google_book_id(
+        google_book_id=request.google_book_id,
+        title=request.title,
+        isbn=request.isbn)
     return BaseResponse(data=result)

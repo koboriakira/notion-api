@@ -1,6 +1,8 @@
+
 from pydantic import BaseModel
-from typing import Optional
+
 
 class AddBookRequest(BaseModel):
-    google_book_id: Optional[str] = None
-    title: Optional[str] = None
+    google_book_id: str | None = None
+    title: str | None = None
+    isbn: str | None = None
