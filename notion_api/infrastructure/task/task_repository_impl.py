@@ -50,4 +50,12 @@ class TaskRepositoryImpl(TaskRepository):
     def save(
             self,
             task: Task) -> Task:
-        pass
+        if task.id is not None:
+            _ = self.client.update_page(
+                page_id=task.id,
+                properties=task.properties.values)
+            return task
+        page = self.client.create_page_in_database(
+            database_id=DatabaseType.TASK.value,
+            properties=task.properties.values)
+        return self.client.retrieve_page(page_id=page["id"], page_model=Task)

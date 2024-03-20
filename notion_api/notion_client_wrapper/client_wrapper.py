@@ -25,10 +25,10 @@ class ClientWrapper:
         return ClientWrapper(client)
 
 
-    def retrieve_page(self, page_id: str) -> BasePage:
+    def retrieve_page(self, page_id: str, page_model: BasePage|None = None) -> BasePage:
         """ 指定されたページを取得する """
         page_entity = self.__retrieve_page(page_id=page_id)
-        return self.__convert_page_model(page_entity=page_entity, include_children=True)
+        return self.__convert_page_model(page_entity=page_entity, include_children=True, page_model=page_model)
 
     def update_page(self, page_id: str, properties: list[Property] = []) -> dict:
         """ 指定されたページを更新する """
