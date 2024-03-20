@@ -27,26 +27,37 @@ class TestNotionClient(TestCase):
 
     @pytest.mark.learning()
     def test_current_tasks(self):
-        # 現在のタスクを取得してみる
+        """現在のタスクを取得してみる"""
+        # pytest test/test_notion_client.py -k test_current_tasks
+
+        # test_client_wrapper.py::TestClientWrapper::test_現在のタスクを取得する と異なる結果が出たりするので注意。
         filter_param = {
             "and": [
                 {
                     "property": "タスク種別",
-                    "select": {"does_not_equal": "ゴミ箱"}
+                    "select": {
+                        "does_not_equal": "ゴミ箱"
+                    }
                 },
                 {
                     "property": "実施日",
-                    "date": {"equals": "2024-03-15"}
+                    "date": {
+                        "equals": "2024-03-20"
+                    }
                 },
                 {
                     "or": [
                         {
                             "property": "ステータス",
-                            "status": {"equals": "InProgress"}
+                            "status": {
+                                "equals": "ToDo"
+                        }
                         },
                         {
                             "property": "ステータス",
-                            "status": {"equals": "ToDo"}
+                            "status": {
+                                "equals": "InProgress"
+                            }
                         }
                     ]
                 }
@@ -55,4 +66,5 @@ class TestNotionClient(TestCase):
         data = self.client.databases.query(
                 database_id=DatabaseType.TASK.value,
                 filter=filter_param)
-        print(data)
+        print(len(data))
+        # self.fail()

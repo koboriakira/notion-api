@@ -104,6 +104,54 @@ class TestClientWrapper(TestCase):
         print(pages)
         print(len(pages))
 
+    @pytest.mark.use_genuine_api()
+    def test_現在のタスクを取得する(self):
+        # pytest test/notion_client_wrapper/test_client_wrapper.py::TestClientWrapper::test_現在のタスクを取得する
+        from notion_api.domain.task.task import Task
+
+        # Given
+        filter_param = {
+            "and": [
+                {
+                    "property": "タスク種別",
+                    "select": {
+                        "does_not_equal": "ゴミ箱"
+                    }
+                },
+                {
+                    "property": "実施日",
+                    "date": {
+                        "equals": "2024-03-20"
+                    }
+                },
+                {
+                    "or": [
+                        {
+                            "property": "ステータス",
+                            "status": {
+                                "equals": "ToDo"
+                        }
+                        },
+                        {
+                            "property": "ステータス",
+                            "status": {
+                                "equals": "InProgress"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+        # When
+        pages = self.suite.retrieve_database(
+            database_id=DatabaseType.TASK.value,
+            filter_param=filter_param,
+            page_model=Task,
+        )
+        print(pages)
+        print(len(pages))
+        # self.fail()
+
 
     @pytest.mark.slow()
     def test_select_kind_map(self):
