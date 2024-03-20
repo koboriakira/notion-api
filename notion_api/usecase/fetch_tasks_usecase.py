@@ -8,8 +8,7 @@ from util.datetime import jst_today
 logger = get_logger(__name__)
 
 class FetchTasksUsecase:
-    def __init__(self, task_repository: TaskRepository|None=None) -> None:
-        from infrastructure.task.task_repository_impl import TaskRepositoryImpl
+    def __init__(self, task_repository: TaskRepository) -> None:
         self.task_repository = task_repository or TaskRepositoryImpl()
 
     def execute(
