@@ -12,6 +12,14 @@ class TaskStatusType(Enum):
     DONE = "Done"
 
     @staticmethod
+    def from_text(text: str) -> "TaskStatusType":
+        for status_type in TaskStatusType:
+            if status_type.value == text:
+                return status_type
+        msg = f"TaskStatusType に存在しない値です: {text}"
+        raise ValueError(msg)
+
+    @staticmethod
     def get_status_list(status_list: list[str]|None) -> list["TaskStatusType"]:
         if status_list is not None or len(status_list) == 0:
             return list(TaskStatusType)

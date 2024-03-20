@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import date, datetime
 
 from domain.task.task_kind import TaskKind, TaskKindType
 from domain.task.task_start_date import TaskStartDate
@@ -18,9 +18,9 @@ COLUMN_NAME_KIND = "タスク種別"
 class Task(BasePage):
     @staticmethod
     def create(
-            title: str,
+            title: str|Title,
             task_kind_type: TaskKindType|None = None,
-            start_date: datetime|None = None,
+            start_date: datetime|date|None = None,
             status: TaskStatusType|None = None) -> "Task":
         properties = []
         properties.append(Title.from_plain_text(name=COLUMN_NAME_TITLE, text=title))

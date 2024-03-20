@@ -1,120 +1,44 @@
-from datetime import date as DateObject
-from datetime import datetime as Datetime
-from datetime import datetime as DatetimeObject
-from datetime import timedelta
+from datetime import date, datetime
 
-from domain.database_type import DatabaseType
-from notion_client_wrapper.base_page import BasePage
-from notion_client_wrapper.client_wrapper import ClientWrapper
-from notion_client_wrapper.properties import Date, Relation, Status, Title
+from domain.task.task import Task
+from domain.task.task_kind import TaskKindType
+from domain.task.task_repository import TaskRepository
+from domain.task.task_status import TaskStatusType
+from notion_client_wrapper.properties import Title
 
 
 class CreateNewTaskUsecase:
-    def __init__(self):
-        self.client = ClientWrapper.get_instance()
+    def __init__(self, task_repository: TaskRepository) -> None:
+        self.task_repository = task_repository
 
-    def handle(
+    def execute(  # noqa: PLR0913
             self,
             title: str | None,
             mentioned_page_id: str | None,
-            start_date: DateObject | DatetimeObject | None = None,
-            end_date: DateObject | DatetimeObject | None = None,
-            task_id: str | None = None,
-            status: str | None = None) -> dict:
-        if title is None and mentioned_page_id is None:
-            raise ValueError("title と mentioned_page_id のどちらかは必須です")
-
-        title = self._generate_title(title=title, mentioned_page_id=mentioned_page_id)
-        properties = [title]
-        if start_date is not None and end_date is None:
-            properties.append(Date.from_start_date(name="実施日", start_date=start_date))
-        elif start_date is not None and end_date is not None:
-            properties.append(Date.from_range(name="実施日", start=start_date, end=end_date))
-        if status is not None:
-            properties.append(Status.from_status_name(name="ステータス", status_name=status))
-
-        if task_id is not None:
-            page = self.client.retrieve_page(page_id=task_id)
-            _ = self.client.update_page(
-                page_id=task_id,
-                properties=properties)
-            return {
-                "id": page.id,
-                "url": page.url,
-            }
-
-        page = self.client.create_page_in_database(
-            database_id=DatabaseType.TASK.value,
-            properties=properties)
+            start_date: date | datetime | None = None,
+            status: str | None = None,
+            task_kind: str | None = None) -> dict:
+        title_property = self._generate_title(title=title, mentioned_page_id=mentioned_page_id)
+        task_kind_type = TaskKindType.from_text(task_kind) if task_kind is not None else None
+        task_status_type = TaskStatusType.from_text(status) if status is not None else None
+        task = Task.create(
+            title=title_property,
+            task_kind_type=task_kind_type,
+            start_date=start_date,
+            status=task_status_type,
+        )
+        task = self.task_repository.save(task)
         return {
-            "id": page["id"],
-            "url": page["url"],
+            "id": task.id,
+            "url": task.url,
         }
 
     def _generate_title(self, title: str | None, mentioned_page_id: str | None) -> Title:
+        if title is None and mentioned_page_id is None:
+            msg = "title と mentioned_page_id のどちらかは必須です"
+            raise ValueError(msg)
         if mentioned_page_id is None:
             return Title.from_plain_text(name="名前", text=title)
         if mentioned_page_id is not None:
             return Title.from_mentioned_page_id(name="名前", page_id=mentioned_page_id)
         raise NotImplementedError
-
-
-
-    def _find_weekly_log(self, year: int, isoweeknum: int) -> dict | None:
-        title=f"{year}-Week{isoweeknum}"
-        weekly_logs = self.client.retrieve_database(
-            database_id=DatabaseType.WEEKLY_LOG.value,
-            title=title,
-        )
-        if len(weekly_logs) == 0:
-            return None
-
-        weekly_log = weekly_logs[0]
-        title = weekly_log.get_title()
-        goal = weekly_log.get_text(name="目標")
-
-        return {
-            "id": weekly_log.id,
-            "url": weekly_log.url,
-            "title": title.text,
-            "goal": goal.text,
-        }
-
-    def _create_weekly_log_page(self, year: int, isoweeknum: int) -> dict:
-        title_text = f"{year}-Week{isoweeknum}"
-        start_date = Datetime.strptime(
-            f"{year}-{isoweeknum}-1", "%G-%V-%u")
-        start_date = Datetime.date(start_date)
-        end_date = start_date + timedelta(days=6)
-
-        return self.client.create_page_in_database(
-            database_id=DatabaseType.WEEKLY_LOG.value,
-            properties=[
-                Title.from_plain_text(
-                    name="名前", text=title_text),
-                Date.from_range(name="期間", start=start_date, end=end_date),
-            ],
-        )
-
-    def _find_daily_log(self, date: DateObject) -> BasePage | None:
-        daily_logs = self.client.retrieve_database(
-            database_id=DatabaseType.DAILY_LOG.value,
-            title=date.isoformat(),
-        )
-        if len(daily_logs) == 0:
-            return None
-        return daily_logs[0]
-
-    def _create_daily_log_page(self, date: DateObject, weekly_log_id: str) -> dict:
-        return self.client.create_page_in_database(
-            database_id=DatabaseType.DAILY_LOG.value,
-            properties=[
-                Date.from_start_date(name="日付", start_date=date),
-                Title.from_plain_text(name="名前", text=date.isoformat()),
-                Relation.from_id_list(name="💭 ウィークリーログ", id_list=[weekly_log_id])],
-        )
-
-if __name__ == "__main__":
-    # python -m usecase.create_daily_log_usecase
-    usecase = CreateDailyLogUsecase()
-    usecase.handle(year=2024, isoweeknum=3)

@@ -37,6 +37,14 @@ class TaskKindType(Enum):
     SOMEDAY_MAYBE = "いつかやる・たぶんやる"
     SCHEDULE = "スケジュール"
 
+    @staticmethod
+    def from_text(text: str) -> "TaskKindType":
+        for kind_type in TaskKindType:
+            if kind_type.value == text:
+                return kind_type
+        msg = f"TaskKindType に存在しない値です: {text}"
+        raise ValueError(msg)
+
     @property
     def selected_name(self) -> str:
         return self.value

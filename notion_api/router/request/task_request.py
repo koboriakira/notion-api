@@ -12,3 +12,4 @@ class CreateNewTaskRequest(BaseModel):
     end_date: Date | Datetime | None = None
     status: str | None = None
     url: str | None = None
+    task_kind: str | None = None
