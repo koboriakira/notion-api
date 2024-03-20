@@ -32,7 +32,7 @@ class TestCreateRoutineTaskUseCase(TestCase):
         # Then
         expected_task = Task.create(
             title="ルーティンタスク",
-            task_kind_type=TaskKindType.NEXT_ACTION,
+            task_kind_type=TaskKindType.SCHEDULE,
             start_date=jst_today_datetime(),
         )
         self.suite.task_repository.save.assert_called_once_with(task=expected_task)

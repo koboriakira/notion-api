@@ -132,4 +132,4 @@ class TestClientWrapper(TestCase):
         print(json.dumps(result, indent=2, ensure_ascii=False))
 
         # 内容を確認したいので、無理やりfailさせる
-        self.fail("動作確認用。テストは失敗しても問題ありません。")
+        # self.fail("動作確認用。テストは失敗しても問題ありません。")

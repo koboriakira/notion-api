@@ -23,6 +23,10 @@ kind_map = {
     "selected_id": "8c1685c7-5398-4cea-b950-b874501a7713",
     "selected_color": "gray",
   },
+  "スケジュール": {
+    "selected_id": "a6e6329d-f547-44d4-b418-ac239dd88632",
+    "selected_color": "blue",
+  },
 }
 
 class TaskKindType(Enum):
@@ -31,6 +35,7 @@ class TaskKindType(Enum):
     DO_NOW = "今すぐやる"
     NEXT_ACTION = "次にとるべき行動リスト"
     SOMEDAY_MAYBE = "いつかやる・たぶんやる"
+    SCHEDULE = "スケジュール"
 
     @property
     def selected_name(self) -> str:
