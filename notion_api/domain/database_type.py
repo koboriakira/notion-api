@@ -24,6 +24,7 @@ class DatabaseType(Enum):
     VIDEO =       "e84f3d8b-7cf3-4e3c-b55e-7ff251064149"
     TASK =        "3b97e3ba-a84e-40a9-bdc8-99ee25d8e99d"
     TASK_BK =     "26594969-6394-41d8-b4bd-88ed801a2bdd"
+    TASK_ROUTINE = "d21db86c-9203-4ff4-9899-9d62354e8fe1"
 
     def title_name(self) -> str:
         """
