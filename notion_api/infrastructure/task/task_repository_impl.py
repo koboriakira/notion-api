@@ -2,7 +2,7 @@ from datetime import date
 
 from domain.database_type import DatabaseType
 from domain.task.task import Task
-from domain.task.task_kind import TaskKind
+from domain.task.task_kind import TaskKind, TaskKindType
 from domain.task.task_repository import TaskRepository
 from domain.task.task_start_date import TaskStartDate
 from domain.task.task_status import TaskStatus, TaskStatusType
@@ -21,13 +21,18 @@ class TaskRepositoryImpl(TaskRepository):
     def search(
             self,
             status_list: list[str]|None=None,
+            task_kind: TaskKindType|None=None,
             start_date: date | None = None) -> list[Task]:
-        task_kind = TaskKind.trash()
+        task_kind_trash = TaskKind.trash()
         filter_builder = FilterBuilder()
-        filter_builder = filter_builder.add_condition(StringCondition.not_equal(property=task_kind))
+        filter_builder = filter_builder.add_condition(StringCondition.not_equal(property=task_kind_trash))
         if start_date is not None:
             task_start_date = TaskStartDate.create(start_date)
             filter_builder = filter_builder.add_condition(DateCondition.equal(property=task_start_date))
+
+        if task_kind is not None:
+            task_kind_property = TaskKind.create(task_kind)
+            filter_builder = filter_builder.add_condition(StringCondition.equal(property=task_kind_property))
 
         if status_list is not None and len(status_list) > 0:
             status_cond_list = TaskStatusType.get_status_list(status_list)

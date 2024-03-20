@@ -12,10 +12,9 @@ class RoutineConverter:
         routine_type = page.get_select("周期")
         if routine_type is None:
             return None
-        return RoutineTask(
+        return RoutineTask.create(
             title=title,
-            routine_type=routine_type.selected_name,
-        )
+            routine_type_text=routine_type.selected_name)
 
 
 class RoutineRepositoryImpl:

@@ -56,6 +56,6 @@ class RoutineTask:
             title=title,
             routine_type=RoutineType.from_text(routine_type_text))
 
-    def needs_today(self) -> bool:
-        today = jst_today()
-        next_date = self.routine_type.next_date()
+    def get_next_date(self) -> date:
+        basis_date = jst_today()
+        return self.routine_type.next_date(basis_date)
