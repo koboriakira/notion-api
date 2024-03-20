@@ -4,10 +4,10 @@ from domain.task.task_kind import TaskKindType
 from domain.task.task_repository import TaskRepository
 from infrastructure.task.routine_repository_impl import RoutineRepositoryImpl
 from notion_api.domain.task.task import Task
-from util.datetime import jst_today
+from util.datetime import jst_today, jst_today_datetime
 
 TODAY = jst_today()
-from datetime import datetime
+
 
 
 class CreateRoutineTaskUseCase:
@@ -32,7 +32,7 @@ class CreateRoutineTaskUseCase:
                 task = Task.create(
                     title=routine_task.title,
                     task_kind_type=TaskKindType.NEXT_ACTION,
-                    start_date=datetime(TODAY.year, TODAY.month, TODAY.day),
+                    start_date=jst_today_datetime(),
                 )
                 self.task_repository.save(task=task)
                 continue

@@ -1,6 +1,5 @@
 
 
-from datetime import datetime
 from unittest import TestCase
 from unittest.mock import Mock
 
@@ -10,6 +9,7 @@ from notion_api.domain.task.task_kind import TaskKindType
 from notion_api.domain.task.task_repository import TaskRepository
 from notion_api.infrastructure.task.routine_repository_impl import RoutineRepositoryImpl
 from notion_api.usecase.create_routine_task_use_case import CreateRoutineTaskUseCase
+from notion_api.util.datetime import jst_today_datetime
 
 
 class TestCreateRoutineTaskUseCase(TestCase):
@@ -33,6 +33,6 @@ class TestCreateRoutineTaskUseCase(TestCase):
         expected_task = Task.create(
             title="ルーティンタスク",
             task_kind_type=TaskKindType.NEXT_ACTION,
-            start_date=datetime.now().replace(hour=0, minute=0, second=0, microsecond=0),
+            start_date=jst_today_datetime(),
         )
         self.suite.task_repository.save.assert_called_once_with(task=expected_task)
