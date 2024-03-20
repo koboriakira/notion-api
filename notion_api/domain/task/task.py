@@ -22,8 +22,9 @@ class Task(BasePage):
             task_kind_type: TaskKindType|None = None,
             start_date: datetime|date|None = None,
             status: TaskStatusType|None = None) -> "Task":
-        properties = []
-        properties.append(Title.from_plain_text(name=COLUMN_NAME_TITLE, text=title))
+        properties = [
+            title if isinstance(title, Title) else Title.from_plain_text(name=COLUMN_NAME_TITLE, text=title),
+        ]
         if task_kind_type is not None:
             properties.append(TaskKind.create(task_kind_type))
         if start_date is not None:
