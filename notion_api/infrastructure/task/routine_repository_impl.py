@@ -25,6 +25,7 @@ class RoutineRepositoryImpl:
         return self.client.retrieve_database(
             database_id=DatabaseType.TASK_ROUTINE.value,
             page_model=RoutineTask,
+            include_children=True,
         )
 
 

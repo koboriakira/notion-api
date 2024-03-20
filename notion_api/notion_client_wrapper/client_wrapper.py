@@ -65,18 +65,21 @@ class ClientWrapper:
             self.append_blocks(block_id=result["id"], blocks=blocks)
         return result
 
-    def retrieve_database(
+    def retrieve_database(  # noqa: PLR0913
             self,
             database_id: str,
             title: str | None = None,
             filter_param: dict|None = None,
             page_model: BasePage|None = None,
-            ) -> list[BasePage]:
+            include_children: bool|None=None) -> list[BasePage]:
         """ 指定されたデータベースのページを取得する """
         results = self._database_query(database_id=database_id, filter_param=filter_param)
         pages: list[BasePage] = []
         for page_entity in results:
-            page = self.__convert_page_model(page_entity=page_entity, include_children=False, page_model=page_model)
+            page = self.__convert_page_model(
+                page_entity=page_entity,
+                include_children=include_children,
+                page_model=page_model)
             pages.append(page)
         if title is not None:
             pages = list(filter(lambda p: p.properties.get_title().text == title, pages))
@@ -130,7 +133,7 @@ class ClientWrapper:
         """ 指定されたブロックに子ブロックを追加する """
         return self.__append_block_children(
             block_id=block_id,
-            children=list(map(lambda b: b.to_dict(), blocks)),
+            children=[b.to_dict(for_create=True) for b in blocks],
         )
 
     def append_comment(self, page_id: str, text: str):
