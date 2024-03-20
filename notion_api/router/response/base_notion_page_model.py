@@ -1,7 +1,7 @@
 from datetime import datetime as DateTime
-from pydantic import BaseModel, Field
-from typing import Any
-from router.response.base_response import BaseResponse
+
+from pydantic import BaseModel
+
 
 class BaseNotionPageModel(BaseModel):
     id: str
@@ -9,3 +9,4 @@ class BaseNotionPageModel(BaseModel):
     title: str
     created_at: DateTime
     updated_at: DateTime
+    text: str | None

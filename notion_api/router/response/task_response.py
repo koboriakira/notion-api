@@ -42,6 +42,7 @@ class Task(BaseNotionPageModel):
             start_date=convert_to_datetime(params.get("start_date")),
             end_date=convert_to_datetime(params.get("end_date")),
             feeling=params.get("feeling"),
+            text=params.get("text"),
         )
 
 class TaskResponse(BaseResponse):
