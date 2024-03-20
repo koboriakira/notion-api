@@ -1,13 +1,16 @@
 from abc import ABCMeta, abstractmethod
-from typing import Optional
 
 
 class RichTextElement(metaclass=ABCMeta):
-    annotations: Optional[dict[str, bool]]
-    plain_text: Optional[dict[str, bool]]
-    href: Optional[dict[str, bool]]
+    annotations: dict[str, bool] | None
+    plain_text: dict[str, bool] | None
+    href: dict[str, bool] | None
 
-    def __init__(self, annotations: Optional[dict[str, bool]] = None, plain_text: Optional[dict[str, bool]] = None, href: Optional[dict[str, bool]] = None):
+    def __init__(
+            self,
+            annotations: dict[str, bool] | None = None,
+            plain_text: dict[str, bool] | None = None,
+            href: dict[str, bool] | None = None) -> None:
         self.annotations = annotations
         self.plain_text = plain_text
         self.href = href
@@ -33,12 +36,12 @@ class RichTextElement(metaclass=ABCMeta):
             text = rich_text_element["text"]
             return RichTextTextElement(
                 content=text["content"],
-                link_url=text["link"]["url"] if "link" in text and text["link"] else None,
+                link_url=text["link"]["url"] if text.get("link") else None,
                 annotations=rich_text_element["annotations"],
                 plain_text=rich_text_element["plain_text"],
-                href=rich_text_element["href"]
+                href=rich_text_element["href"],
             )
-        elif type == "mention":
+        if type == "mention":
             mention = rich_text_element["mention"]
             mention_type = mention["type"]
             if mention_type in ["database", "page"]:
@@ -47,28 +50,27 @@ class RichTextElement(metaclass=ABCMeta):
                     object_id=mention[mention_type]["id"],
                     annotations=rich_text_element["annotations"],
                     plain_text=rich_text_element["plain_text"],
-                    href=rich_text_element["href"]
+                    href=rich_text_element["href"],
                 )
-            elif mention_type == "date":
+            if mention_type == "date":
                 return RichTextMentionElement(
                     mention_type=mention_type,
                     start_date=mention["date"]["start"],
                     end_date=mention["date"]["end"],
                     annotations=rich_text_element["annotations"],
                     plain_text=rich_text_element["plain_text"],
-                    href=rich_text_element["href"]
+                    href=rich_text_element["href"],
                 )
-            elif mention_type == "link_preview":
+            if mention_type == "link_preview":
                 return RichTextMentionElement(
                     mention_type=mention_type,
                     link_preview_url=mention["link_preview"]["url"],
                     annotations=rich_text_element["annotations"],
                     plain_text=rich_text_element["plain_text"],
-                    href=rich_text_element["href"]
+                    href=rich_text_element["href"],
                 )
-            else:
-                raise Exception("invalid mention type")
-        elif type == "equation":
+            raise Exception("invalid mention type")
+        if type == "equation":
             raise NotImplementedError("equation is not implemented yet")
         raise Exception("invalid type")
 
@@ -86,28 +88,32 @@ class RichTextElement(metaclass=ABCMeta):
     @ abstractmethod
     def get_type(self) -> str:
         """ text, mention, equationのどれかを返す """
-        pass
 
     @ abstractmethod
     def to_dict_sub(self) -> str:
         """ Text, Mention, Equationのそれぞれで実装する """
-        pass
 
 
 class RichTextTextElement(RichTextElement):
     content: str
-    link_url: Optional[str] = None
+    link_url: str | None = None
 
-    def __init__(self, content: str, link_url: Optional[str] = None, annotations: Optional[dict[str, bool]] = None, plain_text: Optional[dict[str, bool]] = None, href: Optional[dict[str, bool]] = None):
+    def __init__(
+            self,
+            content: str,
+            link_url: str | None = None,
+            annotations: dict[str, bool] | None = None,
+            plain_text: dict[str, bool] | None = None,
+            href: dict[str, bool] | None = None) -> None:
         self.content = content
         self.link_url = link_url
         super().__init__(annotations, plain_text, href)
 
     @ staticmethod
-    def of(content: str, link_url: Optional[str] = None) -> "RichTextTextElement":
+    def of(content: str, link_url: str | None = None) -> "RichTextTextElement":
         return RichTextTextElement(
             content=content,
-            link_url=link_url
+            link_url=link_url,
         )
 
     def get_type(self) -> str:
@@ -119,7 +125,7 @@ class RichTextTextElement(RichTextElement):
         }
         if self.link_url is not None:
             result["link"] = {
-                "url": self.link_url
+                "url": self.link_url,
             }
         return result
 
@@ -128,20 +134,20 @@ class RichTextMentionElement(RichTextElement):
     # TODO: 日付やリンクプレビューなどもあるみたい
     # refs: https://developers.notion.com/reference/rich-text#mention
     mention_type: str  # database, page, date, link_preview
-    object_id: Optional[str]  # database,pageのどちらかで利用。database_idまたはpage_id
-    start_date: Optional[str] = None  # dateのみ利用
-    end_date: Optional[str] = None  # dateのみ利用
-    link_preview_url: Optional[str] = None  # link_previewのみ利用
+    object_id: str | None  # database,pageのどちらかで利用。database_idまたはpage_id
+    start_date: str | None = None  # dateのみ利用
+    end_date: str | None = None  # dateのみ利用
+    link_preview_url: str | None = None  # link_previewのみ利用
 
-    def __init__(self,
+    def __init__(self,  # noqa: PLR0913
                  mention_type: str,
-                 object_id: Optional[str] = None,
-                 start_date: Optional[str] = None,
-                 end_date: Optional[str] = None,
-                 link_preview_url: Optional[str] = None,
-                 annotations: Optional[dict[str, bool]] = None,
-                 plain_text: Optional[dict[str, bool]] = None,
-                 href: Optional[dict[str, bool]] = None):
+                 object_id: str | None = None,
+                 start_date: str | None = None,
+                 end_date: str | None = None,
+                 link_preview_url: str | None = None,
+                 annotations: dict[str, bool] | None = None,
+                 plain_text: dict[str, bool] | None = None,
+                 href: dict[str, bool] | None = None) -> None:
         self.mention_type = mention_type
         self.object_id = object_id
         self.start_date = start_date
@@ -153,14 +159,14 @@ class RichTextMentionElement(RichTextElement):
     def of_database(database_id: str) -> "RichTextMentionElement":
         return RichTextMentionElement(
             mention_type="database",
-            object_id=database_id
+            object_id=database_id,
         )
 
     @ staticmethod
     def of_page(page_id: str) -> "RichTextMentionElement":
         return RichTextMentionElement(
             mention_type="page",
-            object_id=page_id
+            object_id=page_id,
         )
 
     def get_type(self) -> str:
@@ -173,7 +179,7 @@ class RichTextMentionElement(RichTextElement):
         }
         if self.mention_type in ["database", "page"]:
             result[self.mention_type] = {
-                "id": self.object_id
+                "id": self.object_id,
             }
 
         return result
