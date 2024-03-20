@@ -21,11 +21,23 @@ class Properties:
             values.append(Property.from_dict(key, value))
         return Properties(values=values)
 
+    def append_property(self, prop: Property) -> "Properties":
+        props = []
+
+        for original_prop in self.values:
+            if prop.name == original_prop.name:
+                props.append(prop)
+            else:
+                props.append(original_prop)
+
+        return Properties(values=props)
+
     def get_title(self) -> Title:
         for value in self.values:
             if isinstance(value, Title):
                 return value
-        raise Exception(f"Title property not found. properties: {self.values}")
+        msg = f"Title property not found. properties: {self.values}"
+        raise Exception(msg)
 
     def get_property(self, name: str, instance_class: type) -> Property | None:
         for value in self.values:
