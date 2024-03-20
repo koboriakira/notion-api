@@ -106,11 +106,11 @@ class TestClientWrapper(TestCase):
 
 
     @pytest.mark.slow()
-    def test_select(self):
+    def test_select_kind_map(self):
         """Selectの選択肢を集めるためのテスト"""
-        # pytest test/notion_client_wrapper/test_client_wrapper.py::TestClientWrapper::test_select
-        target_database = DatabaseType.TASK
-        target_select_name = "タスク種別"
+        # pytest test/notion_client_wrapper/test_client_wrapper.py::TestClientWrapper::test_select_kind_map
+        target_database = DatabaseType.TASK_ROUTINE
+        target_select_name = "周期"
 
         pages = self.suite.retrieve_database(
             database_id=target_database.value,
