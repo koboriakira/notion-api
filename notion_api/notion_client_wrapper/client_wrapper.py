@@ -44,11 +44,15 @@ class ClientWrapper:
         )
         return comments["results"]
 
-    def create_page_in_database(self, database_id: str, cover: Cover | None = None, properties: list[Property] = []) -> dict:
+    def create_page_in_database(
+            self,
+            database_id: str,
+            cover: Cover | None = None,
+            properties: list[Property]|None = None,
+            blocks: list[Block]|None = None) -> dict:
         """ データベース上にページを新規作成する """
-        logger.info("create_page_in_database")
-        logger.info(properties)
-        return self.client.pages.create(
+        properties = properties or []
+        result = self.client.pages.create(
             parent={
                 "type": "database_id",
                 "database_id": database_id,
@@ -57,6 +61,9 @@ class ClientWrapper:
             properties=Properties(values=properties).__dict__() if len(
                 properties) > 0 else None,
         )
+        if blocks is not None:
+            self.append_blocks(block_id=result["id"], blocks=blocks)
+        return result
 
     def retrieve_database(
             self,

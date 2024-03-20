@@ -57,5 +57,6 @@ class TaskRepositoryImpl(TaskRepository):
             return task
         page = self.client.create_page_in_database(
             database_id=DatabaseType.TASK.value,
-            properties=task.properties.values)
+            properties=task.properties.values,
+            blocks=task.block_children)
         return self.client.retrieve_page(page_id=page["id"], page_model=Task)
