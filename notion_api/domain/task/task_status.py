@@ -25,9 +25,12 @@ class TaskStatusType(Enum):
         return result
 
 class TaskStatus(Status):
-    def __init__(self, name: str, status_name: str) -> None:
-        super().__init__(name, status_name)
+    NAME = "ステータス"
+    def __init__(self, status_type: TaskStatusType) -> None:
+        super().__init__(
+            self.NAME,
+            status_type.value)
 
-    @staticmethod
-    def from_status_type(status_type: TaskStatusType) -> "TaskStatus":
-        return TaskStatus(name="ステータス", status_name=status_type.value)
+    @classmethod
+    def from_status_type(cls: "TaskStatus", status_type: TaskStatusType) -> "TaskStatus":
+        return cls(status_type=status_type)

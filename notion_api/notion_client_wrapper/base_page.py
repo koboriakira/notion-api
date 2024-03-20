@@ -12,6 +12,7 @@ from notion_client_wrapper.properties.last_edited_time import LastEditedTime
 from notion_client_wrapper.properties.multi_select import MultiSelect
 from notion_client_wrapper.properties.number import Number
 from notion_client_wrapper.properties.properties import Properties
+from notion_client_wrapper.properties.property import Property
 from notion_client_wrapper.properties.relation import Relation
 from notion_client_wrapper.properties.select import Select
 from notion_client_wrapper.properties.status import Status
@@ -22,19 +23,36 @@ from notion_client_wrapper.properties.url import Url
 
 @dataclass(frozen=True)
 class BasePage:
-    id: str|None
-    url: str|None
-    created_time: CreatedTime|None
-    last_edited_time: LastEditedTime|None
-    created_by: BaseOperator|None
-    last_edited_by: BaseOperator|None
     properties: Properties
+    block_children: list[Block] = field(default_factory=list)
+    id: str|None = None
+    url: str|None = None
+    created_time: CreatedTime|None = None
+    last_edited_time: LastEditedTime|None = None
+    created_by: BaseOperator|None = None
+    last_edited_by: BaseOperator|None = None
     cover: Cover | None = None
     icon: Icon | None = None
     archived: bool|None = False
     parent: dict | None = None
-    block_children: list[Block]|None = field(default_factory=list)
     object = "page"
+
+    @staticmethod
+    def create(properties: list[Property]|None, blocks: list[Block]|None) -> "BasePage":
+        return BasePage(
+            id=None,
+            url=None,
+            created_time=None,
+            last_edited_time=None,
+            created_by=None,
+            last_edited_by=None,
+            properties=Properties(values=properties or []),
+            cover=None,
+            icon=None,
+            archived=False,
+            parent=None,
+            block_children=blocks or [],
+        )
 
     def get_title(self) -> Title:
         return self.properties.get_title()

@@ -29,9 +29,9 @@ class TaskKindType(Enum):
 class TaskKind(Select):
     NAME = "タスク種別"
 
-    def __init__(self, name: str, kind_type: TaskKindType) -> None:
+    def __init__(self, kind_type: TaskKindType) -> None:
         super().__init__(
-            name=name,
+            name=self.NAME,
             selected_name=kind_type.selected_name,
             selected_id=kind_type.selected_id,
             selected_color=None,
@@ -39,9 +39,9 @@ class TaskKind(Select):
         )
 
     @classmethod
-    def trash(cls: "TaskKind") -> "TaskKind":
-        return cls.create(kind_type=TaskKindType.TRASH)
+    def create(cls: "TaskKind", kind_type: TaskKindType) -> "TaskKind":
+        return cls(kind_type=kind_type)
 
     @classmethod
-    def create(cls: "TaskKind", kind_type: TaskKindType) -> "TaskKind":
-        return TaskKind(name=cls.NAME, kind_type=kind_type)
+    def trash(cls: "TaskKind") -> "TaskKind":
+        return cls.create(kind_type=TaskKindType.TRASH)
