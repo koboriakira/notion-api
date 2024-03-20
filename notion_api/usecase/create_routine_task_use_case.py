@@ -32,6 +32,7 @@ class CreateRoutineTaskUseCase:
                 title=title,
                 task_kind_type=TaskKindType.SCHEDULE,
                 start_date=datetime.combine(next_date, datetime.min.time(), JST),
+                blocks=routine_task.block_children,
             )
             print(f"Create task: {task.get_title_text()}")
             self.task_repository.save(task=task)

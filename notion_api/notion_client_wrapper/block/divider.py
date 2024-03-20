@@ -1,10 +1,16 @@
+
 from notion_client_wrapper.block.block import Block
-from dataclasses import dataclass
 
 
 class Divider(Block):
-    def __init__(self, id: str, archived: bool, created_time: str, last_edited_time: str, has_children: bool,
-                 parent: dict):
+    def __init__(
+            self,
+            id: str|None = None,
+            archived: bool|None = None,
+            created_time: str|None = None,
+            last_edited_time: str|None = None,
+            has_children: bool|None = None,
+            parent: dict|None = None):
         super().__init__(id, archived, created_time, last_edited_time, has_children, parent)
 
     @staticmethod
