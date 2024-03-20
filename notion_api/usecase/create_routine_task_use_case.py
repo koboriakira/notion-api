@@ -19,7 +19,7 @@ class CreateRoutineTaskUseCase:
 
     def execute(self) -> None:
         routine_tasks = self.routine_repository.fetch_all()
-        next_tasks = self.task_repository.search(task_kind=TaskKindType.NEXT_ACTION)
+        next_tasks = self.task_repository.search(task_kind=TaskKindType.SCHEDULE)
         next_task_titles = [task.get_title().text for task in next_tasks]
 
         for routine_task in routine_tasks:
