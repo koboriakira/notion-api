@@ -10,6 +10,7 @@ class DateConditionType(Enum):
     EQUALS= "equals"
     ON_OR_AFTER = "on_or_after"
     ON_OR_BEFORE = "on_or_before"
+    BEFORE = "before"
 
 @dataclass(frozen=True)
 class DateCondition(Condition):
@@ -33,6 +34,15 @@ class DateCondition(Condition):
             property_name=property.name,
             property_type=property.type,
             condition_type=DateConditionType.ON_OR_AFTER,
+            value=property.value_for_filter(),
+        )
+
+    @staticmethod
+    def before(property: Property) -> "DateCondition":
+        return DateCondition(
+            property_name=property.name,
+            property_type=property.type,
+            condition_type=DateConditionType.BEFORE,
             value=property.value_for_filter(),
         )
 

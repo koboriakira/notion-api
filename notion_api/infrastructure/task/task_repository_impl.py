@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime, time
 
 from domain.database_type import DatabaseType
 from domain.task.task import Task
@@ -11,6 +11,7 @@ from notion_client_wrapper.filter.condition.date_condition import DateCondition
 from notion_client_wrapper.filter.condition.or_condition import OrCondition
 from notion_client_wrapper.filter.condition.string_condition import StringCondition
 from notion_client_wrapper.filter.filter_builder import FilterBuilder
+from util.datetime import JST
 
 
 class TaskRepositoryImpl(TaskRepository):
@@ -27,8 +28,14 @@ class TaskRepositoryImpl(TaskRepository):
         filter_builder = FilterBuilder()
         filter_builder = filter_builder.add_condition(StringCondition.not_equal(property=task_kind_trash))
         if start_date is not None:
-            task_start_date = TaskStartDate.create(start_date)
-            filter_builder = filter_builder.add_condition(DateCondition.equal(property=task_start_date))
+            target_date_after = datetime.combine(start_date, time.min, tzinfo=JST)
+            target_date_before = datetime.combine(start_date, time.max, tzinfo=JST)
+            task_start_date_after = TaskStartDate.create(target_date_after)
+            task_start_date_before = TaskStartDate.create(target_date_before)
+            filter_builder = filter_builder.add_condition(
+                DateCondition.on_or_after(property=task_start_date_after))
+            filter_builder = filter_builder.add_condition(
+                DateCondition.before(property=task_start_date_before))
 
         if task_kind is not None:
             task_kind_property = TaskKind.create(task_kind)
@@ -41,6 +48,7 @@ class TaskRepositoryImpl(TaskRepository):
             or_condition = OrCondition(task_status_equal_conditon)
             filter_builder = filter_builder.add_condition(or_condition)
 
+        print(filter_builder.build())
         return self.client.retrieve_database(
             database_id=DatabaseType.TASK.value,
             filter_param=filter_builder.build(),
