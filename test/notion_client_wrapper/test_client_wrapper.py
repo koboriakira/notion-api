@@ -105,9 +105,10 @@ class TestClientWrapper(TestCase):
         print(len(pages))
 
 
-    @pytest.mark.skip()
+    @pytest.mark.slow()
     def test_select(self):
         """Selectの選択肢を集めるためのテスト"""
+        # pytest test/notion_client_wrapper/test_client_wrapper.py::TestClientWrapper::test_select
         target_database = DatabaseType.TASK
         target_select_name = "タスク種別"
 
@@ -122,10 +123,13 @@ class TestClientWrapper(TestCase):
                 continue
             if select_property.selected_id in result:
                 continue
-            selected_name = select_property.selected_name
-            selected_id = select_property.selected_id
-            result[selected_id] = selected_name
-        print(result)
+            result[select_property.selected_name] = {
+                "selected_id": select_property.selected_id,
+                "selected_color": select_property.selected_color,
+            }
+        # uniqueにする
+        import json
+        print(json.dumps(result, indent=2, ensure_ascii=False))
 
         # 内容を確認したいので、無理やりfailさせる
         self.fail("動作確認用。テストは失敗しても問題ありません。")

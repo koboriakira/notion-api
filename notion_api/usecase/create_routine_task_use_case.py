@@ -34,6 +34,7 @@ class CreateRoutineTaskUseCase:
                     task_kind_type=TaskKindType.NEXT_ACTION,
                     start_date=jst_today_datetime(),
                 )
+                print(f"Create task: {task.get_title_text()}")
                 self.task_repository.save(task=task)
                 continue
             print(f"Create next date: {routine_task.title} {next_date}")

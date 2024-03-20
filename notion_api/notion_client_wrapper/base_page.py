@@ -21,7 +21,7 @@ from notion_client_wrapper.properties.title import Title
 from notion_client_wrapper.properties.url import Url
 
 
-@dataclass(frozen=True)
+@dataclass
 class BasePage:
     properties: Properties
     block_children: list[Block] = field(default_factory=list)

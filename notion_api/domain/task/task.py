@@ -1,10 +1,10 @@
+from dataclasses import dataclass
 from datetime import datetime
 
 from domain.task.task_kind import TaskKind, TaskKindType
 from domain.task.task_start_date import TaskStartDate
 from domain.task.task_status import TaskStatus, TaskStatusType
 from notion_client_wrapper.base_page import BasePage
-from notion_client_wrapper.block.block import Block
 from notion_client_wrapper.properties.properties import Properties
 from notion_client_wrapper.properties.title import Title
 from util.datetime import JST
@@ -14,10 +14,8 @@ COLUMN_NAME_STATUS = "ステータス"
 COLUMN_NAME_START_DATE = "実施日"
 COLUMN_NAME_KIND = "タスク種別"
 
+@dataclass
 class Task(BasePage):
-    def __init__(self, properties: Properties, blocks: list[Block]) -> None:
-        super().__init__(properties=properties)
-
     @staticmethod
     def create(
             title: str,
@@ -32,7 +30,7 @@ class Task(BasePage):
             properties.append(TaskStartDate.create(start_date))
         if status is not None:
             properties.append(TaskStatus.from_status_type(status))
-        return Task(properties=Properties(values=properties), blocks=[])
+        return Task(properties=Properties(values=properties), block_children=[])
 
     @property
     def status(self) -> TaskStatusType:
