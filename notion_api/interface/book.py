@@ -10,7 +10,13 @@ def add_book_by_google_book_id(
         google_book_id: str | None = None,
         title: str | None = None,
         isbn: str | None = None,
-        ) -> dict:
+        slack_channel: str | None = None,
+        slack_thread_ts: str | None = None) -> dict:
     book_api = GoogleBookApi()
     usecase = AddBookUsecase(book_api=book_api)
-    return usecase.execute(google_book_id=google_book_id, title=title, isbn=isbn)
+    return usecase.execute(
+        google_book_id=google_book_id,
+        title=title,
+        isbn=isbn,
+        slack_channel=slack_channel,
+        slack_thread_ts=slack_thread_ts)

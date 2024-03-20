@@ -20,5 +20,7 @@ def add_track_page(
     result = book.add_book_by_google_book_id(
         google_book_id=request.google_book_id,
         title=request.title,
-        isbn=request.isbn)
+        isbn=request.isbn,
+        slack_channel=request.slack_channel,
+        slack_thread_ts=request.slack_thread_ts)
     return BaseResponse(data=result)
