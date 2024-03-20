@@ -5,10 +5,11 @@ from notion_client_wrapper.base_operator import BaseOperator
 from notion_client_wrapper.block import Block
 from notion_client_wrapper.properties.checkbox import Checkbox
 from notion_client_wrapper.properties.cover import Cover
+from notion_client_wrapper.properties.created_time import CreatedTime
 from notion_client_wrapper.properties.date import Date
 from notion_client_wrapper.properties.icon import Icon
+from notion_client_wrapper.properties.last_edited_time import LastEditedTime
 from notion_client_wrapper.properties.multi_select import MultiSelect
-from notion_client_wrapper.properties.notion_datetime import NotionDatetime
 from notion_client_wrapper.properties.number import Number
 from notion_client_wrapper.properties.properties import Properties
 from notion_client_wrapper.properties.relation import Relation
@@ -21,18 +22,18 @@ from notion_client_wrapper.properties.url import Url
 
 @dataclass(frozen=True)
 class BasePage:
-    id: str
-    url: str
-    created_time: NotionDatetime
-    last_edited_time: NotionDatetime
-    created_by: BaseOperator
-    last_edited_by: BaseOperator
+    id: str|None
+    url: str|None
+    created_time: CreatedTime|None
+    last_edited_time: LastEditedTime|None
+    created_by: BaseOperator|None
+    last_edited_by: BaseOperator|None
     properties: Properties
     cover: Cover | None = None
     icon: Icon | None = None
-    archived: bool = False
+    archived: bool|None = False
     parent: dict | None = None
-    block_children: list[Block] = field(default_factory=list)
+    block_children: list[Block]|None = field(default_factory=list)
     object = "page"
 
     def get_title(self) -> Title:
