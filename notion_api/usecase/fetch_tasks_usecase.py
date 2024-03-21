@@ -9,7 +9,7 @@ logger = get_logger(__name__)
 
 class FetchTasksUsecase:
     def __init__(self, task_repository: TaskRepository) -> None:
-        self.task_repository = task_repository or TaskRepositoryImpl()
+        self.task_repository = task_repository
 
     def execute(
             self,

@@ -12,10 +12,9 @@ def fetch_tasks(start_date: DateObject | None = None,
     """ タスク一覧を取得 """
     logger.debug(f"start_date: {start_date}")
     logger.debug(f"status_list: {status_list}")
-    usecase = FetchTasksUsecase()
+    usecase = FetchTasksUsecase(task_repository=TaskRepositoryImpl())
     return usecase.execute(status_list=status_list,
-                           start_date=start_date,
-                           )
+                           start_date=start_date)
 
 def get_current_tasks() -> list[dict]:
     """ 今日のタスクを取得 """
