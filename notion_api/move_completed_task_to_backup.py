@@ -13,7 +13,7 @@ def handler(event:dict, context:dict) -> None:  # noqa: ARG001
     try:
         batch.move_completed_task_to_backup()
     except:
-        ErrorReporter().report_error()
+        ErrorReporter().execute()
         raise
 
 if __name__ == "__main__":

@@ -39,5 +39,5 @@ def create_task(
             task_kind=request.task_kind)
         return BaseResponse(data=result)
     except:
-        ErrorReporter.report_error()
+        ErrorReporter.execute()
         raise

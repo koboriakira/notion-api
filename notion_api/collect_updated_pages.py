@@ -17,7 +17,7 @@ def handler(event: dict, context:dict) -> dict:  # noqa: ARG001
             "statusCode": 200,
         }
     except:
-        ErrorReporter().report_error()
+        ErrorReporter().execute()
         raise
 
 if __name__ == "__main__":

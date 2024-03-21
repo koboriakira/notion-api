@@ -49,7 +49,7 @@ def handler(event:dict, context:dict) -> dict:  # noqa: ARG001
             )
         return {}
     except Exception as e:  # noqa: BLE001
-        ErrorReporter().report_error(
+        ErrorReporter().execute(
             err=e,
             channel=slack_channel,
             thread_ts=slack_thread_ts,

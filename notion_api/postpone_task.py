@@ -16,5 +16,5 @@ def handler(event: dict, context:dict) -> None:  # noqa: ARG001
         target_date = date.fromisoformat(date_str) if date_str else None
         return task.postpone_to_next_day(date=target_date)
     except:
-        ErrorReporter().report_error()
+        ErrorReporter().execute()
         raise

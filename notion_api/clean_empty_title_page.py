@@ -13,5 +13,5 @@ def handler(event: dict, context: dict) -> None:
     try:
         batch.clean_empty_title_page()
     except:
-        ErrorReporter().report_error()
+        ErrorReporter().execute()
         raise

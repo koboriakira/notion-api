@@ -16,5 +16,5 @@ def handler(event:dict, context:dict) -> None:  # noqa: ARG001
         next_week_day = jst_now().date() + timedelta(days=7)
         daily_log.create_daily_log(target_date=next_week_day)
     except:
-        ErrorReporter().report_error()
+        ErrorReporter().execute()
         raise
