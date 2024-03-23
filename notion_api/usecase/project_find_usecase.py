@@ -35,6 +35,6 @@ class ProjectFindUsecase:
             "title": title.text,
             "remind_date": project_remind_date.start,
             "is_thisweek": is_thisweek.checked,
-            "created_at": project.created_time.value,
-            "updated_at": project.last_edited_time.value,
+            "created_at": project.created_time.start_time,
+            "updated_at": project.last_edited_time.start_time,
         }

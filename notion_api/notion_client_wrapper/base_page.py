@@ -61,10 +61,10 @@ class BasePage:
         return self.get_title().text
 
     def get_created_at(self) -> datetime:
-        return self.created_time.value
+        return self.created_time.start_time
 
     def get_updated_at(self) -> datetime:
-        return self.last_edited_time.value
+        return self.last_edited_time.start_time
 
     def get_status(self, name: str) -> Status:
         return self.properties.get_property(name=name, instance_class=Status)
