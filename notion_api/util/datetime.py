@@ -10,3 +10,20 @@ def jst_today_datetime() -> datetime:
 
 def jst_today() -> date:
     return jst_now().date()
+
+def convert_to_date_or_datetime(value: str, cls: type|None = None) -> date | datetime:
+    length_date = 10 # "YYYY-MM-DD"
+    value_error_msg = f"Invalid class: {cls}"
+    if len(value) == length_date:
+        tmp_date = date.fromisoformat(value)
+        if cls is None or cls == date:
+            return tmp_date
+        if cls == datetime:
+            return datetime(tmp_date.year, tmp_date.month, tmp_date.day, tzinfo=JST)
+        raise ValueError(value_error_msg)
+    tmp_datetime = datetime.fromisoformat(value)
+    if cls is None or cls == datetime:
+        return tmp_datetime
+    if cls == date:
+        return tmp_datetime.date()
+    raise ValueError(value_error_msg)

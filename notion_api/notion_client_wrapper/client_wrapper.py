@@ -7,8 +7,9 @@ from notion_client_wrapper.base_operator import BaseOperator
 from notion_client_wrapper.base_page import BasePage
 from notion_client_wrapper.block import Block, BlockFactory
 from notion_client_wrapper.properties.cover import Cover
+from notion_client_wrapper.properties.created_time import CreatedTime
 from notion_client_wrapper.properties.icon import Icon
-from notion_client_wrapper.properties.notion_datetime import NotionDatetime
+from notion_client_wrapper.properties.last_edited_time import LastEditedTime
 from notion_client_wrapper.properties.properties import Properties
 from notion_client_wrapper.properties.property import Property
 from notion_client_wrapper.property_translator import PropertyTranslator
@@ -32,9 +33,10 @@ class ClientWrapper:
 
     def update_page(self, page_id: str, properties: list[Property] = []) -> dict:
         """ 指定されたページを更新する """
+        update_properties = Properties(values=properties).exclude_button()
         return self.client.pages.update(
             page_id=page_id,
-            properties=Properties(values=properties).__dict__(),
+            properties=update_properties.__dict__(),
         )
 
     def retrieve_comments(self, page_id: str) -> list[dict]:
@@ -161,8 +163,8 @@ class ClientWrapper:
             page_model: BasePage|None = None) -> BasePage:
         id = page_entity["id"]
         url = page_entity["url"]
-        created_time = NotionDatetime.created_time(page_entity["created_time"])
-        last_edited_time = NotionDatetime.last_edited_time(page_entity["last_edited_time"])
+        created_time = CreatedTime.create(page_entity["created_time"])
+        last_edited_time = LastEditedTime.create(page_entity["last_edited_time"])
         created_by = BaseOperator.of(page_entity["created_by"])
         last_edited_by = BaseOperator.of(page_entity["last_edited_by"])
         cover = Cover.of(page_entity["cover"]) if page_entity["cover"] is not None else None

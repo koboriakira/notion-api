@@ -2,10 +2,11 @@
 from fastapi import APIRouter, Header
 
 from infrastructure.task.task_repository_impl import TaskRepositoryImpl
-from router.request import CreateNewTaskRequest
+from router.request.task_request import CreateNewTaskRequest, UpdateTaskRequest
 from router.response import BaseResponse, Task, TaskResponse
 from usecase.create_new_task_usecase import CreateNewTaskUsecase
 from usecase.find_task_usecase import FindTaskUsecase
+from usecase.update_task_use_case import UpdateTaskUsecase
 from util.access_token import valid_access_token
 from util.error_reporter import ErrorReporter
 
@@ -21,6 +22,19 @@ def find_task(
     usecase = FindTaskUsecase(task_repository=TaskRepositoryImpl())
     task = usecase.execute(task_id=task_id)
     return TaskResponse(data=Task.from_params(task))
+
+@router.post("/{task_id}", response_model=TaskResponse)
+def upadate_task(
+        task_id: str,
+        request: UpdateTaskRequest,
+        access_token: str | None = Header(None)) -> TaskResponse:
+    """ タスクを取得 """
+    valid_access_token(access_token)
+    usecase = UpdateTaskUsecase(task_repository=TaskRepositoryImpl())
+    task = usecase.execute(
+        task_id=task_id,
+        status=request.status)
+    return TaskResponse.from_model(task)
 
 @router.post("", response_model=BaseResponse)
 def create_task(

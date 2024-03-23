@@ -1,10 +1,14 @@
 from datetime import date, datetime
 
 from notion_client_wrapper.properties.date import Date
+from util.datetime import convert_to_date_or_datetime
 
 
 class LastEditedTime(Date):
-    @staticmethod
-    def create(name: str|None = None, value: date|datetime|None = None) -> "LastEditedTime":
-        name = name or "最終更新日時"
-        return LastEditedTime.from_start_date(name=name, start_date=value)
+    NAME = "最終更新日時"
+
+    @classmethod
+    def create(cls: "LastEditedTime", value: str|date|datetime) -> "LastEditedTime":
+        if isinstance(value, str):
+            value = convert_to_date_or_datetime(value)
+        return LastEditedTime.from_start_date(name=cls.NAME, start_date=value)

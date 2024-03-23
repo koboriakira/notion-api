@@ -1,8 +1,8 @@
 from dataclasses import dataclass
-from datetime import date
-from datetime import datetime as DatetimeObject
+from datetime import date, datetime
 
 from notion_client_wrapper.properties.property import Property
+from util.datetime import convert_to_date_or_datetime
 
 
 @dataclass
@@ -19,6 +19,12 @@ class Date(Property):
         self.end = end
         self.time_zone = time_zone
 
+    @property
+    def start_time(self) -> date|datetime|None:
+        if self.start is None:
+            return None
+        return convert_to_date_or_datetime(self.start)
+
     @staticmethod
     def of(name: str, param: dict) -> "Date":
         if param["date"] is None:
@@ -32,7 +38,7 @@ class Date(Property):
         )
 
     @staticmethod
-    def from_start_date(name: str, start_date: date | DatetimeObject | None = None) -> "Date":
+    def from_start_date(name: str, start_date: date | datetime | None = None) -> "Date":
         return Date(
             name=name,
             start=start_date.isoformat() if start_date is not None else None,
@@ -40,7 +46,7 @@ class Date(Property):
 
 
     @staticmethod
-    def from_range(name: str, start: date|DatetimeObject, end: date|DatetimeObject) -> "Date":
+    def from_range(name: str, start: date|datetime, end: date|datetime) -> "Date":
         return Date(
             name=name,
             start=start.isoformat(),

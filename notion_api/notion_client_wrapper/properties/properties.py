@@ -44,3 +44,9 @@ class Properties:
             if isinstance(value, instance_class) and value.name == name:
                 return value
         return None
+
+    def exclude_button(self) -> "Properties":
+        """
+        ボタンのプロパティは更新時にエラーとなるため、除外する。
+        """
+        return Properties(values=[prop for prop in self.values if prop.type != "button"])

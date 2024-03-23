@@ -8,7 +8,7 @@ from notion_client_wrapper.base_page import BasePage
 from notion_client_wrapper.block.block import Block
 from notion_client_wrapper.properties.properties import Properties
 from notion_client_wrapper.properties.title import Title
-from util.datetime import JST
+from util.datetime import convert_to_date_or_datetime
 
 COLUMN_NAME_TITLE = "名前"
 COLUMN_NAME_STATUS = "ステータス"
@@ -36,13 +36,20 @@ class Task(BasePage):
             properties.append(TaskStatus.from_status_type(status))
         return Task(properties=Properties(values=properties), block_children=blocks)
 
+    def update_status(self, status: str|TaskStatusType) -> str:
+        if isinstance(status, str):
+            status = TaskStatusType.from_text(status)
+        task_status = TaskStatus.from_status_type(status)
+        self.properties.append_property(task_status)
+
+
     @property
     def status(self) -> TaskStatusType:
         status_name = self.get_status(name=COLUMN_NAME_STATUS).status_name
         return TaskStatusType(status_name)
 
     @property
-    def start_datetime(self) -> datetime|None:
+    def start_datetime(self) -> datetime|date|None:
         start_date_model = self.get_date(name=COLUMN_NAME_START_DATE)
         if start_date_model is None or start_date_model.start is None:
             return None
@@ -61,9 +68,5 @@ class Task(BasePage):
     def has_start_datetime(self) -> bool:
         return self.start_datetime is not None
 
-def _convert_to_datetime(value: str) -> datetime:
-    from datetime import date
-    if len(value) == 10:
-        tmp_date = date.fromisoformat(value)
-        return datetime(tmp_date.year, tmp_date.month, tmp_date.day, tzinfo=JST)
-    return datetime.fromisoformat(value)
+def _convert_to_datetime(value: str) -> datetime|date:
+    return convert_to_date_or_datetime(value)
