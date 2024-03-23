@@ -36,11 +36,12 @@ class Task(BasePage):
             properties.append(TaskStatus.from_status_type(status))
         return Task(properties=Properties(values=properties), block_children=blocks)
 
-    def update_status(self, status: str|TaskStatusType) -> str:
+    def update_status(self, status: str|TaskStatusType) -> None:
         if isinstance(status, str):
             status = TaskStatusType.from_text(status)
         task_status = TaskStatus.from_status_type(status)
-        self.properties.append_property(task_status)
+        properties = self.properties.append_property(task_status)
+        self.properties = properties
 
 
     @property

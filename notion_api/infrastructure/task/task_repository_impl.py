@@ -57,6 +57,7 @@ class TaskRepositoryImpl(TaskRepository):
 
     def save(self, task: Task) -> Task:
         if task.id is not None:
+            print(task.properties.values)
             _ = self.client.update_page(
                 page_id=task.id,
                 properties=task.properties.values)
