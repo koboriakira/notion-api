@@ -12,5 +12,6 @@ class UpdateTaskUsecase:
             task_id: str,
             status: str|None=None) -> Task:
         task = self._task_repository.find_by_id(task_id=task_id)
-        task.update_status(status=status)
+        if task is not None:
+            task.update_status(status)
         return self._task_repository.save(task)
