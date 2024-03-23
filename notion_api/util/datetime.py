@@ -11,7 +11,9 @@ def jst_today_datetime() -> datetime:
 def jst_today() -> date:
     return jst_now().date()
 
-def convert_to_date_or_datetime(value: str, cls: type|None = None) -> date | datetime:
+def convert_to_date_or_datetime(value: str|None, cls: type|None = None) -> date | datetime | None:
+    if value is None:
+        return None
     length_date = 10 # "YYYY-MM-DD"
     value_error_msg = f"Invalid class: {cls}"
     if len(value) == length_date:
