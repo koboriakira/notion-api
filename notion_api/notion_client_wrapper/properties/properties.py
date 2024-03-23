@@ -25,6 +25,9 @@ class Properties:
         props = []
 
         for original_prop in self.values:
+            if original_prop is None:
+                # この場合があるらしい。どこかで混じったかな?
+                continue
             if prop.name == original_prop.name:
                 props.append(prop)
             else:
