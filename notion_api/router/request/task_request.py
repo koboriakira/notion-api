@@ -14,4 +14,5 @@ class CreateNewTaskRequest(BaseModel):
     task_kind: str | None = None
 
 class UpdateTaskRequest(BaseModel):
+    pomodoro_count: int
     status: str | None = None

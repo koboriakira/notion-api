@@ -17,6 +17,7 @@ class Task(BaseNotionPageModel):
     status: TaskStatusType
     task_kind: str | None # FIXME: TaskKindTypeにする
     start_date: datetime| date | None
+    pomodoro_count: int
     end_date: datetime| date | None # FIXME: 消す
     feeling: str | None # FIXME: 消す
 
@@ -30,6 +31,7 @@ class Task(BaseNotionPageModel):
             updated_at=params["updated_at"],
             status=TaskStatusType(params["status"]),
             task_kind=params.get("task_kind"),
+            pomodoro_count=params.get("pomodoro_count", 0),
             start_date=convert_to_date_or_datetime(params.get("start_date")),
             end_date=convert_to_date_or_datetime(params.get("end_date")),
             feeling=params.get("feeling"),
@@ -48,6 +50,7 @@ class TaskResponse(BaseResponse):
             created_at=model.created_time.start_time,
             updated_at=model.last_edited_time.start_time,
             status=model.status,
+            pomodoro_count=model.pomodoro_count,
             task_kind=model.kind.value if model.kind is not None else None,
             start_date=model.start_datetime if model.start_datetime is not None else None,
             end_date=None,

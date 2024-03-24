@@ -12,7 +12,13 @@ class Date(Property):
     time_zone: str | None = None
     type: str = "date"
 
-    def __init__(self, name: str, id: str | None = None, start: str = None, end: str = None, time_zone: str = None):
+    def __init__(  # noqa: PLR0913
+            self,
+            name: str,
+            id: str | None = None,  # noqa: A002
+            start: str | None = None,
+            end: str | None = None,
+            time_zone: str | None = None) -> None:
         self.name = name
         self.id = id
         self.start = start

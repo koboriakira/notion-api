@@ -25,6 +25,15 @@ class TaskStatusType(Enum):
             return []
         return [TaskStatusType.from_text(status) for status in status_list]
 
+    def is_done(self) -> bool:
+        return self == TaskStatusType.DONE
+
+    def is_in_progress(self) -> bool:
+        return self == TaskStatusType.IN_PROGRESS
+
+    def is_todo(self) -> bool:
+        return self == TaskStatusType.TODO
+
 class TaskStatus(Status):
     NAME = "ステータス"
     def __init__(self, status_type: TaskStatusType) -> None:

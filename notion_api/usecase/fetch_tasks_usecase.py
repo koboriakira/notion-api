@@ -1,8 +1,8 @@
 from datetime import date
 
 from custom_logger import get_logger
+from domain.task.task import Task
 from domain.task.task_repository import TaskRepository
-from usecase.service.base_page_converter import BasePageConverter
 from util.datetime import jst_today
 
 logger = get_logger(__name__)
@@ -14,10 +14,8 @@ class FetchTasksUsecase:
     def execute(
             self,
             status_list: list[str],
-            start_date: date | None = None) -> list[dict]:
-        tasks = self.task_repository.search(status_list=status_list, start_date=start_date)
-        # FIXME: このままTaskを返すようにリファクタリングする
-        return [BasePageConverter.to_task(t) for t in tasks]
+            start_date: date | None = None) -> list[Task]:
+        return self.task_repository.search(status_list=status_list, start_date=start_date)
 
-    def current(self) -> list[dict]:
+    def current(self) -> list[Task]:
         return self.execute(status_list=["ToDo", "InProgress"], start_date=jst_today())

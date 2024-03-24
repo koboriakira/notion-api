@@ -3,7 +3,7 @@ from fastapi import APIRouter, Header
 
 from infrastructure.task.task_repository_impl import TaskRepositoryImpl
 from router.request.task_request import CreateNewTaskRequest, UpdateTaskRequest
-from router.response import BaseResponse, Task, TaskResponse
+from router.response import BaseResponse, TaskResponse
 from usecase.create_new_task_usecase import CreateNewTaskUsecase
 from usecase.find_task_usecase import FindTaskUsecase
 from usecase.update_task_use_case import UpdateTaskUsecase
@@ -21,7 +21,7 @@ def find_task(
     valid_access_token(access_token)
     usecase = FindTaskUsecase(task_repository=TaskRepositoryImpl())
     task = usecase.execute(task_id=task_id)
-    return TaskResponse(data=Task.from_params(task))
+    return TaskResponse.from_model(task)
 
 @router.post("/{task_id}", response_model=TaskResponse)
 def upadate_task(
@@ -33,7 +33,8 @@ def upadate_task(
     usecase = UpdateTaskUsecase(task_repository=TaskRepositoryImpl())
     task = usecase.execute(
         task_id=task_id,
-        status=request.status)
+        status=request.status,
+        pomodoro_count=request.pomodoro_count)
     return TaskResponse.from_model(task)
 
 @router.post("", response_model=BaseResponse)
