@@ -1,7 +1,6 @@
 import json
-import logging
 from collections.abc import Callable
-from typing import Any
+from logging import Logger, getLogger
 
 from openai import OpenAI
 
@@ -10,10 +9,11 @@ OPENAI_MODEL_DEFAULT = "gpt-3.5-turbo-1106"
 
 class OpenaiExecuter:
     def __init__(
-        self, model: str = OPENAI_MODEL_DEFAULT, logger: logging.Logger | None = None,
-    ):
+            self,
+            model: str = OPENAI_MODEL_DEFAULT,
+            logger: Logger | None = None) -> None:
         self.model = model
-        self.logger = logger or logging.getLogger(__name__)
+        self.logger = logger or getLogger(__name__)
         self.client = OpenAI()
 
     def simple_chat(self, user_content: str) -> str:
@@ -24,8 +24,11 @@ class OpenaiExecuter:
         return response_message.content
 
     def simple_function_calling(
-        self, user_content: str, func: Callable, func_description: str, parameters: dict,
-    ) -> Any:
+            self,
+            user_content: str,
+            func: Callable,
+            func_description: str,
+            parameters: dict):
         """
         シンプルな単一のfunction callingを実行して、実行結果を受け取る
 
@@ -60,16 +63,15 @@ class OpenaiExecuter:
             function_name = tool_call.function.name
             function_to_call = available_functions[function_name]
             function_args = json.loads(tool_call.function.arguments)
-            function_response = function_to_call(args=function_args)
-            return function_response
-        raise Exception("tool_call is not found")
+            return function_to_call(args=function_args)
+        exception_msg = "tool_call is not found"
+        raise Exception(exception_msg)
 
     def __chat_completions_create(
-        self,
-        messages: list[dict],
-        tools: list[dict] | None = None,
-        tool_choice: str | None = None,
-    ):
+            self,
+            messages: list[dict],
+            tools: list[dict] | None = None,
+            tool_choice: str | None = None):
         """OpenAIのchat_completions.createを呼び出す"""
         if tools is None or tool_choice is None:
             response = self.client.chat.completions.create(
@@ -77,15 +79,12 @@ class OpenaiExecuter:
                 messages=messages,
             )
             self.logger.debug(response)
-            response_message = response.choices[0].message
-            return response_message
-        else:
-            response = self.client.chat.completions.create(
-                model=self.model,
-                messages=messages,
-                tools=tools,
-                tool_choice="auto",
-            )
-            self.logger.debug(response)
-            response_message = response.choices[0].message
-            return response_message
+            return response.choices[0].message
+        response = self.client.chat.completions.create(
+            model=self.model,
+            messages=messages,
+            tools=tools,
+            tool_choice="auto",
+        )
+        self.logger.debug(response)
+        return response.choices[0].message
