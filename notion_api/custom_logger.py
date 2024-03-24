@@ -1,11 +1,10 @@
 import logging
-from logging import Logger
-from typing import Optional
 import os
+from logging import Logger
 
 LOG_FILE_NAME = "app.log"
 
-def get_logger(name: Optional[str] = None) -> Logger:
+def get_logger(name: str | None = None) -> Logger:
     logger = logging.getLogger(name)
 
     if os.getenv("ENVIRONMENT") == "dev":

@@ -36,11 +36,15 @@ def handler(event:dict, context:dict) -> dict:  # noqa: ARG001
         if mode == "webclip":
             scrape_service = CommonInjector.get_scrape_service()
             inbox_service = Injector.create_inbox_service()
+            tag_create_service = Injector.create_tag_create_service()
+            tag_analyzer = Injector.create_tag_analyzer()
             append_context_service = SlackConciergeInjector.create_append_context_service()
             usecase = AddWebclipUsecase(
                 scrape_service=scrape_service,
                 inbox_service=inbox_service,
                 append_context_service=append_context_service,
+                tag_create_service=tag_create_service,
+                tag_analyzer=tag_analyzer,
             )
             _ = usecase.execute(
                 url=params["url"],

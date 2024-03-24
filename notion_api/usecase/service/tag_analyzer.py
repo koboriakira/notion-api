@@ -1,6 +1,7 @@
 import logging
-from typing import Optional
+
 from usecase.service.openai_executer import OpenaiExecuter
+
 
 def analyze_tags(args: dict) -> list[str]:
     if "tags" not in args:
@@ -11,10 +12,14 @@ def analyze_tags(args: dict) -> list[str]:
     return [tag.strip() for tag in tags.split(",")]
 
 class TagAnalyzer:
-    def __init__(self, logger: Optional[logging.Logger] = None, is_debug: bool = False):
+    def __init__(
+            self,
+            client: OpenaiExecuter | None = None,
+            logger: logging.Logger | None = None,
+            is_debug: bool|None = None) -> None:
+        self.client = client or OpenaiExecuter(model="gpt-3.5-turbo-1106", logger=logger)
         self.logger = logger or logging.getLogger(__name__)
-        self.client = OpenaiExecuter(model="gpt-3.5-turbo-1106", logger=logger)
-        self.is_debug = is_debug
+        self.is_debug = is_debug or False
 
     def handle(self, text: str) -> list[str]:
         if self.is_debug:

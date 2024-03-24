@@ -15,16 +15,18 @@ from usecase.service.text_summarizer import TextSummarizer
 logger = get_logger(__name__)
 
 class AddWebclipUsecase:
-    def __init__(
+    def __init__(  # noqa: PLR0913
             self,
             scrape_service: ScrapeService,
             inbox_service: InboxService,
-            append_context_service: AppendContextService) -> None:
+            append_context_service: AppendContextService,
+            tag_create_service: TagCreateService,
+            tag_analyzer: TagAnalyzer) -> None:
         self._scrape_service = scrape_service
         self._inbox_service = inbox_service
         self._append_context_service = append_context_service
-        self.tag_create_service = TagCreateService()
-        self.tag_analyzer = TagAnalyzer()
+        self._tag_create_service = tag_create_service
+        self._tag_analyzer = tag_analyzer
         self.text_summarizer = TextSummarizer()
         self.client = ClientWrapper.get_instance()
 
@@ -67,9 +69,9 @@ class AddWebclipUsecase:
 
         # 要約からタグを抽出して、タグを作成
         tag_page_ids:list[str] = []
-        tags = self.tag_analyzer.handle(text=summary)
+        tags = self._tag_analyzer.handle(text=summary)
         for tas in tags:
-            page_id = self.tag_create_service.add_tag(name=tas)
+            page_id = self._tag_create_service.add_tag(name=tas)
             tag_page_ids.append(page_id)
 
         # 新しいページを作成
@@ -129,9 +131,9 @@ class AddWebclipUsecase:
             ) -> dict:
         # Twitter本文からタグを抽出して、タグを作成
         tag_page_ids:list[str] = []
-        tags = self.tag_analyzer.handle(text=title)
+        tags = self._tag_analyzer.handle(text=title)
         for tas in tags:
-            page_id = self.tag_create_service.add_tag(name=tas)
+            page_id = self._tag_create_service.add_tag(name=tas)
             tag_page_ids.append(page_id)
 
         # 新しいページを作成
