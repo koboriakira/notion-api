@@ -3,7 +3,6 @@ import logging
 
 from usecase.add_video_usecase import AddVideoUsecase
 from usecase.add_webclip_usecase import AddWebclipUsecase
-from usecase.service.error_reporter import ErrorReporter
 from util.environment import Environment
 
 # ログ
