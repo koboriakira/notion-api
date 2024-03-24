@@ -20,7 +20,7 @@ class ErrorReporter:
 
         message = message or "something error"
         formatted_exception = _generate_formatted_exception()
-        text=f"[Notion-API]\n{message}\n\noqa```\n{formatted_exception}\n```"
+        text=f"[Notion-API]\n{message}\n\n```\n{formatted_exception}\n```"
 
         self.client.chat_postMessage(
             text=text,
