@@ -4,20 +4,13 @@ import logging
 from usecase.add_video_usecase import AddVideoUsecase
 from usecase.add_webclip_usecase import AddWebclipUsecase
 from util.environment import Environment
+from util.error_reporter import ErrorReporter
 
 # ログ
 logging.basicConfig(level=logging.INFO)
 if Environment.is_dev():
     logging.basicConfig(level=logging.DEBUG)
 
-
-def find_request(event: dict) -> dict:
-    try:
-        return json.loads(event["Records"][0]["body"])
-    except Exception:
-        print("event", event)
-        print("records", event["Records"])
-        raise
 
 
 def handler(event:dict, context:dict) -> dict:  # noqa: ARG001
@@ -47,9 +40,8 @@ def handler(event:dict, context:dict) -> dict:  # noqa: ARG001
                 slack_thread_ts=slack_thread_ts,
             )
         return {}
-    except Exception as e:  # noqa: BLE001
+    except Exception:  # noqa: BLE001
         ErrorReporter().execute(
-            err=e,
-            channel=slack_channel,
-            thread_ts=slack_thread_ts,
+            slack_channel=slack_channel,
+            slack_thread_ts=slack_thread_ts,
     )
