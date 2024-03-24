@@ -53,6 +53,14 @@ class Date(Property):
             end=end.isoformat(),
         )
 
+    def is_between(self, start: datetime, end: datetime) -> bool:
+        return start.timestamp() <= self.start_time.timestamp() <= end.timestamp()
+
+
+    @property
+    def date(self) -> date:
+        return self.start.date()
+
     def __dict__(self):
         return {
             self.name: {
