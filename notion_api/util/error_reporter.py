@@ -18,6 +18,9 @@ class ErrorReporter:
             slack_channel: str|None = None,
             slack_thread_ts: str|None = None) -> None:
 
+        if Environment.is_dev():
+            return
+
         message = message or "something error"
         formatted_exception = _generate_formatted_exception()
         text=f"[Notion-API]\n{message}\n\n```\n{formatted_exception}\n```"
