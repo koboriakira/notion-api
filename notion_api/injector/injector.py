@@ -8,10 +8,10 @@ from notion_client_wrapper.client_wrapper import ClientWrapper
 from slack_concierge.injector import SlackConciergeInjector
 from usecase.add_webclip_usecase import AddWebclipUsecase
 from usecase.service.inbox_service import InboxService
-from usecase.service.openai_executer import OpenaiExecuter
 from usecase.service.tag_analyzer import TagAnalyzer
 from usecase.service.tag_create_service import TagCreateService
 from usecase.service.text_summarizer import TextSummarizer
+from util.openai_executer import OpenaiExecuter
 
 logger = get_logger(__name__)
 

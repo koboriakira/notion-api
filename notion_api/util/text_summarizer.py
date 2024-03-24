@@ -1,4 +1,4 @@
-from logging import Logger
+from logging import Logger, getLogger
 
 from util.openai_executer import OpenaiExecuter
 
@@ -14,11 +14,11 @@ TEMPLATE = """「仕様」に則って「入力」に記載した文章の要約
 class TextSummarizer:
     def __init__(
             self,
-            client: OpenaiExecuter,
-            logger: Logger,
+            client: OpenaiExecuter|None = None,
+            logger: Logger|None = None,
             is_debug: bool|None = None) -> None:
-        self._client = client
-        self._logger = logger
+        self._client = client or OpenaiExecuter()
+        self._logger = logger or getLogger(__name__)
         self._is_debug = is_debug or False
 
     def handle(self, text: str) -> str:
