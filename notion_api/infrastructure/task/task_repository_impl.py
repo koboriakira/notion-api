@@ -21,7 +21,7 @@ class TaskRepositoryImpl(TaskRepository):
 
     def search(
             self,
-            status_list: list[str]|None=None,
+            status_list: list[str|TaskStatusType]|None=None,
             task_kind: TaskKindType|None=None,
             start_date: date | None = None) -> list[Task]:
         task_kind_trash = TaskKind.trash()
@@ -42,8 +42,9 @@ class TaskRepositoryImpl(TaskRepository):
             filter_builder = filter_builder.add_condition(StringCondition.equal(property=task_kind_property))
 
         if status_list is not None and len(status_list) > 0:
-            status_cond_list = TaskStatusType.get_status_list(status_list)
-            task_status_list = [TaskStatus.from_status_type(status_type) for status_type in status_cond_list]
+            if isinstance(status_list[0], str):
+                status_list = TaskStatusType.get_status_list(status_list)
+            task_status_list = [TaskStatus.from_status_type(status_type) for status_type in status_list]
             task_status_equal_conditon = [StringCondition.equal(property=task_status) for task_status in task_status_list]
             or_condition = OrCondition(task_status_equal_conditon)
             filter_builder = filter_builder.add_condition(or_condition)

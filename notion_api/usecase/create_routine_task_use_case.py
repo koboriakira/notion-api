@@ -4,6 +4,7 @@ from datetime import datetime
 
 from domain.task.task_kind import TaskKindType
 from domain.task.task_repository import TaskRepository
+from domain.task.task_status import TaskStatusType
 from infrastructure.task.routine_repository_impl import RoutineRepositoryImpl
 from notion_api.domain.task.task import Task
 from util.datetime import JST
@@ -19,7 +20,9 @@ class CreateRoutineTaskUseCase:
 
     def execute(self) -> None:
         routine_tasks = self.routine_repository.fetch_all()
-        next_tasks = self.task_repository.search(task_kind=TaskKindType.SCHEDULE)
+        next_tasks = self.task_repository.search(
+            status_list=[TaskStatusType.TODO, TaskStatusType.IN_PROGRESS],
+            task_kind=TaskKindType.SCHEDULE)
         next_task_titles = [task.get_title().text for task in next_tasks]
 
         for routine_task in routine_tasks:
