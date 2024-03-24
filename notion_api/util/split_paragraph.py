@@ -2,8 +2,11 @@ from notion_client_wrapper.block.paragraph import Paragraph
 
 MAX_LENGTH = 1500
 
-def split_paragraph(text: str) -> list[Paragraph]:
+def split_paragraph(text: str|None) -> list[Paragraph]:
     """テキストを最大文字数で分割する"""
+    if text is None:
+        return []
+
     if len(text) <= MAX_LENGTH:
         return [Paragraph.from_plain_text(text=text)]
 

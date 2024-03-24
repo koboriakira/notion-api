@@ -55,12 +55,10 @@ class WebclipCreator:
 
         # 要約からタグを抽出して、タグを作成
         tags = self._tag_analyzer.handle(text=summary)
-        for tag in tags:
-            tag_page_id = self._tag_creator.execute(name=tag)
-            tag_relation = tag_relation.add(tag_page_id)
+        tag_relation = self._tag_creator.execute(name_list=tags)
 
         # ページ本文
-        blocks = split_paragraph(page_text) if page_text is not None else []
+        blocks = split_paragraph(page_text)
 
         # あたらしくWebclipを作成
         webclip = Webclip.create(
