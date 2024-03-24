@@ -76,6 +76,8 @@ class Task(BasePage):
     @property
     def pomodoro_count(self) -> int:
         pomodoro_counter = self.get_number(name=PomodoroCounter.NAME)
+        if pomodoro_counter is None:
+            return 0
         return pomodoro_counter.number or 0
 
     def is_kind_trash(self) -> bool:
