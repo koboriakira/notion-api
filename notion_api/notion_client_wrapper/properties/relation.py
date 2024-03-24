@@ -10,13 +10,13 @@ class Relation(Property):
     type: str = "relation"
     has_more: bool = False
 
-    def __init__(
+    def __init__(  # noqa: PLR0913
             self,
             name: str,
-            id: str | None = None,
+            id: str | None = None,  # noqa: A002
             id_list: list[str]|None = None,
             text_list: list[str]|None = None,
-            has_more: bool|None = None):
+            has_more: bool|None = None) -> None:
         self.name = name
         self.id = id
         self.id_list = id_list or []
@@ -29,8 +29,8 @@ class Relation(Property):
 
 
     @staticmethod
-    def of(name: str, property: dict[str, str]) -> "Relation":
-        id_list = list(map(lambda r: r["id"], property["relation"]))
+    def of(name: str, property: dict[str, str]) -> "Relation":  # noqa: A002
+        id_list = [r["id"] for r in property["relation"]]
         return Relation(
             name=name,
             id_list=id_list,
@@ -44,16 +44,16 @@ class Relation(Property):
         )
 
     @classmethod
-    def from_id(cls, name: str, id: str) -> "Relation":
+    def from_id(cls: "Relation", name: str, id: str) -> "Relation":  # noqa: A002
         return cls.from_id_list(name=name, id_list=[id])
 
-    def __dict__(self):
+    def __dict__(self) -> dict:
         result = {
             "type": self.type,
             "relation": [
                 {
                     "id": id,
-                } for id in self.id_list
+                } for id in self.id_list  # noqa: A001
             ],
             "has_more": self.has_more,
         }
