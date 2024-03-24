@@ -10,7 +10,7 @@ from webclip.service.webclip_creator import WebclipCreator
 
 logger = get_logger(__name__)
 
-class Injector:
+class WebclipInjector:
     @staticmethod
     def create_webclip_creator() -> WebclipCreator:
         client = ClientWrapper.get_instance()

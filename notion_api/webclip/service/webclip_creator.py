@@ -80,8 +80,8 @@ class WebclipCreator:
 
 if __name__ == "__main__":
     # python -m notion_api.webclip.service.webclip_creator
-    from webclip.injector import Injector
-    service = Injector.create_webclip_creator()
+    from webclip.injector import WebclipInjector
+    service = WebclipInjector.create_webclip_creator()
     service.execute(
         url="https://hobby.dengeki.com/news/2222026/",
         title="『爆走兄弟レッツ＆ゴー!!』のミニ四駆がミニカー化！マグナムセイバーなどの「トミカプレミアムunlimited」がAmazonで予約受付中!! | 電撃ホビーウェブ",
