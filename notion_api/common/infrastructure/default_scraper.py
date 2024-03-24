@@ -28,7 +28,9 @@ class DefaultScraper:
         other_meta_tags = {}
         for property_tag in soup.find_all("meta", attrs={"property": True}):
             key:str = property_tag["property"]
-            value:str = property_tag["content"]
+            value:str = property_tag.get("content") or property_tag.get("value")
+            if value is None:
+                continue
             if key.startswith("og:"):
                 ogp_tags[key[3:]] = value
             else:
@@ -36,7 +38,9 @@ class DefaultScraper:
 
         for name_tag in soup.find_all("meta", attrs={"name": True}):
             key:str = name_tag["name"]
-            value:str = name_tag["content"]
+            value:str = name_tag.get("content") or name_tag.get("value")
+            if value is None:
+                continue
             other_meta_tags[key] = value
 
         return ScrapedResult(
@@ -49,6 +53,7 @@ class DefaultScraper:
 
 
 if __name__ == "__main__":
-    # python -m notion_api.usecase.service.simple_scraper
+    # python -m notion_api.common.infrastructure.default_scraper
     scraper = DefaultScraper()
-    print(scraper.handle("https://tabelog.com/tokyo/A1317/A131703/13253095/"))
+    result = scraper.execute("https://speakerdeck.com/yuitosato/functional-and-type-safe-ddd-for-oop")
+    # print(result)

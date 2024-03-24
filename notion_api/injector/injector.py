@@ -20,11 +20,16 @@ DEFAULT_GPT_MODEL = "gpt-3.5-turbo-1106"
 class Injector:
     @classmethod
     def create_add_webclip_usecase(cls: "Injector") -> AddWebclipUsecase:
+        openai_executer = cls.__create_openai_executer(model=DEFAULT_GPT_MODEL, logger=logger)
         scrape_service = CommonInjector.get_scrape_service()
         inbox_service = cls.create_inbox_service()
         tag_create_service = cls.create_tag_create_service()
-        tag_analyzer = cls.create_tag_analyzer(is_debug=False)
-        text_summarizer = cls.create_text_summarizer(is_debug=False)
+        tag_analyzer = cls.create_tag_analyzer(
+            openai_executer=openai_executer,
+            is_debug=False)
+        text_summarizer = cls.create_text_summarizer(
+            openai_executer=openai_executer,
+            is_debug=False)
         append_context_service = SlackConciergeInjector.create_append_context_service()
         client = ClientWrapper.get_instance()
         return AddWebclipUsecase(
@@ -47,8 +52,10 @@ class Injector:
         return TagCreateService()
 
     @classmethod
-    def create_tag_analyzer(cls: "Injector", is_debug: bool|None=None) -> TagAnalyzer:
-        openai_executer = cls.__create_openai_executer(model=DEFAULT_GPT_MODEL, logger=logger)
+    def create_tag_analyzer(
+            cls: "Injector",
+            openai_executer: OpenaiExecuter,
+            is_debug: bool|None=None) -> TagAnalyzer:
         return TagAnalyzer(
             client=openai_executer,
             logger=logger,
@@ -56,8 +63,10 @@ class Injector:
         )
 
     @classmethod
-    def create_text_summarizer(cls: "Injector", is_debug: bool|None=None) -> TextSummarizer:
-        openai_executer = cls.__create_openai_executer(model=DEFAULT_GPT_MODEL, logger=logger)
+    def create_text_summarizer(
+            cls: "Injector",
+            openai_executer: OpenaiExecuter,
+            is_debug: bool|None=None) -> TextSummarizer:
         return TextSummarizer(
             logger=logger,
             client=openai_executer,

@@ -5,6 +5,7 @@ from domain.database_type import DatabaseType
 from notion_client_wrapper.block import Paragraph
 from notion_client_wrapper.block.rich_text.rich_text_builder import RichTextBuilder
 from notion_client_wrapper.client_wrapper import ClientWrapper
+from notion_client_wrapper.filter.filter_builder import FilterBuilder
 from notion_client_wrapper.properties import Cover, Relation, Text, Title, Url
 from slack_concierge.service.append_context_service import AppendContextService
 from usecase.service.inbox_service import InboxService
@@ -42,9 +43,12 @@ class AddWebclipUsecase:
             ) -> dict:
         logger.info("execute")
 
+        title_property = Title.from_plain_text(name="名前", text=title)
+        filter_param = FilterBuilder.build_simple_equal_condition(title_property)
+
         searched_webclips = self._client.retrieve_database(
             database_id=DatabaseType.WEBCLIP.value,
-            title=title,
+            filter_param=filter_param,
         )
         if len(searched_webclips) > 0:
             logger.info("Webclip is already registered")
@@ -78,7 +82,7 @@ class AddWebclipUsecase:
 
         # 新しいページを作成
         properties=[
-                Title.from_plain_text(name="名前", text=title),
+                title_property,
                 Url.from_url(name="URL", url=url),
             ]
         if len(tag_page_ids) > 0:
