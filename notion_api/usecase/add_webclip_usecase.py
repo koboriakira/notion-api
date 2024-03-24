@@ -1,4 +1,5 @@
 
+from common.service.scrape_service import ScrapeService
 from custom_logger import get_logger
 from domain.database_type import DatabaseType
 from notion_client_wrapper.block import Paragraph
@@ -7,7 +8,6 @@ from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper.properties import Cover, Relation, Text, Title, Url
 from usecase.service.append_page_id_to_slack_context import AppendPageIdToSlackContext
 from usecase.service.inbox_service import InboxService
-from usecase.service.simple_scraper import SimpleScraper
 from usecase.service.tag_analyzer import TagAnalyzer
 from usecase.service.tag_create_service import TagCreateService
 from usecase.service.text_summarizer import TextSummarizer
@@ -15,16 +15,18 @@ from usecase.service.text_summarizer import TextSummarizer
 logger = get_logger(__name__)
 
 class AddWebclipUsecase:
-    def __init__(self):
+    def __init__(
+            self,
+            scrape_service: ScrapeService) -> None:
         self.client = ClientWrapper.get_instance()
         self.tag_create_service = TagCreateService()
         self.tag_analyzer = TagAnalyzer()
-        self.simple_scraper = SimpleScraper()
+        self._scrape_service = scrape_service
         self.text_summarizer = TextSummarizer()
         self.inbox_service = InboxService()
         self.append_page_id_to_slack_context = AppendPageIdToSlackContext()
 
-    def execute(
+    def execute(  # noqa: C901, PLR0913
             self,
             url: str,
             title: str,
@@ -57,9 +59,8 @@ class AddWebclipUsecase:
             )
 
         # スクレイピングして要約を作成
-        page_text, formatted_page_text = self.simple_scraper.handle(url=url)
-        if page_text is None:
-            raise Exception("ページのスクレイピングに失敗しました。")
+        scraped_result = self._scrape_service.execute(url=url)
+        page_text = scraped_result.not_formatted_text
         summary = self.text_summarizer.handle(page_text)
 
         # 要約からタグを抽出して、タグを作成
@@ -116,7 +117,7 @@ class AddWebclipUsecase:
             "url": page_url,
         }
 
-    def _handle_for_twitter(
+    def _handle_for_twitter(  # noqa: PLR0913
             self,
             url: str,
             title: str, # ツイート本文

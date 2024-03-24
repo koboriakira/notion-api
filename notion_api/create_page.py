@@ -1,6 +1,7 @@
 import json
 import logging
 
+from common.service.scrape_service import ScrapeServiceInjector
 from usecase.add_video_usecase import AddVideoUsecase
 from usecase.add_webclip_usecase import AddWebclipUsecase
 from util.environment import Environment
@@ -31,7 +32,10 @@ def handler(event:dict, context:dict) -> dict:  # noqa: ARG001
                 slack_thread_ts=slack_thread_ts,
                 )
         if mode == "webclip":
-            usecase = AddWebclipUsecase()
+            scrape_service = ScrapeServiceInjector.get_instance()
+            usecase = AddWebclipUsecase(
+                scrape_service=scrape_service,
+            )
             _ = usecase.execute(
                 url=params["url"],
                 title=params["title"],
