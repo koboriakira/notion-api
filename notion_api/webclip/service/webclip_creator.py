@@ -1,16 +1,21 @@
 from logging import Logger, getLogger
+from typing import TYPE_CHECKING
 
 from common.domain.tag_relation import TagRelation
 from common.service.scrape_service import ScrapeService
 from common.service.tag_creator import TagCreator
+from notion_client_wrapper.block.paragraph import Paragraph
 from util.tag_analyzer import TagAnalyzer
 from util.text_summarizer import TextSummarizer
 from webclip.domain.webclip import Webclip
 from webclip.infrastructure.webclip_repository_impl import WebclipRepositoryImpl
 
+if TYPE_CHECKING:
+    from notion_client_wrapper.block.block import Block
+
 
 class WebclipCreator:
-    def __init__(
+    def __init__(  # noqa: PLR0913
             self,
             webclip_repository: WebclipRepositoryImpl,
             scrape_service: ScrapeService,
@@ -27,25 +32,20 @@ class WebclipCreator:
         self._text_summarizer = text_summarizer or TextSummarizer()
 
 
-    def execute(  # noqa: PLR0913
+    def execute(
             self,
             url: str,
             title: str,
             cover: str | None = None,
-            slack_channel: str | None = None,
-            slack_thread_ts: str | None = None,
-            ) -> dict:
-        info_message = f"{self.__class__} execute: url={url}, title={title}, cover={cover}, slack_channel={slack_channel}, slack_thread_ts={slack_thread_ts}"
+            ) -> Webclip:
+        info_message = f"{self.__class__} execute: url={url}, title={title}, cover={cover}"
         self._logger.info(info_message)
 
         webclip = self._webclip_repository.find_by_title(title=title)
         if webclip is not None:
             info_message = f"Webclip is already registered: {webclip.get_title_text()}"
             self._logger.info(info_message)
-            return {
-                "id": webclip.id,
-                "url": webclip.url,
-            }
+            return webclip
 
         info_message = "Create a Webclip"
         self._logger.info(info_message)
@@ -63,19 +63,28 @@ class WebclipCreator:
             tag_page_id = self._tag_creator.execute(name=tag)
             tag_relation = tag_relation.add(tag_page_id)
 
+        # ページ本文を追加
+        blocks:list[Block] = []
+        if page_text is not None:
+            # textが1500文字を超える場合は、1500文字ずつ分割して追加する
+            if len(page_text) > 1500:
+                for i in range(0, len(page_text), 1500):
+                    paraphrased_text = page_text[i:i+1500]
+                    blocks.append(Paragraph.from_plain_text(text=paraphrased_text))
+            else:
+                blocks.append(Paragraph.from_plain_text(text=page_text))
+
         # あたらしくWebclipを作成
         webclip = Webclip.create(
             title=title,
             url=url,
             tag_relation=tag_relation,
             cover=cover,
-            summary=summary, # FIXME: あとでいれる
+            summary=summary,
+            blocks=blocks,
         )
-        webclip = self._webclip_repository.save(webclip=webclip)
-        return {
-            "id": webclip.id,
-            "url": webclip.url,
-        }
+
+        return self._webclip_repository.save(webclip=webclip)
 
 
 if __name__ == "__main__":
