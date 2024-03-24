@@ -1,19 +1,20 @@
 
 from domain.database_type import DatabaseType
 from infrastructure.slack_bot_client import SlackBotClient
-from infrastructure.slack_user_client import SlackUserClient
 from notion_client_wrapper.block.paragraph import Paragraph
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper.properties import Title
 
 
 class InboxService:
-    def __init__(self) -> None:
-        self.client = ClientWrapper.get_instance()
-        self.slack_bot_client = SlackBotClient()
-        self.slack_user_client = SlackUserClient()
+    def __init__(
+            self,
+            client: ClientWrapper|None = None,
+            slack_bot_client: SlackBotClient|None = None) -> None:
+        self.client = client or ClientWrapper.get_instance()
+        self.slack_bot_client = slack_bot_client or SlackBotClient()
 
-    def add_inbox_task_by_page_id(
+    def add_inbox_task_by_page_id(  # noqa: PLR0913
             self,
             page_id: str, # NotionのページID
             page_url: str, # NotionのページURL

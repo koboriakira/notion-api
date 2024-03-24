@@ -1,6 +1,7 @@
-from typing import Optional
-from slack_sdk import WebClient
 import os
+
+from slack_sdk import WebClient
+
 from domain.infrastructure.slack_client import SlackClient
 
 
@@ -12,17 +13,17 @@ class SlackBotClient(SlackClient):
         self,
         channel: str,
         text: str,
-        blocks: Optional[list] = None,
-        thread_ts: Optional[str] = None,
+        blocks: list | None = None,
+        thread_ts: str | None = None,
         is_enabled_mention: bool = False,
     ) -> dict:
         text = f"<@U04PQMBCFNE> {text}" if is_enabled_mention else text
         return self.client.chat_postMessage(
-            channel=channel, text=text, blocks=blocks, thread_ts=thread_ts
+            channel=channel, text=text, blocks=blocks, thread_ts=thread_ts,
         )
 
     def update_message(
-        self, channel: str, ts: str, text: str, blocks: Optional[list] = None
+        self, channel: str, ts: str, text: str, blocks: list | None = None,
     ) -> dict:
         return self.client.chat_update(channel=channel, ts=ts, text=text, blocks=blocks)
 
