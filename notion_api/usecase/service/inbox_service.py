@@ -1,6 +1,9 @@
 
+import os
+
+from slack_sdk.web import WebClient
+
 from domain.database_type import DatabaseType
-from infrastructure.slack_bot_client import SlackBotClient
 from notion_client_wrapper.block.paragraph import Paragraph
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper.properties import Title
@@ -9,10 +12,10 @@ from notion_client_wrapper.properties import Title
 class InboxService:
     def __init__(
             self,
-            client: ClientWrapper|None = None,
-            slack_bot_client: SlackBotClient|None = None) -> None:
+            slack_client: WebClient|None = None,
+            client: ClientWrapper|None = None) -> None:
         self.client = client or ClientWrapper.get_instance()
-        self.slack_bot_client = slack_bot_client or SlackBotClient()
+        self.slack_client = slack_client or WebClient(token=os.environ["SLACK_BOT_TOKEN"])
 
     def add_inbox_task_by_page_id(  # noqa: PLR0913
             self,
@@ -30,7 +33,7 @@ class InboxService:
             paragraph = Paragraph.from_plain_text(text=original_url)
             self.client.append_block(block_id=inbox_task_page["id"], block=paragraph)
         if slack_channel is not None:
-            self.slack_bot_client.send_message(
+            self.slack_client.chat_postMessage(
                 channel=slack_channel,
                 text=f"ページを作成しました: {page_url}",
                 thread_ts=slack_thread_ts,

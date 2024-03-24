@@ -6,7 +6,7 @@ from notion_client_wrapper.block import Paragraph
 from notion_client_wrapper.block.rich_text.rich_text_builder import RichTextBuilder
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper.properties import Cover, Relation, Text, Title, Url
-from usecase.service.append_page_id_to_slack_context import AppendPageIdToSlackContext
+from slack_concierge.service.append_context_service import AppendContextService
 from usecase.service.inbox_service import InboxService
 from usecase.service.tag_analyzer import TagAnalyzer
 from usecase.service.tag_create_service import TagCreateService
@@ -17,14 +17,16 @@ logger = get_logger(__name__)
 class AddWebclipUsecase:
     def __init__(
             self,
-            scrape_service: ScrapeService) -> None:
-        self.client = ClientWrapper.get_instance()
+            scrape_service: ScrapeService,
+            inbox_service: InboxService,
+            append_context_service: AppendContextService) -> None:
+        self._scrape_service = scrape_service
+        self._inbox_service = inbox_service
+        self._append_context_service = append_context_service
         self.tag_create_service = TagCreateService()
         self.tag_analyzer = TagAnalyzer()
-        self._scrape_service = scrape_service
         self.text_summarizer = TextSummarizer()
-        self.inbox_service = InboxService()
-        self.append_page_id_to_slack_context = AppendPageIdToSlackContext()
+        self.client = ClientWrapper.get_instance()
 
     def execute(  # noqa: C901, PLR0913
             self,
@@ -87,14 +89,14 @@ class AddWebclipUsecase:
         page_id = result["id"]
         page_url = result["url"]
 
-        self.inbox_service.add_inbox_task_by_page_id(
+        self._inbox_service.add_inbox_task_by_page_id(
             page_id=page_id,
             page_url=page_url,
             original_url=url,
             slack_channel=slack_channel,
             slack_thread_ts=slack_thread_ts,
         )
-        self.append_page_id_to_slack_context.execute(
+        self._append_context_service.append_page_id(
             channel=slack_channel,
             event_ts=slack_thread_ts,
             page_id=page_id,
@@ -149,14 +151,14 @@ class AddWebclipUsecase:
         page_id = result["id"]
         page_url = result["url"]
 
-        self.inbox_service.add_inbox_task_by_page_id(
+        self._inbox_service.add_inbox_task_by_page_id(
             page_id=page_id,
             page_url=page_url,
             original_url=url,
             slack_channel=slack_channel,
             slack_thread_ts=slack_thread_ts,
         )
-        self.append_page_id_to_slack_context.execute(
+        self._append_context_service.append_page_id(
             channel=slack_channel,
             event_ts=slack_thread_ts,
             page_id=page_id,
