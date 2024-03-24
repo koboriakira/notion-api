@@ -2,11 +2,11 @@
 
 from datetime import datetime
 
+from domain.task.task import Task
 from domain.task.task_kind import TaskKindType
 from domain.task.task_repository import TaskRepository
 from domain.task.task_status import TaskStatusType
 from infrastructure.task.routine_repository_impl import RoutineRepositoryImpl
-from notion_api.domain.task.task import Task
 from util.datetime import JST
 
 
