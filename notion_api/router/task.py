@@ -22,7 +22,7 @@ def find_task(
     valid_access_token(access_token)
     usecase = FindTaskUsecase(task_repository=TaskRepositoryImpl())
     task = usecase.execute(task_id=task_id)
-    return TaskResponse(TaskDto.from_model(task))
+    return TaskResponse(data=TaskDto.from_model(task))
 
 @router.post("/{task_id}", response_model=TaskResponse)
 def upadate_task(
@@ -36,7 +36,7 @@ def upadate_task(
         task_id=task_id,
         status=request.status,
         pomodoro_count=request.pomodoro_count)
-    return TaskResponse(TaskDto.from_model(task))
+    return TaskResponse(data=TaskDto.from_model(task))
 
 @router.post("", response_model=BaseResponse)
 def create_task(
