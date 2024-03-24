@@ -1,5 +1,5 @@
-from typing import Optional
 import logging
+
 from usecase.service.openai_executer import OpenaiExecuter
 
 TEMPLATE = """「仕様」に則って「入力」に記載した文章の要約をしてください。
@@ -12,7 +12,7 @@ TEMPLATE = """「仕様」に則って「入力」に記載した文章の要約
 {context}"""
 
 class TextSummarizer:
-    def __init__(self, logger: Optional[logging.Logger] = None, is_debug: bool = False):
+    def __init__(self, logger: logging.Logger | None = None, is_debug: bool = False) -> None:
         self.logger = logger or logging.getLogger(__name__)
         self.client = OpenaiExecuter(model="gpt-3.5-turbo-1106",
                                      logger=logger)
