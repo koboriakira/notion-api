@@ -1,11 +1,8 @@
 import json
 import logging
 
-from common.injector import CommonInjector
 from injector.injector import Injector
-from slack_concierge.injector import SlackConciergeInjector
 from usecase.add_video_usecase import AddVideoUsecase
-from usecase.add_webclip_usecase import AddWebclipUsecase
 from util.environment import Environment
 from util.error_reporter import ErrorReporter
 
@@ -34,18 +31,7 @@ def handler(event:dict, context:dict) -> dict:  # noqa: ARG001
                 slack_thread_ts=slack_thread_ts,
                 )
         if mode == "webclip":
-            scrape_service = CommonInjector.get_scrape_service()
-            inbox_service = Injector.create_inbox_service()
-            tag_create_service = Injector.create_tag_create_service()
-            tag_analyzer = Injector.create_tag_analyzer()
-            append_context_service = SlackConciergeInjector.create_append_context_service()
-            usecase = AddWebclipUsecase(
-                scrape_service=scrape_service,
-                inbox_service=inbox_service,
-                append_context_service=append_context_service,
-                tag_create_service=tag_create_service,
-                tag_analyzer=tag_analyzer,
-            )
+            usecase = Injector.create_add_webclip_usecase()
             _ = usecase.execute(
                 url=params["url"],
                 title=params["title"],

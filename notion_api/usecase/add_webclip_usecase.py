@@ -21,14 +21,16 @@ class AddWebclipUsecase:
             inbox_service: InboxService,
             append_context_service: AppendContextService,
             tag_create_service: TagCreateService,
-            tag_analyzer: TagAnalyzer) -> None:
+            tag_analyzer: TagAnalyzer,
+            text_summarizer: TextSummarizer,
+            client: ClientWrapper) -> None:
         self._scrape_service = scrape_service
         self._inbox_service = inbox_service
         self._append_context_service = append_context_service
         self._tag_create_service = tag_create_service
         self._tag_analyzer = tag_analyzer
-        self.text_summarizer = TextSummarizer()
-        self.client = ClientWrapper.get_instance()
+        self._text_summarizer = text_summarizer
+        self._client = client
 
     def execute(  # noqa: C901, PLR0913
             self,
@@ -40,7 +42,7 @@ class AddWebclipUsecase:
             ) -> dict:
         logger.info("execute")
 
-        searched_webclips = self.client.retrieve_database(
+        searched_webclips = self._client.retrieve_database(
             database_id=DatabaseType.WEBCLIP.value,
             title=title,
         )
@@ -65,7 +67,7 @@ class AddWebclipUsecase:
         # スクレイピングして要約を作成
         scraped_result = self._scrape_service.execute(url=url)
         page_text = scraped_result.not_formatted_text
-        summary = self.text_summarizer.handle(page_text)
+        summary = self._text_summarizer.handle(page_text)
 
         # 要約からタグを抽出して、タグを作成
         tag_page_ids:list[str] = []
@@ -83,7 +85,7 @@ class AddWebclipUsecase:
             properties.append(Relation.from_id_list(name="タグ", id_list=tag_page_ids))
         if summary is not None:
             properties.append(Text.from_plain_text(name="概要", text=summary))
-        result = self.client.create_page_in_database(
+        result = self._client.create_page_in_database(
             database_id=DatabaseType.WEBCLIP.value,
             cover=Cover.from_external_url(cover) if cover is not None else None,
             properties=properties,
@@ -111,11 +113,11 @@ class AddWebclipUsecase:
                 for i in range(0, len(page_text), 1500):
                     rich_text = RichTextBuilder.get_instance().add_text(page_text[i:i+1500]).build()
                     paragraph = Paragraph.from_rich_text(rich_text=rich_text)
-                    self.client.append_block(block_id=page_id, block=paragraph)
+                    self._client.append_block(block_id=page_id, block=paragraph)
             else:
                 rich_text = RichTextBuilder.get_instance().add_text(page_text).build()
                 paragraph = Paragraph.from_rich_text(rich_text=rich_text)
-                self.client.append_block(block_id=page_id, block=paragraph)
+                self._client.append_block(block_id=page_id, block=paragraph)
         return {
             "id": page_id,
             "url": page_url,
@@ -145,7 +147,7 @@ class AddWebclipUsecase:
         if len(tag_page_ids) > 0:
             properties.append(Relation.from_id_list(name="タグ", id_list=tag_page_ids))
 
-        result = self.client.create_page_in_database(
+        result = self._client.create_page_in_database(
             database_id=DatabaseType.WEBCLIP.value,
             cover=Cover.from_external_url(cover) if cover is not None else None,
             properties=properties,
