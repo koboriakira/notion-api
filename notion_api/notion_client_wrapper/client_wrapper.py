@@ -2,6 +2,7 @@ import logging
 import os
 
 from notion_client import Client
+from notion_client.errors import APIResponseError
 
 from notion_client_wrapper.base_operator import BaseOperator
 from notion_client_wrapper.base_page import BasePage
@@ -15,6 +16,9 @@ from notion_client_wrapper.properties.property import Property
 from notion_client_wrapper.property_translator import PropertyTranslator
 
 logger = logging.getLogger(__name__)
+
+class UpdatePageError(Exception):
+    pass
 
 class ClientWrapper:
     def __init__(self, client: Client) -> None:
@@ -31,13 +35,17 @@ class ClientWrapper:
         page_entity = self.__retrieve_page(page_id=page_id)
         return self.__convert_page_model(page_entity=page_entity, include_children=True, page_model=page_model)
 
-    def update_page(self, page_id: str, properties: list[Property] = []) -> dict:
+    def update_page(self, page_id: str, properties: list[Property]|None = None) -> dict:
         """ 指定されたページを更新する """
-        update_properties = Properties(values=properties).exclude_button()
-        return self.client.pages.update(
-            page_id=page_id,
-            properties=update_properties.__dict__(),
-        )
+        update_properties = Properties(values=properties or []).exclude_button()
+        try:
+            return self.client.pages.update(
+                page_id=page_id,
+                properties=update_properties.__dict__(),
+            )
+        except APIResponseError as e:
+            exception_message = f"page_id: {page_id}, error: {e}, properties: {update_properties.__dict__()}"
+            raise UpdatePageError(exception_message) from e
 
     def retrieve_comments(self, page_id: str) -> list[dict]:
         """ 指定されたページのコメントを取得する """
