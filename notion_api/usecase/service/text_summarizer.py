@@ -1,4 +1,4 @@
-import logging
+from logging import Logger
 
 from usecase.service.openai_executer import OpenaiExecuter
 
@@ -12,23 +12,26 @@ TEMPLATE = """「仕様」に則って「入力」に記載した文章の要約
 {context}"""
 
 class TextSummarizer:
-    def __init__(self, logger: logging.Logger | None = None, is_debug: bool = False) -> None:
-        self.logger = logger or logging.getLogger(__name__)
-        self.client = OpenaiExecuter(model="gpt-3.5-turbo-1106",
-                                     logger=logger)
-        self.is_debug = is_debug
+    def __init__(
+            self,
+            client: OpenaiExecuter,
+            logger: Logger,
+            is_debug: bool|None = None) -> None:
+        self._client = client
+        self._logger = logger
+        self._is_debug = is_debug or False
 
     def handle(self, text: str) -> str:
-        self.logger.debug("TextSummarizer: " + text)
-        if self.is_debug:
+        self._logger.debug("TextSummarizer: " + text)
+        if self._is_debug:
             return "要約テスト"
         user_content = TEMPLATE.format(context=text)
-        return self.client.simple_chat(user_content=user_content)
+        return self._client.simple_chat(user_content=user_content)
 
 if __name__ == "__main__":
-    # python -m usecase.service.text_summarizer
-    logging.basicConfig(level=logging.DEBUG)
-    usecase = TextSummarizer(logger=logging.getLogger(__name__))
+    # python -m notion_api.usecase.service.text_summarizer
+    from injector.injector import Injector
+    usecase = Injector.create_text_summarizer()
     text = """うまみや栄養がぎゅっと凝縮された「切り干し大根」。お醤油味の煮物もいいですが、サラダにしたりかき揚げにしたりと実は自由に楽しめる食材です。味付けもピリ辛やエスニック風味でパンチを効かせてお酒のよき相棒に！ 水でもどす工程なしのレシピなので、思い立ったらすぐ作れます。 """
     summary = usecase.handle(text)
     print(type(summary))

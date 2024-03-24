@@ -172,3 +172,14 @@ class AddWebclipUsecase:
             "id": page_id,
             "url": page_url,
         }
+
+if __name__ == "__main__":
+    # python -m notion_api.usecase.add_webclip_usecase
+    from injector.injector import Injector
+    usecase = Injector.create_add_webclip_usecase()
+    usecase.execute(
+        url="https://speakerdeck.com/yuitosato/functional-and-type-safe-ddd-for-oop",
+        title="ビジネスロジックを「型」で表現するOOPのための関数型DDD / Functional And Type-Safe DDD for OOP",
+        slack_channel="C05GUTE35RU",
+        slack_thread_ts="1711238809.901419",
+    )
