@@ -49,8 +49,8 @@ class Task(BasePage):
         properties = self.properties.append_property(start_date)
         self.properties = properties
 
-    def update_pomodoro_count(self, pomodoro_count: int) -> None:
-        pomodoro_counter = PomodoroCounter.create(pomodoro_count)
+    def update_pomodoro_count(self, number: int) -> None:
+        pomodoro_counter = PomodoroCounter(number=number)
         properties = self.properties.append_property(pomodoro_counter)
         self.properties = properties
 
