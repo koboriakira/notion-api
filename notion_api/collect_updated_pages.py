@@ -22,4 +22,4 @@ def handler(event: dict, context:dict) -> dict:  # noqa: ARG001
 
 if __name__ == "__main__":
     # python -m notion_api.collect_updated_pages
-    handler()
+    handler({}, {})
