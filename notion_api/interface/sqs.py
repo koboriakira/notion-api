@@ -1,16 +1,16 @@
-from typing import Optional
-import os
-import boto3
 import json
+import os
+
+import boto3
+
 from custom_logger import get_logger
-from usecase.add_video_usecase import AddVideoUsecase
 
 AWS_ACCOUNT_ID = os.environ.get("AWS_ACCOUNT_ID")
 CREATE_PAGE_QUEUE_URL = f"https://sqs.ap-northeast-1.amazonaws.com/{AWS_ACCOUNT_ID}/NotionApi-createPageQueue162E3EBC-P2yQXsUSJdus"
 
 logger = get_logger(__name__)
 
-sqs_client = boto3.client('sqs')
+sqs_client = boto3.client("sqs")
 
 def create_page(
         mode: str,

@@ -1,17 +1,17 @@
-from typing import Optional
 from datetime import date as DateObject
-from notion_client_wrapper.client_wrapper import ClientWrapper
-from notion_client_wrapper.base_page import BasePage
-from notion_client_wrapper.properties import Title, Relation, Url, Cover, Date, Select
-from notion_client_wrapper.block.rich_text.rich_text_builder import RichTextBuilder
-from notion_client_wrapper.block import Paragraph
-from usecase.service.tag_create_service import TagCreateService
-from domain.database_type import DatabaseType
+
 from custom_logger import get_logger
+from domain.database_type import DatabaseType
+from notion_client_wrapper.base_page import BasePage
+from notion_client_wrapper.block import Paragraph
+from notion_client_wrapper.block.rich_text.rich_text_builder import RichTextBuilder
+from notion_client_wrapper.client_wrapper import ClientWrapper
+from notion_client_wrapper.properties import Cover, Date, Relation, Select, Title, Url
+from usecase.service.tag_create_service import TagCreateService
 
 logger = get_logger(__name__)
 
-def find_promotion(pages: list[BasePage], promotion_name: str) -> Optional[Select]:
+def find_promotion(pages: list[BasePage], promotion_name: str) -> Select | None:
     for page in pages:
         status = page.get_select(name="団体")
         if status.selected_name == promotion_name:
@@ -30,7 +30,7 @@ class AddProwrestlingUsecase:
                 promotion: str,
                 text: str,
                 tags: list[str],
-                cover: Optional[str] = None,
+                cover: str | None = None,
                 ) -> dict:
         logger.info("execute")
 
@@ -43,12 +43,12 @@ class AddProwrestlingUsecase:
             page = searched_pw_events[0]
             return {
                 "id": page.id,
-                "url": page.url
+                "url": page.url,
             }
         logger.info("Create a Event")
 
         # 団体の選択肢を特定
-        pw_events = self.client.retrieve_database(database_id=DatabaseType.PROWRESTLING.value,)
+        pw_events = self.client.retrieve_database(database_id=DatabaseType.PROWRESTLING.value)
         promotion_select = find_promotion(pages=pw_events,
                                           promotion_name=promotion)
 
@@ -70,11 +70,11 @@ class AddProwrestlingUsecase:
         result = self.client.create_page_in_database(
             database_id=DatabaseType.PROWRESTLING.value,
             cover=Cover.from_external_url(cover) if cover is not None else None,
-            properties=properties
+            properties=properties,
         )
         page = {
             "id": result["id"],
-            "url": result["url"]
+            "url": result["url"],
         }
 
         # ページ本文を追加
