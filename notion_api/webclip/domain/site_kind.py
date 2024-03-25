@@ -3,6 +3,7 @@ from enum import Enum
 
 class SiteKind(Enum):
     TWITTER = "twitter.com"
+    X = "x.com"
     DEFAULT = "_"
 
     @staticmethod
