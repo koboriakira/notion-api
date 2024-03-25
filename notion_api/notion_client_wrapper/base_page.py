@@ -54,6 +54,12 @@ class BasePage:
             block_children=blocks or [],
         )
 
+    def get_slack_text_in_block_children(self) -> str:
+        # FIXME: block_childrenをBlocks型にしたうえで、メソッドをBlocksに移動する
+        if not self.block_children or len(self.block_children) == 0:
+            return ""
+        return "\n".join([block.to_slack_text() for block in self.block_children])
+
     def get_title(self) -> Title:
         return self.properties.get_title()
 

@@ -33,7 +33,7 @@ class Task(BaseNotionPageModel):
             start_date=model.start_datetime if model.start_datetime is not None else None,
             end_date=None,
             feeling="",
-            text="",
+            text=model.get_slack_text_in_block_children(),
         )
 class TaskResponse(BaseResponse):
     data: Task | None
