@@ -39,15 +39,6 @@ export const SCHEDULER_CONFIG = {
     year: "*",
     weekDay: "*",
   }),
-  // 3分ごとに実行(8時から24時まで)
-  // update_current_tasks: events.Schedule.cron({
-  //   minute: "*/3",
-  //   hour: "23-15",
-  //   month: "*",
-  //   year: "*",
-  //   weekDay: "*",
-  // }),
-  // 毎日2時5分に実行
   move_completed_task_to_backup: events.Schedule.cron({
     minute: "5",
     hour: "17",
