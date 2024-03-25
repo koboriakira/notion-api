@@ -1,5 +1,5 @@
-from notion_api.slack_concierge.service.append_context_service import AppendContextService
 from slack_concierge.infrastructure.lambda_slack_concierge_api import LambdaSlackConciergeAPI
+from slack_concierge.service.append_context_service import AppendContextService
 
 
 class SlackConciergeInjector:
