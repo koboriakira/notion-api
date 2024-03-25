@@ -1,4 +1,6 @@
 
+from logging import Logger
+
 from slack_concierge.service.append_context_service import AppendContextService
 from usecase.service.inbox_service import InboxService
 from webclip.service.webclip_creator import WebclipCreator
@@ -10,10 +12,12 @@ class AddWebclipUsecase:
             webclip_creator: WebclipCreator,
             inbox_service: InboxService,
             append_context_service: AppendContextService,
+            logger: Logger,
             ) -> None:
         self._webclip_creator = webclip_creator
         self._inbox_service = inbox_service
         self._append_context_service = append_context_service
+        self._logger = logger
 
     def execute(  # noqa: PLR0913
             self,
