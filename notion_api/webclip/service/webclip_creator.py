@@ -1,32 +1,20 @@
 from logging import Logger, getLogger
 
-from common.domain.tag_relation import TagRelation
-from common.service.scrape_service import ScrapeService
-from common.service.tag_creator import TagCreator
-from util.split_paragraph import split_paragraph
-from util.tag_analyzer import TagAnalyzer
-from util.text_summarizer import TextSummarizer
 from webclip.domain.webclip import Webclip
 from webclip.infrastructure.webclip_repository_impl import WebclipRepositoryImpl
+from webclip.service.webclip_generator import WebclipGeneratorRule
 
 
 class WebclipCreator:
-    def __init__(  # noqa: PLR0913
+    def __init__(
             self,
             webclip_repository: WebclipRepositoryImpl,
-            scrape_service: ScrapeService,
-            tag_creator: TagCreator,
+            webclip_generator_rule: WebclipGeneratorRule,
             logger: Logger | None = None,
-            tag_analyzer: TagAnalyzer | None = None,
-            text_summarizer: TextSummarizer | None = None,
             ) -> None:
         self._webclip_repository = webclip_repository
-        self._scrape_service = scrape_service
-        self._tag_creator = tag_creator
+        self._webclip_generator_rule = webclip_generator_rule
         self._logger = logger or getLogger(__name__)
-        self._tag_analyzer = tag_analyzer or TagAnalyzer()
-        self._text_summarizer = text_summarizer or TextSummarizer()
-
 
     def execute(
             self,
@@ -37,6 +25,21 @@ class WebclipCreator:
         info_message = f"{self.__class__} execute: url={url}, title={title}, cover={cover}"
         self._logger.info(info_message)
 
+        webclip = self._find_webclip(title=title)
+        if webclip is not None:
+            return webclip
+
+        # Webclipを生成
+        webclip_generator = self._webclip_generator_rule.get_generator(url=url)
+        webclip = webclip_generator.execute(
+            url=url,
+            title=title,
+            cover=cover,
+        )
+
+        return self._webclip_repository.save(webclip=webclip)
+
+    def _find_webclip(self, title: str) -> Webclip | None:
         webclip = self._webclip_repository.find_by_title(title=title)
         if webclip is not None:
             info_message = f"Webclip is already registered: {webclip.get_title_text()}"
@@ -45,33 +48,7 @@ class WebclipCreator:
 
         info_message = "Create a Webclip"
         self._logger.info(info_message)
-
-        # スクレイピングして要約を作成
-        scraped_result = self._scrape_service.execute(url=url)
-        page_text = scraped_result.not_formatted_text
-        summary = self._text_summarizer.handle(page_text)
-
-        tag_relation = TagRelation.empty()
-
-        # 要約からタグを抽出して、タグを作成
-        tags = self._tag_analyzer.handle(text=summary)
-        tag_relation = self._tag_creator.execute(name_list=tags)
-
-        # ページ本文
-        blocks = split_paragraph(page_text)
-
-        # あたらしくWebclipを作成
-        webclip = Webclip.create(
-            title=title,
-            url=url,
-            tag_relation=tag_relation,
-            cover=cover,
-            summary=summary,
-            blocks=blocks,
-        )
-
-        return self._webclip_repository.save(webclip=webclip)
-
+        return None
 
 if __name__ == "__main__":
     # python -m notion_api.webclip.service.webclip_creator
