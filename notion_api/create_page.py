@@ -45,3 +45,8 @@ def handler(event:dict, context:dict) -> dict:  # noqa: ARG001
             slack_channel=slack_channel,
             slack_thread_ts=slack_thread_ts,
     )
+
+if __name__ == "__main__":
+    # python -m notion_api.create_page
+    # 絶対に失敗する
+    handler({}, {})

@@ -6,7 +6,7 @@ class SiteKind(Enum):
     DEFAULT = "_"
 
     @staticmethod
-    def find_site_kind(url: str) -> None | "SiteKind":  # noqa: TCH010
+    def find_site_kind(url: str) -> "SiteKind":
         for site_kind in SiteKind:
             if site_kind == SiteKind.DEFAULT:
                 continue
