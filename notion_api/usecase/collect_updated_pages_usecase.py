@@ -1,4 +1,7 @@
+import os
 from datetime import datetime, timedelta
+
+from slack_sdk.web import WebClient
 
 from custom_logger import get_logger
 from domain.database_type import DatabaseType
@@ -34,6 +37,7 @@ LOG_FORMAT_APPEND_PAGE = "ページを追加しました: %s"
 class CollectUpdatedPagesUsecase:
     def __init__(self, is_debug: bool|None = None) -> None:
         self.client = ClientWrapper.get_instance()
+        self._slack_client = WebClient(token=os.environ["SLACK_BOT_TOKEN"])
         self.is_debug = is_debug
 
     def execute(self, target_datetime: datetime | None = None) -> None:
@@ -55,6 +59,11 @@ class CollectUpdatedPagesUsecase:
         for title, database_type in DATABASE_DICT.items():
             pages = self._get_latest_items(target_datetime=target_datetime, database_type=database_type)
             self._append_relation_to_daily_log(daily_log_id=daily_log_id, title=title, pages=pages)
+
+        self._slack_client.chat_postMessage(
+            text=f"デイリーログにページを追加しました。\n{daily_log.url}",
+            channel="C05F6AASERZ", # diary
+        )
 
     def _find_daily_log(self, target_datetime: datetime) -> BasePage:
         """ 指定された日付のデイリーログを取得する """
