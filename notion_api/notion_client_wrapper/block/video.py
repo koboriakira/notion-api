@@ -36,4 +36,4 @@ class Video(Block):
         raise NotImplementedError
 
     def to_slack_text(self) -> str:
-        raise self.external_url
+        return self.external_url

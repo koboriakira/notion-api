@@ -34,4 +34,4 @@ class Bookmark(Block):
         raise NotImplementedError
 
     def to_slack_text(self) -> str:
-        raise self.bookmark_url
+        return self.bookmark_url

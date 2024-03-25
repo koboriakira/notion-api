@@ -34,4 +34,4 @@ class Embed(Block):
         raise NotImplementedError
 
     def to_slack_text(self) -> str:
-        raise self.embed_url
+        return self.embed_url

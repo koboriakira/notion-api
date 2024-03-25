@@ -62,4 +62,4 @@ class Heading(Block):
         return result
 
     def to_slack_text(self) -> str:
-        raise self.rich_text.to_slack_text()
+        return self.rich_text.to_slack_text()
