@@ -34,6 +34,8 @@ class TweetResponse:
         data = self.data
         return Tweet(
             tweet_id=data.id,
+            text=data.text,
+            user_name=data.user.name,
             url=data.url,
             media_urls=[medium.url for medium in data.media] if data.media is not None else [],
         )
