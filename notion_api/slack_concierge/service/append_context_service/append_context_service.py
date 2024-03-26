@@ -6,5 +6,7 @@ class AppendContextService:
         self.slack_api = slack_api or LambdaSlackConciergeAPI()
 
     def append_page_id(self, channel: str, event_ts:str, page_id: str) -> None:
+        if channel is None or event_ts is None or page_id is None:
+            return
         context = {"page_id": page_id}
         self.slack_api.append_context_block(channel, event_ts, context)
