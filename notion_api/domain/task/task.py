@@ -60,11 +60,18 @@ class Task(BasePage):
         return TaskStatusType(status_name)
 
     @property
-    def start_datetime(self) -> datetime|date|None:
+    def start_datetime(self) -> datetime|None:
         start_date_model = self.get_date(name=TaskStartDate.NAME)
         if start_date_model is None or start_date_model.start is None:
             return None
-        return _convert_to_datetime(start_date_model.start)
+        return convert_to_date_or_datetime(value=start_date_model.start, cls=datetime)
+
+    @property
+    def start_date(self) -> date|None:
+        start_date_model = self.get_date(name=TaskStartDate.NAME)
+        if start_date_model is None or start_date_model.start is None:
+            return None
+        return convert_to_date_or_datetime(value=start_date_model.start, cls=date)
 
     @property
     def kind(self) -> TaskKindType|None:
@@ -85,6 +92,3 @@ class Task(BasePage):
 
     def has_start_datetime(self) -> bool:
         return self.start_datetime is not None
-
-def _convert_to_datetime(value: str) -> datetime|date:
-    return convert_to_date_or_datetime(value)

@@ -24,8 +24,8 @@ class PostponeTaskToNextDayUsecase:
         )
 
         # 実施日が過去のタスクに絞る
-        tasks = [task for task in tasks if task.start_datetime is not None]
-        tasks = [task for task in tasks if task.start_datetime.date() <= date]
+        tasks = [task for task in tasks if task.start_date is not None]
+        tasks = [task for task in tasks if task.start_date <= date]
 
         # 実施日を翌日に更新
         tomorrow = date + timedelta(days=1)
@@ -35,5 +35,6 @@ class PostponeTaskToNextDayUsecase:
 
 if __name__ == "__main__":
     # python -m notion_api.usecase.postpone_task_to_next_day_usecase
-    usecase = PostponeTaskToNextDayUsecase()
+    from infrastructure.task.task_repository_impl import TaskRepositoryImpl
+    usecase = PostponeTaskToNextDayUsecase(task_repository=TaskRepositoryImpl())
     print(usecase.execute())

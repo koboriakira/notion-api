@@ -26,5 +26,5 @@ def get_current_tasks() -> list[Task]:
 def postpone_to_next_day(date: DateObject | None = None) -> list[Task]:
     """ 実施日を翌日に延期 """
     logger.debug(f"date: {date}")
-    usecase = PostponeTaskToNextDayUsecase()
+    usecase = PostponeTaskToNextDayUsecase(task_repository=TaskRepositoryImpl())
     return usecase.execute(date=date)
