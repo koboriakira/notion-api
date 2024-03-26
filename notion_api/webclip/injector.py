@@ -5,7 +5,7 @@ from notion_client_wrapper.client_wrapper import ClientWrapper
 from util.openai_executer import OpenaiExecuter
 from util.tag_analyzer import TagAnalyzer
 from util.text_summarizer import TextSummarizer
-from webclip.domain.site_kind import SiteKind
+from common.value.site_kind import SiteKind
 from webclip.infrastructure.webclip_repository_impl import WebclipRepositoryImpl
 from webclip.service.webclip_creator import WebclipCreator
 from webclip.service.webclip_generator import (

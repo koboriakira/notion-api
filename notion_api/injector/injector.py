@@ -4,7 +4,7 @@ from logging import Logger
 from slack_sdk.web import WebClient
 
 from custom_logger import get_logger
-from notion_api.notion_client_wrapper.client_wrapper import ClientWrapper
+from notion_client_wrapper.client_wrapper import ClientWrapper
 from slack_concierge.injector import SlackConciergeInjector
 from usecase.add_webclip_usecase import AddWebclipUsecase
 from usecase.service.inbox_service import InboxService
