@@ -42,7 +42,3 @@ class Webclip(BasePage):
             return Webclip(properties=Properties(values=properties), block_children=blocks)
         cover = cover if isinstance(cover, Cover) else Cover.from_external_url(cover)
         return Webclip(properties=Properties(values=properties), block_children=blocks, cover=cover)
-
-    def update_id_and_url(self, page_id: str, url: str) -> None:
-        self.id = page_id
-        self.url = url

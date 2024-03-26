@@ -98,3 +98,7 @@ class BasePage:
 
     def get_number(self, name: str) -> Number:
         return self.properties.get_property(name=name, instance_class=Number)
+
+    def update_id_and_url(self, page_id: str, url: str) -> None:
+        self.id = page_id
+        self.url = url

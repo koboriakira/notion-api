@@ -47,7 +47,3 @@ class Restaurant(BasePage):
     def tag_relation(self) -> NotionPageIdList:
         id_list = self.get_relation(TagRelation.NAME).id_list
         return NotionPageIdList.from_str_list(id_list)
-
-    def update_id_and_url(self, page_id: str, url: str) -> None:
-        self.id = page_id
-        self.url = url
