@@ -10,7 +10,7 @@ class TagRelation(Relation):
             id_list: list[str]|None = None) -> None:
         super().__init__(
             name=self.NAME,
-            id_list=id_list,
+            id_list=list(set(id_list or [])),
         )
 
     @staticmethod
