@@ -4,9 +4,11 @@ from logging import Logger
 from slack_sdk.web import WebClient
 
 from custom_logger import get_logger
+from injector.page_creator_factory import PageCreatorFactory
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from slack_concierge.injector import SlackConciergeInjector
 from usecase.add_webclip_usecase import AddWebclipUsecase
+from usecase.create_page_use_case import CreatePageUseCase
 from usecase.service.inbox_service import InboxService
 from usecase.service.tag_analyzer import TagAnalyzer
 from usecase.service.tag_create_service import TagCreateService
@@ -41,6 +43,18 @@ class Injector:
     @classmethod
     def create_tag_create_service(cls: "Injector") -> TagCreateService:
         return TagCreateService()
+
+    @classmethod
+    def create_page_use_case(cls: "Injector") -> CreatePageUseCase:
+        page_creator_factory = PageCreatorFactory.generate_rule(logger=logger)
+        inbox_service = cls.create_inbox_service()
+        append_context_service = SlackConciergeInjector.create_append_context_service()
+        return CreatePageUseCase(
+            page_creator_factory=page_creator_factory,
+            inbox_service=inbox_service,
+            append_context_service=append_context_service,
+            logger=logger,
+        )
 
     @classmethod
     def create_tag_analyzer(

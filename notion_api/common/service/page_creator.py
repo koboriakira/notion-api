@@ -12,3 +12,13 @@ class PageCreator(metaclass=ABCMeta):
             cover: str | None = None,
             ) -> BasePage:
         pass
+
+class NotImplementPageCreator(PageCreator):
+    def execute(
+            self,
+            url: str,
+            title: str | None = None,
+            cover: str | None = None,
+            ) -> BasePage:
+        msg = f"The page creator is not implemented. url: {url}"
+        raise NotImplementedError(msg)

@@ -4,6 +4,7 @@ from enum import Enum
 class SiteKind(Enum):
     TWITTER = "twitter.com"
     X = "x.com"
+    TABELOG = "tabelog.com"
     DEFAULT = "_"
 
     @staticmethod

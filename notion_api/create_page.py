@@ -30,6 +30,7 @@ def handler(event:dict, context:dict) -> dict:  # noqa: ARG001
                 slack_channel=slack_channel,
                 slack_thread_ts=slack_thread_ts,
                 )
+            return {}
         if mode == "webclip":
             usecase = Injector.create_add_webclip_usecase()
             _ = usecase.execute(
@@ -39,7 +40,11 @@ def handler(event:dict, context:dict) -> dict:  # noqa: ARG001
                 slack_channel=slack_channel,
                 slack_thread_ts=slack_thread_ts,
             )
-        return {}
+            return {}
+
+        # いずれは上記2つもここに統合する
+        usecase = Injector.create_page_use_case()
+        return {"status": "warning"}
     except Exception:  # noqa: BLE001
         ErrorReporter().execute(
             slack_channel=slack_channel,
