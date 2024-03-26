@@ -1,11 +1,11 @@
 from common.injector import CommonInjector
 from common.service.tag_creator import TagCreator
+from common.value.site_kind import SiteKind
 from custom_logger import get_logger
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from util.openai_executer import OpenaiExecuter
 from util.tag_analyzer import TagAnalyzer
 from util.text_summarizer import TextSummarizer
-from common.value.site_kind import SiteKind
 from webclip.infrastructure.webclip_repository_impl import WebclipRepositoryImpl
 from webclip.service.webclip_creator import WebclipCreator
 from webclip.service.webclip_generator import (
@@ -54,7 +54,7 @@ class WebclipInjector:
                     tag_analyzer=tag_analyzer,
                     logger=logger,
                 )
-            case SiteKind.DEFAULT:
+            case _:
                 return DefaultWebclipGenerator(
                     scrape_service=scrape_service,
                     tag_creator=tag_creator,
@@ -62,6 +62,3 @@ class WebclipInjector:
                     text_summarizer=text_summarizer,
                     logger=logger,
                 )
-            case _:
-                msg = f"Unexpected site_kind: {site_kind}"
-                raise ValueError(msg)
