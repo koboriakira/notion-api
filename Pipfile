@@ -18,6 +18,9 @@ bs4 = "*"
 
 [dev-packages]
 uvicorn = "*"
+parameterized = "*"
+pytest = "*"
+pytest-watch = "*"
 
 [requires]
 python_version = "3.11"
