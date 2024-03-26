@@ -5,19 +5,20 @@ class Embed(Block):
     caption: list
     embed_url: str
 
-    def __init__(
+    def __init__(  # noqa: PLR0913
             self,
-            id: str,
-            archived: bool,
-            created_time: str,
-            last_edited_time: str,
-            has_children: bool,
-            parent: dict,
-            caption: list,
-            embed_url: str):
+            embed_url: str,
+            caption: list|None = None,
+            id: str | None = None,  # noqa: A002
+            archived: bool | None = None,
+            created_time: str | None = None,
+            last_edited_time: str | None = None,
+            has_children: bool | None = None,
+            parent: dict | None = None,
+            ) -> None:
         super().__init__(id, archived, created_time, last_edited_time, has_children, parent)
-        self.caption = caption
         self.embed_url = embed_url
+        self.caption = caption or []
 
     @staticmethod
     def of(block: dict) -> "Embed":
