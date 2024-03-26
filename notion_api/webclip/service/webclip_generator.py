@@ -5,13 +5,13 @@ from typing import TYPE_CHECKING
 from common.service.scrape_service import ScrapeService
 from common.service.tag_creator import TagCreator
 from common.service.tweet.tweet_fetcher import TweetFetcher
-from notion_api.webclip.service import webclip_creator
 from notion_client_wrapper.block.embed import Embed
 from util.split_paragraph import split_paragraph
 from util.tag_analyzer import TagAnalyzer
 from util.text_summarizer import TextSummarizer
 from webclip.domain.site_kind import SiteKind
 from webclip.domain.webclip import Webclip
+from webclip.service import webclip_creator
 
 if TYPE_CHECKING:
     from notion_client_wrapper.block.block import Block
