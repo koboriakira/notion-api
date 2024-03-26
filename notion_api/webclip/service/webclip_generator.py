@@ -1,14 +1,20 @@
 from abc import ABCMeta, abstractmethod
 from logging import Logger, getLogger
+from typing import TYPE_CHECKING
 
 from common.service.scrape_service import ScrapeService
 from common.service.tag_creator import TagCreator
 from common.service.tweet.tweet_fetcher import TweetFetcher
+from notion_api.webclip.service import webclip_creator
+from notion_client_wrapper.block.embed import Embed
 from util.split_paragraph import split_paragraph
 from util.tag_analyzer import TagAnalyzer
 from util.text_summarizer import TextSummarizer
 from webclip.domain.site_kind import SiteKind
 from webclip.domain.webclip import Webclip
+
+if TYPE_CHECKING:
+    from notion_client_wrapper.block.block import Block
 
 
 class WebclipGenerator(metaclass=ABCMeta):
@@ -85,7 +91,7 @@ class TwitterWebclipGenerator(WebclipGenerator):
             cover: str | None = None,
             ) -> Webclip:
         tweet_id = self._extract_tweet_id(url=url)
-        tweet = self._tweet_fetcher.fetch(tweet_id=tweet_id)
+        tweet = self._tweet_fetcher.fetch(tweet_id)
 
         # 本文からタグを抽出して、タグを作成
         tags = self._tag_analyzer.handle(text=tweet.text)
@@ -93,8 +99,13 @@ class TwitterWebclipGenerator(WebclipGenerator):
         tags.append(tweet.user_name)
         tag_relation = self._tag_creator.execute(name_list=tags)
 
-        # ページ本文
-        blocks = split_paragraph(tweet.text)
+        blocks:list[Block] = []
+        # 本文を入れる
+        blocks.extend(split_paragraph(tweet.text))
+        # 画像をいれる
+        for media_url in tweet.media_urls:
+            embed = Embed.from_url_and_caption(url=media_url)
+            blocks.append(embed)
 
         # あたらしくWebclipを作成
         return Webclip.create(
@@ -120,3 +131,13 @@ class WebclipGeneratorRule:
         """WebclipGeneratorを取得する"""
         site_kind = SiteKind.find_site_kind(url=url)
         return self.generator_dict[site_kind]
+
+if __name__ == "__main__":
+    # python -m notion_api.webclip.service.webclip_generator
+    from webclip.injector import WebclipInjector
+    webclip_creator = WebclipInjector.create_webclip_creator()
+
+    twitter_url = "https://twitter.com/harajuku_tjpw/status/1772269440396333105"
+    twitter_webclip_generator = webclip_creator._webclip_generator_rule.get_generator(twitter_url)  # noqa: SLF001
+    twitter_webclip = twitter_webclip_generator.execute(url=twitter_url, title="")
+    print(twitter_webclip)

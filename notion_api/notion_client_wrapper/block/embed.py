@@ -21,6 +21,15 @@ class Embed(Block):
         self.caption = caption or []
 
     @staticmethod
+    def from_url_and_caption(url: str, caption_str: str|None = None) -> "Embed":
+        if caption_str is not None:
+            raise NotImplementedError
+        return Embed(
+            embed_url=url,
+            caption=[],
+        )
+
+    @staticmethod
     def of(block: dict) -> "Embed":
         embed = block["embed"]
         return Embed(
