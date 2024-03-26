@@ -1,8 +1,10 @@
+import os
 from logging import Logger
 
 from slack_sdk.web import WebClient
 
 from custom_logger import get_logger
+from notion_api.notion_client_wrapper.client_wrapper import ClientWrapper
 from slack_concierge.injector import SlackConciergeInjector
 from usecase.add_webclip_usecase import AddWebclipUsecase
 from usecase.service.inbox_service import InboxService
@@ -15,6 +17,9 @@ from webclip.injector import WebclipInjector
 logger = get_logger(__name__)
 
 DEFAULT_GPT_MODEL = "gpt-3.5-turbo-1106"
+
+client = ClientWrapper.get_instance()
+slack_bot_client = WebClient(token=os.environ["SLACK_BOT_TOKEN"])
 
 class Injector:
     @classmethod
@@ -31,8 +36,7 @@ class Injector:
 
     @classmethod
     def create_inbox_service(cls: "Injector") -> InboxService:
-        slack_client = WebClient()
-        return InboxService(slack_client=slack_client)
+        return InboxService(slack_client=slack_bot_client, client=client)
 
     @classmethod
     def create_tag_create_service(cls: "Injector") -> TagCreateService:
