@@ -22,6 +22,7 @@ tag_creator = TagCreator(client=client)
 openai_executer = OpenaiExecuter(logger=logger)
 tag_analyzer = TagAnalyzer(client=openai_executer, logger=logger)
 text_summarizer = TextSummarizer(client=openai_executer, logger=logger)
+tweet_fetcher = CommonInjector.get_tweet_fetcher()
 
 class WebclipInjector:
     @classmethod
@@ -48,6 +49,7 @@ class WebclipInjector:
             # TwitterまたはX
             case SiteKind.TWITTER, SiteKind.X:
                 return TwitterWebclipGenerator(
+                    tweet_fetcher=tweet_fetcher,
                     tag_creator=tag_creator,
                     tag_analyzer=tag_analyzer,
                     logger=logger,

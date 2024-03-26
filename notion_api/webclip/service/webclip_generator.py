@@ -3,6 +3,7 @@ from logging import Logger, getLogger
 
 from common.service.scrape_service import ScrapeService
 from common.service.tag_creator import TagCreator
+from common.service.tweet.tweet_fetcher import TweetFetcher
 from util.split_paragraph import split_paragraph
 from util.tag_analyzer import TagAnalyzer
 from util.text_summarizer import TextSummarizer
@@ -67,10 +68,12 @@ class TwitterWebclipGenerator(WebclipGenerator):
     """TwitterのWebclipを生成するクラス"""
     def __init__(
             self,
+            tweet_fetcher: TweetFetcher,
             tag_creator: TagCreator,
             tag_analyzer: TagAnalyzer | None = None,
             logger: Logger | None = None,
             ) -> None:
+        self._tweet_fetcher = tweet_fetcher
         self._tag_creator = tag_creator
         self._tag_analyzer = tag_analyzer or TagAnalyzer()
         self._logger = logger or getLogger(__name__)
@@ -78,28 +81,35 @@ class TwitterWebclipGenerator(WebclipGenerator):
     def execute(
             self,
             url: str,
-            title: str,
+            title: str,  # noqa: ARG002 FIXME: 利用しないパターンもある
             cover: str | None = None,
             ) -> Webclip:
-        summary = title # 本文(title)をそのまま要約として扱う
-        shorten_title = title[:50] # タイトルは本文(title)の50文字まで
+        tweet_id = self._extract_tweet_id(url=url)
+        tweet = self._tweet_fetcher.fetch(tweet_id=tweet_id)
 
-        # 要約(本文)からタグを抽出して、タグを作成
-        tags = self._tag_analyzer.handle(text=summary)
+        # 本文からタグを抽出して、タグを作成
+        tags = self._tag_analyzer.handle(text=tweet.text)
+        # 投稿者もタグに含める
+        tags.append(tweet.user_name)
         tag_relation = self._tag_creator.execute(name_list=tags)
 
         # ページ本文
-        blocks = split_paragraph(summary)
+        blocks = split_paragraph(tweet.text)
 
         # あたらしくWebclipを作成
         return Webclip.create(
-            title=shorten_title,
-            url=url,
+            title=tweet.text[:50], # タイトルは本文(title)の50文字まで,
+            url=tweet.url,
             tag_relation=tag_relation,
             cover=cover,
-            summary=summary,
+            summary=tweet.text,
             blocks=blocks,
         )
+
+    def _extract_tweet_id(self, url: str) -> str:
+        """URLからtweet_idを抽出する"""
+        tweet_id = url.split("/status/")[1]
+        return tweet_id.split("/")[0]
 
 class WebclipGeneratorRule:
     def __init__(self, generator_dict: dict[SiteKind, WebclipGenerator]) -> None:
