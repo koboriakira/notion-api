@@ -1,4 +1,4 @@
-from common.domain.value.notion_page_id import NotionPageId
+from common.value.notion_page_id import NotionPageId
 from notion_client_wrapper.properties.relation import Relation
 
 

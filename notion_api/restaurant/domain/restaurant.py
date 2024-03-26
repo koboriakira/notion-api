@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from common.domain.tag_relation import TagRelation
-from common.domain.value.notion_page_id_list import NotionPageIdList
+from common.value.notion_page_id_list import NotionPageIdList
 from notion_client_wrapper.base_page import BasePage
 from notion_client_wrapper.block.block import Block
 from notion_client_wrapper.properties.cover import Cover

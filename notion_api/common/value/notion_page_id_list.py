@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from common.domain.value.notion_page_id import NotionPageId
+from notion_api.common.value.notion_page_id import NotionPageId
 
 
 @dataclass(frozen=True)
