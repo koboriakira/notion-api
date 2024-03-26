@@ -37,3 +37,4 @@ jobs:
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           LAMBDA_SLACK_CONCIERGE_API_DOMAIN: ${{ secrets.LAMBDA_SLACK_CONCIERGE_API_DOMAIN }}
+          LAMBDA_TWITTER_API_DOMAIN: ${{ secrets.LAMBDA_TWITTER_API_DOMAIN }}
