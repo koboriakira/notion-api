@@ -137,7 +137,7 @@ if __name__ == "__main__":
     from webclip.injector import WebclipInjector
     webclip_creator = WebclipInjector.create_webclip_creator()
 
-    twitter_url = "https://twitter.com/harajuku_tjpw/status/1772269440396333105"
+    twitter_url = "https://twitter.com/uug_p_STAFF/status/1772234517572722806"
     twitter_webclip_generator = webclip_creator._webclip_generator_rule.get_generator(twitter_url)  # noqa: SLF001
     twitter_webclip = twitter_webclip_generator.execute(url=twitter_url, title="")
     print(twitter_webclip)

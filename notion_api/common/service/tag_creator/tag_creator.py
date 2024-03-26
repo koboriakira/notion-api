@@ -31,3 +31,8 @@ class TagCreator:
             )
             result = result.add(tag_page["id"])
         return result
+
+if __name__ == "__main__":
+    # python -m notion_api.common.service.tag_creator.tag_creator
+    tag_creator = TagCreator()
+    tag_creator.execute(["tjpw"])
