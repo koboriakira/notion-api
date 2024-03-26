@@ -12,5 +12,5 @@ class CommonInjector:
 
     @staticmethod
     def get_tweet_fetcher() -> TweetFetcher:
-        twitter_api = LambdaTwitterApi
+        twitter_api = LambdaTwitterApi()
         return TweetFetcher(twitter_api=twitter_api)

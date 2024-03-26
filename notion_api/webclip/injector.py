@@ -47,7 +47,7 @@ class WebclipInjector:
     def __create_webclip_generator(cls: "WebclipInjector", site_kind: SiteKind) -> WebclipGenerator:
         match site_kind:
             # TwitterまたはX
-            case SiteKind.TWITTER, SiteKind.X:
+            case SiteKind.TWITTER | SiteKind.X:
                 return TwitterWebclipGenerator(
                     tweet_fetcher=tweet_fetcher,
                     tag_creator=tag_creator,
