@@ -13,9 +13,13 @@ class TestNotionClient(TestCase):
     @pytest.mark.skip()
     def test_retrieve_page(self):
         # pipenv run pytest test/test_notion_client.py -k test_retrieve_page
+        import json
         page_id = "a2579057a21f44728582c84f5b74afea"
         data = self.client.pages.retrieve(page_id=page_id)
-        print(data)
+        print(json.dumps(data, indent=2, ensure_ascii=False))
+
+        blocks = self.client.blocks.children.list(block_id=page_id)
+        print(json.dumps(blocks["results"], indent=2, ensure_ascii=False))
         self.fail("標準出力確認のためのエラー")
 
     @pytest.mark.skip()
