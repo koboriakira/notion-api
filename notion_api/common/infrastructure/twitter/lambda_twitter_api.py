@@ -3,14 +3,13 @@ import os
 
 import requests
 
-from notion_api.infrastructure.twitter.tweet_response import TweetResponse
+from common.infrastructure.twitter.tweet_response import TweetResponse
 
 
 class TwitterApiError(Exception):
     pass
 
-# domain層に同名のクラスをつくったら、LambdaTwitterApiにリネームする
-class TwitterApi:
+class LambdaTwitterApi:
     def __init__(self) -> None:
         self.domain = os.environ["LAMBDA_TWITTER_API_DOMAIN"]
 
@@ -30,7 +29,7 @@ class TwitterApi:
 
 
 if __name__ == "__main__":
-    # python -m notion_api.infrastructure.twitter.lambda_twitter_api
-    api = TwitterApi()
+    # python -m notion_api.common.infrastructure.twitter.lambda_twitter_api
+    api = LambdaTwitterApi()
     tweet = api.get_tweet("1772383862393348494")
-    print(tweet)
+    print(tweet.to_entity())

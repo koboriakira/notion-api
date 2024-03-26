@@ -1,6 +1,8 @@
 from dataclasses import dataclass, field
 from datetime import datetime
 
+from common.domain.tweet import Tweet
+
 
 @dataclass
 class UserModel:
@@ -27,6 +29,14 @@ class TweetResponse:
     status: str
     message: str
     data: TweetModel
+
+    def to_entity(self) -> Tweet:
+        data = self.data
+        return Tweet(
+            tweet_id=data.id,
+            url=data.url,
+            media_urls=[medium.url for medium in data.media] if data.media is not None else [],
+        )
 
     @staticmethod
     def from_dict(data: dict) -> "TweetResponse":
