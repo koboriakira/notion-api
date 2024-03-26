@@ -28,9 +28,9 @@ class Image(Block):
     @staticmethod
     def of(block: dict) -> "Image":
         image = block["image"]
-        image_caption = image["caption"] if "caption" in image else []
-        image_type = image["type"] if "type" in image else ""
-        image_file = image["file"] if "file" in image else {}
+        image_caption = image.get("caption", [])
+        image_type = image.get("type", "")
+        image_file = image.get("file", {})
         return Image(
             id=block["id"],
             archived=block["archived"],
