@@ -11,9 +11,16 @@ class TestNotionClient(TestCase):
         self.client = Client(auth=os.getenv("NOTION_SECRET"))
 
     @pytest.mark.skip()
-    def test_find_page(self):
+    def test_retrieve_page(self):
+        # pipenv run pytest test/test_notion_client.py -k test_retrieve_page
+        page_id = "a2579057a21f44728582c84f5b74afea"
+        data = self.client.pages.retrieve(page_id=page_id)
+        print(data)
+        self.fail("標準出力確認のためのエラー")
+
+    @pytest.mark.skip()
+    def test_database_query(self):
         spotify_url = "https://open.spotify.com/track/6tPlPsvzSM74vRVn9O5v9K"
-        # 音楽のページを取得してみる
         data = self.client.databases.query(
                 database_id=DatabaseType.MUSIC.value,
                 filter={
