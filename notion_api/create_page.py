@@ -12,35 +12,35 @@ logging.basicConfig(level=logging.INFO)
 if Environment.is_dev():
     logging.basicConfig(level=logging.DEBUG)
 
-def execute(request_param: CreatePageRequest) -> dict:
+def execute(request: CreatePageRequest) -> dict:
     usecase = Injector.create_page_use_case()
-    return usecase.execute(request_param=request_param)
+    return usecase.execute(request=request)
 
 
 def handler(event:dict, context:dict) -> dict:  # noqa: ARG001
-    request: dict = json.loads(event["Records"][0]["body"])
-    print("request", request)
-    mode: str = request["mode"]
-    request_param = CreatePageRequest.from_params(request["params"])
+    body: dict = json.loads(event["Records"][0]["body"])
+    print("body", body)
+    mode: str = body["mode"]
+    request = CreatePageRequest.from_params(body["params"])
     try:
         if mode == "video":
             usecase = AddVideoUsecase()
             _ = usecase.execute(
-                url=request_param.url,
-                title=request_param.title,
-                cover=request_param.cover,
-                slack_channel=request_param.slack_channel,
-                slack_thread_ts=request_param.slack_thread_ts,
+                url=request.url,
+                title=request.title,
+                cover=request.cover,
+                slack_channel=request.slack_channel,
+                slack_thread_ts=request.slack_thread_ts,
                 )
             return {}
 
         # いずれは上記2つもここに統合する
-        execute(request_param)
+        execute(request)
         return {}
     except Exception:  # noqa: BLE001
         ErrorReporter().execute(
-            slack_channel=request_param.slack_channel,
-            slack_thread_ts=request_param.slack_thread_ts,
+            slack_channel=request.slack_channel,
+            slack_thread_ts=request.slack_thread_ts,
     )
 
 if __name__ == "__main__":
