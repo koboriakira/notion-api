@@ -24,7 +24,7 @@ class TagAnalyzer:
     def handle(self, text: str) -> list[str]:
         if self.is_debug:
             return ["テスト"]
-        user_content = f"次の文章を解析して、タグをつけてください。\n\n{text}"
+        user_content = f"次の文章を解析して、タグをつけてください。タグはたとえば人名やカテゴリ、特定のキーワードのようなものを指します。\n\n{text}"
         analyze_tags_parameters = {
             "type": "object",
             "properties": {
@@ -44,6 +44,7 @@ class TagAnalyzer:
         return tags
 
 if __name__ == "__main__":
-    # python -m usecase.service.tag_analyzer
+    # python -m notion_api.util.tag_analyzer
     logging.basicConfig(level=logging.DEBUG)
     tag_analyzer = TagAnalyzer()
+    print(tag_analyzer.handle("団体を引っ張る準備、できてます。練習量に裏付けされた確固たる自信!! デビュー前から続く現王者との歴史を振り返る。3.31両国国技館で王者・山下実優に挑む渡辺未詩にインタビュー"))
