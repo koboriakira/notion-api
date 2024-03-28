@@ -15,4 +15,7 @@ class TestRestaurant(TestCase):
         # Then
         self.assertEqual(actual.restaurant_name, "店名")
         self.assertEqual(actual.restaurant_url, "https://example.com")
-        self.assertEqual(actual.tag_relation.to_str_list(), ["abc123", "def456"])
+        actual_tag_id_list = actual.tag_relation.to_str_list()
+        self.assertEqual(2, len(actual_tag_id_list))
+        self.assertIn("abc123", actual_tag_id_list)
+        self.assertIn("def456", actual_tag_id_list)
