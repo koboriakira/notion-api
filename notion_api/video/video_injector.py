@@ -13,7 +13,10 @@ scrape_service = CommonInjector.get_scrape_service()
 tag_creator = CommonInjector.get_tag_creator()
 tag_analyzer = TagAnalyzer()
 scraper = DefaultScraper()
-video_repository=VideoRepositoryImpl()
+video_repository=VideoRepositoryImpl(
+    client=client,
+    logger=logger,
+)
 scrape_service=ScrapeService(scraper=scraper)
 
 class VideoInjector:
