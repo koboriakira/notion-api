@@ -18,3 +18,8 @@ class ScrapedResult:
     formatted_text: str
     ogp_tags: OgpTags
     other_meta_tags: OtherMetaTags
+
+    def get_image_url(self) -> str|None:
+        """画像URLを見つける"""
+        # 他にあればもっと付け足す
+        return self.ogp_tags.values.get("image") or self.other_meta_tags.values.get("image")
