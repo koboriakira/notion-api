@@ -4,10 +4,10 @@ from logging import Logger
 
 from common.service.page_creator import PageCreator
 from common.value.site_kind import SiteKind
-from notion_api.video.video_injector import VideoInjector
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from restaurant.infrastructure.restaurant_repository_impl import RestaurantRepositoryImpl
 from restaurant.service.restaurant_creator import RestaurantCreator
+from video.video_injector import VideoInjector
 from webclip.injector import WebclipInjector
 
 
