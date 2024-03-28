@@ -9,7 +9,7 @@ def analyze_tags(args: dict) -> list[str]:
     tags: str = args["tags"]
     if tags is None:
         return []
-    return [tag.strip() for tag in tags.split(",")]
+    return list({tag.strip() for tag in tags.split(",")})
 
 class TagAnalyzer:
     def __init__(
