@@ -41,16 +41,6 @@ def handler(event:dict, context:dict) -> dict:  # noqa: ARG001
                 slack_thread_ts=slack_thread_ts,
                 )
             return {}
-        if mode == "webclip":
-            usecase = Injector.create_add_webclip_usecase()
-            _ = usecase.execute(
-                url=params["url"],
-                title=params["title"],
-                cover=params.get("cover"),
-                slack_channel=slack_channel,
-                slack_thread_ts=slack_thread_ts,
-            )
-            return {}
 
         # いずれは上記2つもここに統合する
         execute(
@@ -58,8 +48,7 @@ def handler(event:dict, context:dict) -> dict:  # noqa: ARG001
             title=params["title"],
             cover=params.get("cover"),
             slack_channel=slack_channel,
-            slack_thread_ts=slack_thread_ts,
-            )
+            slack_thread_ts=slack_thread_ts)
         return {}
     except Exception:  # noqa: BLE001
         ErrorReporter().execute(
