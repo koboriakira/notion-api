@@ -5,6 +5,7 @@ class SiteKind(Enum):
     TWITTER = "twitter.com"
     X = "x.com"
     TABELOG = "tabelog.com"
+    YOUTUBE = "youtube.com"
     DEFAULT = "_"
 
     @staticmethod
