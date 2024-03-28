@@ -15,7 +15,7 @@ class TestTagCreator(TestCase):
 
     def test_新規タグを作成する(self):
         # Given
-        name_list = ["aaa", "bbb"]
+        name_list = ["aaa", "bbb", "aaa"]
 
         # 既存のNotionページが存在しないとする
         self.mock_client.retrieve_database.return_value = []
