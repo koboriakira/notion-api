@@ -8,11 +8,9 @@ class RestaurantCreator:
     def __init__(
             self,
             restaurant_repository: RestaurantRepository,
-            # webclip_generator_rule: WebclipGeneratorRule,
             logger: Logger | None = None,
             ) -> None:
         self._restaurant_repository = restaurant_repository
-        # self._webclip_generator_rule = webclip_generator_rule
         self._logger = logger or getLogger(__name__)
 
     def execute(
