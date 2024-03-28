@@ -8,6 +8,7 @@ from notion_api.notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_api.notion_client_wrapper.filter.condition.date_condition import DateCondition
 from notion_api.notion_client_wrapper.filter.condition.string_condition import StringCondition
 from notion_api.notion_client_wrapper.filter.filter_builder import FilterBuilder
+from notion_api.notion_client_wrapper.properties.cover import Cover
 from notion_api.notion_client_wrapper.properties.last_edited_time import LastEditedTime
 from notion_api.notion_client_wrapper.properties.title import Title
 from notion_api.notion_client_wrapper.properties.url import Url
@@ -181,3 +182,15 @@ class TestClientWrapper(TestCase):
 
         # 内容を確認したいので、無理やりfailさせる
         # self.fail("動作確認用。テストは失敗しても問題ありません。")
+
+    @pytest.mark.skip("実際にページが作成されるので注意")
+    def test_ページを作成してみる(self):
+        # pytest test/notion_client_wrapper/test_client_wrapper.py::TestClientWrapper::test_ページを作成してみる
+        title = Title.from_plain_text(name="名前", text="テストページ")
+        cover = Cover(type='external', external_url='https://i.ytimg.com/vi/82KT4FNyNdY/maxresdefault.jpg')
+        page = self.suite.create_page_in_database(
+            database_id=DatabaseType.TASK.value,
+            cover=cover,
+            properties=[title],
+        )
+        print(page)
