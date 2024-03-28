@@ -25,6 +25,7 @@ class DatabaseType(Enum):
     TASK =        "3b97e3ba-a84e-40a9-bdc8-99ee25d8e99d"
     TASK_BK =     "26594969-6394-41d8-b4bd-88ed801a2bdd"
     TASK_ROUTINE = "d21db86c-9203-4ff4-9899-9d62354e8fe1"
+    RESTAURANT =  "4f10b337-9a1d-4b87-9feb-87a00c511b68"
 
     def title_name(self) -> str:
         """
