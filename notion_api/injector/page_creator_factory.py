@@ -2,7 +2,7 @@
 
 from logging import Logger
 
-from common.service.page_creator import NotImplementPageCreator, PageCreator
+from common.service.page_creator import PageCreator
 from common.value.site_kind import SiteKind
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from restaurant.infrastructure.restaurant_repository_impl import RestaurantRepositoryImpl
@@ -28,10 +28,8 @@ class PageCreatorFactory:
             match site_kind:
                 case SiteKind.TABELOG:
                     generator_dict[site_kind] = restaurant_creator
-                case SiteKind.TWITTER | SiteKind.X:
-                    generator_dict[site_kind] = webclip_creator
                 case _:
-                    generator_dict[site_kind] = NotImplementPageCreator()
+                    generator_dict[site_kind] = webclip_creator
         return PageCreatorFactory(generator_dict=generator_dict)
 
     def get_creator(self, site_kind: SiteKind) -> PageCreator:
