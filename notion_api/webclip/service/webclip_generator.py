@@ -53,6 +53,9 @@ class DefaultWebclipGenerator(WebclipGenerator):
         page_text = scraped_result.not_formatted_text
         summary = self._text_summarizer.handle(page_text)
 
+        # カバー画像が指定されてなければ取得を試みる
+        cover = cover or scraped_result.get_image_url()
+
         # 要約からタグを抽出して、タグを作成
         tags = self._tag_analyzer.handle(text=summary)
         tag_relation = self._tag_creator.execute(name_list=tags)
@@ -98,6 +101,10 @@ class TwitterWebclipGenerator(WebclipGenerator):
         # 投稿者もタグに含める
         tags.append(tweet.user_name)
         tag_relation = self._tag_creator.execute(name_list=tags)
+
+        # カバー画像が指定されてなければ取得を試みる
+        if not cover:
+            cover = tweet.media_urls[0] if tweet.media_urls else None
 
         blocks:list[Block] = []
         # 本文を入れる
