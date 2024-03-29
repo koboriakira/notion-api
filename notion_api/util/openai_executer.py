@@ -8,6 +8,7 @@ OPENAI_MODEL_DEFAULT = "gpt-3.5-turbo-1106"
 
 
 class OpenaiExecuter:
+    DEFAULT_GPT_MODEL = "gpt-3.5-turbo-1106"
     def __init__(
             self,
             model: str = OPENAI_MODEL_DEFAULT,
