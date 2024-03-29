@@ -3,13 +3,19 @@ import logging
 from util.openai_executer import OpenaiExecuter
 
 
+def prittier(tags: list[str]) -> list[str]:
+    # 先頭・末尾の空白を削除
+    tags = [tag.strip() for tag in tags]
+    # 重複を削除
+    tags = list(set(tags))
+    # Noneと空文字を削除
+    return [tag for tag in tags if tag is not None and tag != ""]
+
 def analyze_tags(args: dict) -> list[str]:
-    if "tags" not in args:
+    if "tags" not in args or args["tags"] is None:
         return []
-    tags: str = args["tags"]
-    if tags is None:
-        return []
-    return list({tag.strip() for tag in tags.split(",")})
+    arg_tags:str = args["tags"]
+    return prittier(arg_tags.split(","))
 
 class TagAnalyzer:
     def __init__(
