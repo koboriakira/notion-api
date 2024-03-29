@@ -100,15 +100,20 @@ class ClientWrapper:
             return self._database_query_without_filter(database_id=database_id, start_cursor=start_cursor)
         results = []
         while True:
-            data:dict = self.client.databases.query(
-                database_id=database_id,
-                start_cursor=start_cursor,
-                filter=filter_param,
-            )
-            results += data.get("results")
-            if not data.get("has_more"):
-                return results
-            start_cursor = data.get("next_cursor")
+            try:
+                data:dict = self.client.databases.query(
+                    database_id=database_id,
+                    start_cursor=start_cursor,
+                    filter=filter_param,
+                )
+                results += data.get("results")
+                if not data.get("has_more"):
+                    return results
+                start_cursor = data.get("next_cursor")
+            except:
+                exception_message = f"Database Query was failed. database_id: {database_id}, filter_param: {filter_param}, start_cursor: {start_cursor}"
+                logging.exception(exception_message)
+                raise
 
     def _database_query_without_filter(self, database_id: str, start_cursor: str | None = None ) -> dict:
         results = []
