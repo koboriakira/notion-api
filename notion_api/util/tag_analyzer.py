@@ -30,7 +30,7 @@ class TagAnalyzer:
     def handle(self, text: str) -> list[str]:
         if self.is_debug:
             return ["テスト"]
-        user_content = f"次の文章を解析して、タグをつけてください。タグはたとえば人名や作品名、カテゴリ、特定の重要なキーワードのようなものを指します。\n\n{text}"
+        user_content = f"次の文章を解析して、タグをつけてください。タグはたとえば人名や作品名、サービス名、具体的なキーワード、抽象化されたカテゴリ名のようなものを指します。\n\n{text}"
         analyze_tags_parameters = {
             "type": "object",
             "properties": {
