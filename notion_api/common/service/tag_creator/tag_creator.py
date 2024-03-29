@@ -9,9 +9,12 @@ class TagCreator:
     def __init__(self, client:ClientWrapper|None=None) -> None:
         self.client = client or ClientWrapper.get_instance()
 
-    def execute(self, name_list: list[str]|str) -> TagRelation:
+    def execute(self, name_list: list[str]|str|None) -> TagRelation:
         """指定されたタグをタグデータベースに追加する。タグページのIDを返却する。"""
+        if name_list is None:
+            return TagRelation.empty()
         name_list = list(set(name_list)) if isinstance(name_list, list) else [name_list]
+
         title_properties = [Title.from_plain_text(name="名前", text=name) for name in name_list]
         tag_page_list = [self.__create(title_property) for title_property in title_properties]
         tag_page_id_list = [tag_page["id"] for tag_page in tag_page_list]

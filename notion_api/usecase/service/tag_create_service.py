@@ -6,8 +6,8 @@ from notion_client_wrapper.properties import Title
 logger = get_logger(__name__)
 
 class TagCreateService:
-    def __init__(self) -> None:
-        self.client = ClientWrapper.get_instance()
+    def __init__(self, client: ClientWrapper|None = None) -> None:
+        self.client = client or ClientWrapper.get_instance()
 
     def add_tag(self, name: str) -> str:
         """ 指定されたタグをタグデータベースに追加する。タグページのIDを返却する """
