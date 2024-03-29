@@ -5,6 +5,9 @@ from slack_sdk.web import WebClient
 
 from custom_logger import get_logger
 from injector.page_creator_factory import PageCreatorFactory
+from notion_api.common.service.tag_creator.tag_creator import TagCreator
+from notion_api.usecase.zettlekasten.create_tag_to_zettlekasten_use_case import CreateTagToZettlekastenUseCase
+from notion_api.zettlekasten.infrastructure.zettlekasten_repository_impl import ZettlekastenRepositoryImpl
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from slack_concierge.injector import SlackConciergeInjector
 from usecase.add_webclip_usecase import AddWebclipUsecase
@@ -21,6 +24,9 @@ logger = get_logger(__name__)
 DEFAULT_GPT_MODEL = "gpt-3.5-turbo-1106"
 
 client = ClientWrapper.get_instance()
+openai_executer = OpenaiExecuter(
+    model=OpenaiExecuter.DEFAULT_GPT_MODEL,
+    logger=logger)
 slack_bot_client = WebClient(token=os.environ["SLACK_BOT_TOKEN"])
 
 class Injector:
@@ -33,6 +39,26 @@ class Injector:
             webclip_creator=webclip_creator,
             inbox_service=inbox_service,
             append_context_service=append_context_service,
+            logger=logger,
+        )
+
+    @classmethod
+    def get_create_tag_to_zettlekasten_use_case(cls: "Injector") -> CreateTagToZettlekastenUseCase:
+        zettlekasten_repository = ZettlekastenRepositoryImpl(
+            client=client,
+            logger=logger,
+        )
+        tag_analyzer = TagAnalyzer(
+            client=openai_executer,
+            logger=logger,
+        )
+        tag_creator = TagCreator(
+            client=client,
+        )
+        return CreateTagToZettlekastenUseCase(
+            zettlekasten_repository=zettlekasten_repository,
+            tag_analyzer=tag_analyzer,
+            tag_creator=tag_creator,
             logger=logger,
         )
 
