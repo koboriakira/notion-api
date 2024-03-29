@@ -164,10 +164,14 @@ class RichTextMentionElement(RichTextElement):
         super().__init__(annotations, plain_text, href)
 
     def to_slack_text(self) -> str:
-        raise NotImplementedError("not implemented yet")
+        # TODO: メンションの場合、そのタイトルは再度クライアントを使ってretrieveしないといけない
+        # これをどうするか迷うけど、とりあえず空文字で返す
+        return ""
 
     def to_plain_text(self) -> str:
-        raise NotImplementedError("not implemented yet")
+        # TODO: メンションの場合、そのタイトルは再度クライアントを使ってretrieveしないといけない
+        # これをどうするか迷うけど、とりあえず空文字で返す
+        return ""
 
     @ staticmethod
     def of_database(database_id: str) -> "RichTextMentionElement":
