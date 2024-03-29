@@ -35,6 +35,10 @@ class Zettlekasten(BasePage):
         cover = cover if isinstance(cover, Cover) else Cover.from_external_url(cover)
         return Zettlekasten(properties=Properties(values=properties), block_children=blocks, cover=cover)
 
+    def update_tag_relation(self, tag_relation: TagRelation) -> None:
+        properties = self.properties.append_property(tag_relation)
+        self.properties = properties
+
     @property
     def zettlekasten_name(self) -> str:
         return self.get_title_text()

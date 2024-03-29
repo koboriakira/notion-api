@@ -21,7 +21,9 @@ class ZettlekastenRepositoryImpl:
 
     def search(
             self,
-            is_tag_empty: bool|None = None) -> list[Zettlekasten]:
+            is_tag_empty: bool|None = None,
+            include_children: bool|None = None,
+            ) -> list[Zettlekasten]:
         filter_builder = FilterBuilder()
         if is_tag_empty is not None:
             filter_builder = filter_builder.add_condition(EmptyCondition.true(property=TagRelation()))
@@ -30,6 +32,7 @@ class ZettlekastenRepositoryImpl:
             database_id=self.DATABASE_ID,
             filter_param=filter_param,
             page_model=Zettlekasten,
+            include_children=include_children,
         )
 
 
@@ -40,6 +43,7 @@ class ZettlekastenRepositoryImpl:
             database_id=self.DATABASE_ID,
             filter_param=filter_param,
             page_model=Zettlekasten,
+            include_children=True,
         )
         if len(searched_zettlekasten) == 0:
             return None
@@ -49,6 +53,11 @@ class ZettlekastenRepositoryImpl:
         return searched_zettlekasten[0]
 
     def save(self, zettlekasten: Zettlekasten) -> Zettlekasten:
+        if zettlekasten.id is not None:
+            _ = self._client.update_page(
+                page_id=zettlekasten.id,
+                properties=zettlekasten.properties.values)
+            return zettlekasten
         result = self._client.create_page_in_database(
             database_id=self.DATABASE_ID,
             cover=zettlekasten.cover,
