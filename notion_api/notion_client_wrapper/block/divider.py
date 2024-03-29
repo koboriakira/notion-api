@@ -1,16 +1,16 @@
-
 from notion_client_wrapper.block.block import Block
 
 
 class Divider(Block):
     def __init__(
-            self,
-            id: str|None = None,
-            archived: bool|None = None,
-            created_time: str|None = None,
-            last_edited_time: str|None = None,
-            has_children: bool|None = None,
-            parent: dict|None = None):
+        self,
+        id: str | None = None,
+        archived: bool | None = None,
+        created_time: str | None = None,
+        last_edited_time: str | None = None,
+        has_children: bool | None = None,
+        parent: dict | None = None,
+    ):
         super().__init__(id, archived, created_time, last_edited_time, has_children, parent)
 
     @staticmethod
@@ -32,4 +32,4 @@ class Divider(Block):
         raise NotImplementedError
 
     def to_slack_text(self) -> str:
-        raise "---"
+        return "---"

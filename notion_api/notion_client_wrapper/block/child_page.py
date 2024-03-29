@@ -4,8 +4,16 @@ from notion_client_wrapper.block.block import Block
 class ChildPage(Block):
     title: str
 
-    def __init__(self, id: str, archived: bool, created_time: str, last_edited_time: str, has_children: bool,
-                 parent: dict, title: str):
+    def __init__(
+        self,
+        id: str,
+        archived: bool,
+        created_time: str,
+        last_edited_time: str,
+        has_children: bool,
+        parent: dict,
+        title: str,
+    ):
         super().__init__(id, archived, created_time, last_edited_time, has_children, parent)
         self.title = title
 
@@ -30,4 +38,4 @@ class ChildPage(Block):
         raise NotImplementedError
 
     def to_slack_text(self) -> str:
-        raise ""
+        return ""

@@ -1,4 +1,3 @@
-
 from notion_client_wrapper.block.block import Block
 
 
@@ -9,17 +8,17 @@ class Image(Block):
     type: str = "image"
 
     def __init__(
-            self,
-            image_caption: list,
-            image_type: str,
-            image_file: dict,
-            id: str | None = None,  # noqa: A002
-            archived: bool | None = None,
-            created_time: str | None = None,
-            last_edited_time: str | None = None,
-            has_children: bool | None = None,
-            parent: dict | None = None,
-            ):
+        self,
+        image_caption: list,
+        image_type: str,
+        image_file: dict,
+        id: str | None = None,  # noqa: A002
+        archived: bool | None = None,
+        created_time: str | None = None,
+        last_edited_time: str | None = None,
+        has_children: bool | None = None,
+        parent: dict | None = None,
+    ):
         super().__init__(id, archived, created_time, last_edited_time, has_children, parent)
         self.image_caption = image_caption
         self.image_type = image_type
@@ -51,4 +50,4 @@ class Image(Block):
         raise NotImplementedError
 
     def to_slack_text(self) -> str:
-        raise ""
+        return ""
