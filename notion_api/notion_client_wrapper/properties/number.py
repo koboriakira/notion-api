@@ -8,10 +8,14 @@ class Number(Property):
     number: int | None
     type: str = "number"
 
-    def __init__(self, name: str, id: str | None = None, number: int | None = None):
+    def __init__(
+            self,
+            name: str,
+            id: str | None = None,  # noqa: A002
+            number: int | None = None) -> None:
         self.name = name
         self.id = id
-        self.number = number
+        self.number = number or 0
 
     def add(self, count: int) -> "Number":
         prev = self.number if self.number is not None else 0
@@ -31,7 +35,7 @@ class Number(Property):
             number=param["number"],
         )
 
-    def __dict__(self):
+    def __dict__(self) -> dict:
         result = {
         }
         if self.id is not None:
