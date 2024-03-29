@@ -3,11 +3,9 @@ from logging import Logger
 
 from slack_sdk.web import WebClient
 
+from common.service.tag_creator.tag_creator import TagCreator
 from custom_logger import get_logger
 from injector.page_creator_factory import PageCreatorFactory
-from notion_api.common.service.tag_creator.tag_creator import TagCreator
-from notion_api.usecase.zettlekasten.create_tag_to_zettlekasten_use_case import CreateTagToZettlekastenUseCase
-from notion_api.zettlekasten.infrastructure.zettlekasten_repository_impl import ZettlekastenRepositoryImpl
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from slack_concierge.injector import SlackConciergeInjector
 from usecase.add_webclip_usecase import AddWebclipUsecase
@@ -16,8 +14,10 @@ from usecase.service.inbox_service import InboxService
 from usecase.service.tag_analyzer import TagAnalyzer
 from usecase.service.tag_create_service import TagCreateService
 from usecase.service.text_summarizer import TextSummarizer
+from usecase.zettlekasten.create_tag_to_zettlekasten_use_case import CreateTagToZettlekastenUseCase
 from util.openai_executer import OpenaiExecuter
 from webclip.injector import WebclipInjector
+from zettlekasten.infrastructure.zettlekasten_repository_impl import ZettlekastenRepositoryImpl
 
 logger = get_logger(__name__)
 

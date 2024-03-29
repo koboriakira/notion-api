@@ -1,9 +1,9 @@
 from logging import Logger, getLogger
 
+from common.domain.tag_relation import TagRelation
 from domain.database_type import DatabaseType
-from notion_api.common.domain.tag_relation import TagRelation
-from notion_api.notion_client_wrapper.filter.condition.empty_condition import EmptyCondition
 from notion_client_wrapper.client_wrapper import ClientWrapper
+from notion_client_wrapper.filter.condition.empty_condition import EmptyCondition
 from notion_client_wrapper.filter.filter_builder import FilterBuilder
 from zettlekasten.domain.zettlekasten import Zettlekasten
 from zettlekasten.domain.zettlekasten_title import ZettlekastenName

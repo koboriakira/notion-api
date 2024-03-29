@@ -1,11 +1,11 @@
 
 from logging import Logger
 
-from notion_api.common.service.tag_creator.tag_creator import TagCreator
-from notion_api.notion_client_wrapper.client_wrapper import ClientWrapper
-from notion_api.util.tag_analyzer import TagAnalyzer
-from notion_api.zettlekasten.domain.zettlekasten import Zettlekasten
-from notion_api.zettlekasten.infrastructure.zettlekasten_repository_impl import (
+from common.service.tag_creator.tag_creator import TagCreator
+from notion_client_wrapper.client_wrapper import ClientWrapper
+from util.tag_analyzer import TagAnalyzer
+from zettlekasten.domain.zettlekasten import Zettlekasten
+from zettlekasten.infrastructure.zettlekasten_repository_impl import (
     ZettlekastenRepositoryImpl as ZettlekastenRepository,
 )
 
