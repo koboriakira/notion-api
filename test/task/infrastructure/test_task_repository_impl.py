@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import datetime
 from unittest import TestCase
 from unittest.mock import Mock
 
@@ -20,10 +20,12 @@ class TestTaskRepositoryImpl(TestCase):
         # Given
         status_list = [TaskStatusType.TODO, TaskStatusType.IN_PROGRESS]
         task_kind_type_list = [TaskKindType.NEXT_ACTION]
-        start_date = date(2024, 1, 2)
+        start_datetime = datetime(2024, 1, 2)
 
         # When
-        _ = self.suite.search(status_list=status_list, kind_type_list=task_kind_type_list, start_date=start_date)
+        _ = self.suite.search(
+            status_list=status_list, kind_type_list=task_kind_type_list, start_datetime=start_datetime
+        )
 
         # Then
         # クラス名の一致をチェックするロジックがあるので、完全に合わせておく

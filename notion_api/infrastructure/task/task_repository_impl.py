@@ -1,4 +1,4 @@
-from datetime import date, datetime, time
+from datetime import datetime, time
 
 from domain.database_type import DatabaseType
 from domain.task.task import Task
@@ -22,14 +22,14 @@ class TaskRepositoryImpl(TaskRepository):
         self,
         status_list: list[str | TaskStatusType] | None = None,
         kind_type_list: list[TaskKindType] | None = None,
-        start_date: date | None = None,
+        start_datetime: datetime | None = None,
     ) -> list[Task]:
         task_kind_trash = TaskKind.trash()
         filter_builder = FilterBuilder()
         filter_builder = filter_builder.add_condition(StringCondition.not_equal(property=task_kind_trash))
-        if start_date is not None:
-            target_date_after = datetime.combine(start_date, time.min, tzinfo=JST)
-            target_date_before = datetime.combine(start_date, time.max, tzinfo=JST)
+        if start_datetime is not None:
+            target_date_after = datetime.combine(start_datetime.date(), time.min, tzinfo=JST)
+            target_date_before = datetime.combine(start_datetime.date(), time.max, tzinfo=JST)
             task_start_date_after = TaskStartDate.create(target_date_after)
             task_start_date_before = TaskStartDate.create(target_date_before)
             filter_builder = filter_builder.add_condition(DateCondition.on_or_after(property=task_start_date_after))
