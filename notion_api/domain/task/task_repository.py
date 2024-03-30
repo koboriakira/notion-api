@@ -9,10 +9,11 @@ from domain.task.task_status import TaskStatusType
 class TaskRepository(metaclass=ABCMeta):
     @abstractmethod
     def search(
-            self,
-            status_list: list[str|TaskStatusType]|None=None,
-            task_kind: TaskKindType|None=None,
-            start_date: date | None = None) -> list[Task]:
+        self,
+        status_list: list[str | TaskStatusType] | None = None,
+        kind_type_list: list[TaskKindType] | None = None,
+        start_date: date | None = None,
+    ) -> list[Task]:
         pass
 
     @abstractmethod

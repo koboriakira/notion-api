@@ -1,5 +1,3 @@
-
-
 from datetime import datetime
 
 from domain.task.task import Task
@@ -11,10 +9,7 @@ from util.datetime import JST
 
 
 class CreateRoutineTaskUseCase:
-    def __init__(
-            self,
-            task_repository: TaskRepository,
-            routine_repository: RoutineRepositoryImpl) -> None:
+    def __init__(self, task_repository: TaskRepository, routine_repository: RoutineRepositoryImpl) -> None:
         self.task_repository = task_repository
         self.routine_repository = routine_repository
 
@@ -22,7 +17,8 @@ class CreateRoutineTaskUseCase:
         routine_tasks = self.routine_repository.fetch_all()
         next_tasks = self.task_repository.search(
             status_list=[TaskStatusType.TODO, TaskStatusType.IN_PROGRESS],
-            task_kind=TaskKindType.SCHEDULE)
+            kind_type_list=[TaskKindType.SCHEDULE],
+        )
         next_task_titles = [task.get_title().text for task in next_tasks]
 
         for routine_task in routine_tasks:
@@ -40,12 +36,12 @@ class CreateRoutineTaskUseCase:
             print(f"Create task: {task.get_title_text()}")
             self.task_repository.save(task=task)
 
+
 if __name__ == "__main__":
     # python -m notion_api.usecase.create_routine_task_use_case
     from infrastructure.task.task_repository_impl import TaskRepositoryImpl
+
     task_repository = TaskRepositoryImpl()
     routine_repository = RoutineRepositoryImpl()
-    usecase = CreateRoutineTaskUseCase(
-        task_repository=task_repository,
-        routine_repository=routine_repository)
+    usecase = CreateRoutineTaskUseCase(task_repository=task_repository, routine_repository=routine_repository)
     usecase.execute()
