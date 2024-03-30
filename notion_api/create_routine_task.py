@@ -8,9 +8,7 @@ from util.error_reporter import ErrorReporter
 
 task_repository = TaskRepositoryImpl()
 routine_repository = RoutineRepositoryImpl()
-usecase = CreateRoutineTaskUseCase(
-    task_repository=task_repository,
-    routine_repository=routine_repository)
+usecase = CreateRoutineTaskUseCase(task_repository=task_repository, routine_repository=routine_repository)
 
 # ログ
 logging.basicConfig(level=logging.INFO)
@@ -18,8 +16,13 @@ if Environment.is_dev():
     logging.basicConfig(level=logging.DEBUG)
 
 
-def handler(event:dict, context:dict) -> dict:  # noqa: ARG001
+def handler(event: dict, context: dict) -> dict:  # noqa: ARG001
     try:
         usecase.execute()
     except Exception:  # noqa: BLE001
         ErrorReporter().execute()
+
+
+if __name__ == "__main__":
+    # python -m notion_api.create_routine_task
+    handler({}, {})

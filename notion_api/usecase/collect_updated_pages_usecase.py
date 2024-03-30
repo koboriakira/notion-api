@@ -34,8 +34,9 @@ DATABASE_DICT = {
 
 LOG_FORMAT_APPEND_PAGE = "ページを追加しました: %s"
 
+
 class CollectUpdatedPagesUsecase:
-    def __init__(self, is_debug: bool|None = None) -> None:
+    def __init__(self, is_debug: bool | None = None) -> None:
         self.client = ClientWrapper.get_instance()
         self._slack_client = WebClient(token=os.environ["SLACK_BOT_TOKEN"])
         self.is_debug = is_debug
@@ -62,11 +63,11 @@ class CollectUpdatedPagesUsecase:
 
         self._slack_client.chat_postMessage(
             text=f"デイリーログにページを追加しました。\n{daily_log.url}",
-            channel="C05F6AASERZ", # diary
+            channel="C05F6AASERZ",  # diary
         )
 
     def _find_daily_log(self, target_datetime: datetime) -> BasePage:
-        """ 指定された日付のデイリーログを取得する """
+        """指定された日付のデイリーログを取得する"""
         title_text = target_datetime.date().isoformat()
         title_property = Title.from_plain_text(name=DATABASE_TYPE_DAILY_LOG.title_name(), text=title_text)
         filter_param = FilterBuilder().add_condition(StringCondition.equal(property=title_property)).build()
@@ -81,7 +82,7 @@ class CollectUpdatedPagesUsecase:
         return pages[0]
 
     def _get_latest_items(self, target_datetime: datetime, database_type: DatabaseType) -> list[BasePage]:
-        """ 指定されたカテゴリの、最近更新されたページIDを取得する """
+        """指定されたカテゴリの、最近更新されたページIDを取得する"""
         start = target_datetime - timedelta(hours=24)
         last_edited_time_start = LastEditedTime.create(value=start)
         last_edited_time_end = LastEditedTime.create(value=target_datetime)
@@ -90,9 +91,7 @@ class CollectUpdatedPagesUsecase:
         filter_builder = filter_builder.add_condition(DateCondition.on_or_after(last_edited_time_start))
         filter_builder = filter_builder.add_condition(DateCondition.on_or_before(last_edited_time_end))
         filter_param = filter_builder.build()
-        return self.client.retrieve_database(
-            database_id=database_type.value,
-            filter_param=filter_param)
+        return self.client.retrieve_database(database_id=database_type.value, filter_param=filter_param)
 
     def _append_relation_to_daily_log(self, daily_log_id: str, title: str, pages: list[BasePage]) -> None:
         if len(pages) == 0:
@@ -119,7 +118,8 @@ class CollectUpdatedPagesUsecase:
             )
         logger.info(LOG_FORMAT_APPEND_PAGE, page.get_title().text)
 
+
 if __name__ == "__main__":
     # python -m notion_api.usecase.collect_updated_pages_usecase
     usecase = CollectUpdatedPagesUsecase(is_debug=True)
-    usecase.execute(target_datetime=datetime(2024, 3, 18, 21, 0, 0, tzinfo=JST))
+    usecase.execute(target_datetime=datetime(2024, 3, 29, 21, 0, 0, tzinfo=JST))
