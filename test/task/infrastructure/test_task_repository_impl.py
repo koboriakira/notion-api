@@ -8,6 +8,7 @@ from notion_api.domain.task.task_kind import TaskKindType
 from notion_api.domain.task.task_status import TaskStatusType
 from notion_api.infrastructure.task.task_repository_impl import TaskRepositoryImpl
 from notion_api.notion_client_wrapper.client_wrapper import ClientWrapper
+from notion_api.util.datetime import JST
 
 
 class TestTaskRepositoryImpl(TestCase):
@@ -20,7 +21,7 @@ class TestTaskRepositoryImpl(TestCase):
         # Given
         status_list = [TaskStatusType.TODO, TaskStatusType.IN_PROGRESS]
         task_kind_type_list = [TaskKindType.NEXT_ACTION]
-        start_datetime = datetime(2024, 1, 2)
+        start_datetime = datetime(2024, 1, 2, 12, 0, tzinfo=JST)
 
         # When
         _ = self.suite.search(
@@ -32,7 +33,7 @@ class TestTaskRepositoryImpl(TestCase):
             filter_param={
                 "and": [
                     {"property": "タスク種別", "select": {"does_not_equal": "ゴミ箱"}},
-                    {"property": "実施日", "date": {"on_or_after": "2024-01-02T00:00:00+09:00"}},
+                    {"property": "実施日", "date": {"on_or_after": "2024-01-02T12:00:00+09:00"}},
                     {"property": "実施日", "date": {"before": "2024-01-02T23:59:59.999999+09:00"}},
                     {"or": [{"property": "タスク種別", "select": {"equals": "次にとるべき行動リスト"}}]},
                     {
