@@ -23,6 +23,7 @@ class TaskRepositoryImpl(TaskRepository):
         status_list: list[str | TaskStatusType] | None = None,
         kind_type_list: list[TaskKindType] | None = None,
         start_datetime: date | datetime | None = None,
+        start_datetime_end: date | datetime | None = None,
     ) -> list[Task]:
         task_kind_trash = TaskKind.trash()
         filter_builder = FilterBuilder()
@@ -33,11 +34,17 @@ class TaskRepositoryImpl(TaskRepository):
                 if isinstance(start_datetime, datetime)
                 else datetime.combine(start_datetime, time.min, tzinfo=JST)
             )
-            target_date_before = datetime.combine(start_datetime.date(), time.max, tzinfo=JST)
             task_start_date_after = TaskStartDate.create(start_datetime)
-            task_start_date_before = TaskStartDate.create(target_date_before)
             filter_builder = filter_builder.add_condition(DateCondition.on_or_after(property=task_start_date_after))
-            filter_builder = filter_builder.add_condition(DateCondition.before(property=task_start_date_before))
+
+        if start_datetime_end is not None:
+            start_datetime_end = (
+                start_datetime_end
+                if isinstance(start_datetime_end, datetime)
+                else datetime.combine(start_datetime_end, time.max, tzinfo=JST)
+            )
+            task_start_date_before = TaskStartDate.create(start_datetime_end)
+            filter_builder = filter_builder.add_condition(DateCondition.on_or_before(property=task_start_date_before))
 
         if kind_type_list is not None and len(kind_type_list) > 0:
             task_kind_properties = [TaskKind.create(kind_type=kind_type) for kind_type in kind_type_list]

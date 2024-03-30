@@ -13,6 +13,7 @@ class TaskRepository(metaclass=ABCMeta):
         status_list: list[str | TaskStatusType] | None = None,
         kind_type_list: list[TaskKindType] | None = None,
         start_datetime: date | datetime | None = None,
+        start_datetime_end: date | datetime | None = None,
     ) -> list[Task]:
         pass
 

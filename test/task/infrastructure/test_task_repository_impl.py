@@ -22,10 +22,14 @@ class TestTaskRepositoryImpl(TestCase):
         status_list = [TaskStatusType.TODO, TaskStatusType.IN_PROGRESS]
         task_kind_type_list = [TaskKindType.NEXT_ACTION]
         start_datetime = datetime(2024, 1, 2, 12, 0, tzinfo=JST)
+        start_datetime_end = datetime(2024, 1, 2, 13, 0, tzinfo=JST)
 
         # When
         _ = self.suite.search(
-            status_list=status_list, kind_type_list=task_kind_type_list, start_datetime=start_datetime
+            status_list=status_list,
+            kind_type_list=task_kind_type_list,
+            start_datetime=start_datetime,
+            start_datetime_end=start_datetime_end,
         )
 
         # Then
@@ -34,7 +38,7 @@ class TestTaskRepositoryImpl(TestCase):
                 "and": [
                     {"property": "タスク種別", "select": {"does_not_equal": "ゴミ箱"}},
                     {"property": "実施日", "date": {"on_or_after": "2024-01-02T12:00:00+09:00"}},
-                    {"property": "実施日", "date": {"before": "2024-01-02T23:59:59.999999+09:00"}},
+                    {"property": "実施日", "date": {"on_or_before": "2024-01-02T13:00:00+09:00"}},
                     {"or": [{"property": "タスク種別", "select": {"equals": "次にとるべき行動リスト"}}]},
                     {
                         "or": [
@@ -51,10 +55,14 @@ class TestTaskRepositoryImpl(TestCase):
         status_list = [TaskStatusType.TODO, TaskStatusType.IN_PROGRESS]
         task_kind_type_list = [TaskKindType.NEXT_ACTION]
         start_datetime = date(2024, 1, 2)
+        start_datetime_end = date(2024, 1, 2)
 
         # When
         _ = self.suite.search(
-            status_list=status_list, kind_type_list=task_kind_type_list, start_datetime=start_datetime
+            status_list=status_list,
+            kind_type_list=task_kind_type_list,
+            start_datetime=start_datetime,
+            start_datetime_end=start_datetime_end,
         )
 
         # Then
@@ -63,7 +71,7 @@ class TestTaskRepositoryImpl(TestCase):
                 "and": [
                     {"property": "タスク種別", "select": {"does_not_equal": "ゴミ箱"}},
                     {"property": "実施日", "date": {"on_or_after": "2024-01-02T00:00:00+09:00"}},
-                    {"property": "実施日", "date": {"before": "2024-01-02T23:59:59.999999+09:00"}},
+                    {"property": "実施日", "date": {"on_or_before": "2024-01-02T23:59:59.999999+09:00"}},
                     {"or": [{"property": "タスク種別", "select": {"equals": "次にとるべき行動リスト"}}]},
                     {
                         "or": [
