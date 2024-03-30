@@ -9,17 +9,17 @@ class TestEmptyCondition(TestCase):
         return super().setUp()
 
     def test_リレーションが空である条件(self):
-        # Given
-        relation = Relation(name="Task List")
-
         # When
-        condition = EmptyCondition.true(property=relation)
+        condition = EmptyCondition.true(prop_name="Task List", prop_type=Relation.TYPE)
 
         # Then
-        expected = {
-          "property": "Task List",
-          "relation": {
-            "is_empty": True
-          }
-        }
+        expected = {"property": "Task List", "relation": {"is_empty": True}}
+        self.assertEqual(expected, condition.__dict__())
+
+    def test_リレーションが空でない条件(self):
+        # When
+        condition = EmptyCondition.false(prop_name="Task List", prop_type=Relation.TYPE)
+
+        # Then
+        expected = {"property": "Task List", "relation": {"is_not_empty": True}}
         self.assertEqual(expected, condition.__dict__())

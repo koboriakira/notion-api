@@ -1,8 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
 
-from notion_client_wrapper.properties.property import Property
-
 from .condition import Condition
 
 
@@ -18,18 +16,18 @@ class EmptyCondition(Condition):
     condition_type: EmptyConditionType
 
     @classmethod
-    def true(cls: "EmptyCondition", property: Property) -> "EmptyCondition":  # noqa: A002
+    def true(cls: "EmptyCondition", prop_name: str, prop_type: str) -> "EmptyCondition":
         return cls(
-            prop_name=property.name,
-            prop_type=property.type,
+            prop_name=prop_name,
+            prop_type=prop_type,
             condition_type=EmptyConditionType.IS_EMPTY,
         )
 
     @classmethod
-    def false(cls: "EmptyCondition", property: Property) -> "EmptyCondition":  # noqa: A002
+    def false(cls: "EmptyCondition", prop_name: str, prop_type: str) -> "EmptyCondition":
         return cls(
-            prop_name=property.name,
-            prop_type=property.type,
+            prop_name=prop_name,
+            prop_type=prop_type,
             condition_type=EmptyConditionType.IS_NOT_EMPTY,
         )
 

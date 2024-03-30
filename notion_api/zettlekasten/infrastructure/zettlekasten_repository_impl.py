@@ -12,21 +12,20 @@ from zettlekasten.domain.zettlekasten_title import ZettlekastenName
 class ZettlekastenRepositoryImpl:
     DATABASE_ID = DatabaseType.ZETTLEKASTEN.value
 
-    def __init__(
-            self,
-            client: ClientWrapper,
-            logger: Logger|None = None) -> None:
+    def __init__(self, client: ClientWrapper, logger: Logger | None = None) -> None:
         self._client = client
         self._logger = logger or getLogger(__name__)
 
     def search(
-            self,
-            is_tag_empty: bool|None = None,
-            include_children: bool|None = None,
-            ) -> list[Zettlekasten]:
+        self,
+        is_tag_empty: bool | None = None,
+        include_children: bool | None = None,
+    ) -> list[Zettlekasten]:
         filter_builder = FilterBuilder()
         if is_tag_empty is not None:
-            filter_builder = filter_builder.add_condition(EmptyCondition.true(property=TagRelation()))
+            filter_builder = filter_builder.add_condition(
+                EmptyCondition.true(prop_name=TagRelation.NAME, prop_type=TagRelation.TYPE),
+            )
         filter_param = filter_builder.build()
         return self._client.retrieve_database(
             database_id=self.DATABASE_ID,
@@ -35,8 +34,7 @@ class ZettlekastenRepositoryImpl:
             include_children=include_children,
         )
 
-
-    def find_by_title(self, title: str) -> Zettlekasten|None:
+    def find_by_title(self, title: str) -> Zettlekasten | None:
         title_property = ZettlekastenName(text=title)
         filter_param = FilterBuilder.build_simple_equal_condition(title_property)
         searched_zettlekasten = self._client.retrieve_database(
@@ -54,9 +52,7 @@ class ZettlekastenRepositoryImpl:
 
     def save(self, zettlekasten: Zettlekasten) -> Zettlekasten:
         if zettlekasten.id is not None:
-            _ = self._client.update_page(
-                page_id=zettlekasten.id,
-                properties=zettlekasten.properties.values)
+            _ = self._client.update_page(page_id=zettlekasten.id, properties=zettlekasten.properties.values)
             return zettlekasten
         result = self._client.create_page_in_database(
             database_id=self.DATABASE_ID,
