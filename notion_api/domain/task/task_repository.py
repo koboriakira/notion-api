@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from datetime import datetime
+from datetime import date, datetime
 
 from domain.task.task import Task
 from domain.task.task_kind import TaskKindType
@@ -12,7 +12,7 @@ class TaskRepository(metaclass=ABCMeta):
         self,
         status_list: list[str | TaskStatusType] | None = None,
         kind_type_list: list[TaskKindType] | None = None,
-        start_datetime: datetime | None = None,
+        start_datetime: date | datetime | None = None,
     ) -> list[Task]:
         pass
 
