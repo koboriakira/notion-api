@@ -11,19 +11,23 @@ class Select(Property):
     selected_color: str
     type: str = "select"
 
-    def __init__(self,
-                 name: str,
-                 selected_name: str,
-                 selected_id: str | None = None,
-                 selected_color: str | None = None,
-                 id: str | None = None):
+    TYPE = "select"
+
+    def __init__(
+        self,
+        name: str,
+        selected_name: str,
+        selected_id: str | None = None,
+        selected_color: str | None = None,
+        id: str | None = None,
+    ):
         self.name = name
         self.id = id
         self.selected_name = selected_name
         self.selected_id = selected_id if selected_id is not None else "default"
         self.selected_color = selected_color if selected_color is not None else "default"
 
-    @ staticmethod
+    @staticmethod
     def of(name: str, param: dict) -> Optional["Select"]:
         select = param["select"]
         if select is None:

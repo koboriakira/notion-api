@@ -6,6 +6,7 @@ from domain.task.task_kind import TaskKind, TaskKindType
 from domain.task.task_repository import TaskRepository
 from domain.task.task_start_date import TaskStartDate
 from domain.task.task_status import TaskStatus, TaskStatusType
+from notion_api.notion_client_wrapper.filter.condition.empty_condition import EmptyCondition
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper.filter.condition.date_condition import DateCondition
 from notion_client_wrapper.filter.condition.or_condition import OrCondition
@@ -46,13 +47,16 @@ class TaskRepositoryImpl(TaskRepository):
             task_start_date_before = TaskStartDate.create(start_datetime_end)
             filter_builder = filter_builder.add_condition(DateCondition.on_or_before(property=task_start_date_before))
 
-        if kind_type_list is not None and len(kind_type_list) > 0:
-            task_kind_properties = [TaskKind.create(kind_type=kind_type) for kind_type in kind_type_list]
-            task_kind_equal_conditions = [
-                StringCondition.equal(property=task_kind) for task_kind in task_kind_properties
-            ]
-            or_condition = OrCondition(task_kind_equal_conditions)
-            filter_builder = filter_builder.add_condition(or_condition)
+        if kind_type_list is not None:
+            if len(kind_type_list) > 0:
+                task_kind_properties = [TaskKind.create(kind_type=kind_type) for kind_type in kind_type_list]
+                task_kind_equal_conditions = [
+                    StringCondition.equal(property=task_kind) for task_kind in task_kind_properties
+                ]
+                or_condition = OrCondition(task_kind_equal_conditions)
+                filter_builder = filter_builder.add_condition(or_condition)
+            if len(kind_type_list) == 0:
+                filter_builder = filter_builder.add_condition(EmptyCondition.true(TaskKind.NAME, TaskKind.TYPE))
 
         if status_list is not None and len(status_list) > 0:
             if isinstance(status_list[0], str):

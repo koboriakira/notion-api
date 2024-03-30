@@ -83,6 +83,26 @@ class TestTaskRepositoryImpl(TestCase):
             },
         )
 
+    def test_search_タスク種別が未指定のものだけを検索できる(self):
+        # Given
+        # 空配列にすることで未指定を表現する
+        task_kind_type_list = []
+
+        # When
+        _ = self.suite.search(
+            kind_type_list=task_kind_type_list,
+        )
+
+        # Then
+        self._assert_retrieve_page_called_once_with(
+            filter_param={
+                "and": [
+                    {"property": "タスク種別", "select": {"does_not_equal": "ゴミ箱"}},
+                    {"property": "タスク種別", "select": {"is_empty": True}},
+                ]
+            },
+        )
+
     def test_タスクを保存する(self):
         # Given
         task = Task.create(
