@@ -6,7 +6,7 @@ services:
   api:
     container_name: "notion-api"
     volumes:
-      - ./:/workspace:cached
+      - ./notion_api:/workspace/notion_api:cached
     build:
       context: .
       dockerfile: docker/api/Dockerfile
