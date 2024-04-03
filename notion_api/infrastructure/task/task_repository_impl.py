@@ -6,9 +6,9 @@ from domain.task.task_kind import TaskKind, TaskKindType
 from domain.task.task_repository import TaskRepository
 from domain.task.task_start_date import TaskStartDate
 from domain.task.task_status import TaskStatus, TaskStatusType
-from notion_api.notion_client_wrapper.filter.condition.empty_condition import EmptyCondition
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper.filter.condition.date_condition import DateCondition
+from notion_client_wrapper.filter.condition.empty_condition import EmptyCondition
 from notion_client_wrapper.filter.condition.or_condition import OrCondition
 from notion_client_wrapper.filter.condition.string_condition import StringCondition
 from notion_client_wrapper.filter.filter_builder import FilterBuilder
