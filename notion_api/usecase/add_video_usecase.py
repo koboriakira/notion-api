@@ -1,4 +1,3 @@
-
 from custom_logger import get_logger
 from domain.database_type import DatabaseType
 from notion_client_wrapper.block import Paragraph
@@ -11,6 +10,7 @@ from usecase.service.tag_create_service import TagCreateService
 
 logger = get_logger(__name__)
 
+
 class AddVideoUsecase:
     def __init__(self):
         self.client = ClientWrapper.get_instance()
@@ -20,13 +20,13 @@ class AddVideoUsecase:
         self.append_page_id_to_slack_context = AppendPageIdToSlackContext()
 
     def execute(
-            self,
-            url: str,
-            title: str,
-            cover: str | None = None,
-            slack_channel: str | None = None,
-            slack_thread_ts: str | None = None,
-            ) -> dict:
+        self,
+        url: str,
+        title: str,
+        cover: str | None = None,
+        slack_channel: str | None = None,
+        slack_thread_ts: str | None = None,
+    ) -> dict:
         searched_videos = self.client.retrieve_database(
             database_id=DatabaseType.VIDEO.value,
             title=title,
@@ -43,16 +43,16 @@ class AddVideoUsecase:
         tags = self.tag_analyzer.handle(text=title)
 
         # タグを作成
-        tag_page_ids:list[str] = []
+        tag_page_ids: list[str] = []
         for tas in tags:
             page_id = self.tag_create_service.add_tag(name=tas)
             tag_page_ids.append(page_id)
 
         # 新しいページを作成
-        properties=[
-                Title.from_plain_text(name="名前", text=title),
-                Url.from_url(name="URL", url=url),
-            ]
+        properties = [
+            Title.from_plain_text(name="名前", text=title),
+            Url.from_url(name="URL", url=url),
+        ]
         if len(tag_page_ids) > 0:
             properties.append(Relation.from_id_list(name="タグ", id_list=tag_page_ids))
         result = self.client.create_page_in_database(
@@ -99,6 +99,7 @@ class AddVideoUsecase:
         embed_code = f"""<iframe width="560" height="315" src="https://www.youtube.com/embed/{video_id}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>"""
         paragraph = Paragraph.from_plain_text(text=embed_code)
         self.client.append_block(block_id=block_id, block=paragraph)
+
 
 if __name__ == "__main__":
     # python -m usecase.add_video_usecase

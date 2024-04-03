@@ -11,6 +11,7 @@ from usecase.service.tag_create_service import TagCreateService
 
 logger = get_logger(__name__)
 
+
 def find_promotion(pages: list[BasePage], promotion_name: str) -> Select | None:
     for page in pages:
         status = page.get_select(name="団体")
@@ -18,20 +19,22 @@ def find_promotion(pages: list[BasePage], promotion_name: str) -> Select | None:
             return status
     return None
 
+
 class AddProwrestlingUsecase:
     def __init__(self):
         self.client = ClientWrapper.get_instance()
         self.tag_create_service = TagCreateService()
 
-    def execute(self,
-                url: str,
-                title: str,
-                date: DateObject,
-                promotion: str,
-                text: str,
-                tags: list[str],
-                cover: str | None = None,
-                ) -> dict:
+    def execute(
+        self,
+        url: str,
+        title: str,
+        date: DateObject,
+        promotion: str,
+        text: str,
+        tags: list[str],
+        cover: str | None = None,
+    ) -> dict:
         logger.info("execute")
 
         searched_pw_events = self.client.retrieve_database(
@@ -49,17 +52,16 @@ class AddProwrestlingUsecase:
 
         # 団体の選択肢を特定
         pw_events = self.client.retrieve_database(database_id=DatabaseType.PROWRESTLING.value)
-        promotion_select = find_promotion(pages=pw_events,
-                                          promotion_name=promotion)
+        promotion_select = find_promotion(pages=pw_events, promotion_name=promotion)
 
         # タグを作成
-        tag_page_ids:list[str] = []
+        tag_page_ids: list[str] = []
         for tas in tags:
             page_id = self.tag_create_service.add_tag(name=tas)
             tag_page_ids.append(page_id)
 
         # 新しいページを作成
-        properties=[
+        properties = [
             Title.from_plain_text(name="名前", text=title),
             Url.from_url(name="URL", url=url),
             Date.from_start_date(name="日付", start_date=date),
@@ -82,7 +84,7 @@ class AddProwrestlingUsecase:
             # textが1500文字を超える場合は、1500文字ずつ分割して追加する
             if len(text) > 1500:
                 for i in range(0, len(text), 1500):
-                    rich_text = RichTextBuilder.get_instance().add_text(text[i:i+1500]).build()
+                    rich_text = RichTextBuilder.get_instance().add_text(text[i : i + 1500]).build()
                     paragraph = Paragraph.from_rich_text(rich_text=rich_text)
                     self.client.append_block(block_id=page["id"], block=paragraph)
             else:
