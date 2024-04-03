@@ -3,6 +3,7 @@ from unittest import TestCase
 
 import pytest
 from notion_api.domain.database_type import DatabaseType
+from notion_api.domain.task.task import Task
 from notion_api.notion_client_wrapper.base_page import BasePage
 from notion_api.notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_api.notion_client_wrapper.filter.condition.date_condition import DateCondition
@@ -19,6 +20,16 @@ class TestClientWrapper(TestCase):
     def setUp(self):
         self.suite = ClientWrapper.get_instance()
 
+    @pytest.mark.skip()
+    def test_ページを取得してみる(self):
+        # pipenv run pytest test/notion_client_wrapper/test_client_wrapper.py -k test_ページを取得してみる
+        page_id = "5c38fd30714b4ce2bf2d25407f3cfc16"
+        page_model = Task
+        page = self.suite.retrieve_page(page_id=page_id, page_model=page_model)
+        print(page)
+        print(page.get_slack_text_in_block_children())
+        self.fail("標準出力確認のためのエラー")
+
     @pytest.mark.use_genuine_api()
     def test_すべてのデータを取得できる(self):
         # 音楽のページを取得してみる
@@ -26,7 +37,6 @@ class TestClientWrapper(TestCase):
             database_id=DatabaseType.BOOK.value,
         )
         self.assertTrue(len(pages) > 0)
-
 
     @pytest.mark.use_genuine_api()
     def test_1つの条件で絞り込む(self):
@@ -78,12 +88,9 @@ class TestClientWrapper(TestCase):
         title = Title.from_plain_text(name="名前", text="タバコロード 20")
         filter_param = FilterBuilder().add_condition(StringCondition.equal(title)).build()
 
-
         # When: モデルを指定して取得
         pages = self.suite.retrieve_database(
-            database_id=DatabaseType.MUSIC.value,
-            filter_param=filter_param,
-            page_model=OriginalBasePage
+            database_id=DatabaseType.MUSIC.value, filter_param=filter_param, page_model=OriginalBasePage
         )
         self.assertIsInstance(pages[0], OriginalBasePage)
 
@@ -95,7 +102,12 @@ class TestClientWrapper(TestCase):
         # Given
         date_property = LastEditedTime.create(value=datetime(2024, 3, 17, tzinfo=JST))
         date_property2 = LastEditedTime.create(value=datetime(2024, 3, 18, tzinfo=JST))
-        filter_param = FilterBuilder().add_condition(DateCondition.on_or_after(date_property)).add_condition(DateCondition.on_or_before(date_property2)).build()
+        filter_param = (
+            FilterBuilder()
+            .add_condition(DateCondition.on_or_after(date_property))
+            .add_condition(DateCondition.on_or_before(date_property2))
+            .build()
+        )
 
         # When: モデルを指定して取得
         pages = self.suite.retrieve_database(
@@ -113,34 +125,14 @@ class TestClientWrapper(TestCase):
         # Given
         filter_param = {
             "and": [
-                {
-                    "property": "タスク種別",
-                    "select": {
-                        "does_not_equal": "ゴミ箱"
-                    }
-                },
-                {
-                    "property": "実施日",
-                    "date": {
-                        "equals": "2024-03-20"
-                    }
-                },
+                {"property": "タスク種別", "select": {"does_not_equal": "ゴミ箱"}},
+                {"property": "実施日", "date": {"equals": "2024-03-20"}},
                 {
                     "or": [
-                        {
-                            "property": "ステータス",
-                            "status": {
-                                "equals": "ToDo"
-                        }
-                        },
-                        {
-                            "property": "ステータス",
-                            "status": {
-                                "equals": "InProgress"
-                            }
-                        }
+                        {"property": "ステータス", "status": {"equals": "ToDo"}},
+                        {"property": "ステータス", "status": {"equals": "InProgress"}},
                     ]
-                }
+                },
             ]
         }
         # When
@@ -152,7 +144,6 @@ class TestClientWrapper(TestCase):
         print(pages)
         print(len(pages))
         # self.fail()
-
 
     @pytest.mark.slow()
     def test_select_kind_map(self):
@@ -178,6 +169,7 @@ class TestClientWrapper(TestCase):
             }
         # uniqueにする
         import json
+
         print(json.dumps(result, indent=2, ensure_ascii=False))
 
         # 内容を確認したいので、無理やりfailさせる
@@ -187,7 +179,7 @@ class TestClientWrapper(TestCase):
     def test_ページを作成してみる(self):
         # pytest test/notion_client_wrapper/test_client_wrapper.py::TestClientWrapper::test_ページを作成してみる
         title = Title.from_plain_text(name="名前", text="テストページ")
-        cover = Cover(type='external', external_url='https://i.ytimg.com/vi/82KT4FNyNdY/maxresdefault.jpg')
+        cover = Cover(type="external", external_url="https://i.ytimg.com/vi/82KT4FNyNdY/maxresdefault.jpg")
         page = self.suite.create_page_in_database(
             database_id=DatabaseType.TASK.value,
             cover=cover,

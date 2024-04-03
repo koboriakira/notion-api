@@ -50,4 +50,4 @@ class Image(Block):
         raise NotImplementedError
 
     def to_slack_text(self) -> str:
-        return ""
+        return self.image_file["url"]
