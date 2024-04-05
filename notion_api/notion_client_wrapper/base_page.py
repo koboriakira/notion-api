@@ -25,20 +25,20 @@ from notion_client_wrapper.properties.url import Url
 class BasePage:
     properties: Properties
     block_children: list[Block] = field(default_factory=list)
-    id: str|None = None
-    url: str|None = None
-    created_time: CreatedTime|None = None
-    last_edited_time: LastEditedTime|None = None
-    created_by: BaseOperator|None = None
-    last_edited_by: BaseOperator|None = None
+    id: str | None = None
+    url: str | None = None
+    created_time: CreatedTime | None = None
+    last_edited_time: LastEditedTime | None = None
+    created_by: BaseOperator | None = None
+    last_edited_by: BaseOperator | None = None
     cover: Cover | None = None
     icon: Icon | None = None
-    archived: bool|None = False
+    archived: bool | None = False
     parent: dict | None = None
     object = "page"
 
     @staticmethod
-    def create(properties: list[Property]|None, blocks: list[Block]|None) -> "BasePage":
+    def create(properties: list[Property] | None = None, blocks: list[Block] | None = None) -> "BasePage":
         return BasePage(
             id=None,
             url=None,
@@ -102,3 +102,6 @@ class BasePage:
     def update_id_and_url(self, page_id: str, url: str) -> None:
         self.id = page_id
         self.url = url
+
+    def title_for_slack(self) -> None:
+        return f"<{self.url}|{self.get_title_text()}>"
