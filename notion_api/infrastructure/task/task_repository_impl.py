@@ -89,3 +89,25 @@ class TaskRepositoryImpl(TaskRepository):
 
     def find_by_id(self, task_id: str) -> Task:
         return self.client.retrieve_page(page_id=task_id, page_model=Task)
+
+    def move_to_backup(self, task: Task) -> None:
+        # バックアップ用のデータベースにレコードを作成
+        # タイトル、ステータス、実施日、タグ、プロジェクト、中身のみを移行
+        properties = [
+            task.get_title(),
+        ]
+        if task.get_date("実施日").start is not None:
+            properties.append(task.get_date("実施日"))
+        if task.get_relation("タグ") is not None:
+            properties.append(task.get_relation("タグ"))
+        if task.get_relation("プロジェクト") is not None:
+            properties.append(task.get_relation("プロジェクト"))
+
+        self.client.create_page_in_database(
+            database_id=DatabaseType.TASK_BK.value,
+            properties=properties,
+            blocks=task.block_children,
+        )
+
+        # タスクを削除
+        self.client.remove_page(page_id=task.id)

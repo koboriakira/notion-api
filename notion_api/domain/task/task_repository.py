@@ -24,3 +24,7 @@ class TaskRepository(metaclass=ABCMeta):
     @abstractmethod
     def find_by_id(self, task_id: str) -> Task:
         pass
+
+    @abstractmethod
+    def move_to_backup(self, task: Task) -> None:
+        pass
