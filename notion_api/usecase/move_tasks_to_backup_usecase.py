@@ -1,59 +1,38 @@
-from datetime import datetime as DatetimeObject
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from custom_logger import get_logger
-from domain.database_type import DatabaseType
+from domain.task.task_repository import TaskRepository
 from domain.task.task_status import TaskStatusType
-from notion_client_wrapper.base_page import BasePage
-from notion_client_wrapper.client_wrapper import ClientWrapper
 from util.datetime import jst_now
 
 logger = get_logger(__name__)
 
-DATETIME_2000 = DatetimeObject(2000, 1, 1)
 
 class MoveTasksToBackupUsecase:
-    def __init__(self):
-        self.client = ClientWrapper.get_instance()
+    MIN_DATETIME = datetime(1970, 1, 1)
+
+    def __init__(self, task_repository: TaskRepository) -> None:
+        self.task_repository = task_repository
 
     def execute(self) -> None:
-        datetime = jst_now() - timedelta(days=14)
-
         # まず全てのタスクを集める
-        all_pages = self.client.retrieve_database(database_id=DatabaseType.TASK.value)
-        tasks: list[BasePage] = []
-        for page in all_pages:
-            # 未了のタスクは無視
-            if page.get_status("ステータス").status_name != TaskStatusType.DONE.value:
-                continue
-            # 直近更新されたものは無視
-            if not page.last_edited_time.is_between(DATETIME_2000, datetime):
-                continue
-            tasks.append(page)
+        tasks = self.task_repository.search(status_list=[TaskStatusType.DONE])
+
+        # 直近更新されたものは無視
+        target_datetime = jst_now() - timedelta(days=14)
+        tasks_moving_to_backup = [t for t in tasks if t.last_edited_time.is_between(self.MIN_DATETIME, target_datetime)]
 
         # バックアップ用のデータベースに移動
-        for task in tasks:
-            print(task.get_title().text)
-            properties = [
-                task.get_title(),
-                task.get_status("ステータス"),
-            ]
-            if task.get_date("実施日").start is not None:
-                properties.append(task.get_date("実施日"))
-            if task.get_select("タスク種別") is not None:
-                properties.append(task.get_select("タスク種別"))
-
-            # バックアップ用のデータベースにレコードを作成
-            self.client.create_page_in_database(
-                database_id=DatabaseType.TASK_BK.value,
-                properties=properties)
-
-            # タスクを削除
-            self.client.remove_page(page_id=task.id)
-
+        for task in tasks_moving_to_backup:
+            self.task_repository.move_to_backup(task)
+            print(task.get_title().text + "をバックアップに移動しました。")
 
 
 if __name__ == "__main__":
-    # python -m usecase.move_tasks_to_backup_usecase
-    usecase = MoveTasksToBackupUsecase()
+    # python -m notion_api.usecase.move_tasks_to_backup_usecase
+    from infrastructure.task.task_repository_impl import TaskRepositoryImpl
+
+    usecase = MoveTasksToBackupUsecase(
+        task_repository=TaskRepositoryImpl(),
+    )
     usecase.execute()
