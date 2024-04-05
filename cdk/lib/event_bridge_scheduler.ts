@@ -54,4 +54,12 @@ export const SCHEDULER_CONFIG = {
     year: "*",
     weekDay: "*",
   }),
+  // 毎日12時に実行
+  remind_zettlekasten: events.Schedule.cron({
+    minute: "0",
+    hour: "3",
+    month: "*",
+    year: "*",
+    weekDay: "*",
+  }),
 };
