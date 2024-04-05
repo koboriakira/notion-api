@@ -1,7 +1,6 @@
 from dataclasses import dataclass, field
 from datetime import datetime
 
-from notion_api.util.datetime import jst_now
 from notion_client_wrapper.base_operator import BaseOperator
 from notion_client_wrapper.block import Block
 from notion_client_wrapper.properties.checkbox import Checkbox
@@ -20,6 +19,7 @@ from notion_client_wrapper.properties.status import Status
 from notion_client_wrapper.properties.text import Text
 from notion_client_wrapper.properties.title import Title
 from notion_client_wrapper.properties.url import Url
+from util.datetime import jst_now
 
 
 @dataclass

@@ -14,11 +14,12 @@ from zettlekasten.domain.zettlekasten_title import ZettlekastenName
 class Zettlekasten(BasePage):
     @staticmethod
     def create(
-            title: str|ZettlekastenName,
-            reference_url: str|ReferenceUrl,
-            tag_relation: list[str]|TagRelation|None = None,
-            blocks: list[Block]|None = None,
-            cover: str|Cover|None = None) -> "Zettlekasten":
+        title: str | ZettlekastenName,
+        reference_url: str | ReferenceUrl | None = None,
+        tag_relation: list[str] | TagRelation | None = None,
+        blocks: list[Block] | None = None,
+        cover: str | Cover | None = None,
+    ) -> "Zettlekasten":
         blocks = blocks or []
         properties = [
             title if isinstance(title, ZettlekastenName) else ZettlekastenName(text=title),
@@ -28,7 +29,7 @@ class Zettlekasten(BasePage):
             if isinstance(tag_relation, TagRelation):
                 properties.append(tag_relation)
             else:
-              properties.append(TagRelation.from_id_list(id_list=tag_relation))
+                properties.append(TagRelation.from_id_list(id_list=tag_relation))
 
         if cover is None:
             return Zettlekasten(properties=Properties(values=properties), block_children=blocks)

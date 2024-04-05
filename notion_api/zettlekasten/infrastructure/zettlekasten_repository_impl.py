@@ -6,15 +6,22 @@ from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper.filter.condition.empty_condition import EmptyCondition
 from notion_client_wrapper.filter.filter_builder import FilterBuilder
 from zettlekasten.domain.zettlekasten import Zettlekasten
+from zettlekasten.domain.zettlekasten_repository import ZettlekastenRepository
 from zettlekasten.domain.zettlekasten_title import ZettlekastenName
 
 
-class ZettlekastenRepositoryImpl:
+class ZettlekastenRepositoryImpl(ZettlekastenRepository):
     DATABASE_ID = DatabaseType.ZETTLEKASTEN.value
 
     def __init__(self, client: ClientWrapper, logger: Logger | None = None) -> None:
         self._client = client
         self._logger = logger or getLogger(__name__)
+
+    def fetch_all(self) -> list[Zettlekasten]:
+        return self._client.retrieve_database(
+            database_id=self.DATABASE_ID,
+            page_model=Zettlekasten,
+        )
 
     def search(
         self,
