@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from datetime import datetime
 
+from notion_api.util.datetime import jst_now
 from notion_client_wrapper.base_operator import BaseOperator
 from notion_client_wrapper.block import Block
 from notion_client_wrapper.properties.checkbox import Checkbox
@@ -67,9 +68,13 @@ class BasePage:
         return self.get_title().text
 
     def get_created_at(self) -> datetime:
+        if self.created_time is None:
+            return jst_now()
         return self.created_time.start_time
 
     def get_updated_at(self) -> datetime:
+        if self.last_edited_time is None:
+            return jst_now()
         return self.last_edited_time.start_time
 
     def get_status(self, name: str) -> Status:
