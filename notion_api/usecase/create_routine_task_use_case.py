@@ -1,15 +1,15 @@
 from datetime import datetime
 
+from domain.task.routine_repository import RoutineRepository
 from domain.task.task import Task
 from domain.task.task_kind import TaskKindType
 from domain.task.task_repository import TaskRepository
 from domain.task.task_status import TaskStatusType
-from infrastructure.task.routine_repository_impl import RoutineRepositoryImpl
 from util.datetime import JST
 
 
 class CreateRoutineTaskUseCase:
-    def __init__(self, task_repository: TaskRepository, routine_repository: RoutineRepositoryImpl) -> None:
+    def __init__(self, task_repository: TaskRepository, routine_repository: RoutineRepository) -> None:
         self.task_repository = task_repository
         self.routine_repository = routine_repository
 
@@ -39,6 +39,7 @@ class CreateRoutineTaskUseCase:
 
 if __name__ == "__main__":
     # python -m notion_api.usecase.create_routine_task_use_case
+    from infrastructure.task.routine_repository_impl import RoutineRepositoryImpl
     from infrastructure.task.task_repository_impl import TaskRepositoryImpl
 
     task_repository = TaskRepositoryImpl()
