@@ -2,8 +2,10 @@ from datetime import date, datetime
 from unittest import TestCase
 from unittest.mock import Mock
 
+import pytest
 from notion_api.domain.database_type import DatabaseType
 from notion_api.notion_client_wrapper.client_wrapper import ClientWrapper
+from notion_api.notion_client_wrapper.page.page_id import PageId
 from notion_api.task.domain.task import Task
 from notion_api.task.domain.task_kind import TaskKindType
 from notion_api.task.domain.task_status import TaskStatusType
@@ -130,3 +132,12 @@ class TestTaskRepositoryImpl(TestCase):
             filter_param=filter_param,
             page_model=TaskModel,
         )
+
+    @pytest.mark.use_genuine_api()
+    def test_プロジェクトにひもづくタスクを取得する(self):
+        # モックを使わない
+        suite = TaskRepositoryImpl(notion_client_wrapper=ClientWrapper.get_instance())
+
+        project_page_id = PageId("5673db2d520f48fbad6622a38cf2ecad")
+        tasks = suite.search(project_id=project_page_id)
+        print([task.get_title_text() for task in tasks])
