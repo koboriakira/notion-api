@@ -1,6 +1,7 @@
 from logging import Logger, getLogger
 
 from common.value.slack_channel_type import ChannelType
+from notion_api.task.domain.task_status import TaskStatusType
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from project.domain import project_repository
 from project.domain.project import Project
@@ -39,12 +40,14 @@ class ExampleProjectHealthcheckUseCase:
             project for project in projects if project.project_status == ProjectStatusType.IN_PROGRESS
         ]
         for project in inprogress_projects:
-            tasks = self._task_repository.search(project_id=project.page_id)
-            self._execute_project(project, tasks)
+            undone_tasks = self._task_repository.search(
+                project_id=project.page_id,
+                status_list=[TaskStatusType.TODO, TaskStatusType.IN_PROGRESS],
+            )
+            self._execute_project(project, undone_tasks)
 
     def _execute_project(self, project: Project, tasks: list[Task]) -> None:  # noqa: C901
         project_title_link = project.title_for_slack()
-        print(project_title_link)
         message_list = []
 
         # スケジュールのチェック
@@ -69,9 +72,9 @@ class ExampleProjectHealthcheckUseCase:
         next_action_tasks = [task for task in tasks if task.kind == TaskKindType.NEXT_ACTION]
         if len(next_action_tasks) == 0:
             message_list.append("次にとるべき行動をひとつ決めましょう")
+        elif len(next_action_tasks) > 3:
+            message_list.append("次にとるべき行動は3つまでにしましょう")
 
-        print("\n".join(message_list))
-        print("====================================")
         text = f"{project_title_link}\n" + "\n".join(message_list)
         self._slack_client.chat_postMessage(text)
 
