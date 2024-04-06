@@ -1,11 +1,11 @@
 from unittest import TestCase
 from unittest.mock import Mock
 
-from notion_api.domain.task.routine_repository import RoutineRepository
-from notion_api.domain.task.routine_task import RoutineTask, RoutineType
-from notion_api.domain.task.task import Task
-from notion_api.domain.task.task_kind import TaskKindType
-from notion_api.domain.task.task_repository import TaskRepository
+from notion_api.task.domain.routine_repository import RoutineRepository
+from notion_api.task.domain.routine_task import RoutineTask, RoutineType
+from notion_api.task.domain.task import Task
+from notion_api.task.domain.task_kind import TaskKindType
+from notion_api.task.domain.task_repository import TaskRepository
 from notion_api.notion_client_wrapper.block.divider import Divider
 from notion_api.usecase.create_routine_task_use_case import CreateRoutineTaskUseCase
 from notion_api.util.datetime import jst_today_datetime

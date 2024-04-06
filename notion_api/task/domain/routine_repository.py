@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 
-from domain.task.routine_task import RoutineTask
+from task.domain.routine_task import RoutineTask
 
 
 class RoutineRepository(metaclass=ABCMeta):

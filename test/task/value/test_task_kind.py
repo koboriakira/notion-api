@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from notion_api.domain.task.task_kind import TaskKind, TaskKindType
+from notion_api.task.domain.task_kind import TaskKind, TaskKindType
 
 
 class TestTaskKind(TestCase):

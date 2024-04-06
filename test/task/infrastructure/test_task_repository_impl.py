@@ -3,11 +3,11 @@ from unittest import TestCase
 from unittest.mock import Mock
 
 from notion_api.domain.database_type import DatabaseType
-from notion_api.domain.task.task import Task
-from notion_api.domain.task.task_kind import TaskKindType
-from notion_api.domain.task.task_status import TaskStatusType
-from notion_api.task.infrastructure.task_repository_impl import TaskRepositoryImpl
 from notion_api.notion_client_wrapper.client_wrapper import ClientWrapper
+from notion_api.task.domain.task import Task
+from notion_api.task.domain.task_kind import TaskKindType
+from notion_api.task.domain.task_status import TaskStatusType
+from notion_api.task.infrastructure.task_repository_impl import TaskRepositoryImpl
 from notion_api.util.datetime import JST
 
 
@@ -123,7 +123,7 @@ class TestTaskRepositoryImpl(TestCase):
         import sys
 
         sys.path.append("notion_api")
-        from domain.task.task import Task as TaskModel
+        from task.domain.task import Task as TaskModel
 
         self.suite.client.retrieve_database.assert_called_once_with(
             database_id=DatabaseType.TASK.value,

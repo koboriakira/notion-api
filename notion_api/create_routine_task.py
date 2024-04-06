@@ -1,6 +1,6 @@
 import logging
 
-from infrastructure.task.routine_repository_impl import RoutineRepositoryImpl
+from task.infrastructure.routine_repository_impl import RoutineRepositoryImpl
 from task.infrastructure.task_repository_impl import TaskRepositoryImpl
 from usecase.create_routine_task_use_case import CreateRoutineTaskUseCase
 from util.environment import Environment

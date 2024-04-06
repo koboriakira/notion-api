@@ -3,21 +3,21 @@ from datetime import date, datetime
 from pydantic import Field
 
 from custom_logger import get_logger
-from domain.task.task import Task as TaskModel
-from domain.task.task_status import TaskStatusType
 from router.response.base_notion_page_model import BaseNotionPageModel
 from router.response.base_response import BaseResponse
+from task.domain.task import Task as TaskModel
+from task.domain.task_status import TaskStatusType
 
 logger = get_logger(__name__)
 
 
 class Task(BaseNotionPageModel):
     status: TaskStatusType
-    task_kind: str | None # FIXME: TaskKindTypeにする
-    start_date: datetime| date | None
+    task_kind: str | None  # FIXME: TaskKindTypeにする
+    start_date: datetime | date | None
     pomodoro_count: int
-    end_date: datetime| date | None # FIXME: 消す
-    feeling: str | None # FIXME: 消す
+    end_date: datetime | date | None  # FIXME: 消す
+    feeling: str | None  # FIXME: 消す
 
     @staticmethod
     def from_model(model: TaskModel) -> "Task":
@@ -35,8 +35,11 @@ class Task(BaseNotionPageModel):
             feeling="",
             text=model.get_slack_text_in_block_children(),
         )
+
+
 class TaskResponse(BaseResponse):
     data: Task | None
+
 
 class TasksResponse(BaseResponse):
     data: list[Task] = Field(default=[])

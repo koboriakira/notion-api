@@ -1,9 +1,9 @@
 from abc import ABCMeta, abstractmethod
 from datetime import date, datetime
 
-from domain.task.task import Task
-from domain.task.task_kind import TaskKindType
-from domain.task.task_status import TaskStatusType
+from task.domain.task import Task
+from task.domain.task_kind import TaskKindType
+from task.domain.task_status import TaskStatusType
 
 
 class TaskRepository(metaclass=ABCMeta):

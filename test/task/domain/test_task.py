@@ -1,9 +1,9 @@
 from datetime import datetime
 from unittest import TestCase
 
-from notion_api.domain.task.task import Task
-from notion_api.domain.task.task_kind import TaskKindType
-from notion_api.domain.task.task_status import TaskStatusType
+from notion_api.task.domain.task import Task
+from notion_api.task.domain.task_kind import TaskKindType
+from notion_api.task.domain.task_status import TaskStatusType
 
 
 class TestTask(TestCase):

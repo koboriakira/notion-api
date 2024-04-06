@@ -1,7 +1,7 @@
 from datetime import date as DateObject
 
 from custom_logger import get_logger
-from domain.task.task import Task
+from task.domain.task import Task
 from task.infrastructure.task_repository_impl import TaskRepositoryImpl
 from usecase.fetch_tasks_usecase import FetchTasksUsecase
 from usecase.postpone_task_to_next_day_usecase import PostponeTaskToNextDayUsecase

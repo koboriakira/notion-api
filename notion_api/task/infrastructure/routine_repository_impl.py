@@ -1,8 +1,8 @@
 from domain.database_type import DatabaseType
-from domain.task.routine_repository import RoutineRepository
-from domain.task.routine_task import RoutineTask
 from notion_client_wrapper.base_page import BasePage
 from notion_client_wrapper.client_wrapper import ClientWrapper
+from task.domain.routine_repository import RoutineRepository
+from task.domain.routine_task import RoutineTask
 
 
 class RoutineConverter:

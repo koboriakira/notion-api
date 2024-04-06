@@ -2,12 +2,12 @@ from logging import Logger, getLogger
 
 from slack_sdk import WebClient
 
-from domain.task.task_repository import TaskRepository
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from project.domain import project_repository
 from project.domain.project import Project
 from project.domain.project_repository import ProjectRepository
 from project.domain.project_status import ProjectStatusType
+from task.domain.task_repository import TaskRepository
 from util.datetime import jst_today
 
 

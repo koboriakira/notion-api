@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from notion_api.domain.task.task_status import TaskStatusType
+from notion_api.task.domain.task_status import TaskStatusType
 
 
 class TestTaskStatusType(TestCase):

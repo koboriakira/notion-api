@@ -2,9 +2,9 @@ from datetime import date as DateObject
 from datetime import timedelta
 
 from custom_logger import get_logger
-from domain.task.task import Task
-from domain.task.task_repository import TaskRepository
-from domain.task.task_status import TaskStatusType
+from task.domain.task import Task
+from task.domain.task_repository import TaskRepository
+from task.domain.task_status import TaskStatusType
 from util.datetime import jst_today
 
 logger = get_logger(__name__)

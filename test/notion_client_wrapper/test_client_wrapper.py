@@ -3,7 +3,7 @@ from unittest import TestCase
 
 import pytest
 from notion_api.domain.database_type import DatabaseType
-from notion_api.domain.task.task import Task
+from notion_api.task.domain.task import Task
 from notion_api.notion_client_wrapper.base_page import BasePage
 from notion_api.notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_api.notion_client_wrapper.filter.condition.date_condition import DateCondition
@@ -120,7 +120,7 @@ class TestClientWrapper(TestCase):
     @pytest.mark.use_genuine_api()
     def test_ブロックもあわせてページをひとつ取得する(self):
         # pytest test/notion_client_wrapper/test_client_wrapper.py::TestClientWrapper::test_ブロックもあわせてページをひとつ取得する
-        from notion_api.domain.task.task import Task
+        from notion_api.task.domain.task import Task
 
         # When
         task = self.suite.retrieve_page(
@@ -133,7 +133,7 @@ class TestClientWrapper(TestCase):
     @pytest.mark.use_genuine_api()
     def test_現在のタスクを取得する(self):
         # pytest test/notion_client_wrapper/test_client_wrapper.py::TestClientWrapper::test_現在のタスクを取得する
-        from notion_api.domain.task.task import Task
+        from notion_api.task.domain.task import Task
 
         # Given
         filter_param = {

@@ -1,17 +1,17 @@
 from datetime import date, datetime, time
 
 from domain.database_type import DatabaseType
-from domain.task.task import Task
-from domain.task.task_kind import TaskKind, TaskKindType
-from domain.task.task_repository import TaskRepository
-from domain.task.task_start_date import TaskStartDate
-from domain.task.task_status import TaskStatus, TaskStatusType
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper.filter.condition.date_condition import DateCondition
 from notion_client_wrapper.filter.condition.empty_condition import EmptyCondition
 from notion_client_wrapper.filter.condition.or_condition import OrCondition
 from notion_client_wrapper.filter.condition.string_condition import StringCondition
 from notion_client_wrapper.filter.filter_builder import FilterBuilder
+from task.domain.task import Task
+from task.domain.task_kind import TaskKind, TaskKindType
+from task.domain.task_repository import TaskRepository
+from task.domain.task_start_date import TaskStartDate
+from task.domain.task_status import TaskStatus, TaskStatusType
 from util.datetime import JST
 
 

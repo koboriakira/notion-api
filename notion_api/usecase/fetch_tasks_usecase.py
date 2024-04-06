@@ -1,8 +1,8 @@
 from datetime import date
 
 from custom_logger import get_logger
-from domain.task.task import Task
-from domain.task.task_repository import TaskRepository
+from task.domain.task import Task
+from task.domain.task_repository import TaskRepository
 from util.datetime import jst_today
 
 logger = get_logger(__name__)

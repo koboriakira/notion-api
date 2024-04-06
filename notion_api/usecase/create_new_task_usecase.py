@@ -1,10 +1,10 @@
 from datetime import date, datetime
 
-from domain.task.task import Task
-from domain.task.task_kind import TaskKindType
-from domain.task.task_repository import TaskRepository
-from domain.task.task_status import TaskStatusType
 from notion_client_wrapper.properties import Title
+from task.domain.task import Task
+from task.domain.task_kind import TaskKindType
+from task.domain.task_repository import TaskRepository
+from task.domain.task_status import TaskStatusType
 
 
 class CreateNewTaskUsecase:
@@ -12,12 +12,13 @@ class CreateNewTaskUsecase:
         self.task_repository = task_repository
 
     def execute(  # noqa: PLR0913
-            self,
-            title: str | None,
-            mentioned_page_id: str | None,
-            start_date: date | datetime | None = None,
-            status: str | None = None,
-            task_kind: str | None = None) -> dict:
+        self,
+        title: str | None,
+        mentioned_page_id: str | None,
+        start_date: date | datetime | None = None,
+        status: str | None = None,
+        task_kind: str | None = None,
+    ) -> dict:
         title_property = self._generate_title(title=title, mentioned_page_id=mentioned_page_id)
         task_kind_type = TaskKindType.from_text(task_kind) if task_kind is not None else None
         task_status_type = TaskStatusType.from_text(status) if status is not None else None
