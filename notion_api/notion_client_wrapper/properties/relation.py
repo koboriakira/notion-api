@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+from notion_client_wrapper.page.page_id import PageId
 from notion_client_wrapper.properties.property import Property
 
 
@@ -45,6 +46,10 @@ class Relation(Property):
     @classmethod
     def from_id(cls: "Relation", name: str, id: str) -> "Relation":  # noqa: A002
         return cls.from_id_list(name=name, id_list=[id])
+
+    @property
+    def page_id_list(self) -> list[PageId]:
+        return [PageId(id_) for id_ in self.id_list]
 
     def __dict__(self) -> dict:
         result = {
