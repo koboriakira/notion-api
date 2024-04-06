@@ -1,6 +1,5 @@
-from abc import ABCMeta, abstractmethod
-
-from zettlekasten.domain.zettlekasten import Zettlekasten
+from abc import ABCMeta
 
 
-class ZettlekastenRepository(metaclass=ABCMeta):
+class MusicRepository(metaclass=ABCMeta):
+    pass
