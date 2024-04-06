@@ -38,9 +38,7 @@ class TestTagCreator(TestCase):
         name_list = ["aaa"]
 
         # 既存のNotionページが存在するとする
-        existed_tags = [
-            BasePage(properties=Properties([]), block_children=[], id="111")
-        ]
+        existed_tags = [BasePage(properties=Properties([]), block_children=[], id_="111")]
         self.mock_client.retrieve_database.return_value = existed_tags
 
         # When

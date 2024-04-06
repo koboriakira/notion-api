@@ -3,6 +3,7 @@ from datetime import datetime
 
 from notion_client_wrapper.base_operator import BaseOperator
 from notion_client_wrapper.block import Block
+from notion_client_wrapper.page.page_id import PageId
 from notion_client_wrapper.properties.checkbox import Checkbox
 from notion_client_wrapper.properties.cover import Cover
 from notion_client_wrapper.properties.created_time import CreatedTime
@@ -26,7 +27,7 @@ from util.datetime import jst_now
 class BasePage:
     properties: Properties
     block_children: list[Block] = field(default_factory=list)
-    id: str | None = None
+    id_: PageId | str | None = None
     url: str | None = None
     created_time: CreatedTime | None = None
     last_edited_time: LastEditedTime | None = None
@@ -41,7 +42,7 @@ class BasePage:
     @staticmethod
     def create(properties: list[Property] | None = None, blocks: list[Block] | None = None) -> "BasePage":
         return BasePage(
-            id=None,
+            id_=None,
             url=None,
             created_time=None,
             last_edited_time=None,
@@ -105,8 +106,14 @@ class BasePage:
         return self.properties.get_property(name=name, instance_class=Number)
 
     def update_id_and_url(self, page_id: str, url: str) -> None:
-        self.id = page_id
+        self.id_ = page_id
         self.url = url
 
     def title_for_slack(self) -> None:
         return f"<{self.url}|{self.get_title_text()}>"
+
+    @property
+    def id(self) -> str | None:
+        if isinstance(self.id_, str):
+            return self.id_
+        return self.id_.value if self.id_ is not None else None
