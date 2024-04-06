@@ -117,3 +117,9 @@ class BasePage:
         if isinstance(self.id_, str):
             return self.id_
         return self.id_.value if self.id_ is not None else None
+
+    @property
+    def page_id(self) -> PageId | None:
+        if isinstance(self.id_, str):
+            return PageId(self.id_)
+        return self.id_

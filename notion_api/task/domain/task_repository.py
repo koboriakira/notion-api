@@ -1,6 +1,7 @@
 from abc import ABCMeta, abstractmethod
 from datetime import date, datetime
 
+from notion_client_wrapper.page.page_id import PageId
 from task.domain.task import Task
 from task.domain.task_kind import TaskKindType
 from task.domain.task_status import TaskStatusType
@@ -14,6 +15,7 @@ class TaskRepository(metaclass=ABCMeta):
         kind_type_list: list[TaskKindType] | None = None,
         start_datetime: date | datetime | None = None,
         start_datetime_end: date | datetime | None = None,
+        project_id: PageId | None = None,
     ) -> list[Task]:
         pass
 
