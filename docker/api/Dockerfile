@@ -9,6 +9,8 @@ RUN apt clean
 
 # Python dependencies
 RUN pip install --upgrade pip && \
-    pip install pipenv
+  pip install pipenv
 COPY Pipfile ./
 RUN pipenv install --dev
+
+COPY notion_api ./notion_api
