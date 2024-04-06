@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from enum import Enum
 
-from notion_api.notion_client_wrapper.filter.condition.or_condition import OrCondition
-from notion_api.notion_client_wrapper.properties.relation import Relation
+from notion_client_wrapper.filter.condition.or_condition import OrCondition
+from notion_client_wrapper.properties.relation import Relation
 
 from .condition import Condition
 
