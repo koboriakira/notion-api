@@ -44,6 +44,24 @@ class Date(Property):
             return None
         return convert_to_date_or_datetime(self.start, cls=datetime)
 
+    @property
+    def end_time(self) -> date | datetime | None:
+        if self.end is None:
+            return None
+        return convert_to_date_or_datetime(self.end)
+
+    @property
+    def end_date(self) -> date | None:
+        if self.end is None:
+            return None
+        return convert_to_date_or_datetime(self.end, cls=date)
+
+    @property
+    def end_datetime(self) -> datetime | None:
+        if self.end is None:
+            return None
+        return convert_to_date_or_datetime(self.end, cls=datetime)
+
     @staticmethod
     def of(name: str, param: dict) -> "Date":
         if param["date"] is None:
