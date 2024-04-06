@@ -53,3 +53,13 @@ class TestNotionClient(TestCase):
         data = self.client.databases.query(database_id=DatabaseType.TASK.value, filter=filter_param)
         print(len(data))
         # self.fail()
+
+    @pytest.mark.learning()
+    def test_relation_filter(self):
+        """リレーション系のフィルターを試す"""
+        # pytest test/test_notion_client.py -k test_relation_filter
+
+        filter_param = {"property": "プロジェクト", "relation": {"contains": "5673db2d520f48fbad6622a38cf2ecad"}}
+        data = self.client.databases.query(database_id=DatabaseType.TASK.value, filter=filter_param)
+        print(data["results"])
+        # self.fail()
