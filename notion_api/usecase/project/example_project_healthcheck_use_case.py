@@ -1,7 +1,5 @@
 from logging import Logger, getLogger
 
-from slack_sdk import WebClient
-
 from common.value.slack_channel_type import ChannelType
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from project.domain import project_repository
@@ -12,6 +10,7 @@ from task.domain.task import Task
 from task.domain.task_kind import TaskKindType
 from task.domain.task_repository import TaskRepository
 from util.datetime import jst_today
+from util.slack.slack_client import SlackClient
 
 
 class ExampleProjectHealthcheckUseCase:
@@ -19,7 +18,7 @@ class ExampleProjectHealthcheckUseCase:
         self,
         project_repository: ProjectRepository,
         task_repository: TaskRepository,
-        slack_client: WebClient,
+        slack_client: SlackClient,
         logger: Logger | None = None,
     ) -> None:
         self._project_repository = project_repository
@@ -29,14 +28,17 @@ class ExampleProjectHealthcheckUseCase:
 
     def execute(self) -> None:
         projects = self._project_repository.fetch_all()
+        self._slack_client.chat_postMessage("プロジェクトのヘルスチェックを開始します")
 
-        for project in projects:
-            # TODO: Inboxステータスは一覧だけ通知する
+        # Inboxステータスは一覧だけ通知する
+        inbox_projects = [project for project in projects if project.project_status == ProjectStatusType.INBOX]
+        self._execute_inbox_project(inbox_projects)
 
-            # 進行中のプロジェクトのみを分析対象とするため、その他はスキップ
-            if project.project_status not in [ProjectStatusType.IN_PROGRESS]:
-                continue
-
+        # 進行中のプロジェクトのみを分析対象とする
+        inprogress_projects = [
+            project for project in projects if project.project_status == ProjectStatusType.IN_PROGRESS
+        ]
+        for project in inprogress_projects:
             tasks = self._task_repository.search(project_id=project.page_id)
             self._execute_project(project, tasks)
 
@@ -70,16 +72,20 @@ class ExampleProjectHealthcheckUseCase:
 
         print("\n".join(message_list))
         print("====================================")
-        self._slack_client.chat_postMessage(
-            channel=ChannelType.TEST.value,
-            text=f"{project_title_link}\n" + "\n".join(message_list),
-        )
+        text = f"{project_title_link}\n" + "\n".join(message_list)
+        self._slack_client.chat_postMessage(text)
+
+    def _execute_inbox_project(self, projects: list[Project]) -> None:
+        if len(projects) == 0:
+            return
+
+        project_title_list = [project.title_for_slack() for project in projects]
+        self._slack_client.chat_postMessage("Inboxには以下のプロジェクトがあります\n" + "\n".join(project_title_list))
 
 
 if __name__ == "__main__":
     # python -m notion_api.usecase.project.example_project_healthcheck_use_case
     import logging
-    import os
 
     from project.infrastructure.project_repository_impl import ProjectRepositoryImpl
     from task.infrastructure.task_repository_impl import TaskRepositoryImpl
@@ -92,7 +98,7 @@ if __name__ == "__main__":
     task_repository = TaskRepositoryImpl(
         notion_client_wrapper=ClientWrapper.get_instance(),
     )
-    slack_client = WebClient(token=os.environ["SLACK_BOT_TOKEN"])
+    slack_client = SlackClient.bot(ChannelType.TEST, thread_ts=None)
     use_case = ExampleProjectHealthcheckUseCase(
         project_repository=project_repository,
         task_repository=task_repository,
