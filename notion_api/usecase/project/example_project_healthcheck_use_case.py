@@ -7,6 +7,8 @@ from project.domain import project_repository
 from project.domain.project import Project
 from project.domain.project_repository import ProjectRepository
 from project.domain.project_status import ProjectStatusType
+from task.domain.task import Task
+from task.domain.task_kind import TaskKindType
 from task.domain.task_repository import TaskRepository
 from util.datetime import jst_today
 
@@ -34,9 +36,10 @@ class ExampleProjectHealthcheckUseCase:
             if project.project_status not in [ProjectStatusType.IN_PROGRESS]:
                 continue
 
-            self._execute_project(project)
+            tasks = self._task_repository.search(project_id=project.page_id)
+            self._execute_project(project, tasks)
 
-    def _execute_project(self, project: Project) -> None:  # noqa: C901
+    def _execute_project(self, project: Project, tasks: list[Task]) -> None:  # noqa: C901
         project_title_link = project.title_for_slack()
         print(project_title_link)
         message_list = []
@@ -58,12 +61,18 @@ class ExampleProjectHealthcheckUseCase:
         if project.goal_relation is None or len(project.goal_relation) == 0:
             message_list.append("目標とのひもづきを設定してください")
 
+        # タスクのチェック
+        # 未了の「次にとるべき行動リスト」があるかどうか
+        next_action_tasks = [task for task in tasks if task.kind == TaskKindType.NEXT_ACTION]
+        if len(next_action_tasks) == 0:
+            message_list.append("次にとるべき行動をひとつ決めましょう")
+
         print("\n".join(message_list))
         print("====================================")
-        # self._slack_client.chat_postMessage(
-        #     channel=ChannelType.TEST.value,
-        #     text=f"{project_title_link}\n" + "\n".join(message_list),
-        # )
+        self._slack_client.chat_postMessage(
+            channel=ChannelType.TEST.value,
+            text=f"{project_title_link}\n" + "\n".join(message_list),
+        )
 
 
 if __name__ == "__main__":
