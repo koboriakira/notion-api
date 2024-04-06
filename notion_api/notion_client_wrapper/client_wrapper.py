@@ -215,7 +215,7 @@ class ClientWrapper:
 
     def __get_block_children(self, page_id: str) -> list[Block]:
         block_entities = self.__list_blocks(block_id=page_id)["results"]
-        return list(map(lambda b: BlockFactory.create(b), block_entities))
+        return [BlockFactory.create(b) for b in block_entities]
 
     def __list_blocks(self, block_id: str) -> dict:
         return self.client.blocks.children.list(block_id=block_id)
