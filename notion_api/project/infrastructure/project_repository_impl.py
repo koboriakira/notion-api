@@ -1,6 +1,6 @@
 from logging import Logger, getLogger
 
-from notion_api.domain.database_type import DatabaseType
+from domain.database_type import DatabaseType
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from project.domain.project import Project
 from project.domain.project_repository import ProjectRepository

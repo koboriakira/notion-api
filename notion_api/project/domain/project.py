@@ -96,7 +96,7 @@ class Project(BasePage):
         return self.get_relation(name=GoalRelation.NAME).id_list
 
     @property
-    def schedule(self) -> Schedule:
+    def schedule(self) -> Schedule | None:
         return self.get_date(name=Schedule.NAME)
 
     @property
