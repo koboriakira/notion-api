@@ -14,9 +14,16 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
 
-      - uses: stepci/stepci@main
-        env:
-          STEPCI_DISABLE_ANALYTICS: "1" # データの収集を無効にする場合は設定する
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          workflow: stepci_workflow.yml # ワークフローファイルを指定
-          secrets: "NOTION_SECRET=${{ secrets.NOTION_SECRET }}" # シークレットを指定
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install -g stepci
+
+      - name: run stepci
+        run: |
+          stepci run --workflow stepci_workflow.yml --secrets NOTION_SECRET=$NOTION_SECRET
+        env:
+          NOTION_SECRET: ${{ secrets.NOTION_SECRET }}
