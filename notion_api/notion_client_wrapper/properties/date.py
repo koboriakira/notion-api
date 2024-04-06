@@ -13,12 +13,13 @@ class Date(Property):
     type: str = "date"
 
     def __init__(  # noqa: PLR0913
-            self,
-            name: str,
-            id: str | None = None,  # noqa: A002
-            start: str | None = None,
-            end: str | None = None,
-            time_zone: str | None = None) -> None:
+        self,
+        name: str,
+        id: str | None = None,  # noqa: A002
+        start: str | None = None,
+        end: str | None = None,
+        time_zone: str | None = None,
+    ) -> None:
         self.name = name
         self.id = id
         self.start = start
@@ -26,10 +27,22 @@ class Date(Property):
         self.time_zone = time_zone
 
     @property
-    def start_time(self) -> date|datetime|None:
+    def start_time(self) -> date | datetime | None:
         if self.start is None:
             return None
         return convert_to_date_or_datetime(self.start)
+
+    @property
+    def start_date(self) -> date | None:
+        if self.start is None:
+            return None
+        return convert_to_date_or_datetime(self.start, cls=date)
+
+    @property
+    def start_datetime(self) -> datetime | None:
+        if self.start is None:
+            return None
+        return convert_to_date_or_datetime(self.start, cls=datetime)
 
     @staticmethod
     def of(name: str, param: dict) -> "Date":
@@ -50,9 +63,8 @@ class Date(Property):
             start=start_date.isoformat() if start_date is not None else None,
         )
 
-
     @staticmethod
-    def from_range(name: str, start: date|datetime, end: date|datetime) -> "Date":
+    def from_range(name: str, start: date | datetime, end: date | datetime) -> "Date":
         return Date(
             name=name,
             start=start.isoformat(),
@@ -61,7 +73,6 @@ class Date(Property):
 
     def is_between(self, start: datetime, end: datetime) -> bool:
         return start.timestamp() <= self.start_time.timestamp() <= end.timestamp()
-
 
     @property
     def date(self) -> date:
