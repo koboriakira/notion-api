@@ -118,6 +118,19 @@ class TestClientWrapper(TestCase):
         print(len(pages))
 
     @pytest.mark.use_genuine_api()
+    def test_タスクをひとつ取得する(self):
+        # pytest test/notion_client_wrapper/test_client_wrapper.py::TestClientWrapper::test_タスクをひとつ取得する
+        from notion_api.domain.task.task import Task
+
+        # When
+        task = self.suite.retrieve_page(
+            page_id="342d39cf25ce4b589a0ed6b7c529a0fa",
+            page_model=Task,
+        )
+        print(task)
+        # self.fail()
+
+    @pytest.mark.use_genuine_api()
     def test_現在のタスクを取得する(self):
         # pytest test/notion_client_wrapper/test_client_wrapper.py::TestClientWrapper::test_現在のタスクを取得する
         from notion_api.domain.task.task import Task

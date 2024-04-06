@@ -193,7 +193,7 @@ class ClientWrapper:
         icon = Icon.of(page_entity["icon"]) if page_entity["icon"] is not None else None
         archived = page_entity["archived"]
         properties = PropertyTranslator.from_dict(page_entity["properties"])
-        block_children = self.__get_block_children(page_id=id) if include_children else []
+        block_children = self.__get_block_children(page_id=id_.value) if include_children else []
 
         page_model_cls = page_model or BasePage
         return page_model_cls(
