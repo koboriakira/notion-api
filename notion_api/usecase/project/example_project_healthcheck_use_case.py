@@ -2,6 +2,7 @@ from logging import Logger, getLogger
 
 from slack_sdk import WebClient
 
+from common.value.slack_channel_type import ChannelType
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from project.domain import project_repository
 from project.domain.project import Project
