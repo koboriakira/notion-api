@@ -76,7 +76,6 @@ class TaskRepositoryImpl(TaskRepository):
             project_relation = ProjectRelation.from_id_list(id_list=[project_id.value])
             filter_builder = filter_builder.add_condition(RelationCondition.contains(project_relation))
 
-        print(filter_builder.build())
         return self.client.retrieve_database(
             database_id=DatabaseType.TASK.value,
             filter_param=filter_builder.build(),
