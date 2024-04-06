@@ -6,7 +6,7 @@ from notion_api.domain.database_type import DatabaseType
 from notion_api.domain.task.task import Task
 from notion_api.domain.task.task_kind import TaskKindType
 from notion_api.domain.task.task_status import TaskStatusType
-from notion_api.infrastructure.task.task_repository_impl import TaskRepositoryImpl
+from notion_api.task.infrastructure.task_repository_impl import TaskRepositoryImpl
 from notion_api.notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_api.util.datetime import JST
 

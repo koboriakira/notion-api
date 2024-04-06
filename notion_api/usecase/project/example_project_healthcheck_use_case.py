@@ -2,7 +2,7 @@ from logging import Logger, getLogger
 
 from slack_sdk import WebClient
 
-from notion_api.domain.task.task_repository import TaskRepository
+from domain.task.task_repository import TaskRepository
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from project.domain import project_repository
 from project.domain.project import Project
@@ -71,8 +71,8 @@ if __name__ == "__main__":
     import logging
     import os
 
-    from infrastructure.task.task_repository_impl import TaskRepositoryImpl
     from project.infrastructure.project_repository_impl import ProjectRepositoryImpl
+    from task.infrastructure.task_repository_impl import TaskRepositoryImpl
 
     logging.basicConfig(level=logging.INFO)
     project_repository = ProjectRepositoryImpl(

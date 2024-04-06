@@ -30,7 +30,7 @@ class MoveTasksToBackupUsecase:
 
 if __name__ == "__main__":
     # python -m notion_api.usecase.move_tasks_to_backup_usecase
-    from infrastructure.task.task_repository_impl import TaskRepositoryImpl
+    from task.infrastructure.task_repository_impl import TaskRepositoryImpl
 
     usecase = MoveTasksToBackupUsecase(
         task_repository=TaskRepositoryImpl(),

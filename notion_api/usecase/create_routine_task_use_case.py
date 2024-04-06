@@ -40,7 +40,7 @@ class CreateRoutineTaskUseCase:
 if __name__ == "__main__":
     # python -m notion_api.usecase.create_routine_task_use_case
     from infrastructure.task.routine_repository_impl import RoutineRepositoryImpl
-    from infrastructure.task.task_repository_impl import TaskRepositoryImpl
+    from task.infrastructure.task_repository_impl import TaskRepositoryImpl
 
     task_repository = TaskRepositoryImpl()
     routine_repository = RoutineRepositoryImpl()
