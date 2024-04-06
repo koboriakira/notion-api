@@ -3,9 +3,11 @@ from datetime import date, datetime
 
 from notion_client_wrapper.base_page import BasePage
 from notion_client_wrapper.block.block import Block
+from notion_client_wrapper.page.page_id import PageId
 from notion_client_wrapper.properties.properties import Properties
 from notion_client_wrapper.properties.title import Title
 from task.domain.pomodoro_counter import PomodoroCounter
+from task.domain.project_relation import ProjectRelation
 from task.domain.task_kind import TaskKind, TaskKindType
 from task.domain.task_start_date import TaskStartDate
 from task.domain.task_status import TaskStatus, TaskStatusType
@@ -88,6 +90,13 @@ class Task(BasePage):
         if pomodoro_counter is None:
             return 0
         return pomodoro_counter.number or 0
+
+    @property
+    def project_id_list(self) -> list[PageId]:
+        project_relation = self.get_relation(name=ProjectRelation.NAME)
+        if project_relation is None:
+            return []
+        return project_relation.page_id_list
 
     def is_kind_trash(self) -> bool:
         return self.kind == TaskKindType.TRASH
