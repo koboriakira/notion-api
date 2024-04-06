@@ -118,8 +118,8 @@ class TestClientWrapper(TestCase):
         print(len(pages))
 
     @pytest.mark.use_genuine_api()
-    def test_タスクをひとつ取得する(self):
-        # pytest test/notion_client_wrapper/test_client_wrapper.py::TestClientWrapper::test_タスクをひとつ取得する
+    def test_ブロックもあわせてページをひとつ取得する(self):
+        # pytest test/notion_client_wrapper/test_client_wrapper.py::TestClientWrapper::test_ブロックもあわせてページをひとつ取得する
         from notion_api.domain.task.task import Task
 
         # When
