@@ -26,20 +26,35 @@ class ExampleProjectHealthcheckUseCase:
         projects = self._project_repository.fetch_all()
 
         for project in projects:
-            # Done or Trashは無視
-            if project.project_status in [ProjectStatusType.DONE, ProjectStatusType.TRASH]:
+            # TODO: Inboxステータスは一覧だけ通知する
+
+            # 進行中のプロジェクトのみを分析対象とするため、その他はスキップ
+            if project.project_status not in [ProjectStatusType.IN_PROGRESS]:
                 continue
             self._execute_project(project)
 
-    def _execute_project(self, project: Project) -> None:
+    def _execute_project(self, project: Project) -> None:  # noqa: C901
         project_title_link = project.title_for_slack()
         print(project_title_link)
         message_list = []
+
+        # スケジュールのチェック
         schedule = project.schedule
         if schedule is None or schedule.start_date is None or schedule.end_date is None:
-            message_list.append("スケジュールが設定されていません")
+            message_list.append("開始日、終了日を設定してください")
         elif schedule.end_date <= jst_today():
             message_list.append("終了日が過ぎています")
+
+        # ゴール、アクションプランの未設定チェック
+        if project.definition_of_done in [None, ""]:
+            message_list.append("完了定義を記入してください")
+        if project.action_plan in [None, ""]:
+            message_list.append("アクションプランを記入してください")
+
+        # 目標とのひもづきチェック
+        if project.goal_relation is None or len(project.goal_relation) == 0:
+            message_list.append("目標とのひもづきを設定してください")
+
         print("\n".join(message_list))
         print("====================================")
         self._slack_client.chat_postMessage(
