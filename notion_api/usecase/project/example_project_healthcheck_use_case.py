@@ -2,7 +2,7 @@ from logging import Logger, getLogger
 
 from slack_sdk import WebClient
 
-from common.value.slack_channel_type import ChannelType
+from notion_api.domain.task.task_repository import TaskRepository
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from project.domain import project_repository
 from project.domain.project import Project
@@ -15,10 +15,12 @@ class ExampleProjectHealthcheckUseCase:
     def __init__(
         self,
         project_repository: ProjectRepository,
+        task_repository: TaskRepository,
         slack_client: WebClient,
         logger: Logger | None = None,
     ) -> None:
         self._project_repository = project_repository
+        self._task_repository = task_repository
         self._slack_client = slack_client
         self._logger = logger or getLogger(__name__)
 
@@ -31,6 +33,7 @@ class ExampleProjectHealthcheckUseCase:
             # 進行中のプロジェクトのみを分析対象とするため、その他はスキップ
             if project.project_status not in [ProjectStatusType.IN_PROGRESS]:
                 continue
+
             self._execute_project(project)
 
     def _execute_project(self, project: Project) -> None:  # noqa: C901
@@ -57,10 +60,10 @@ class ExampleProjectHealthcheckUseCase:
 
         print("\n".join(message_list))
         print("====================================")
-        self._slack_client.chat_postMessage(
-            channel=ChannelType.TEST.value,
-            text=f"{project_title_link}\n" + "\n".join(message_list),
-        )
+        # self._slack_client.chat_postMessage(
+        #     channel=ChannelType.TEST.value,
+        #     text=f"{project_title_link}\n" + "\n".join(message_list),
+        # )
 
 
 if __name__ == "__main__":
@@ -68,6 +71,7 @@ if __name__ == "__main__":
     import logging
     import os
 
+    from infrastructure.task.task_repository_impl import TaskRepositoryImpl
     from project.infrastructure.project_repository_impl import ProjectRepositoryImpl
 
     logging.basicConfig(level=logging.INFO)
@@ -75,9 +79,13 @@ if __name__ == "__main__":
         client=ClientWrapper.get_instance(),
         logger=logging.getLogger(__name__),
     )
+    task_repository = TaskRepositoryImpl(
+        notion_client_wrapper=ClientWrapper.get_instance(),
+    )
     slack_client = WebClient(token=os.environ["SLACK_BOT_TOKEN"])
     use_case = ExampleProjectHealthcheckUseCase(
         project_repository=project_repository,
+        task_repository=task_repository,
         slack_client=slack_client,
         logger=logging.getLogger(__name__),
     )
