@@ -1,0 +1,20 @@
+name: StepCI
+
+on:
+  workflow_dispatch:
+  # push:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - uses: stepci/stepci@main
+        env:
+          STEPCI_DISABLE_ANALYTICS: "1" # データの収集を無効にする場合は設定する
+        with:
+          workflow: stepci_workflow.yml # ワークフローファイルを指定
