@@ -1,5 +1,9 @@
-from abc import ABCMeta
+from abc import ABCMeta, abstractmethod
+
+from project.domain.project import Project
 
 
-class MusicRepository(metaclass=ABCMeta):
-    pass
+class ProjectRepository(metaclass=ABCMeta):
+    @abstractmethod
+    def fetch_all(self) -> list[Project]:
+        pass
