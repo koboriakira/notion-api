@@ -1,7 +1,6 @@
 from logging import Logger, getLogger
 
 from common.value.slack_channel_type import ChannelType
-from notion_api.task.domain.task_status import TaskStatusType
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from project.domain import project_repository
 from project.domain.project import Project
@@ -10,6 +9,7 @@ from project.domain.project_status import ProjectStatusType
 from task.domain.task import Task
 from task.domain.task_kind import TaskKindType
 from task.domain.task_repository import TaskRepository
+from task.domain.task_status import TaskStatusType
 from util.datetime import jst_today
 from util.slack.slack_client import SlackClient
 
