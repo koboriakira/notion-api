@@ -4,14 +4,16 @@ from notion_client_wrapper.block.block import Block
 class Image(Block):
     image_caption: list
     image_type: str
-    image_file: dict
+    image_file: dict | None
+    image_external: dict | None
     type: str = "image"
 
     def __init__(
         self,
         image_caption: list,
         image_type: str,
-        image_file: dict,
+        image_file: dict | None = None,
+        image_external: dict | None = None,
         id: str | None = None,  # noqa: A002
         archived: bool | None = None,
         created_time: str | None = None,
@@ -23,13 +25,15 @@ class Image(Block):
         self.image_caption = image_caption
         self.image_type = image_type
         self.image_file = image_file
+        self.image_external = image_external
 
     @staticmethod
     def of(block: dict) -> "Image":
         image = block["image"]
         image_caption = image.get("caption", [])
         image_type = image.get("type", "")
-        image_file = image.get("file", {})
+        image_file = image.get("file")
+        image_external = image.get("external")
         return Image(
             id=block["id"],
             archived=block["archived"],
@@ -40,14 +44,26 @@ class Image(Block):
             image_caption=image_caption,
             image_type=image_type,
             image_file=image_file,
+            image_external=image_external,
         )
 
-    @property
-    def type(self) -> str:
-        return "image"
-
     def to_dict_sub(self) -> dict:
-        raise NotImplementedError
+        if self.image_type == "file":
+            msg = "fileタイプは未実装"
+            raise NotImplementedError(msg)
+        if self.image_type == "external":
+            return {
+                "caption": self.image_caption,
+                "type": self.image_type,
+                "external": self.image_external,
+            }
+        msg = f"Invalid image type: {self.image_type}"
+        raise ValueError(msg)
 
     def to_slack_text(self) -> str:
-        return self.image_file["url"]
+        if self.image_type == "file":
+            return self.image_file["url"]
+        if self.image_type == "external":
+            return self.image_external["url"]
+        msg = f"Invalid image type: {self.image_type}"
+        raise ValueError(msg)
