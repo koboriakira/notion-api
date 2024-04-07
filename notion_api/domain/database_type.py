@@ -21,13 +21,14 @@ class DatabaseType(Enum):
     BOOK = "cbe1dc60-5cb7-4c4a-9519-0accaea737df"
     WEBCLIP = "b5e701d7-75d0-4355-8c59-dc3e2f0c09ac"
     MONTHLY_LOG = "043ecb87-268c-48d8-93e7-18702808b3be"
-    VIDEO =       "e84f3d8b-7cf3-4e3c-b55e-7ff251064149"
-    TASK =        "3b97e3ba-a84e-40a9-bdc8-99ee25d8e99d"
-    TASK_BK =     "26594969-6394-41d8-b4bd-88ed801a2bdd"
+    VIDEO = "e84f3d8b-7cf3-4e3c-b55e-7ff251064149"
+    TASK = "3b97e3ba-a84e-40a9-bdc8-99ee25d8e99d"
+    TASK_BK = "26594969-6394-41d8-b4bd-88ed801a2bdd"
     TASK_ROUTINE = "d21db86c-9203-4ff4-9899-9d62354e8fe1"
-    RESTAURANT =  "4f10b337-9a1d-4b87-9feb-87a00c511b68"
+    RESTAURANT = "4f10b337-9a1d-4b87-9feb-87a00c511b68"
+    GOAL = "f3f8b93f-d89f-4c3d-a47a-01c134a7e2bf"
 
-    def title_name(self) -> str:
+    def title_name(self) -> str:  # noqa: PLR0911
         """
         タイトルのプロパティ名を返す
         """

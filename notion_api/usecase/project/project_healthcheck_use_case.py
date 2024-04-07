@@ -14,7 +14,7 @@ from util.datetime import jst_today
 from util.slack.slack_client import SlackClient
 
 
-class ExampleProjectHealthcheckUseCase:
+class ProjectHealthcheckUseCase:
     def __init__(
         self,
         project_repository: ProjectRepository,
@@ -87,7 +87,7 @@ class ExampleProjectHealthcheckUseCase:
 
 
 if __name__ == "__main__":
-    # python -m notion_api.usecase.project.example_project_healthcheck_use_case
+    # python -m notion_api.usecase.project.project_healthcheck_use_case
     import logging
 
     from project.infrastructure.project_repository_impl import ProjectRepositoryImpl
@@ -102,7 +102,7 @@ if __name__ == "__main__":
         notion_client_wrapper=ClientWrapper.get_instance(),
     )
     slack_client = SlackClient.bot(ChannelType.TEST, thread_ts=None)
-    use_case = ExampleProjectHealthcheckUseCase(
+    use_case = ProjectHealthcheckUseCase(
         project_repository=project_repository,
         task_repository=task_repository,
         slack_client=slack_client,

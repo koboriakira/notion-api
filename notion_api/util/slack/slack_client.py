@@ -29,5 +29,19 @@ class SlackClient:
     @staticmethod
     def bot(channel_type: ChannelType, thread_ts: str | None = None) -> "SlackClient":
         return SlackClient(
-            web_client=WebClient(token=os.environ["SLACK_BOT_TOKEN"]), channel=channel_type.value, thread_ts=thread_ts
+            web_client=WebClient(token=os.environ["SLACK_BOT_TOKEN"]),
+            channel=channel_type.value,
+            thread_ts=thread_ts,
         )
+
+
+class MockSlackClient(SlackClient):
+    def __init__(self) -> None:
+        self.is_started_thread = False
+
+    def chat_postMessage(self, text: str, new_thread: bool | None = None) -> None:
+        if new_thread or not self.is_started_thread:
+            print(f"{text}\n-------------------------")
+            self.is_started_thread = True
+        else:
+            print(f"    {text}\n    -------------------------")

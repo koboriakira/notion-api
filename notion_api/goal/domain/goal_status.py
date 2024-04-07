@@ -24,14 +24,14 @@ class GoalStatusType(Enum):
             return []
         return [GoalStatusType.from_text(status) for status in status_list]
 
+    def is_inbox(self) -> bool:
+        return self == GoalStatusType.INBOX
+
     def is_done(self) -> bool:
         return self == GoalStatusType.DONE
 
     def is_in_progress(self) -> bool:
         return self == GoalStatusType.IN_PROGRESS
-
-    def is_todo(self) -> bool:
-        return self == GoalStatusType.TODO
 
 
 class GoalStatus(Status):
