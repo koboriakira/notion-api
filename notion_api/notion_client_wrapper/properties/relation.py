@@ -43,6 +43,13 @@ class Relation(Property):
             id_list=id_list,
         )
 
+    @staticmethod
+    def from_page_id_list(name: str, page_id_list: list[PageId]) -> "Relation":
+        return Relation(
+            name=name,
+            id_list=[page_id.value for page_id in page_id_list],
+        )
+
     @classmethod
     def from_id(cls: "Relation", name: str, id: str) -> "Relation":  # noqa: A002
         return cls.from_id_list(name=name, id_list=[id])
