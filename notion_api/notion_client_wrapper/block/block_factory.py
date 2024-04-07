@@ -1,28 +1,27 @@
 from dataclasses import dataclass
+
 from notion_client_wrapper.block.block import Block
 from notion_client_wrapper.block.block_type import BlockType
-from notion_client_wrapper.block.video import Video
+from notion_client_wrapper.block.bookmark import Bookmark
+from notion_client_wrapper.block.bulleted_list_item import BulletedlistItem
+from notion_client_wrapper.block.callout import Callout
+from notion_client_wrapper.block.child_database import ChildDatabase
+from notion_client_wrapper.block.child_page import ChildPage
+from notion_client_wrapper.block.code import Code
+from notion_client_wrapper.block.divider import Divider
+from notion_client_wrapper.block.embed import Embed
+from notion_client_wrapper.block.heading import Heading
+from notion_client_wrapper.block.image import Image
+from notion_client_wrapper.block.numbered_list_item import NumberedListItem
 from notion_client_wrapper.block.paragraph import Paragraph
 from notion_client_wrapper.block.quote import Quote
-from notion_client_wrapper.block.heading import Heading
-from notion_client_wrapper.block.divider import Divider
-from notion_client_wrapper.block.bulleted_list_item import BulletedlistItem
-from notion_client_wrapper.block.numbered_list_item import NumberedListItem
-from notion_client_wrapper.block.embed import Embed
-from notion_client_wrapper.block.bookmark import Bookmark
-from notion_client_wrapper.block.image import Image
-from notion_client_wrapper.block.code import Code
 from notion_client_wrapper.block.table import Table
-from notion_client_wrapper.block.child_database import ChildDatabase
 from notion_client_wrapper.block.to_do import ToDo
-from notion_client_wrapper.block.callout import Callout
-from notion_client_wrapper.block.child_page import ChildPage
-from typing import Union
+from notion_client_wrapper.block.video import Video
 
 
 @dataclass
-class BlockFactory():
-
+class BlockFactory:
     @staticmethod
     def create(block: dict) -> Block:
         if block["object"] != "block":
@@ -67,5 +66,4 @@ class BlockFactory():
                 return ChildPage.of(block)
             case _:
                 print(block)
-                raise ValueError(
-                    f"block type is not supported {block_type}\n{block}")
+                raise ValueError(f"block type is not supported {block_type}\n{block}")
