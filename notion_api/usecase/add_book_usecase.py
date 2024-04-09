@@ -1,10 +1,8 @@
-from book.domain.author import Author
+from book.domain.book import Book
 from book.domain.book_api import BookApi, BookApiResult
+from book.domain.book_repository import BookRepository
 from custom_logger import get_logger
-from domain.database_type import DatabaseType
-from notion_client_wrapper.client_wrapper import ClientWrapper
-from notion_client_wrapper.filter.condition.string_condition import StringCondition
-from notion_client_wrapper.filter.filter_builder import FilterBuilder
+from notion_client_wrapper.page.page_id import PageId
 from usecase.service.inbox_service import InboxService
 from usecase.service.tag_create_service import TagCreateService
 
@@ -15,13 +13,13 @@ class AddBookUsecase:
     def __init__(
         self,
         book_api: BookApi,
-        client_wrapper: ClientWrapper | None = None,
-        tag_create_service: TagCreateService | None = None,
+        book_repository: BookRepository,
+        tag_create_service: TagCreateService,
     ) -> None:
-        self.book_api = book_api
-        self.inbox_service = InboxService()
-        self.client = client_wrapper or ClientWrapper.get_instance()
-        self.tag_create_service = tag_create_service or TagCreateService()
+        self._book_api = book_api
+        self._book_repository = book_repository
+        self._tag_create_service = tag_create_service
+        self._inbox_service = InboxService()
 
     def _find_book(
         self,
@@ -30,10 +28,10 @@ class AddBookUsecase:
         isbn: str | None = None,
     ) -> BookApiResult | None:
         if google_book_id is not None:
-            return self.book_api.find_by_id(book_id=google_book_id)
+            return self._book_api.find_by_id(book_id=google_book_id)
         if isbn is not None:
-            return self.book_api.find_by_isbn(isbn=isbn)
-        return self.book_api.find_by_title(title=title)
+            return self._book_api.find_by_isbn(isbn=isbn)
+        return self._book_api.find_by_title(title=title)
 
     def execute(
         self,
@@ -45,55 +43,31 @@ class AddBookUsecase:
     ) -> dict:
         book_api_result = self._find_book(google_book_id=google_book_id, title=title, isbn=isbn)
 
-        # データベースの取得
-        filter_param = FilterBuilder().add_condition(StringCondition.equal(book.title)).build()
-        searched_books = self.client.retrieve_database(
-            database_id=DatabaseType.BOOK.value,
-            filter_param=filter_param,
-        )
-        if len(searched_books) > 0:
-            logger.info("The book is already registered")
-            book = searched_books[0]
+        # すでに登録されているか確認
+        book = self._book_repository.find_by_title(title=book_api_result.title)
+        if book is not None:
             return {
                 "id": book.id,
                 "url": book.url,
             }
         logger.info("Create a book page")
 
-        # 著者のタグページを作成
-        tag_page_ids: list[str] = [self.tag_create_service.add_tag(name=author) for author in book.author.text_list]
-        author = Author.create(id_list=tag_page_ids) if len(tag_page_ids) > 0 else None
+        # 先に著者のタグページを作成
+        tag_page_ids = [self._tag_create_service.add_tag(name=author) for author in book_api_result.authors]
 
-        # 新しいページを作成
-        properties = [
-            p
-            for p in [
-                book.title,
-                author,
-                book.published_date,
-                book.publisher,
-                book.url,
-            ]
-            if p is not None
-        ]
+        # ページインスタンスを生成、保存
+        book = Book.from_api_result(result=book_api_result, author_page_id_list=[PageId(id_) for id_ in tag_page_ids])
+        book = self._book_repository.save(book=book)
 
-        result = self.client.create_page_in_database(
-            database_id=DatabaseType.BOOK.value,
-            cover=book.cover,
-            properties=properties,
-        )
-        page_id = result["id"]
-        page_url = result["url"]
-
-        self.inbox_service.add_inbox_task_by_page_id(
-            page_id=page_id,
-            page_url=page_url,
-            original_url=book.url.url if book.url else "",
+        self._inbox_service.add_inbox_task_by_page_id(
+            page_id=book.id,
+            page_url=book.url,
+            original_url=book.book_url,
             slack_channel=slack_channel,
             slack_thread_ts=slack_thread_ts,
         )
 
         return {
-            "id": result["id"],
-            "url": result["url"],
+            "id": book.id,
+            "url": book.url,
         }
