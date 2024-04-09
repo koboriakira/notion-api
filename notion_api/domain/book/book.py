@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 from datetime import date
 
-from domain.book.author import Author
-from domain.book.published_date import PublishedDate
-from domain.book.publisher import Publisher
+from book.domain.author import Author
+from book.domain.published_date import PublishedDate
+from book.domain.publisher import Publisher
 from notion_client_wrapper.properties.cover import Cover
 from notion_client_wrapper.properties.title import Title
 from notion_client_wrapper.properties.url import Url
@@ -12,20 +12,21 @@ from notion_client_wrapper.properties.url import Url
 @dataclass
 class Book:
     title: Title
-    author: Author|None
-    publisher: Publisher|None
-    published_date: PublishedDate|None
-    url: Url|None
-    cover: Cover|None
+    author: Author | None
+    publisher: Publisher | None
+    published_date: PublishedDate | None
+    url: Url | None
+    cover: Cover | None
 
     @staticmethod
     def create(  # noqa: PLR0913
-            title: str,
-            authors: list[str],
-            publisher: str|None = None,
-            published_date: date|None = None,
-            image_url: str|None = None,
-            url: str|None = None) -> "Book":
+        title: str,
+        authors: list[str],
+        publisher: str | None = None,
+        published_date: date | None = None,
+        image_url: str | None = None,
+        url: str | None = None,
+    ) -> "Book":
         return Book(
             title=Title.from_plain_text(name="Title", text=title),
             author=Author.create(text_list=authors) if authors is not None else None,
