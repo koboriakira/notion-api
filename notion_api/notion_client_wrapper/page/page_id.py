@@ -13,3 +13,7 @@ class PageId:
         if not re.match(r"[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}", self.value):
             msg = f"page_idの形式が不正です: {self.value}"
             raise ValueError(msg)
+
+    @staticmethod
+    def dummy() -> "PageId":
+        return PageId(value="5c38fd30-714b-4ce2-bf2d-25407f3cfc16")

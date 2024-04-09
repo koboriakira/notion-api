@@ -1,7 +1,6 @@
 from book.domain.author import Author
+from book.domain.book_api import BookApi, BookApiResult
 from custom_logger import get_logger
-from domain.book.book import Book
-from domain.book.book_api import BookApi
 from domain.database_type import DatabaseType
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper.filter.condition.string_condition import StringCondition
@@ -25,8 +24,11 @@ class AddBookUsecase:
         self.tag_create_service = tag_create_service or TagCreateService()
 
     def _find_book(
-        self, google_book_id: str | None = None, title: str | None = None, isbn: str | None = None
-    ) -> Book | None:
+        self,
+        google_book_id: str | None = None,
+        title: str | None = None,
+        isbn: str | None = None,
+    ) -> BookApiResult | None:
         if google_book_id is not None:
             return self.book_api.find_by_id(book_id=google_book_id)
         if isbn is not None:
@@ -41,7 +43,7 @@ class AddBookUsecase:
         slack_channel: str | None = None,
         slack_thread_ts: str | None = None,
     ) -> dict:
-        book = self._find_book(google_book_id=google_book_id, title=title, isbn=isbn)
+        book_api_result = self._find_book(google_book_id=google_book_id, title=title, isbn=isbn)
 
         # データベースの取得
         filter_param = FilterBuilder().add_condition(StringCondition.equal(book.title)).build()
