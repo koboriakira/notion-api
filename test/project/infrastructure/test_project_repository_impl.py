@@ -7,7 +7,7 @@ from notion_api.notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_api.project.infrastructure.project_repository_impl import ProjectRepositoryImpl
 
 
-class Test(TestCase):
+class TestProjectRepositoryImpl(TestCase):
     def setUp(self) -> None:
         self.suite = ProjectRepositoryImpl(client=Mock(spec=ClientWrapper), logger=Mock(spec=Logger))
         return super().setUp()
