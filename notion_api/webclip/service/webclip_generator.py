@@ -6,6 +6,7 @@ from common.service.scrape_service import ScrapeService
 from common.service.tag_creator import TagCreator
 from common.service.tweet.tweet_fetcher import TweetFetcher
 from common.value.site_kind import SiteKind
+from notion_api.common.domain.tag_relation import TagRelation
 from notion_client_wrapper.block.embed import Embed
 from util.split_paragraph import split_paragraph
 from util.tag_analyzer import TagAnalyzer
@@ -19,23 +20,21 @@ if TYPE_CHECKING:
 
 class WebclipGenerator(metaclass=ABCMeta):
     @abstractmethod
-    def execute(
-            self,
-            url: str,
-            title: str,
-            cover: str | None = None) -> Webclip:
+    def execute(self, url: str, title: str, cover: str | None = None) -> Webclip:
         """Webclipを生成する"""
+
 
 class DefaultWebclipGenerator(WebclipGenerator):
     """通常のWebclipを生成するクラス"""
+
     def __init__(  # noqa: PLR0913
-            self,
-            scrape_service: ScrapeService,
-            tag_creator: TagCreator,
-            logger: Logger | None = None,
-            tag_analyzer: TagAnalyzer | None = None,
-            text_summarizer: TextSummarizer | None = None,
-            ) -> None:
+        self,
+        scrape_service: ScrapeService,
+        tag_creator: TagCreator,
+        logger: Logger | None = None,
+        tag_analyzer: TagAnalyzer | None = None,
+        text_summarizer: TextSummarizer | None = None,
+    ) -> None:
         self._scrape_service = scrape_service
         self._tag_creator = tag_creator
         self._tag_analyzer = tag_analyzer or TagAnalyzer()
@@ -43,11 +42,11 @@ class DefaultWebclipGenerator(WebclipGenerator):
         self._logger = logger or getLogger(__name__)
 
     def execute(
-            self,
-            url: str,
-            title: str,
-            cover: str | None = None,
-            ) -> Webclip:
+        self,
+        url: str,
+        title: str,
+        cover: str | None = None,
+    ) -> Webclip:
         # スクレイピングして要約を作成
         scraped_result = self._scrape_service.execute(url=url)
         page_text = scraped_result.not_formatted_text
@@ -58,7 +57,8 @@ class DefaultWebclipGenerator(WebclipGenerator):
 
         # 要約からタグを抽出して、タグを作成
         tags = self._tag_analyzer.handle(text=summary)
-        tag_relation = self._tag_creator.execute(name_list=tags)
+        tag_page_id_list = self._tag_creator.execute(tags=tags)
+        tag_relation = TagRelation.from_page_id_list(tag_page_id_list)
 
         # ページ本文
         blocks = split_paragraph(page_text)
@@ -73,26 +73,28 @@ class DefaultWebclipGenerator(WebclipGenerator):
             blocks=blocks,
         )
 
+
 class TwitterWebclipGenerator(WebclipGenerator):
     """TwitterのWebclipを生成するクラス"""
+
     def __init__(
-            self,
-            tweet_fetcher: TweetFetcher,
-            tag_creator: TagCreator,
-            tag_analyzer: TagAnalyzer | None = None,
-            logger: Logger | None = None,
-            ) -> None:
+        self,
+        tweet_fetcher: TweetFetcher,
+        tag_creator: TagCreator,
+        tag_analyzer: TagAnalyzer | None = None,
+        logger: Logger | None = None,
+    ) -> None:
         self._tweet_fetcher = tweet_fetcher
         self._tag_creator = tag_creator
         self._tag_analyzer = tag_analyzer or TagAnalyzer()
         self._logger = logger or getLogger(__name__)
 
     def execute(
-            self,
-            url: str,
-            title: str,  # noqa: ARG002 FIXME: 利用しないパターンもある
-            cover: str | None = None,
-            ) -> Webclip:
+        self,
+        url: str,
+        title: str,  # noqa: ARG002 FIXME: 利用しないパターンもある
+        cover: str | None = None,
+    ) -> Webclip:
         tweet_id = self._extract_tweet_id(url=url)
         tweet = self._tweet_fetcher.fetch(tweet_id)
 
@@ -100,13 +102,14 @@ class TwitterWebclipGenerator(WebclipGenerator):
         tags = self._tag_analyzer.handle(text=tweet.text)
         # 投稿者もタグに含める
         tags.append(tweet.user_name)
-        tag_relation = self._tag_creator.execute(name_list=tags)
+        tag_page_id_list = self._tag_creator.execute(tags=tags)
+        tag_relation = TagRelation.from_page_id_list(tag_page_id_list)
 
         # カバー画像が指定されてなければ取得を試みる
         if not cover:
             cover = tweet.media_urls[0] if tweet.media_urls else None
 
-        blocks:list[Block] = []
+        blocks: list[Block] = []
         # 本文を入れる
         blocks.extend(split_paragraph(tweet.text))
         # 画像をいれる
@@ -116,7 +119,7 @@ class TwitterWebclipGenerator(WebclipGenerator):
 
         # あたらしくWebclipを作成
         return Webclip.create(
-            title=tweet.text[:50], # タイトルは本文(title)の50文字まで,
+            title=tweet.text[:50],  # タイトルは本文(title)の50文字まで,
             url=tweet.url,
             tag_relation=tag_relation,
             cover=cover,
@@ -129,19 +132,21 @@ class TwitterWebclipGenerator(WebclipGenerator):
         tweet_id = url.split("/status/")[1]
         return tweet_id.split("/")[0]
 
+
 class WebclipGeneratorRule:
     def __init__(self, generator_dict: dict[SiteKind, WebclipGenerator]) -> None:
         self.generator_dict = generator_dict
-
 
     def get_generator(self, url: str) -> WebclipGenerator:
         """WebclipGeneratorを取得する"""
         site_kind = SiteKind.find_site_kind(url=url)
         return self.generator_dict[site_kind]
 
+
 if __name__ == "__main__":
     # python -m notion_api.webclip.service.webclip_generator
     from webclip.injector import WebclipInjector
+
     webclip_creator = WebclipInjector.create_webclip_creator()
 
     twitter_url = "https://twitter.com/uug_p_STAFF/status/1772234517572722806"

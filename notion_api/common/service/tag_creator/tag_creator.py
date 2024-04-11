@@ -1,44 +1,37 @@
-from common.domain.tag_relation import TagRelation
 from common.value.database_type import DatabaseType
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper.filter.filter_builder import FilterBuilder
+from notion_client_wrapper.page.page_id import PageId
 from notion_client_wrapper.properties import Title
 
 
 class TagCreator:
+    DATABASE_ID = DatabaseType.TAG.value
+
     def __init__(self, client: ClientWrapper | None = None) -> None:
         self.client = client or ClientWrapper.get_instance()
 
-    def execute(self, name_list: list[str] | str | None) -> TagRelation:
+    def execute(self, tag: list[str] | str | None) -> list[PageId]:
         """指定されたタグをタグデータベースに追加する。タグページのIDを返却する。"""
-        if name_list is None:
-            return TagRelation.empty()
-        name_list = list(set(name_list)) if isinstance(name_list, list) else [name_list]
+        if tag is None:
+            return []
 
-        title_properties = [Title.from_plain_text(name="名前", text=name) for name in name_list]
-        tag_page_list = [self.__create(title_property) for title_property in title_properties]
-        tag_page_id_list = [tag_page["id"] for tag_page in tag_page_list]
-        return TagRelation.from_id_list(id_list=tag_page_id_list)
+        tag_list = list(set(tag)) if isinstance(tag, list) else [tag]
+        return [self.__create(t) for t in tag_list]
 
-    def __create(self, title_property: Title) -> dict:
+    def __create(self, title: str) -> PageId:
         # すでに存在するか確認
-        filter_param = FilterBuilder.build_simple_equal_condition(title_property)
-        tags = self.client.retrieve_database(database_id=DatabaseType.TAG.value, filter_param=filter_param)
+        filter_param = FilterBuilder.build_title_equal_condition(title=title)
+        tags = self.client.retrieve_database(database_id=self.DATABASE_ID, filter_param=filter_param)
         if len(tags) > 0:
-            return {
-                "id": tags[0].id,
-                # "url": tags[0].url,
-            }
+            return PageId(tags[0].id)
 
         # 作成
         tag_page = self.client.create_page_in_database(
-            database_id=DatabaseType.TAG.value,
-            properties=[title_property],
+            database_id=self.DATABASE_ID,
+            properties=[Title.from_plain_text(name="名前", text=title)],
         )
-        return {
-            "id": tag_page["id"],
-            # "url": tag_page["url"],
-        }
+        return PageId(tag_page["id"])
 
 
 if __name__ == "__main__":

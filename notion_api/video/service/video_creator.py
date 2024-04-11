@@ -3,6 +3,7 @@ from logging import Logger, getLogger
 from common.infrastructure.default_scraper import DefaultScraper
 from common.service.scrape_service.scrape_service import ScrapeService
 from common.service.tag_creator import TagCreator
+from notion_api.common.domain.tag_relation import TagRelation
 from util.tag_analyzer import TagAnalyzer
 from video.domain.video import Video
 from video.infrastructure.video_repository_impl import VideoRepositoryImpl as VideoRepository
@@ -10,13 +11,13 @@ from video.infrastructure.video_repository_impl import VideoRepositoryImpl as Vi
 
 class VideoCreator:
     def __init__(  # noqa: PLR0913
-            self,
-            video_repository: VideoRepository,
-            scrape_service: ScrapeService,
-            tag_creator: TagCreator,
-            tag_analyzer: TagAnalyzer,
-            logger: Logger | None = None,
-            ) -> None:
+        self,
+        video_repository: VideoRepository,
+        scrape_service: ScrapeService,
+        tag_creator: TagCreator,
+        tag_analyzer: TagAnalyzer,
+        logger: Logger | None = None,
+    ) -> None:
         self._video_repository = video_repository
         self._scrape_service = scrape_service
         self._tag_creator = tag_creator
@@ -24,11 +25,11 @@ class VideoCreator:
         self._logger = logger or getLogger(__name__)
 
     def execute(
-            self,
-            url: str,
-            title: str | None = None,
-            cover: str | None = None,
-            ) -> Video:
+        self,
+        url: str,
+        title: str | None = None,
+        cover: str | None = None,
+    ) -> Video:
         if title is None:
             msg = "title is required"
             raise ValueError(msg)
@@ -51,7 +52,8 @@ class VideoCreator:
 
         # タグを解析
         tags = self._tag_analyzer.handle(text=title)
-        tag_relation = self._tag_creator.execute(name_list=tags)
+        tag_page_id_list = self._tag_creator.execute(tags=tags)
+        tag_relation = TagRelation.from_page_id_list(tag_page_id_list)
 
         # Videoを生成
         video = Video.create(
@@ -67,6 +69,7 @@ class VideoCreator:
 if __name__ == "__main__":
     # python -m notion_api.video.service.video_creator
     from notion_client_wrapper.client_wrapper import ClientWrapper
+
     client = ClientWrapper.get_instance()
     default_scraper = DefaultScraper()
     scrape_service = ScrapeService(scraper=default_scraper)

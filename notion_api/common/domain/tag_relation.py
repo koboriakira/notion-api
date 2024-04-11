@@ -26,6 +26,10 @@ class TagRelation(Relation):
     def from_id_list(id_list: list[str | NotionPageId]) -> "TagRelation":
         return TagRelation(id_list=[convert_page_id(id_) for id_ in id_list])
 
+    @staticmethod
+    def from_page_id_list(id_list: list[PageId]) -> "TagRelation":
+        return TagRelation(id_list=[id_.value for id_ in id_list])
+
     def add(self, notion_page_id: NotionPageId | str) -> "TagRelation":
         str_value = notion_page_id.value if isinstance(notion_page_id, NotionPageId) else notion_page_id
         return TagRelation(id_list=[*self.id_list, str_value])
