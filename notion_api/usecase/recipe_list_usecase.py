@@ -1,4 +1,4 @@
-from domain.database_type import DatabaseType
+from common.value.database_type import DatabaseType
 from notion_client_wrapper.client_wrapper import ClientWrapper
 
 
@@ -6,9 +6,10 @@ class RecipeListUsecase:
     def __init__(self):
         self.client = ClientWrapper.get_instance()
 
-    def execute(self,
-                detail_enabled: bool = False,
-                ):
+    def execute(
+        self,
+        detail_enabled: bool = False,
+    ):
         # 食材マスタ
         ingredient_list = self.client.retrieve_database(database_id=DatabaseType.INGREDIENTS.value)
         ingredients_map = {}
@@ -27,17 +28,19 @@ class RecipeListUsecase:
             daily_log_relation = recipe.get_relation(name="デイリーログ")
             select = recipe.get_select(name="状態")
 
-            recipes.append({
-                "id": recipe.id,
-                "url": recipe.url,
-                "title": title.text,
-                "updated_at": recipe.last_edited_time.start_time,
-                "created_at": recipe.created_time.start_time,
-                "daily_log_id": daily_log_relation.id_list,
-                "ingredients": ingredients,
-                "meal_categories": [c.name for c in meal_categories.values] if meal_categories is not None else [],
-                "status": select.selected_name if select is not None else "",
-            })
+            recipes.append(
+                {
+                    "id": recipe.id,
+                    "url": recipe.url,
+                    "title": title.text,
+                    "updated_at": recipe.last_edited_time.start_time,
+                    "created_at": recipe.created_time.start_time,
+                    "daily_log_id": daily_log_relation.id_list,
+                    "ingredients": ingredients,
+                    "meal_categories": [c.name for c in meal_categories.values] if meal_categories is not None else [],
+                    "status": select.selected_name if select is not None else "",
+                }
+            )
         if detail_enabled:
             # ヒットしたレシピの詳細を取得する
             pass

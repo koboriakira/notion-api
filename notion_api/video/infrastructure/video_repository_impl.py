@@ -1,6 +1,6 @@
 from logging import Logger, getLogger
 
-from domain.database_type import DatabaseType
+from common.value.database_type import DatabaseType
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper.filter.filter_builder import FilterBuilder
 from video.domain.video import Video
@@ -10,14 +10,11 @@ from video.domain.video_title import VideoName
 class VideoRepositoryImpl:
     DATABASE_ID = DatabaseType.VIDEO.value
 
-    def __init__(
-            self,
-            client: ClientWrapper,
-            logger: Logger|None = None) -> None :
+    def __init__(self, client: ClientWrapper, logger: Logger | None = None) -> None:
         self._client = client
         self._logger = logger or getLogger(__name__)
 
-    def find_by_title(self, title: str) -> Video|None:
+    def find_by_title(self, title: str) -> Video | None:
         title_property = VideoName(text=title)
         filter_param = FilterBuilder.build_simple_equal_condition(title_property)
         searched_video = self._client.retrieve_database(

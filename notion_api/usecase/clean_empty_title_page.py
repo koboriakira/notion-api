@@ -1,7 +1,6 @@
-from notion_client_wrapper.client_wrapper import ClientWrapper
-from domain.database_type import DatabaseType
+from common.value.database_type import DatabaseType
 from custom_logger import get_logger
-
+from notion_client_wrapper.client_wrapper import ClientWrapper
 
 logger = get_logger(__name__)
 
@@ -16,6 +15,7 @@ database_list = [
     DatabaseType.MUSIC,
 ]
 
+
 class CleanEmptyTitlePageUsecase:
     def __init__(self):
         self.client = ClientWrapper.get_instance()
@@ -29,6 +29,7 @@ class CleanEmptyTitlePageUsecase:
         for page in pages:
             if page.get_title().text == "":
                 self.client.remove_page(page_id=page.id)
+
 
 if __name__ == "__main__":
     # python -m usecase.clean_empty_title_page

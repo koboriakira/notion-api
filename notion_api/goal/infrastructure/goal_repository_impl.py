@@ -1,6 +1,6 @@
 from logging import Logger, getLogger
 
-from domain.database_type import DatabaseType
+from common.value.database_type import DatabaseType
 from goal.domain.goal import Goal
 from goal.domain.goal_repository import GoalRepository
 from notion_client_wrapper.client_wrapper import ClientWrapper

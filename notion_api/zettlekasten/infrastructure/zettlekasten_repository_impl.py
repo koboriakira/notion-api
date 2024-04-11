@@ -1,7 +1,7 @@
 from logging import Logger, getLogger
 
 from common.domain.tag_relation import TagRelation
-from domain.database_type import DatabaseType
+from common.value.database_type import DatabaseType
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper.filter.condition.empty_condition import EmptyCondition
 from notion_client_wrapper.filter.filter_builder import FilterBuilder

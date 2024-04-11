@@ -1,7 +1,7 @@
 from datetime import date as DateObject
 
+from common.value.database_type import DatabaseType
 from custom_logger import get_logger
-from domain.database_type import DatabaseType
 from infrastructure.slack_tmp_client import SlackTmpClient
 from notion_client_wrapper.block import Paragraph
 from notion_client_wrapper.client_wrapper import ClientWrapper
@@ -13,6 +13,7 @@ from usecase.service.tag_create_service import TagCreateService
 
 logger = get_logger(__name__)
 
+
 class AddTrackPageUsecase:
     def __init__(self):
         self.client = ClientWrapper.get_instance()
@@ -21,15 +22,16 @@ class AddTrackPageUsecase:
         self.slack_bot_client = SlackTmpClient.get_bot_client()
         self.append_page_id_to_slack_context = AppendPageIdToSlackContext()
 
-    def execute(self,
-                track_name: str,
-                artists: list[str],
-                spotify_url: str | None = None,
-                cover_url: str | None = None,
-                release_date: DateObject | None = None,
-                slack_channel: str | None = None,
-                slack_thread_ts: str | None = None,
-                ) -> dict:
+    def execute(
+        self,
+        track_name: str,
+        artists: list[str],
+        spotify_url: str | None = None,
+        cover_url: str | None = None,
+        release_date: DateObject | None = None,
+        slack_channel: str | None = None,
+        slack_thread_ts: str | None = None,
+    ) -> dict:
         logger.info("execute")
         logger.info(f"track_name: {track_name}")
         logger.info(f"artists: {artists}")
@@ -54,17 +56,17 @@ class AddTrackPageUsecase:
         logger.info("Create a track page")
 
         # タグを作成
-        tag_page_ids:list[str] = []
+        tag_page_ids: list[str] = []
         for artist in artists:
             page_id = self.tag_create_service.add_tag(name=artist)
             tag_page_ids.append(page_id)
 
         # 新しいページを作成
         artist_name = ",".join(artists)
-        properties=[
-                title,
-                Text.from_plain_text(name="Artist", text=artist_name),
-            ]
+        properties = [
+            title,
+            Text.from_plain_text(name="Artist", text=artist_name),
+        ]
         if spotify_url is not None:
             properties.append(Url.from_url(name="Spotify", url=spotify_url))
         if len(tag_page_ids) > 0:
@@ -86,7 +88,6 @@ class AddTrackPageUsecase:
                 block=iframe_html,
             )
 
-
         if slack_channel and slack_thread_ts:
             self.append_page_id_to_slack_context.execute(
                 channel=slack_channel,
@@ -104,6 +105,7 @@ class AddTrackPageUsecase:
             "url": page_url,
         }
 
+
 def _spotify_iframe_html(spotify_url: str | None = None) -> Paragraph | None:
     if spotify_url is None:
         return None
@@ -111,6 +113,7 @@ def _spotify_iframe_html(spotify_url: str | None = None) -> Paragraph | None:
     iframe_html = f"""<iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/{track_id}?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>"""
     paragraph = Paragraph.from_plain_text(iframe_html)
     return paragraph
+
 
 if __name__ == "__main__":
     # python -m usecase.add_track_page_usecase

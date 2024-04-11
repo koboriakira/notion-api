@@ -1,15 +1,15 @@
 from common.domain.tag_relation import TagRelation
-from domain.database_type import DatabaseType
+from common.value.database_type import DatabaseType
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper.filter.filter_builder import FilterBuilder
 from notion_client_wrapper.properties import Title
 
 
 class TagCreator:
-    def __init__(self, client:ClientWrapper|None=None) -> None:
+    def __init__(self, client: ClientWrapper | None = None) -> None:
         self.client = client or ClientWrapper.get_instance()
 
-    def execute(self, name_list: list[str]|str|None) -> TagRelation:
+    def execute(self, name_list: list[str] | str | None) -> TagRelation:
         """指定されたタグをタグデータベースに追加する。タグページのIDを返却する。"""
         if name_list is None:
             return TagRelation.empty()
@@ -23,9 +23,7 @@ class TagCreator:
     def __create(self, title_property: Title) -> dict:
         # すでに存在するか確認
         filter_param = FilterBuilder.build_simple_equal_condition(title_property)
-        tags = self.client.retrieve_database(
-            database_id=DatabaseType.TAG.value,
-            filter_param=filter_param)
+        tags = self.client.retrieve_database(database_id=DatabaseType.TAG.value, filter_param=filter_param)
         if len(tags) > 0:
             return {
                 "id": tags[0].id,

@@ -2,7 +2,7 @@ import os
 from unittest import TestCase
 
 import pytest
-from notion_api.domain.database_type import DatabaseType
+from notion_api.common.value.database_type import DatabaseType
 from notion_client import Client
 
 

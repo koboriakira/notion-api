@@ -3,7 +3,7 @@ from datetime import date, datetime, timedelta
 
 import requests
 
-from domain.database_type import DatabaseType
+from common.value.database_type import DatabaseType
 from notion_client_wrapper.base_page import BasePage
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper.properties import Cover, Date, Relation, Title

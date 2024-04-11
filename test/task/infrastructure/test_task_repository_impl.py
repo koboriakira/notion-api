@@ -3,7 +3,7 @@ from unittest import TestCase
 from unittest.mock import Mock
 
 import pytest
-from notion_api.domain.database_type import DatabaseType
+from notion_api.common.value.database_type import DatabaseType
 from notion_api.notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_api.notion_client_wrapper.page.page_id import PageId
 from notion_api.task.domain.task import Task

@@ -2,7 +2,7 @@ from datetime import datetime
 from unittest import TestCase
 
 import pytest
-from notion_api.domain.database_type import DatabaseType
+from notion_api.common.value.database_type import DatabaseType
 from notion_api.task.domain.task import Task
 from notion_api.notion_client_wrapper.base_page import BasePage
 from notion_api.notion_client_wrapper.client_wrapper import ClientWrapper

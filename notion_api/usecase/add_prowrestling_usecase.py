@@ -1,7 +1,7 @@
 from datetime import date as DateObject
 
+from common.value.database_type import DatabaseType
 from custom_logger import get_logger
-from domain.database_type import DatabaseType
 from notion_client_wrapper.base_page import BasePage
 from notion_client_wrapper.block import Paragraph
 from notion_client_wrapper.block.rich_text.rich_text_builder import RichTextBuilder
