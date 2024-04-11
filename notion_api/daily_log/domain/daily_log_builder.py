@@ -66,6 +66,10 @@ class DailyLogBuilder:
         self.properties.append(tag_relation)
         return self
 
+    def add_random_cover(self) -> "DailyLogBuilder":
+        self.cover = Cover.random(query_words=["bird", "flower"])
+        return self
+
     def add_cover(self, cover_url: str) -> "DailyLogBuilder":
         self.cover = Cover.from_external_url(cover_url)
         return self
