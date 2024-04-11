@@ -68,6 +68,10 @@ class BasePage:
     def get_title_text(self) -> str:
         return self.get_title().text
 
+    @property
+    def title(self) -> str:
+        return self.get_title_text()
+
     def get_created_at(self) -> datetime:
         if self.created_time is None:
             return jst_now()
