@@ -1,11 +1,25 @@
-from datetime import date
+from datetime import date, timedelta
 from logging import Logger, getLogger
 
 from common.value.database_type import DatabaseType
 from daily_log.domain.daily_log import DailyLog
+from daily_log.domain.daily_log_builder import DailyLogBuilder
 from daily_log.domain.daily_log_repository import DailyLogRepository
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper.filter.filter_builder import FilterBuilder
+from notion_client_wrapper.page.page_id import PageId
+
+
+class ExistedDailyLogError(Exception):
+    def __init__(self, date_: date) -> None:
+        self.date_ = date_
+        super().__init__(f"Existed daily log for {date_}")
+
+
+class NotFoundPreviousDailyLogError(Exception):
+    def __init__(self, date_: date) -> None:
+        self.date_ = date_
+        super().__init__(f"Not found previous daily log for {date_}")
 
 
 class DailyLogRepositoryImpl(DailyLogRepository):
@@ -38,3 +52,21 @@ class DailyLogRepositoryImpl(DailyLogRepository):
             url=result["url"],
         )
         return daily_log
+
+    def create(self, date_: date, weekly_log_id: PageId) -> DailyLog:
+        """デイリーログを新規作成する"""
+        if self.find(date_) is not None:
+            raise ExistedDailyLogError(date_)
+
+        yesterday_daily_log = self.find(date_ - timedelta(days=1))
+        if yesterday_daily_log is None:
+            raise NotFoundPreviousDailyLogError(date_)
+
+        daily_log = (
+            DailyLogBuilder.of(date_=date_)
+            .add_weekly_log_relation(weekly_log_page_id=PageId(weekly_log_id))
+            .add_previous_relation(previous_page_id=PageId(yesterday_daily_log.id))
+            .add_random_cover()
+            .build()
+        )
+        return self.save(daily_log)
