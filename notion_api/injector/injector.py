@@ -5,10 +5,13 @@ from slack_sdk.web import WebClient
 
 from common.service.tag_creator.tag_creator import TagCreator
 from custom_logger import get_logger
+from daily_log.infrastructure.daily_log_repository_impl import DailyLogRepositoryImpl
 from injector.page_creator_factory import PageCreatorFactory
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from slack_concierge.injector import SlackConciergeInjector
+from task.infrastructure.task_repository_impl import TaskRepositoryImpl
 from usecase.add_webclip_usecase import AddWebclipUsecase
+from usecase.collect_updated_pages_usecase import CollectUpdatedPagesUsecase
 from usecase.create_page_use_case import CreatePageUseCase
 from usecase.service.inbox_service import InboxService
 from usecase.service.tag_analyzer import TagAnalyzer
@@ -24,10 +27,9 @@ logger = get_logger(__name__)
 DEFAULT_GPT_MODEL = "gpt-3.5-turbo-1106"
 
 client = ClientWrapper.get_instance()
-openai_executer = OpenaiExecuter(
-    model=OpenaiExecuter.DEFAULT_GPT_MODEL,
-    logger=logger)
+openai_executer = OpenaiExecuter(model=OpenaiExecuter.DEFAULT_GPT_MODEL, logger=logger)
 slack_bot_client = WebClient(token=os.environ["SLACK_BOT_TOKEN"])
+
 
 class Injector:
     @classmethod
@@ -84,9 +86,10 @@ class Injector:
 
     @classmethod
     def create_tag_analyzer(
-            cls: "Injector",
-            openai_executer: OpenaiExecuter,
-            is_debug: bool|None=None) -> TagAnalyzer:
+        cls: "Injector",
+        openai_executer: OpenaiExecuter,
+        is_debug: bool | None = None,
+    ) -> TagAnalyzer:
         return TagAnalyzer(
             client=openai_executer,
             logger=logger,
@@ -95,9 +98,10 @@ class Injector:
 
     @classmethod
     def create_text_summarizer(
-            cls: "Injector",
-            openai_executer: OpenaiExecuter,
-            is_debug: bool|None=None) -> TextSummarizer:
+        cls: "Injector",
+        openai_executer: OpenaiExecuter,
+        is_debug: bool | None = None,
+    ) -> TextSummarizer:
         return TextSummarizer(
             logger=logger,
             client=openai_executer,
@@ -105,8 +109,22 @@ class Injector:
         )
 
     @classmethod
+    def create_collect_updated_pages_usecase(
+        cls: "Injector",
+        is_debug: bool | None = None,
+    ) -> CollectUpdatedPagesUsecase:
+        task_repository = TaskRepositoryImpl(notion_client_wrapper=client)
+        daily_log_repository = DailyLogRepositoryImpl(client=client)
+        return CollectUpdatedPagesUsecase(
+            task_repository=task_repository,
+            daily_log_repository=daily_log_repository,
+            is_debug=is_debug,
+        )
+
+    @classmethod
     def __create_openai_executer(
         cls: "Injector",
-        model: str|None=None,
-        logger: Logger|None=None) -> TagAnalyzer:
+        model: str | None = None,
+        logger: Logger | None = None,
+    ) -> TagAnalyzer:
         return OpenaiExecuter(model=model, logger=logger)
