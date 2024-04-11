@@ -1,5 +1,4 @@
-from datetime import date as DateObject
-from datetime import timedelta
+from datetime import date, datetime, timedelta
 
 from custom_logger import get_logger
 from task.domain.task import Task
@@ -11,26 +10,28 @@ logger = get_logger(__name__)
 
 
 class PostponeTaskToNextDayUsecase:
+    MIN_DATETIME = datetime.min
+
     def __init__(self, task_repository: TaskRepository) -> None:
         self._task_repository = task_repository
 
-    def execute(self, date: DateObject | None = None) -> list[dict]:
-        # 指定日がない場合は前日を指定
-        date = date if date is not None else jst_today() - timedelta(days=1)
+    def execute(self, target_date: date | None = None) -> list[dict]:
+        target_date = target_date or jst_today()
 
-        # まず未完了のタスクを集める
-        tasks: list[Task] = self._task_repository.search(
+        # 指定日より前の未了タスクを集めて、実施日を指定日に更新
+        tasks: list[Task] = self._fetch_past_undone_tasks(target_date)
+        self._update_start_datetime(tasks, target_date)
+
+    def _fetch_past_undone_tasks(self, target_date: date) -> list[Task]:
+        return self._task_repository.search(
             status_list=[TaskStatusType.TODO, TaskStatusType.IN_PROGRESS],
+            start_datetime=self.MIN_DATETIME,
+            start_datetime_end=target_date - timedelta(days=1),
         )
 
-        # 実施日が過去のタスクに絞る
-        tasks = [task for task in tasks if task.start_date is not None]
-        tasks = [task for task in tasks if task.start_date <= date]
-
-        # 実施日を翌日に更新
-        tomorrow = date + timedelta(days=1)
+    def _update_start_datetime(self, tasks: list[Task], target_date: date) -> Task:
         for task in tasks:
-            task.update_start_datetime(tomorrow)
+            task.update_start_datetime(target_date)
             self._task_repository.save(task)
 
 
