@@ -1,12 +1,11 @@
 from datetime import date
 from logging import Logger, getLogger
 
-from notion_api.common.value.database_type import DatabaseType
-from notion_api.notion_client_wrapper.filter.filter_builder import FilterBuilder
-
+from common.value.database_type import DatabaseType
 from daily_log.domain.daily_log import DailyLog
 from daily_log.domain.daily_log_repository import DailyLogRepository
 from notion_client_wrapper.client_wrapper import ClientWrapper
+from notion_client_wrapper.filter.filter_builder import FilterBuilder
 
 
 class DailyLogRepositoryImpl(DailyLogRepository):

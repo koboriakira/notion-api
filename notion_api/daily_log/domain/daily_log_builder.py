@@ -51,22 +51,12 @@ class DailyLogBuilder:
         self.properties.append(daily_retro_comment)
         return self
 
-    def add_weekly_log_relation(self, weekly_log_relation: list[PageId] | WeeklyLogRelation) -> "DailyLogBuilder":
-        weekly_log_relation = (
-            weekly_log_relation
-            if isinstance(weekly_log_relation, WeeklyLogRelation)
-            else WeeklyLogRelation.from_id_list(id_list=weekly_log_relation)
-        )
-        self.properties.append(weekly_log_relation)
+    def add_weekly_log_relation(self, weekly_log_page_id: PageId) -> "DailyLogBuilder":
+        self.properties.append(WeeklyLogRelation.from_id_list(id_list=[weekly_log_page_id]))
         return self
 
-    def add_previous_relation(self, previous_relation: list[PageId] | PreviousRelation) -> "DailyLogBuilder":
-        previous_relation = (
-            previous_relation
-            if isinstance(previous_relation, PreviousRelation)
-            else PreviousRelation.from_id_list(id_list=previous_relation)
-        )
-        self.properties.append(previous_relation)
+    def add_previous_relation(self, previous_page_id: PageId) -> "DailyLogBuilder":
+        self.properties.append(PreviousRelation.from_id_list(id_list=[previous_page_id]))
         return self
 
     def add_tag_relation(self, tag_relation: list[PageId] | TagRelation) -> "DailyLogBuilder":
@@ -76,8 +66,8 @@ class DailyLogBuilder:
         self.properties.append(tag_relation)
         return self
 
-    def add_cover(self, cover: list[PageId] | TagRelation) -> "DailyLogBuilder":
-        self.cover = cover if isinstance(cover, Cover) else Cover.from_external_url(cover)
+    def add_cover(self, cover_url: str) -> "DailyLogBuilder":
+        self.cover = Cover.from_external_url(cover_url)
         return self
 
     def add_block(self, block: Block) -> "DailyLogBuilder":

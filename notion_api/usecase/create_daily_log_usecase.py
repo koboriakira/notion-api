@@ -4,15 +4,18 @@ from datetime import date, datetime, timedelta
 import requests
 
 from common.value.database_type import DatabaseType
-from notion_client_wrapper.base_page import BasePage
+from daily_log.domain.daily_log_builder import DailyLogBuilder
+from daily_log.domain.daily_log_repository import DailyLogRepository
 from notion_client_wrapper.client_wrapper import ClientWrapper
-from notion_client_wrapper.properties import Cover, Date, Relation, Title
+from notion_client_wrapper.page.page_id import PageId
+from notion_client_wrapper.properties import Date, Title
 from util.datetime import JST, jst_today
 
 
 class CreateDailyLogUsecase:
-    def __init__(self) -> None:
-        self.client = ClientWrapper.get_instance()
+    def __init__(self, client: ClientWrapper, daily_log_repository: DailyLogRepository) -> None:
+        self.client = client
+        self._daily_log_repository = daily_log_repository
 
     def handle(self, year: int | None = None, isoweeknum: int | None = None) -> None:
         # 初期化
@@ -28,7 +31,7 @@ class CreateDailyLogUsecase:
         start_date = generate_date(year, isoweeknum)
         for i in range(7):
             daily_date = start_date + timedelta(days=i)
-            self._create_daily_log_page(date=daily_date, weekly_log_id=weekly_log_id)
+            self._create_daily_log_page(date_=daily_date, weekly_log_id=weekly_log_id)
 
     def _find_weekly_log(self, year: int, isoweeknum: int) -> dict | None:
         title = f"{year}-Week{isoweeknum}"
@@ -67,33 +70,26 @@ class CreateDailyLogUsecase:
             ],
         )
 
-    def _find_daily_log(self, date: date) -> BasePage | None:
-        daily_logs = self.client.retrieve_database(
-            database_id=DatabaseType.DAILY_LOG.value,
-            title=date.isoformat(),
-        )
-        if len(daily_logs) == 0:
-            return None
-        return daily_logs[0]
-
-    def _create_daily_log_page(self, date: date, weekly_log_id: str) -> None:
-        daily_log = self._find_daily_log(date)
+    def _create_daily_log_page(self, date_: date, weekly_log_id: str) -> None:
+        daily_log = self._daily_log_repository.find(date_)
         if daily_log is not None:
             return
-        yesterday_daily_log = self._find_daily_log(date - timedelta(days=1))
+
+        yesterday_daily_log = self._daily_log_repository.find(date_ - timedelta(days=1))
+        if yesterday_daily_log is None:
+            msg = "前日のデイリーログが存在しません"
+            raise ValueError(msg)
+
         cover_url = get_random_photo_url()
-        properties = [
-            Date.from_start_date(name="日付", start_date=date),
-            Title.from_plain_text(name="名前", text=date.isoformat()),
-            Relation.from_id_list(name="💭 ウィークリーログ", id_list=[weekly_log_id]),
-        ]
-        if yesterday_daily_log is not None:
-            properties.append(Relation.from_id_list(name="前日", id_list=[yesterday_daily_log.id]))
-        self.client.create_page_in_database(
-            database_id=DatabaseType.DAILY_LOG.value,
-            cover=Cover.from_external_url(external_url=cover_url),
-            properties=properties,
+
+        daily_log = (
+            DailyLogBuilder.of(date_=date_)
+            .add_weekly_log_relation(weekly_log_page_id=PageId(weekly_log_id))
+            .add_previous_relation(previous_page_id=PageId(yesterday_daily_log.id))
+            .add_cover(cover_url=cover_url)
+            .build()
         )
+        self._daily_log_repository.save(daily_log)
 
 
 def generate_date(year: int, isoweeknum: int) -> date:
@@ -109,9 +105,3 @@ def get_random_photo_url() -> str | None:
         return None
     data = response.json()
     return data["urls"]["full"]
-
-
-if __name__ == "__main__":
-    # python -m usecase.create_daily_log_usecase
-    usecase = CreateDailyLogUsecase()
-    usecase.handle(year=2024, isoweeknum=3)
