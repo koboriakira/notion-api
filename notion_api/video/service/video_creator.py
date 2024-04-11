@@ -1,9 +1,9 @@
 from logging import Logger, getLogger
 
+from common.domain.tag_relation import TagRelation
 from common.infrastructure.default_scraper import DefaultScraper
 from common.service.scrape_service.scrape_service import ScrapeService
 from common.service.tag_creator import TagCreator
-from notion_api.common.domain.tag_relation import TagRelation
 from util.tag_analyzer import TagAnalyzer
 from video.domain.video import Video
 from video.infrastructure.video_repository_impl import VideoRepositoryImpl as VideoRepository

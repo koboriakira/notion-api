@@ -3,7 +3,6 @@ from custom_logger import get_logger
 from infrastructure.book.google_book_api import GoogleBookApi
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from usecase.add_book_usecase import AddBookUsecase
-from usecase.service.tag_create_service import TagCreateService
 
 logger = get_logger(__name__)
 
@@ -22,8 +21,7 @@ def add_book_by_google_book_id(
         client=client,
         logger=logger,
     )
-    tag_create_service = TagCreateService(client=client)
-    usecase = AddBookUsecase(book_api=book_api, book_repository=book_repository, tag_create_service=tag_create_service)
+    usecase = AddBookUsecase(book_api=book_api, book_repository=book_repository)
     return usecase.execute(
         google_book_id=google_book_id,
         title=title,

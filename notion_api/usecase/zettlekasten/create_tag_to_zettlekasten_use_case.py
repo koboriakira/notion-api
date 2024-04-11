@@ -1,7 +1,7 @@
 from logging import Logger
 
+from common.domain.tag_relation import TagRelation
 from common.service.tag_creator.tag_creator import TagCreator
-from notion_api.common.domain.tag_relation import TagRelation
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from util.tag_analyzer import TagAnalyzer
 from zettlekasten.domain.zettlekasten import Zettlekasten
