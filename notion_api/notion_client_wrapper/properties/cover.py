@@ -1,12 +1,16 @@
 from dataclasses import dataclass
 
+from requests import HTTPError
+
+from notion_client_wrapper.unsplash.unsplash_photo import UnsplashPhoto
+
 
 @dataclass
 class Cover:
     type: str
     external_url: str | None = None
 
-    def __init__(self, type: str, external_url: str | None = None):
+    def __init__(self, type: str, external_url: str | None = None) -> None:  # noqa: A002
         self.type = type
         self.external_url = external_url
 
@@ -24,7 +28,16 @@ class Cover:
             external_url=external_url,
         )
 
-    def __dict__(self):
+    @staticmethod
+    def random(query_words: list[str] | None = None) -> "Cover | None":
+        query_words = query_words or ["nature"]
+        try:
+            external_url = UnsplashPhoto().get_random_photo_url(query_words=query_words)
+            return Cover.from_external_url(external_url=external_url)
+        except HTTPError:
+            return None
+
+    def __dict__(self) -> dict:
         result = {
             "type": self.type,
         }
