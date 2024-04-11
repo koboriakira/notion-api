@@ -1,17 +1,10 @@
-import logging
-
-from usecase.collect_updated_pages_usecase import CollectUpdatedPagesUsecase
-from util.environment import Environment
+from injector.injector import Injector
 from util.error_reporter import ErrorReporter
 
-# ログ
-logging.basicConfig(level=logging.INFO)
-if Environment.is_dev():
-    logging.basicConfig(level=logging.DEBUG)
 
-def handler(event: dict, context:dict) -> dict:  # noqa: ARG001
+def handler(event: dict, context: dict) -> dict:  # noqa: ARG001
     try:
-        usecase = CollectUpdatedPagesUsecase()
+        usecase = Injector.create_collect_updated_pages_usecase()
         usecase.execute()
         return {
             "statusCode": 200,
@@ -19,6 +12,7 @@ def handler(event: dict, context:dict) -> dict:  # noqa: ARG001
     except:
         ErrorReporter().execute()
         raise
+
 
 if __name__ == "__main__":
     # python -m notion_api.collect_updated_pages
