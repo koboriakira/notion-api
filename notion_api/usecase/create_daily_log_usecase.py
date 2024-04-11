@@ -2,8 +2,7 @@ import contextlib
 from datetime import date
 
 from common.value.database_type import DatabaseType
-from daily_log.domain.daily_log_repository import DailyLogRepository
-from daily_log.infrastructure.daily_log_repository_impl import ExistedDailyLogError
+from daily_log.domain.daily_log_repository import DailyLogRepository, ExistedDailyLogError
 from daily_log.value.isoweek import Isoweek
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper.page.page_id import PageId
