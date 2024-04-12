@@ -31,7 +31,7 @@ class AddRecipeUseCase:
         reference_url: str | None,
         slack_channel: str | None = None,
         slack_thread_ts: str | None = None,
-    ) -> dict:
+    ) -> Recipe:
         self._logger.info("レシピを追加します")
         # レシピを分析
         analyze_result = self._recipe_creator.execute(description=description)
@@ -46,6 +46,8 @@ class AddRecipeUseCase:
             text=f"レシピを登録しました!`: {recipe.title_for_slack()}",
             thread_ts=slack_thread_ts,
         )
+
+        return recipe
 
     def _generate_recipe(self, analyze_result: AnalyzeResult, reference_url: str | None) -> Recipe:
         builder = (
