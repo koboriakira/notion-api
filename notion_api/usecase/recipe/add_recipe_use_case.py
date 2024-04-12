@@ -73,6 +73,8 @@ class AddRecipeUseCase:
                 fat=int(pfc_dict["fat"]),
                 carbohydrate=int(pfc_dict["carbohydrate"]),
             )
+        if pfc_dict.get("description") is not None:
+            builder = builder.add_bulletlist_block(heading="栄養素計算の背景", texts=[pfc_dict["description"]])
 
         return builder.build()
 
