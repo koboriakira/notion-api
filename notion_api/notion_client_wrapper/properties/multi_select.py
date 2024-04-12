@@ -7,7 +7,7 @@ from notion_client_wrapper.properties.property import Property
 class MultiSelectElement:
     id: str
     name: str
-    color: str
+    color: str | None
 
     def __dict__(self) -> dict:
         return {
@@ -22,28 +22,47 @@ class MultiSelect(Property):
     values: list[MultiSelectElement]
     type: str = "multi_select"
 
-    def __init__(
-            self,
-            name: str,
-            values: list[dict[str, str]],
-            id: str | None = None) -> None:  # noqa: A002
+    def __init__(self, name: str, values: list[dict[str, str]], id: str | None = None) -> None:  # noqa: A002
+        values = [
+            MultiSelectElement(id=element["id"], name=element["name"], color=element.get("color")) for element in values
+        ]
         self.name = name
         self.values = values
         self.id = id
 
-    @ staticmethod
+    @staticmethod
     def of(name: str, param: dict) -> "MultiSelect":
         multi_select = [
             MultiSelectElement(
                 id=element["id"],
                 name=element["name"],
                 color=element["color"],
-            ) for element in param["multi_select"]]
+            )
+            for element in param["multi_select"]
+        ]
 
         return MultiSelect(
             name=name,
             values=multi_select,
             id=param["id"],
+        )
+
+    @staticmethod
+    def create(name: str, values: list[dict[str, str]]) -> "MultiSelect":
+        """
+        Create a MultiSelect instance from a list of dictionaries.
+
+        Args:
+            name (str): Name of the property.
+            values (list[dict[str, str]]): List of dictionaries. Each dictionary should have keys "id" and "name".
+
+        Returns:
+            MultiSelect: MultiSelect instance.
+        """
+        multi_select = [MultiSelectElement(id=element["id"], name=element["name"]) for element in values]
+        return MultiSelect(
+            name=name,
+            values=multi_select,
         )
 
     def __dict__(self) -> dict:
