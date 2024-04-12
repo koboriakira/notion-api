@@ -1,3 +1,4 @@
+import json
 from collections.abc import Callable
 from logging import Logger, getLogger
 
@@ -34,6 +35,20 @@ class OpenaiExecuter:
         self.logger.debug(response.choices[0].message)
         content = response.choices[0].message.content
         return content or ""
+
+    def simple_json_chat(self, system_prompt: dict, user_content: str) -> dict:
+        """メッセージをOpenAIに送信して、返答を受け取る"""
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_content},
+        ]
+        response = self.client.chat.completions.create(
+            model=self.model,
+            messages=messages,
+            response_format={"type": "json_object"},
+        )
+        print(response.choices[0].message)
+        return json.loads(response.choices[0].message.content)
 
     def simple_function_calling(
         self,
