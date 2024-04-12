@@ -20,10 +20,34 @@ class NotFoundBookError(Exception):
 
 
 class BookRepository(metaclass=ABCMeta):
+    """Interface for a book repository"""
+
     @abstractmethod
     def find_by_title(self, title: str) -> Book | None:
-        """Find a book by title"""
+        """
+        Find a book by title
+
+        Args:
+            title: Title of the book
+
+        Returns:
+            Book: Book instance if found, None otherwise
+
+        Raises:
+            NotFoundBookError: If the book is not found
+        """
 
     @abstractmethod
     def save(self, book: Book) -> Book:
-        """Save a book"""
+        """
+        Save a book
+
+        Args:
+            book: Book instance to save
+
+        Returns:
+            Book: Saved book instance
+
+        Raises:
+            ExistedBookError: If the book already exists
+        """
