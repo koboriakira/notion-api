@@ -8,11 +8,14 @@ from custom_logger import get_logger
 from daily_log.infrastructure.daily_log_repository_impl import DailyLogRepositoryImpl
 from injector.page_creator_factory import PageCreatorFactory
 from notion_client_wrapper.client_wrapper import ClientWrapper
+from recipe.infrastructure.recipe_repository_impl import RecipeRepositoryImpl
+from recipe.service.recipe_creator import RecipeCreator
 from slack_concierge.injector import SlackConciergeInjector
 from task.infrastructure.task_repository_impl import TaskRepositoryImpl
 from usecase.add_webclip_usecase import AddWebclipUsecase
 from usecase.collect_updated_pages_usecase import CollectUpdatedPagesUsecase
 from usecase.create_page_use_case import CreatePageUseCase
+from usecase.recipe.add_recipe_use_case import AddRecipeUseCase
 from usecase.service.inbox_service import InboxService
 from usecase.service.tag_analyzer import TagAnalyzer
 from usecase.service.tag_create_service import TagCreateService
@@ -119,6 +122,21 @@ class Injector:
             task_repository=task_repository,
             daily_log_repository=daily_log_repository,
             is_debug=is_debug,
+        )
+
+    @classmethod
+    def create_add_recipe_use_case(
+        cls: "Injector",
+        logger: Logger | None = None,
+    ) -> AddRecipeUseCase:
+        logger = logger or get_logger(__name__)
+        recipe_creator = RecipeCreator(openai_executer=openai_executer, logger=logger)
+        recipe_repository = RecipeRepositoryImpl(client=client, logger=logger)
+        return AddRecipeUseCase(
+            recipe_creator=recipe_creator,
+            recipe_repository=recipe_repository,
+            slack_client=slack_bot_client,
+            logger=logger,
         )
 
     @classmethod
