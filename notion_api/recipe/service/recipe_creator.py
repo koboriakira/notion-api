@@ -25,9 +25,6 @@ class AnalyzeResult:
     kind: MealKindTypes
     ingredients: list[str]
     process: list[str]
-    protein: int | None
-    fat: int | None
-    carbohydrate: int | None
 
     @staticmethod
     def func(args: dict) -> "AnalyzeResult":
@@ -45,18 +42,11 @@ class AnalyzeResult:
         process: str = params.get("process")
         if process is None:
             raise RecipeCreateError.required(field="process")
-        protein = params.get("protein")
-        fat = params.get("fat")
-        carbohydrate = params.get("carbohydrate")
-
         return AnalyzeResult(
             title=title,
             kind=MealKindTypes([MealKindType.from_text(k) for k in kind.split(",")]),
             ingredients=ingredients.split("\n"),
             process=process.split("\n"),
-            protein=convert_to_int(protein) if protein else None,
-            fat=convert_to_int(fat) if fat else None,
-            carbohydrate=convert_to_int(carbohydrate) if carbohydrate else None,
         )
 
 
@@ -87,18 +77,6 @@ class RecipeCreator:
                     "type": "string",
                     "description": "工程をあらわす。リスト形式で改行で区切る。1行には50文字以内で記述すること。\n例)\nじゃがいもを洗って皮をむく\nにんじんを輪切りにする",
                 },
-                "protein": {
-                    "type": "string",
-                    "description": "材料・工程から推測したタンパク質の量。単位はg。整数値で指定し、数値以外の文字はNG。推測できない場合は空文字を指定する。",
-                },
-                "fat": {
-                    "type": "string",
-                    "description": "材料・工程から推測した脂質の量。単位はg。整数値で指定し、数値以外の文字はNG。推測できない場合は空文字を指定する。",
-                },
-                "carbohydrate": {
-                    "type": "string",
-                    "description": "材料・工程から推測した炭水化物の量。単位はg。整数値で指定し、数値以外の文字はNG。推測できない場合は空文字を指定する。",
-                },
             },
             "required": ["title", "kind", "ingredients", "process", "protein", "fat", "carbohydrate"],
         }
@@ -109,6 +87,15 @@ class RecipeCreator:
             parameters=analyze_recipe_parameters,
         )
         return result
+
+    def calculate_pfc(self, ingredients: list[str], process: list[str]) -> dict:
+        system_prompt = """次の食材・工程で料理したときの、1人前に相当する量のPFC(protein, fat, carbohydrate)を計算してください。回答はJSON形式で、以下のフィールドを持ちます。
+・protein: 1人前の量にふくまれるタンパク質。グラム単位の整数値
+・fat: 1人前の量にふくまれる脂質。グラム単位の整数値
+・carbohydrate: 1人前の量にふくまれる炭水化物。グラム単位の整数値
+・description: どのように計算したかの説明。とくに全量のPFCがいくつかと、全量が何人前に相当すると推測したかを明記してください"""
+        user_content = "【食材】\n" + "\n".join(ingredients) + "\n\n【工程】\n" + "\n".join(process)
+        return self._openai_executer.simple_json_chat(system_prompt=system_prompt, user_content=user_content)
 
 
 class MockRecipeCreator(RecipeCreator):

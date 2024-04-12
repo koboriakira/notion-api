@@ -35,9 +35,13 @@ class AddRecipeUseCase:
         self._logger.info("レシピを追加します")
         # レシピを分析
         analyze_result = self._recipe_creator.execute(description=description)
+        pfc_dict = self._recipe_creator.calculate_pfc(
+            ingredients=analyze_result.ingredients,
+            process=analyze_result.process,
+        )
 
         # ページインスタンスを生成、保存
-        recipe = self._generate_recipe(analyze_result=analyze_result, reference_url=reference_url)
+        recipe = self._generate_recipe(analyze_result=analyze_result, reference_url=reference_url, pfc_dict=pfc_dict)
         recipe = self._recipe_repository.save(recipe)
 
         # Slackに通知
@@ -49,7 +53,7 @@ class AddRecipeUseCase:
 
         return recipe
 
-    def _generate_recipe(self, analyze_result: AnalyzeResult, reference_url: str | None) -> Recipe:
+    def _generate_recipe(self, analyze_result: AnalyzeResult, reference_url: str | None, pfc_dict: dict) -> Recipe:
         builder = (
             RecipeBuilder.of(title=analyze_result.title)
             .add_recipe_kind(RecipeKindType.AUTO)
@@ -59,6 +63,16 @@ class AddRecipeUseCase:
         )
         if reference_url is not None:
             builder = builder.add_reference_url(url=reference_url)
+        if (
+            pfc_dict.get("protein") is not None
+            and pfc_dict.get("fat") is not None
+            and pfc_dict.get("carbohydrate") is not None
+        ):
+            builder = builder.add_pfc(
+                protein=int(pfc_dict["protein"]),
+                fat=int(pfc_dict["fat"]),
+                carbohydrate=int(pfc_dict["carbohydrate"]),
+            )
 
         return builder.build()
 
