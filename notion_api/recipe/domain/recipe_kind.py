@@ -16,6 +16,7 @@ class RecipeKindType(Enum):
     CLASSIC = "殿堂入り"
     COOKED = "レシピ入り"
     ARCHIVE = "アーカイブ"
+    AUTO = "自動作成"
 
     @staticmethod
     def from_text(text: str) -> "RecipeKindType":

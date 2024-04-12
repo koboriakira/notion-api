@@ -1,11 +1,12 @@
 from dataclasses import dataclass
 
 from notion_client_wrapper.block.block import Block
+from notion_client_wrapper.block.bulleted_list_item import BulletedlistItem
+from notion_client_wrapper.block.heading import Heading
 from notion_client_wrapper.page.page_id import PageId
 from notion_client_wrapper.properties.cover import Cover
 from notion_client_wrapper.properties.properties import Properties
 from notion_client_wrapper.properties.property import Property
-from notion_client_wrapper.properties.title import Title
 from recipe.domain.carbohydrate import Carbohydrate
 from recipe.domain.fat import Fat
 from recipe.domain.ingredient_relation import IngredientRelation
@@ -13,6 +14,7 @@ from recipe.domain.meal_kind import MealKind, MealKindTypes
 from recipe.domain.protein import Protein
 from recipe.domain.recipe import Recipe
 from recipe.domain.recipe_kind import RecipeKind, RecipeKindType
+from recipe.domain.recipe_title import RecipeTitle
 from recipe.domain.reference_url import ReferenceUrl
 
 
@@ -25,7 +27,7 @@ class RecipeBuilder:
     @staticmethod
     def of(title: str, blocks: list[Block] | None = None) -> "RecipeBuilder":
         blocks = blocks or []
-        properties = [Title.from_plain_text(text=title)]
+        properties = [RecipeTitle(text=title)]
         return RecipeBuilder(properties=properties, blocks=blocks, cover=None)
 
     def build(self) -> Recipe:
@@ -42,7 +44,9 @@ class RecipeBuilder:
         return self
 
     def add_meal_kind(self, meal_kind_types: MealKindTypes) -> "RecipeBuilder":
-        self.properties.append(MealKind(kind_types=meal_kind_types))
+        meal_kind = MealKind(kind_types=meal_kind_types)
+        print(meal_kind)
+        self.properties.append(meal_kind)
         return self
 
     def add_recipe_kind(self, recipe_kind_type: RecipeKindType) -> "RecipeBuilder":
@@ -51,4 +55,11 @@ class RecipeBuilder:
 
     def add_reference_url(self, url: str) -> "RecipeBuilder":
         self.properties.append(ReferenceUrl(url=url))
+        return self
+
+    def add_bulletlist_block(self, heading: str, texts: list[str]) -> "RecipeBuilder":
+        heading_block = Heading.from_plain_text(heading_size=2, text=heading)
+        self.blocks.append(heading_block)
+        items = [BulletedlistItem.from_plain_text(text=text) for text in texts]
+        self.blocks.extend(items)
         return self
