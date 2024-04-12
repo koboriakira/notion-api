@@ -3,6 +3,7 @@ from enum import Enum
 from notion_client_wrapper.properties.select import Select
 
 kind_map = {
+    "自動作成": {"selected_id": "pMjN", "selected_color": "gray"},
     "まだつくってない": {"selected_id": "426fbc68-2502-48ab-a64c-782149f10b03", "selected_color": "default"},
     "殿堂入り": {"selected_id": "5086e21b-258e-440e-802d-b9c032b2a537", "selected_color": "green"},
     "レシピ入り": {"selected_id": "1455196c-b429-46c9-bfc8-0e50424a7d2e", "selected_color": "blue"},
