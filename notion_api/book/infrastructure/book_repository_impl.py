@@ -35,6 +35,7 @@ class BookRepositoryImpl(BookRepository):
             database_id=DATABASE_ID,
             properties=book.properties.values,
             blocks=book.block_children,
+            cover=book.cover,
         )
         book.update_id_and_url(
             page_id=result["id"],
