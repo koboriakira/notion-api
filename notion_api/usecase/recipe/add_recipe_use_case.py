@@ -4,10 +4,11 @@ from slack_sdk import WebClient
 
 from common.value.slack_channel_type import ChannelType
 from notion_client_wrapper.client_wrapper import ClientWrapper
+from recipe.domain.recipe import Recipe
 from recipe.domain.recipe_builder import RecipeBuilder
 from recipe.domain.recipe_kind import RecipeKindType
 from recipe.domain.recipe_repository import RecipeRepository
-from recipe.service.recipe_creator import MockRecipeCreator, RecipeCreator
+from recipe.service.recipe_creator import AnalyzeResult, MockRecipeCreator, RecipeCreator
 from util.openai_executer import OpenaiExecuter
 
 
@@ -34,9 +35,19 @@ class AddRecipeUseCase:
         self._logger.info("レシピを追加します")
         # レシピを分析
         analyze_result = self._recipe_creator.execute(description=description)
-        self._logger.info(f"分析結果: {analyze_result}")
 
         # ページインスタンスを生成、保存
+        recipe = self._generate_recipe(analyze_result=analyze_result, reference_url=reference_url)
+        recipe = self._recipe_repository.save(recipe)
+
+        # Slackに通知
+        self._slack_client.chat_postMessage(
+            channel=slack_channel or ChannelType.DIARY.value,
+            text=f"レシピを登録しました!`: {recipe.title_for_slack()}",
+            thread_ts=slack_thread_ts,
+        )
+
+    def _generate_recipe(self, analyze_result: AnalyzeResult, reference_url: str | None) -> Recipe:
         builder = (
             RecipeBuilder.of(title=analyze_result.title)
             .add_recipe_kind(RecipeKindType.AUTO)
@@ -47,14 +58,7 @@ class AddRecipeUseCase:
         if reference_url is not None:
             builder = builder.add_reference_url(url=reference_url)
 
-        recipe = builder.build()
-        recipe = self._recipe_repository.save(recipe)
-
-        self._slack_client.chat_postMessage(
-            channel=slack_channel or ChannelType.DIARY.value,
-            text=f"レシピを登録しました!`: {recipe.title_for_slack()}",
-            thread_ts=slack_thread_ts,
-        )
+        return builder.build()
 
 
 if __name__ == "__main__":
@@ -71,7 +75,7 @@ if __name__ == "__main__":
     logger = logging.getLogger(__name__)
 
     openai_executer = OpenaiExecuter(logger=logger)
-    recipe_creator = RecipeCreator(openai_executer=openai_executer, logger=logger)
+    # recipe_creator = RecipeCreator(openai_executer=openai_executer, logger=logger)
     recipe_repository = RecipeRepositoryImpl(client=ClientWrapper.get_instance(), logger=logger)
     slack_client = WebClient(token=os.environ["SLACK_BOT_TOKEN"])
     usecase = AddRecipeUseCase(
