@@ -127,3 +127,9 @@ class BasePage:
         if isinstance(self.id_, str):
             return PageId(self.id_)
         return self.id_
+
+    def get_id_and_url(self) -> dict:
+        return {
+            "id": self.id,
+            "url": self.url,
+        }
