@@ -8,6 +8,9 @@ class MultiSelectElement:
     id: str
     name: str
     color: str | None = None
+    type: str = "multi_select"
+
+    TYPE = "multi_select"
 
     def __dict__(self) -> dict:
         result = {
@@ -69,7 +72,12 @@ class MultiSelect(Property):
         )
 
     def __dict__(self) -> dict:
-        result = [e.__dict__() for e in self.values]
+        result = {
+            "type": self.type,
+            "multi_select": [e.__dict__() for e in self.values],
+        }
+        if self.id is not None:
+            result["id"] = self.id
         return {self.name: result}
 
     def value_for_filter(self) -> str:
