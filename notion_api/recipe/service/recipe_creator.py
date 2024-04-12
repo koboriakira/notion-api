@@ -1,9 +1,16 @@
 import json
+import re
 from dataclasses import dataclass
 from logging import Logger, getLogger
 
 from recipe.domain.meal_kind import MealKindType, MealKindTypes
 from util.openai_executer import OpenaiExecuter
+
+
+def convert_to_int(value: str) -> int | None:
+    # 数値以外の文字を削除
+    value = re.sub(r"\D", "", value)
+    return int(value) if value.isdigit() else None
 
 
 class RecipeCreateError(Exception):
@@ -18,6 +25,9 @@ class AnalyzeResult:
     kind: MealKindTypes
     ingredients: list[str]
     process: list[str]
+    protein: int | None
+    fat: int | None
+    carbohydrate: int | None
 
     @staticmethod
     def func(args: dict) -> "AnalyzeResult":
@@ -35,12 +45,18 @@ class AnalyzeResult:
         process: str = params.get("process")
         if process is None:
             raise RecipeCreateError.required(field="process")
+        protein = params.get("protein")
+        fat = params.get("fat")
+        carbohydrate = params.get("carbohydrate")
 
         return AnalyzeResult(
             title=title,
             kind=MealKindTypes([MealKindType.from_text(k) for k in kind.split(",")]),
             ingredients=ingredients.split("\n"),
             process=process.split("\n"),
+            protein=convert_to_int(protein) if protein else None,
+            fat=convert_to_int(fat) if fat else None,
+            carbohydrate=convert_to_int(carbohydrate) if carbohydrate else None,
         )
 
 
@@ -71,8 +87,20 @@ class RecipeCreator:
                     "type": "string",
                     "description": "工程をあらわす。リスト形式で改行で区切る。1行には50文字以内で記述すること。\n例)\nじゃがいもを洗って皮をむく\nにんじんを輪切りにする",
                 },
+                "protein": {
+                    "type": "string",
+                    "description": "材料・工程から推測したタンパク質の量。単位はg。整数値で指定し、数値以外の文字はNG。推測できない場合は空文字を指定する。",
+                },
+                "fat": {
+                    "type": "string",
+                    "description": "材料・工程から推測した脂質の量。単位はg。整数値で指定し、数値以外の文字はNG。推測できない場合は空文字を指定する。",
+                },
+                "carbohydrate": {
+                    "type": "string",
+                    "description": "材料・工程から推測した炭水化物の量。単位はg。整数値で指定し、数値以外の文字はNG。推測できない場合は空文字を指定する。",
+                },
             },
-            "required": ["title", "kind", "ingredients", "process"],
+            "required": ["title", "kind", "ingredients", "process", "protein", "fat", "carbohydrate"],
         }
         result: AnalyzeResult = self._openai_executer.simple_function_calling(
             user_content=user_content,
