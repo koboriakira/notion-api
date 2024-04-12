@@ -2,8 +2,8 @@ from datetime import datetime
 from unittest import TestCase
 
 import pytest
+from notion_api.book.domain.book import Book
 from notion_api.common.value.database_type import DatabaseType
-from notion_api.task.domain.task import Task
 from notion_api.notion_client_wrapper.base_page import BasePage
 from notion_api.notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_api.notion_client_wrapper.filter.condition.date_condition import DateCondition
@@ -13,6 +13,7 @@ from notion_api.notion_client_wrapper.properties.cover import Cover
 from notion_api.notion_client_wrapper.properties.last_edited_time import LastEditedTime
 from notion_api.notion_client_wrapper.properties.title import Title
 from notion_api.notion_client_wrapper.properties.url import Url
+from notion_api.task.domain.task import Task
 from notion_api.util.datetime import JST
 
 
@@ -199,3 +200,14 @@ class TestClientWrapper(TestCase):
             properties=[title],
         )
         print(page)
+
+    @pytest.mark.use_genuine_api()
+    def test_タイトルだけで検索する(self):
+        # pytest test/notion_client_wrapper/test_client_wrapper.py::TestClientWrapper::test_タイトルだけで検索する
+        page = self.suite.find_page_by_title(
+            database_id=DatabaseType.BOOK.value,
+            title="ジェームズ・クリアー式 複利で伸びる1つの習慣",
+            title_key_name="Title",
+            page_model=Book,
+        )
+        self.assertIsNotNone(page)

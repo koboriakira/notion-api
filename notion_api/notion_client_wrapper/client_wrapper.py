@@ -7,6 +7,7 @@ from notion_client.errors import APIResponseError
 from notion_client_wrapper.base_operator import BaseOperator
 from notion_client_wrapper.base_page import BasePage
 from notion_client_wrapper.block import Block, BlockFactory
+from notion_client_wrapper.filter.filter_builder import FilterBuilder
 from notion_client_wrapper.page.page_id import PageId
 from notion_client_wrapper.properties.cover import Cover
 from notion_client_wrapper.properties.created_time import CreatedTime
@@ -14,6 +15,7 @@ from notion_client_wrapper.properties.icon import Icon
 from notion_client_wrapper.properties.last_edited_time import LastEditedTime
 from notion_client_wrapper.properties.properties import Properties
 from notion_client_wrapper.properties.property import Property
+from notion_client_wrapper.properties.title import Title
 from notion_client_wrapper.property_translator import PropertyTranslator
 
 logger = logging.getLogger(__name__)
@@ -98,6 +100,29 @@ class ClientWrapper:
         if title is not None:
             pages = list(filter(lambda p: p.properties.get_title().text == title, pages))
         return pages
+
+    def find_page_by_title(
+        self,
+        database_id: str,
+        title: str,
+        title_key_name: str | None = "名前",
+        page_model: BasePage | None = None,
+    ) -> list[BasePage]:
+        """タイトルだけをもとにデータベースのページを取得する"""
+        title_property = Title.from_plain_text(text=title, name=title_key_name)
+        filter_param = FilterBuilder.build_simple_equal_condition(title_property)
+        results = self.retrieve_database(
+            database_id=database_id,
+            filter_param=filter_param,
+            page_model=page_model,
+        )
+        results = self._database_query(database_id=database_id, filter_param=filter_param)
+        if len(results) == 0:
+            return None
+        if len(results) > 1:
+            warning_message = f"Found multiple pages with the same title: {title}"
+            logger.warning(warning_message)
+        return results[0]
 
     def _database_query(
         self,
