@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from enum import Enum
 
-from notion_client_wrapper.properties.multi_select import MultiSelect
+from notion_client_wrapper.properties.multi_select import MultiSelect, MultiSelectElement
 
 KIND_LIST = [
     {"name": "副菜", "id": "f1557d37-1470-4d8a-8010-0cbfcac8481a"},
@@ -66,8 +66,8 @@ class MealKindTypes:
                 msg = f"[{type(self)} Invalid type for {value}: {type(value)}"
                 raise TypeError(msg)
 
-    def to_dict_values(self) -> list[dict[str, str]]:
-        return [k.__dict__() for k in self.values]
+    def to_multi_select_elements(self) -> list[MultiSelectElement]:
+        return [MultiSelectElement(**kind.__dict__()) for kind in self.values]
 
 
 class MealKind(MultiSelect):

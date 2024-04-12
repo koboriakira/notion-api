@@ -7,14 +7,16 @@ from notion_client_wrapper.properties.property import Property
 class MultiSelectElement:
     id: str
     name: str
-    color: str | None
+    color: str | None = None
 
     def __dict__(self) -> dict:
-        return {
+        result = {
             "id": self.id,
             "name": self.name,
-            "color": self.color,
         }
+        if self.color:
+            result["color"] = self.color
+        return result
 
 
 @dataclass
@@ -22,13 +24,14 @@ class MultiSelect(Property):
     values: list[MultiSelectElement]
     type: str = "multi_select"
 
-    def __init__(self, name: str, values: list[dict[str, str]], id: str | None = None) -> None:  # noqa: A002
-        values = [
-            MultiSelectElement(id=element["id"], name=element["name"], color=element.get("color")) for element in values
-        ]
+    def __init__(self, name: str, values: list[MultiSelectElement], id: str | None = None) -> None:  # noqa: A002
         self.name = name
         self.values = values
         self.id = id
+
+    def __post_init__(self) -> None:
+        if not all(isinstance(value, MultiSelectElement) for value in self.values):
+            raise ValueError("All values must be MultiSelectElement instances.")
 
     @staticmethod
     def of(name: str, param: dict) -> "MultiSelect":
