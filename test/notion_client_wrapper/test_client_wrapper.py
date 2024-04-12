@@ -159,12 +159,12 @@ class TestClientWrapper(TestCase):
         print(len(pages))
         # self.fail()
 
-    @pytest.mark.slow()
+    @pytest.mark.skip()
     def test_select_kind_map(self):
         """Selectの選択肢を集めるためのテスト"""
         # pytest test/notion_client_wrapper/test_client_wrapper.py::TestClientWrapper::test_select_kind_map
-        target_database = DatabaseType.TASK_ROUTINE
-        target_select_name = "周期"
+        target_database = DatabaseType.RECIPE
+        target_select_name = "状態"
 
         pages = self.suite.retrieve_database(
             database_id=target_database.value,
@@ -187,7 +187,34 @@ class TestClientWrapper(TestCase):
         print(json.dumps(result, indent=2, ensure_ascii=False))
 
         # 内容を確認したいので、無理やりfailさせる
-        # self.fail("動作確認用。テストは失敗しても問題ありません。")
+        self.fail("動作確認用。テストは失敗しても問題ありません。")
+
+    @pytest.mark.skip()
+    def test_multi_select_kind_map(self):
+        """MultiSelectの選択肢を集めるためのテスト"""
+        # pytest test/notion_client_wrapper/test_client_wrapper.py::TestClientWrapper::test_multi_select_kind_map
+        target_database = DatabaseType.RECIPE
+        target_multi_select_name = "種類"
+
+        pages = self.suite.retrieve_database(
+            database_id=target_database.value,
+        )
+
+        result = []
+        for page in pages:
+            select_property = page.get_multi_select(name=target_multi_select_name)
+            if select_property is None:
+                continue
+            values = select_property.values
+            result.extend([{"name": value.name, "id": value.id} for value in values])
+        # uniqueにする
+        result = list({value["name"]: value for value in result}.values())
+        import json
+
+        print(json.dumps(result, indent=2, ensure_ascii=False))
+
+        # 内容を確認したいので、無理やりfailさせる
+        self.fail("動作確認用。テストは失敗しても問題ありません。")
 
     @pytest.mark.skip("実際にページが作成されるので注意")
     def test_ページを作成してみる(self):
