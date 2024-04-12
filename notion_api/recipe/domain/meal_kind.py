@@ -76,5 +76,5 @@ class MealKind(MultiSelect):
     def __init__(self, kind_types: MealKindTypes) -> None:
         super().__init__(
             name=self.NAME,
-            values=kind_types.to_dict_values(),
+            values=kind_types.to_multi_select_elements(),
         )
