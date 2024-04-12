@@ -23,8 +23,6 @@ class DailyLog(BasePage):
 
     @property
     def tag_relation(self) -> list[PageId]:
-        tag_relation = self.get_relation(name=TagRelation.NAME)
-        print(tag_relation)
         return self.get_relation(name=TagRelation.NAME).page_id_list
 
     @property
