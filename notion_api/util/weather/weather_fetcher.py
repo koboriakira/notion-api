@@ -16,16 +16,40 @@ class Detail(TypeSafeFrozenObject):
 
 @dataclass(frozen=True)
 class Tempature(TypeSafeFrozenObject):
-    min_cecius: int
-    max_cecius: int
+    min_cecius: int | None
+    max_cecius: int | None
+
+    @staticmethod
+    def from_dict(data: dict) -> "Tempature":
+        min_celecius = data["min"]["celsius"]
+        max_celecius = data["max"]["celsius"]
+        return Tempature(
+            min_cecius=int(min_celecius) if min_celecius is not None else None,
+            max_cecius=int(max_celecius) if max_celecius is not None else None,
+        )
 
 
 @dataclass(frozen=True)
 class ChanceOfRain(TypeSafeFrozenObject):
-    morning: int
-    afternoon: int
-    evening: int
-    late_night: int
+    morning: int | None
+    afternoon: int | None
+    evening: int | None
+    late_night: int | None
+
+    @staticmethod
+    def from_dict(data: dict) -> "ChanceOfRain":
+        def convert(data: str) -> int | None:
+            try:
+                return int(data.replace("%", ""))
+            except ValueError:
+                return None
+
+        return ChanceOfRain(
+            morning=convert(data["T06_12"]),
+            afternoon=convert(data["T12_18"]),
+            evening=convert(data["T18_24"]),
+            late_night=convert(data["T00_06"]),
+        )
 
 
 @dataclass(frozen=True)
@@ -61,17 +85,9 @@ class WeatherFetcher:
             wind=forecast["detail"]["wind"],
             wave=forecast["detail"]["wave"],
         )
-        tempature = Tempature(
-            min_cecius=int(forecast["temperature"]["min"]["celsius"]),
-            max_cecius=int(forecast["temperature"]["max"]["celsius"]),
-        )
-        chancre_of_rain = ChanceOfRain(
-            # "%"を削除してintに変換する
-            morning=int(forecast["chanceOfRain"]["T06_12"].replace("%", "")),
-            afternoon=int(forecast["chanceOfRain"]["T12_18"].replace("%", "")),
-            evening=int(forecast["chanceOfRain"]["T18_24"].replace("%", "")),
-            late_night=int(forecast["chanceOfRain"]["T00_06"].replace("%", "")),
-        )
+        tempature = Tempature.from_dict(forecast["temperature"])
+        chancre_of_rain = ChanceOfRain.from_dict(forecast["chanceOfRain"])
+
         return WeatherFetchResult(
             date=date.fromisoformat(forecast["date"]),
             telop=forecast["telop"],
