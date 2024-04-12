@@ -3,6 +3,12 @@ from dataclasses import dataclass
 from datetime import date
 
 
+class NotFoundApiError(Exception):
+    def __init__(self, param: str) -> None:
+        self.param = param
+        super().__init__(f"Not found API result for {param}")
+
+
 @dataclass(frozen=True)
 class BookApiResult:
     title: str
@@ -38,13 +44,46 @@ class BookApiResultConverter:
 
 class BookApi(metaclass=ABCMeta):
     @abstractmethod
-    def find_by_title(self, title: str) -> BookApiResult | None:
-        pass
+    def find_by_title(self, title: str) -> BookApiResult:
+        """
+        Find a book by title
+
+        Args:
+            title: Title of the book
+
+        Returns:
+            BookApiResult: Book API result
+
+        Raises:
+            NotFoundApiError: If the book is not found
+        """
 
     @abstractmethod
     def find_by_id(self, book_id: str) -> BookApiResult:
-        pass
+        """
+        Find a book by ID
+
+        Args:
+            book_id: ID of the book
+
+        Returns:
+            BookApiResult: Book API result
+
+        Raises:
+            NotFoundApiError: If the book is not found
+        """
 
     @abstractmethod
-    def find_by_isbn(self, isbn: str) -> BookApiResult | None:
-        pass
+    def find_by_isbn(self, isbn: str) -> BookApiResult:
+        """
+        Find a book by ISBN
+
+        Args:
+            isbn: ISBN of the book
+
+        Returns:
+            BookApiResult: Book API result
+
+        Raises:
+            NotFoundApiError: If the book is not found
+        """
