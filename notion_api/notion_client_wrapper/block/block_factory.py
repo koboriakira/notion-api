@@ -24,6 +24,9 @@ from notion_client_wrapper.block.video import Video
 class BlockFactory:
     @staticmethod
     def create(block: dict) -> Block:
+        # import json
+
+        # print(json.dumps(block, indent=2, ensure_ascii=False))
         if block["object"] != "block":
             raise ValueError("block must be of type block")
         block_type = BlockType(block["type"])
