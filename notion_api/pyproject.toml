@@ -11,6 +11,7 @@ ignore = [
   "TRY",    # try-except文がある場合の警告を無視
   "N802",   # クラス名がキャメルケースでない場合の警告を無視
   "PD",     # Pandas関連の警告を無視
+  "S101",   # assertの非推奨を無視
 ]
 
 select = ["ALL"] # ignore以外のすべてのルールを適用する
