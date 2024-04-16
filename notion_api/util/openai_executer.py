@@ -27,6 +27,8 @@ class OpenaiExecuter:
 
     def simple_chat(self, user_content: str) -> str:
         """メッセージをOpenAIに送信して、返答を受け取る"""
+        assert isinstance(user_content, str)
+
         messages = [{"role": "user", "content": user_content}]
         response = self.client.chat.completions.create(
             model=self.model,
@@ -36,8 +38,10 @@ class OpenaiExecuter:
         content = response.choices[0].message.content
         return content or ""
 
-    def simple_json_chat(self, system_prompt: dict, user_content: str) -> dict:
+    def simple_json_chat(self, system_prompt: str, user_content: str) -> dict:
         """メッセージをOpenAIに送信して、返答を受け取る"""
+        assert isinstance(system_prompt, str)
+        assert isinstance(user_content, str)
         messages = [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_content},
@@ -47,8 +51,12 @@ class OpenaiExecuter:
             messages=messages,
             response_format={"type": "json_object"},
         )
-        print(response.choices[0].message)
-        return json.loads(response.choices[0].message.content)
+        message = response.choices[0].message
+        try:
+            return json.loads(message.content)
+        except json.JSONDecodeError as e:
+            print(message.content)
+            return e
 
     def simple_function_calling(
         self,
@@ -65,6 +73,11 @@ class OpenaiExecuter:
             そのdictの中にOpenAIが出力した「関数に使う引数」がすべて入っている。
             それ以外の引数は受け取れない。
         """
+        assert isinstance(user_content, str)
+        assert callable(func)
+        assert isinstance(func_description, str)
+        assert isinstance(parameters, dict)
+
         tool_calls = self.__function_calling(
             user_content=user_content,
             func=func,

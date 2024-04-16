@@ -14,8 +14,6 @@ def prittier(tags: list[str]) -> list[str]:
 
 
 def analyze_tags(args: str) -> list[str]:
-    print(args)
-    print(type(args))
     json_dict = json.loads(args)
     if "tags" not in json_dict or json_dict["tags"] is None:
         return []
@@ -35,6 +33,7 @@ class TagAnalyzer:
         self.is_debug = is_debug or False
 
     def handle(self, text: str) -> list[str]:
+        assert isinstance(text, str)
         if self.is_debug:
             return ["テスト"]
         user_content = f"次の文章を解析して、タグをつけてください。タグはたとえば人名や作品名、サービス名、具体的なキーワード、抽象化されたカテゴリ名のようなものを指します。\n\n{text}"
