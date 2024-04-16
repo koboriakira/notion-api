@@ -46,9 +46,6 @@ class TestRecipeCreator(TestCase):
             "kind": "主菜",
             "ingredients": "鶏むね肉: 350g\nキャベツ: 300g\nにんにく: 10g\n水: 450cc\n酒: 大さじ3\n鶏ガラスープ: 小さじ1と1／2\nほんだし: 小さじ1／2\n塩: 小さじ1／3\n砂糖: 小さじ1\nオイスターソース: 小さじ1\n黒コショウ: 適量",
             "process": "鍋に鶏むね肉350g、キャベツ300g、にんにく10g水450cc、酒大さじ3、鶏ガラスープ小さじ1半、ほんだし小さじ1/2、塩小さじ1/3、砂糖小さじ1、オイスターソース小さじ1入れ沸かし蓋をし1時間煮込み、鶏むね肉を崩して黒胡椒",
-            "protein": "10",
-            "fat": "20",
-            "carbohydrate": "30g",
         }
 
         # When
@@ -79,6 +76,3 @@ class TestRecipeCreator(TestCase):
                 "鍋に鶏むね肉350g、キャベツ300g、にんにく10g水450cc、酒大さじ3、鶏ガラスープ小さじ1半、ほんだし小さじ1/2、塩小さじ1/3、砂糖小さじ1、オイスターソース小さじ1入れ沸かし蓋をし1時間煮込み、鶏むね肉を崩して黒胡椒"
             ],
         )
-        self.assertEqual(actual.protein, 10)
-        self.assertEqual(actual.fat, 20)
-        self.assertEqual(actual.carbohydrate, 30)
