@@ -38,7 +38,7 @@ class CreateTagToZettlekastenUseCase:
             return
         text = f"【タイトル】\n{title}\n\n【本文】\n{page_text}"
         tags = self._tag_analyzer.handle(text=text)
-        tag_page_id_list = self._tag_creator.execute(tags=tags)
+        tag_page_id_list = self._tag_creator.execute(tag=tags)
         tag_relation = TagRelation.from_page_id_list(tag_page_id_list)
         zettlekasten.update_tag_relation(tag_relation)
         self._zettlekasten_repository.save(zettlekasten)

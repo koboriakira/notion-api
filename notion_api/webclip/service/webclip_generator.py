@@ -57,7 +57,7 @@ class DefaultWebclipGenerator(WebclipGenerator):
 
         # 要約からタグを抽出して、タグを作成
         tags = self._tag_analyzer.handle(text=summary)
-        tag_page_id_list = self._tag_creator.execute(tags=tags)
+        tag_page_id_list = self._tag_creator.execute(tag=tags)
         tag_relation = TagRelation.from_page_id_list(tag_page_id_list)
 
         # ページ本文
@@ -102,7 +102,7 @@ class TwitterWebclipGenerator(WebclipGenerator):
         tags = self._tag_analyzer.handle(text=tweet.text)
         # 投稿者もタグに含める
         tags.append(tweet.user_name)
-        tag_page_id_list = self._tag_creator.execute(tags=tags)
+        tag_page_id_list = self._tag_creator.execute(tag=tags)
         tag_relation = TagRelation.from_page_id_list(tag_page_id_list)
 
         # カバー画像が指定されてなければ取得を試みる

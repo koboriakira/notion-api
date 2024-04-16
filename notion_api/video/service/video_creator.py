@@ -52,7 +52,7 @@ class VideoCreator:
 
         # タグを解析
         tags = self._tag_analyzer.handle(text=title)
-        tag_page_id_list = self._tag_creator.execute(tags=tags)
+        tag_page_id_list = self._tag_creator.execute(tag=tags)
         tag_relation = TagRelation.from_page_id_list(tag_page_id_list)
 
         # Videoを生成
