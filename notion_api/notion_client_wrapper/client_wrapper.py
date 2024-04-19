@@ -146,25 +146,20 @@ class ClientWrapper:
             return self._database_query_without_filter(database_id=database_id, start_cursor=start_cursor)
         results = []
         while True:
-            try:
-                data: dict = self.client.databases.query(
-                    database_id=database_id,
-                    start_cursor=start_cursor,
-                    filter=filter_param,
-                )
-                results += data.get("results")
-                if not data.get("has_more"):
-                    return results
-                start_cursor = data.get("next_cursor")
-            except:
-                exception_message = f"Database Query was failed. database_id: {database_id}, filter_param: {filter_param}, start_cursor: {start_cursor}"
-                logging.exception(exception_message)
-                raise
+            data = self.__database_query(
+                database_id=database_id,
+                filter_param=filter_param,
+                start_cursor=start_cursor,
+            )
+            results += data.get("results")
+            if not data.get("has_more"):
+                return results
+            start_cursor = data.get("next_cursor")
 
     def _database_query_without_filter(self, database_id: str, start_cursor: str | None = None) -> dict:
         results = []
         while True:
-            data: dict = self.client.databases.query(
+            data = self.__database_query(
                 database_id=database_id,
                 start_cursor=start_cursor,
             )
@@ -247,8 +242,13 @@ class ClientWrapper:
         block_entities = self.__list_blocks(block_id=page_id)["results"]
         return [BlockFactory.create(b) for b in block_entities]
 
-    def __list_blocks(self, block_id: str) -> dict:
-        return self.client.blocks.children.list(block_id=block_id)
+    def __list_blocks(self, block_id: str, retry_count: int = 0) -> dict:
+        try:
+            return self.client.blocks.children.list(block_id=block_id)
+        except APIResponseError as e:
+            if self.__is_able_retry(status=e.status, retry_count=retry_count):
+                return self.__list_blocks(block_id=block_id, retry_count=retry_count + 1)
+            raise NotionApiError(page_id=block_id, e=e) from e
 
     def __archive(self, page_id: str, retry_count: int = 0) -> dict:
         try:
@@ -294,6 +294,34 @@ class ClientWrapper:
                     retry_count=retry_count + 1,
                 )
             raise NotionApiError(database_id=database_id, e=e, properties=properties) from e
+
+    def __database_query(
+        self,
+        database_id: str,
+        start_cursor: str | None = None,
+        filter_param: dict | None = None,
+        retry_count: int = 0,
+    ) -> dict:
+        try:
+            if filter_param is None:
+                return self.client.databases.query(
+                    database_id=database_id,
+                    start_cursor=start_cursor,
+                )
+            return self.client.databases.query(
+                database_id=database_id,
+                start_cursor=start_cursor,
+                filter=filter_param,
+            )
+        except APIResponseError as e:
+            if self.__is_able_retry(status=e.status, retry_count=retry_count):
+                return self.__database_query(
+                    database_id=database_id,
+                    start_cursor=start_cursor,
+                    filter_param=filter_param,
+                    retry_count=retry_count + 1,
+                )
+            raise NotionApiError(database_id=database_id, e=e) from e
 
     def __is_able_retry(self, status: int, retry_count: int) -> bool:
         return status == NOTION_API_ERROR_BAD_GATEWAY and retry_count < self.max_retry_count
