@@ -205,9 +205,11 @@ class ClientWrapper:
     def __convert_page_model(
         self,
         page_entity: dict,
-        include_children: bool = True,
+        include_children: bool | None = None,
         page_model: BasePage | None = None,
     ) -> BasePage:
+        include_children = include_children or True  # 未指定の場合はchildrenを取得する
+
         id_ = PageId(page_entity["id"])
         url = page_entity["url"]
         created_time = CreatedTime.create(page_entity["created_time"])
