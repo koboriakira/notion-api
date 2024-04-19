@@ -82,18 +82,14 @@ class ClientWrapper:
         blocks: list[Block] | None = None,
     ) -> dict:
         """データベース上にページを新規作成する"""
-        properties = properties or []
-        result = self.client.pages.create(
-            parent={
-                "type": "database_id",
-                "database_id": database_id,
-            },
-            cover=cover.__dict__() if cover is not None else None,
-            properties=Properties(values=properties).__dict__() if len(properties) > 0 else None,
+        page = self.__create_page(
+            database_id=database_id,
+            cover=cover,
+            properties=Properties(values=properties or []),
         )
         if blocks is not None:
-            self.append_blocks(block_id=result["id"], blocks=blocks)
-        return result
+            self.append_blocks(block_id=page["id"], blocks=blocks)
+        return page
 
     def retrieve_database(  # noqa: PLR0913
         self,
@@ -201,7 +197,7 @@ class ClientWrapper:
             children=[b.to_dict(for_create=True) for b in blocks],
         )
 
-    def append_comment(self, page_id: str, text: str):
+    def append_comment(self, page_id: str, text: str) -> dict:
         """指定されたページにコメントを追加する"""
         return self.client.comments.create(
             parent={"page_id": page_id},
@@ -212,8 +208,13 @@ class ClientWrapper:
         """指定されたページを削除する"""
         self.__archive(page_id=page_id)
 
-    def __append_block_children(self, block_id: str, children=list[dict]) -> dict:
-        return self.client.blocks.children.append(block_id=block_id, children=children)
+    def __append_block_children(self, block_id: str, children: list[dict], retry_count: int = 0) -> dict:
+        try:
+            return self.client.blocks.children.append(block_id=block_id, children=children)
+        except APIResponseError as e:
+            if self.__is_able_retry(status=e.status, retry_count=retry_count):
+                return self.__append_block_children(block_id=block_id, children=children, retry_count=retry_count + 1)
+            raise NotionApiError(page_id=block_id, e=e) from e
 
     def __convert_page_model(
         self,
@@ -286,9 +287,9 @@ class ClientWrapper:
         properties: Properties,
         cover: Cover | None = None,
         retry_count: int = 0,
-    ) -> None:
+    ) -> dict:
         try:
-            self.client.pages.create(
+            return self.client.pages.create(
                 parent={"type": "database_id", "database_id": database_id},
                 cover=cover.__dict__() if cover is not None else None,
                 properties=properties.__dict__() if properties.is_empty() else None,
