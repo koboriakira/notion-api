@@ -332,18 +332,3 @@ class ClientWrapper:
 
     def __is_able_retry(self, status: int, retry_count: int) -> bool:
         return status == NOTION_API_ERROR_BAD_GATEWAY and retry_count < self.max_retry_count
-
-
-if __name__ == "__main__":
-    # python -m notion_client_wrapper.client_wrapper
-    client = ClientWrapper(client=Client(auth=os.getenv("NOTION_SECRET")))
-
-    # page = client.retrieve_page(page_id="b7576fbdde9b476f913924c1bd90b250")
-    # print(page)
-    # pages = client.retrieve_database(database_id="986876c2e7f8457abd4437334835d0db", title="テストA")
-    # print(pages)
-    # blocks = client.list_blocks(block_id="b7576fbdde9b476f913924c1bd90b250")
-    # print(blocks)
-    # result = client.append_blocks(block_id="b7576fbdde9b476f913924c1bd90b250", blocks=[Paragraph.from_plain_text("test")])
-    # print(result)
-    print(client.retrieve_page(page_id="56049c410c1748b9b035584cf576744f"))
