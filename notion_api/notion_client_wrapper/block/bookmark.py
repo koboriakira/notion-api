@@ -43,7 +43,7 @@ class Bookmark(Block):
         return "bookmark"
 
     def to_dict_sub(self) -> dict:
-        raise {
+        return {
             "caption": [],
             "url": self.bookmark_url,
         }
