@@ -235,8 +235,13 @@ class ClientWrapper:
             block_children=block_children,
         )
 
-    def __retrieve_page(self, page_id: str) -> dict:
-        return self.client.pages.retrieve(page_id=page_id)
+    def __retrieve_page(self, page_id: str, retry_count: int = 0) -> dict:
+        try:
+            return self.client.pages.retrieve(page_id=page_id)
+        except APIResponseError as e:
+            if self.__is_able_retry(status=e.status, retry_count=retry_count):
+                return self.__retrieve_page(page_id=page_id, retry_count=retry_count + 1)
+            raise NotionApiError(page_id=page_id, e=e) from e
 
     def __get_block_children(self, page_id: str) -> list[Block]:
         block_entities = self.__list_blocks(block_id=page_id)["results"]
