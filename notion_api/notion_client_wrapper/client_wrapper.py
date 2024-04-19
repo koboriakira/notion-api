@@ -20,14 +20,17 @@ from notion_client_wrapper.property_translator import PropertyTranslator
 
 logger = logging.getLogger(__name__)
 
+NOTION_API_ERROR_BAD_GATEWAY = 502
+
 
 class UpdatePageError(Exception):
     pass
 
 
 class ClientWrapper:
-    def __init__(self, client: Client) -> None:
+    def __init__(self, client: Client, max_retry_count: int = 3) -> None:
         self.client = client
+        self.max_retry_count = max_retry_count
 
     @staticmethod
     def get_instance() -> "ClientWrapper":
@@ -41,15 +44,8 @@ class ClientWrapper:
 
     def update_page(self, page_id: str, properties: list[Property] | None = None) -> dict:
         """指定されたページを更新する"""
-        update_properties = Properties(values=properties or []).exclude_button()
-        try:
-            return self.client.pages.update(
-                page_id=page_id,
-                properties=update_properties.__dict__(),
-            )
-        except APIResponseError as e:
-            exception_message = f"page_id: {page_id}, error: {e}, properties: {update_properties.__dict__()}"
-            raise UpdatePageError(exception_message) from e
+        update_properties = Properties(values=properties or [])
+        return self.__update(page_id=page_id, properties=update_properties)
 
     def retrieve_comments(self, page_id: str) -> list[dict]:
         """指定されたページのコメントを取得する"""
@@ -194,10 +190,7 @@ class ClientWrapper:
 
     def remove_page(self, page_id: str) -> None:
         """指定されたページを削除する"""
-        self.client.pages.update(
-            page_id=page_id,
-            archived=True,
-        )
+        self.__archive(page_id=page_id)
 
     def __append_block_children(self, block_id: str, children=list[dict]) -> dict:
         return self.client.blocks.children.append(block_id=block_id, children=children)
@@ -244,6 +237,33 @@ class ClientWrapper:
 
     def __list_blocks(self, block_id: str) -> dict:
         return self.client.blocks.children.list(block_id=block_id)
+
+    def __archive(self, page_id: str, retry_count: int = 0) -> dict:
+        try:
+            return self.client.pages.update(
+                page_id=page_id,
+                archived=True,
+            )
+        except APIResponseError as e:
+            if self.__is_able_retry(status=e.status, retry_count=retry_count):
+                return self.__archive(page_id=page_id, retry_count=retry_count + 1)
+            exception_message = f"page_id: {page_id}, error: {e}"
+            raise UpdatePageError(exception_message) from e
+
+    def __update(self, page_id: str, properties: Properties, retry_count: int = 0) -> dict:
+        try:
+            return self.client.pages.update(
+                page_id=page_id,
+                properties=properties.exclude_button().__dict__(),
+            )
+        except APIResponseError as e:
+            if self.__is_able_retry(status=e.status, retry_count=retry_count):
+                return self.__update(page_id=page_id, properties=properties, retry_count=retry_count + 1)
+            exception_message = f"page_id: {page_id}, error: {e}, properties: {properties.exclude_button().__dict__()}"
+            raise UpdatePageError(exception_message) from e
+
+    def __is_able_retry(self, status: int, retry_count: int) -> bool:
+        return status == NOTION_API_ERROR_BAD_GATEWAY and retry_count < self.max_retry_count
 
 
 if __name__ == "__main__":
