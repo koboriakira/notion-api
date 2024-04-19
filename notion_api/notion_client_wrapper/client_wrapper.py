@@ -23,8 +23,28 @@ logger = logging.getLogger(__name__)
 NOTION_API_ERROR_BAD_GATEWAY = 502
 
 
-class UpdatePageError(Exception):
-    pass
+class NotionApiError(Exception):
+    def __init__(
+        self,
+        page_id: str | None = None,
+        database_id: str | None = None,
+        e: Exception | None = None,
+        properties: Properties | None = None,
+    ) -> None:
+        self.database_id = database_id
+        self.e = e
+        self.properties = properties
+
+        message = ""
+        if e is not None:
+            message += f", error: {e}"
+        if page_id is not None:
+            message += f"page_id: {page_id}"
+        if database_id is not None:
+            message += f"database_id: {database_id}"
+        if properties is not None:
+            message += f", properties: {properties.__dict__()}"
+        super().__init__(message)
 
 
 class ClientWrapper:
@@ -247,8 +267,7 @@ class ClientWrapper:
         except APIResponseError as e:
             if self.__is_able_retry(status=e.status, retry_count=retry_count):
                 return self.__archive(page_id=page_id, retry_count=retry_count + 1)
-            exception_message = f"page_id: {page_id}, error: {e}"
-            raise UpdatePageError(exception_message) from e
+            raise NotionApiError(page_id=page_id, e=e) from e
 
     def __update(self, page_id: str, properties: Properties, retry_count: int = 0) -> dict:
         try:
@@ -259,8 +278,30 @@ class ClientWrapper:
         except APIResponseError as e:
             if self.__is_able_retry(status=e.status, retry_count=retry_count):
                 return self.__update(page_id=page_id, properties=properties, retry_count=retry_count + 1)
-            exception_message = f"page_id: {page_id}, error: {e}, properties: {properties.exclude_button().__dict__()}"
-            raise UpdatePageError(exception_message) from e
+            raise NotionApiError(page_id=page_id, e=e, properties=properties) from e
+
+    def __create_page(
+        self,
+        database_id: str,
+        properties: Properties,
+        cover: Cover | None = None,
+        retry_count: int = 0,
+    ) -> None:
+        try:
+            self.client.pages.create(
+                parent={"type": "database_id", "database_id": database_id},
+                cover=cover.__dict__() if cover is not None else None,
+                properties=properties.__dict__() if properties.is_empty() else None,
+            )
+        except APIResponseError as e:
+            if self.__is_able_retry(status=e.status, retry_count=retry_count):
+                self.__create_page(
+                    database_id=database_id,
+                    properties=properties,
+                    cover=cover,
+                    retry_count=retry_count + 1,
+                )
+            raise NotionApiError(database_id=database_id, e=e, properties=properties) from e
 
     def __is_able_retry(self, status: int, retry_count: int) -> bool:
         return status == NOTION_API_ERROR_BAD_GATEWAY and retry_count < self.max_retry_count
