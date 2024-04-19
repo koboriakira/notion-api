@@ -173,15 +173,6 @@ class ClientWrapper:
                 return results
             start_cursor = data.get("next_cursor")
 
-    def find_page(self, database_id: str, title: str) -> BasePage | None:
-        """指定されたデータベースのページを取得する。1ページのみ取得する。複数ある場合は最初に見つかったページを返す"""
-        data = self.client.databases.query(database_id=database_id)
-        for page_entity in data["results"]:
-            page = self.__convert_page_model(page_entity=page_entity, include_children=False)
-            if page.properties.get_title().text == title:
-                return page
-        return None
-
     def list_blocks(self, block_id: str) -> list[Block]:
         """指定されたブロックの子ブロックを取得する"""
         return self.__get_block_children(page_id=block_id)
