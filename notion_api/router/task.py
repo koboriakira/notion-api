@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Header
 
+from notion_client_wrapper.client_wrapper import ClientWrapper
 from router.request.task_request import CreateNewTaskRequest, UpdateTaskRequest
 from router.response import BaseResponse, TaskResponse
 from router.response import Task as TaskDto
@@ -12,12 +13,15 @@ from util.error_reporter import ErrorReporter
 
 router = APIRouter()
 
+client = ClientWrapper.get_instance()
+task_repository = TaskRepositoryImpl(notion_client_wrapper=client)
+
 
 @router.get("/{task_id}", response_model=TaskResponse)
 def find_task(task_id: str, access_token: str | None = Header(None)) -> TaskResponse:
     """タスクを取得"""
     valid_access_token(access_token)
-    usecase = FindTaskUsecase(task_repository=TaskRepositoryImpl())
+    usecase = FindTaskUsecase(task_repository=task_repository)
     task = usecase.execute(task_id=task_id)
     return TaskResponse(data=TaskDto.from_model(task))
 
@@ -26,7 +30,7 @@ def find_task(task_id: str, access_token: str | None = Header(None)) -> TaskResp
 def upadate_task(task_id: str, request: UpdateTaskRequest, access_token: str | None = Header(None)) -> TaskResponse:
     """タスクを取得"""
     valid_access_token(access_token)
-    usecase = UpdateTaskUsecase(task_repository=TaskRepositoryImpl())
+    usecase = UpdateTaskUsecase(task_repository=task_repository)
     task = usecase.execute(task_id=task_id, status=request.status, pomodoro_count=request.pomodoro_count)
     return TaskResponse(data=TaskDto.from_model(task))
 
@@ -36,7 +40,7 @@ def create_task(request: CreateNewTaskRequest, access_token: str | None = Header
     try:
         valid_access_token(access_token)
         usecase = CreateNewTaskUsecase(
-            task_repository=TaskRepositoryImpl(),
+            task_repository=task_repository,
         )
         result = usecase.execute(
             title=request.title,
