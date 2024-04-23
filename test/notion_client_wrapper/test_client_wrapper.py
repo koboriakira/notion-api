@@ -238,3 +238,13 @@ class TestClientWrapper(TestCase):
             page_model=Book,
         )
         self.assertIsNotNone(page)
+
+    @pytest.mark.skip("実際にページが作成されるので注意")
+    def test_ページを作成する(self):
+        # pytest test/notion_client_wrapper/test_client_wrapper.py::TestClientWrapper::test_ページを作成する
+        title = Title.from_plain_text(name="名前", text="テストページ")
+        page = self.suite.create_page_in_database(
+            database_id=DatabaseType.TASK.value,
+            properties=[title],
+        )
+        self.assertIsNotNone(page)
