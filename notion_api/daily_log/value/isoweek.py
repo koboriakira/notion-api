@@ -1,6 +1,5 @@
-import datetime
 from dataclasses import dataclass
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 
 from util.dataclass.type_safe_object import TypeSafeFrozenObject
 
@@ -13,7 +12,10 @@ class Isoweek(TypeSafeFrozenObject):
     end_date: date
 
     @staticmethod
-    def of(date_: date) -> "Isoweek":
+    def of(date_: date | datetime) -> "Isoweek":
+        assert isinstance(date_, date)
+        if isinstance(date_, datetime):
+            date_ = date_.date()
         year, isoweeknum, _ = date_.isocalendar()
         start_date = date_.fromisocalendar(year, isoweeknum, 1)
         end_date = date_.fromisocalendar(year, isoweeknum, 7)
@@ -25,12 +27,7 @@ class Isoweek(TypeSafeFrozenObject):
         )
 
     def date_range(self) -> list[date]:
-        result = []
-        for i in range(7):
-            datetime_ = self.start_date + timedelta(days=i)
-            assert isinstance(datetime_, datetime.datetime)
-            result.append(datetime_.date())
-        return result
+        return [self.start_date + timedelta(days=i) for i in range(7)]
 
     def __str__(self) -> str:
         return f"{self.year}-Week{self.isoweeknum}"
