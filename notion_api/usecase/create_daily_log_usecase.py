@@ -1,5 +1,4 @@
 import contextlib
-from datetime import date
 
 from common.value.database_type import DatabaseType
 from daily_log.domain.daily_log_repository import DailyLogRepository, ExistedDailyLogError
@@ -14,10 +13,7 @@ class CreateDailyLogUsecase:
         self.client = client
         self._daily_log_repository = daily_log_repository
 
-    def handle(self, date_: date) -> None:
-        # ISO週情報を生成
-        isoweek = Isoweek.of(date_)
-
+    def handle(self, isoweek: Isoweek) -> None:
         # ウィークリーログを作成
         weekly_log_entity = self._create_weekly_log_page(isoweek)
         weekly_log_id = PageId(weekly_log_entity["id"])
@@ -29,17 +25,14 @@ class CreateDailyLogUsecase:
 
     def _find_weekly_log(self, year: int, isoweeknum: int) -> dict | None:
         title = f"{year}-Week{isoweeknum}"
-        weekly_logs = self.client.retrieve_database(
+        weekly_log = self.client.find_page_by_title(
             database_id=DatabaseType.WEEKLY_LOG.value,
             title=title,
         )
-        if len(weekly_logs) == 0:
+        if weekly_log is None:
             return None
-
-        weekly_log = weekly_logs[0]
         title = weekly_log.get_title()
         goal = weekly_log.get_text(name="目標")
-
         return {
             "id": weekly_log.id,
             "url": weekly_log.url,

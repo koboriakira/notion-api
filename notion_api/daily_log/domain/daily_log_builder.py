@@ -35,6 +35,7 @@ class DailyLogBuilder:
         return DailyLogBuilder(properties=properties, blocks=blocks, cover=None)
 
     def build(self) -> DailyLog:
+        print(self.properties)
         return DailyLog(properties=Properties(self.properties), block_children=self.blocks, cover=self.cover)
 
     def add_daily_goal(self, daily_goal: str | DailyGoal) -> "DailyLogBuilder":

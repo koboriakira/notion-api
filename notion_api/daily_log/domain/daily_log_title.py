@@ -14,4 +14,4 @@ class DailyLogTitle(Title):
 
     @classmethod
     def from_date(cls: "DailyLogTitle", date_: date) -> "DailyLogTitle":
-        DailyLogTitle(text=date_.isoformat())
+        return DailyLogTitle(text=date_.isoformat())

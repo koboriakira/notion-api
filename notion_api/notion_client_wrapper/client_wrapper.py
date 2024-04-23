@@ -84,8 +84,8 @@ class ClientWrapper:
         """データベース上にページを新規作成する"""
         page = self.__create_page(
             database_id=database_id,
-            cover=cover,
-            properties=Properties(values=properties or []),
+            cover=cover.__dict__() if cover is not None else None,
+            properties=Properties(values=properties).__dict__() if properties is not None else {},
         )
         if blocks is not None:
             self.append_blocks(block_id=page["id"], blocks=blocks)
@@ -119,7 +119,7 @@ class ClientWrapper:
         title: str,
         title_key_name: str | None = "名前",
         page_model: BasePage | None = None,
-    ) -> list[BasePage]:
+    ) -> BasePage | None:
         """タイトルだけをもとにデータベースのページを取得する"""
         title_property = Title.from_plain_text(text=title, name=title_key_name)
         filter_param = FilterBuilder.build_simple_equal_condition(title_property)
@@ -128,7 +128,6 @@ class ClientWrapper:
             filter_param=filter_param,
             page_model=page_model,
         )
-        results = self._database_query(database_id=database_id, filter_param=filter_param)
         if len(results) == 0:
             return None
         if len(results) > 1:
@@ -282,15 +281,15 @@ class ClientWrapper:
     def __create_page(
         self,
         database_id: str,
-        properties: Properties,
-        cover: Cover | None = None,
+        properties: dict,
+        cover: dict | None = None,
         retry_count: int = 0,
     ) -> dict:
         try:
             return self.client.pages.create(
                 parent={"type": "database_id", "database_id": database_id},
-                cover=cover.__dict__() if cover is not None else None,
-                properties=properties.__dict__() if properties.is_empty() else None,
+                cover=cover,
+                properties=properties if properties != {} else None,
             )
         except APIResponseError as e:
             if self.__is_able_retry(status=e.status, retry_count=retry_count):

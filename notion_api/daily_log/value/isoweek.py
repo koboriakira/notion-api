@@ -1,3 +1,4 @@
+import datetime
 from dataclasses import dataclass
 from datetime import date, timedelta
 
@@ -24,7 +25,12 @@ class Isoweek(TypeSafeFrozenObject):
         )
 
     def date_range(self) -> list[date]:
-        return [self.start_date + timedelta(days=i) for i in range(7)]
+        result = []
+        for i in range(7):
+            datetime_ = self.start_date + timedelta(days=i)
+            assert isinstance(datetime_, datetime.datetime)
+            result.append(datetime_.date())
+        return result
 
     def __str__(self) -> str:
         return f"{self.year}-Week{self.isoweeknum}"

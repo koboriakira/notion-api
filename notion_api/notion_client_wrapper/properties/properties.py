@@ -8,7 +8,13 @@ from notion_client_wrapper.properties.title import Title
 class Properties:
     values: list[Property]
 
-    def __dict__(self):
+    def __post_init__(self) -> None:
+        for value in self.values:
+            if not isinstance(value, Property):
+                msg = f"values must be Property. value: {value}"
+                raise TypeError(msg)
+
+    def __dict__(self) -> dict:
         result = {}
         for value in self.values:
             result = {**result, **value.__dict__()}

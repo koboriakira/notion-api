@@ -69,4 +69,5 @@ class BlockFactory:
                 return ChildPage.of(block)
             case _:
                 print(block)
-                raise ValueError(f"block type is not supported {block_type}\n{block}")
+                msg = f"block type is not supported {block_type}\n{block}"
+                raise ValueError(msg)

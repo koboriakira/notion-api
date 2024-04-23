@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from logging import Logger, getLogger
 
 from common.value.database_type import DatabaseType
@@ -6,7 +6,6 @@ from daily_log.domain.daily_log import DailyLog
 from daily_log.domain.daily_log_builder import DailyLogBuilder
 from daily_log.domain.daily_log_repository import DailyLogRepository, ExistedDailyLogError, NotFoundDailyLogError
 from notion_client_wrapper.client_wrapper import ClientWrapper
-from notion_client_wrapper.filter.filter_builder import FilterBuilder
 from notion_client_wrapper.page.page_id import PageId
 
 
@@ -18,7 +17,7 @@ class DailyLogRepositoryImpl(DailyLogRepository):
         self._logger = logger or getLogger(__name__)
 
     def find(self, date: date) -> DailyLog:
-        daily_log = self._find_daily_log(date)
+        daily_log = self._find_daily_log(date_=date)
         if daily_log is None:
             raise NotFoundDailyLogError(date)
         return daily_log
@@ -37,28 +36,27 @@ class DailyLogRepositoryImpl(DailyLogRepository):
         return daily_log
 
     def create(self, date_: date, weekly_log_id: PageId) -> DailyLog:
-        """デイリーログを新規作成する"""
+        assert not isinstance(date_, datetime)
+        assert isinstance(weekly_log_id, PageId)
+
         if self._find_daily_log(date_) is not None:
             raise ExistedDailyLogError(date_)
 
-        yesterday_daily_log = self.find(date_ - timedelta(days=1))
+        yesterday = date_ - timedelta(days=1)
+        yesterday_daily_log = self.find(yesterday)
 
         daily_log = (
             DailyLogBuilder.of(date_=date_)
-            .add_weekly_log_relation(weekly_log_page_id=PageId(weekly_log_id))
-            .add_previous_relation(previous_page_id=PageId(yesterday_daily_log.id))
+            .add_weekly_log_relation(weekly_log_page_id=weekly_log_id)
+            .add_previous_relation(previous_page_id=yesterday_daily_log.page_id)
             .add_random_cover()
             .build()
         )
         return self.save(daily_log)
 
-    def _find_daily_log(self, date: date) -> DailyLog | None:
-        filter_param = FilterBuilder.build_title_equal_condition(title=date.isoformat())
-        daily_logs: list[DailyLog] = self._client.retrieve_database(
+    def _find_daily_log(self, date_: date) -> DailyLog | None:
+        return self._client.find_page_by_title(
             database_id=self.DATABASE_ID,
-            filter_param=filter_param,
+            title=date_.isoformat(),
             page_model=DailyLog,
         )
-        if len(daily_logs) == 0:
-            return None
-        return daily_logs[0]
