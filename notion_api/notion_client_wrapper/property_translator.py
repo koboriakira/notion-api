@@ -20,43 +20,44 @@ from notion_client_wrapper.properties.url import Url
 
 class PropertyTranslator:
     @classmethod
-    def from_dict(cls, properties: dict[str, dict]) -> Properties:
+    def from_dict(cls: "PropertyTranslator", properties: dict[str, dict]) -> Properties:
         values = []
         for key, value in properties.items():
             values.append(cls.from_property_dict(key, value))
-        return Properties(values=values)
+        return Properties(values=[value for value in values if value is not None])
 
     @classmethod
-    def from_property_dict(cls, key: str, property: dict[str, Any]) -> "Property":
-        type = property["type"]
-        match type:
+    def from_property_dict(cls: "PropertyTranslator", key: str, property_: dict[str, Any]) -> "Property":  # noqa: PLR0911
+        type_ = property_["type"]
+        match type_:
             case "title":
-                return Title.from_property(key, property)
+                return Title.from_property(key, property_)
             case "rich_text":
-                return Text.from_dict(key, property)
+                return Text.from_dict(key, property_)
             case "multi_select":
-                return MultiSelect.of(key, property)
+                return MultiSelect.of(key, property_)
             case "select":
-                return Select.of(key, property)
+                return Select.of(key, property_)
             case "number":
-                return Number.of(key, property)
+                return Number.of(key, property_)
             case "checkbox":
-                return Checkbox.of(key, property)
+                return Checkbox.of(key, property_)
             case "date":
-                return Date.of(key, property)
+                return Date.of(key, property_)
             case "status":
-                return Status.of(key, property)
+                return Status.of(key, property_)
             case "url":
-                return Url.of(key, property)
+                return Url.of(key, property_)
             case "relation":
-                return Relation.of(key, property)
+                return Relation.of(key, property_)
             case "last_edited_time":
-                return LastEditedTime.create(property["last_edited_time"])
+                return LastEditedTime.create(property_["last_edited_time"])
             case "created_time":
-                return CreatedTime.create(property["created_time"])
+                return CreatedTime.create(property_["created_time"])
             case "rollup":
-                return Rollup.of(key, property)
+                return Rollup.of(key, property_)
             case "button":
-                return Button.of(key, property)
+                return Button.of(key, property_)
             case _:
-                raise Exception(f"Unsupported property type: {type} {property}")
+                msg = f"Unsupported property type: {type_} {property_}"
+                raise Exception(msg)
