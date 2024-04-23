@@ -47,5 +47,5 @@ def create_task(request: CreateNewTaskRequest, access_token: str | None = Header
         )
         return BaseResponse(data=result)
     except:
-        ErrorReporter.execute()
+        ErrorReporter().execute()
         raise

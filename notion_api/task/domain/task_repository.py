@@ -9,7 +9,7 @@ from task.domain.task_status import TaskStatusType
 
 class TaskRepository(metaclass=ABCMeta):
     @abstractmethod
-    def search(
+    def search(  # noqa: PLR0913
         self,
         status_list: list[str | TaskStatusType] | None = None,
         kind_type_list: list[TaskKindType] | None = None,
