@@ -16,6 +16,8 @@ from notion_api.notion_client_wrapper.properties.url import Url
 from notion_api.task.domain.task import Task
 from notion_api.util.datetime import JST
 
+from daily_log.domain.daily_log import DailyLog
+
 
 class TestClientWrapper(TestCase):
     def setUp(self):
@@ -121,12 +123,11 @@ class TestClientWrapper(TestCase):
     @pytest.mark.use_genuine_api()
     def test_ブロックもあわせてページをひとつ取得する(self):
         # pytest test/notion_client_wrapper/test_client_wrapper.py::TestClientWrapper::test_ブロックもあわせてページをひとつ取得する
-        from notion_api.task.domain.task import Task
 
         # When
         task = self.suite.retrieve_page(
-            page_id="342d39cf25ce4b589a0ed6b7c529a0fa",
-            page_model=Task,
+            page_id="21c664d6cc394d25accd77315c7a8a2e",
+            page_model=DailyLog,
         )
         print(task)
         # self.fail()

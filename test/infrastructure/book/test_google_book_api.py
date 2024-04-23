@@ -2,6 +2,7 @@ from unittest import TestCase
 
 import pytest
 from notion_api.infrastructure.book.google_book_api import GoogleBookApi
+from requests import HTTPError
 
 from book.domain.book_api import NotFoundApiError
 
@@ -19,7 +20,7 @@ class TestGoogleBookApi(TestCase):
         actual = self.suite.find_by_title(title=title)
 
         # Then
-        self.assertEqual(actual.title.text, title)
+        self.assertEqual(actual.title, title)
 
     @pytest.mark.slow()
     def test_書籍名の検索結果がないとき(self):
@@ -38,7 +39,7 @@ class TestGoogleBookApi(TestCase):
         # Given
         book_id = "hoge"
         # When, Then: 例外が発生する
-        with pytest.raises(NotFoundApiError):
+        with pytest.raises(HTTPError):
             _ = self.suite.find_by_id(book_id=book_id)
 
     @pytest.mark.slow()
