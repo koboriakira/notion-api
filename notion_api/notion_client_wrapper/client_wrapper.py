@@ -1,5 +1,5 @@
-import logging
 import os
+from logging import Logger, getLogger
 
 from notion_client import Client
 from notion_client.errors import APIResponseError
@@ -17,8 +17,6 @@ from notion_client_wrapper.properties.properties import Properties
 from notion_client_wrapper.properties.property import Property
 from notion_client_wrapper.properties.title import Title
 from notion_client_wrapper.property_translator import PropertyTranslator
-
-logger = logging.getLogger(__name__)
 
 NOTION_API_ERROR_BAD_GATEWAY = 502
 
@@ -48,14 +46,15 @@ class NotionApiError(Exception):
 
 
 class ClientWrapper:
-    def __init__(self, client: Client, max_retry_count: int = 3) -> None:
+    def __init__(self, client: Client, max_retry_count: int = 3, logger: Logger | None = None) -> None:
         self.client = client
         self.max_retry_count = max_retry_count
+        self._logger = logger or getLogger(__name__)
 
     @staticmethod
-    def get_instance() -> "ClientWrapper":
+    def get_instance(max_retry_count: int = 3, logger: Logger | None = None) -> "ClientWrapper":
         client = Client(auth=os.getenv("NOTION_SECRET"))
-        return ClientWrapper(client)
+        return ClientWrapper(client, max_retry_count=max_retry_count, logger=logger)
 
     def retrieve_page(self, page_id: str, page_model: BasePage | None = None) -> BasePage:
         """指定されたページを取得する"""
@@ -105,7 +104,7 @@ class ClientWrapper:
         for page_entity in results:
             page = self.__convert_page_model(
                 page_entity=page_entity,
-                include_children=include_children,
+                include_children=include_children or False,
                 page_model=page_model,
             )
             pages.append(page)
@@ -132,7 +131,7 @@ class ClientWrapper:
             return None
         if len(results) > 1:
             warning_message = f"Found multiple pages with the same title: {title}"
-            logger.warning(warning_message)
+            self._logger.warning(warning_message)
         return results[0]
 
     def _database_query(
@@ -207,7 +206,9 @@ class ClientWrapper:
         include_children: bool | None = None,
         page_model: BasePage | None = None,
     ) -> BasePage:
-        include_children = include_children or True  # 未指定の場合はchildrenを取得する
+        include_children = (
+            include_children if include_children is not None else True
+        )  # 未指定の場合はchildrenを取得する
 
         id_ = PageId(page_entity["id"])
         url = page_entity["url"]
