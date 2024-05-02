@@ -16,6 +16,7 @@ kind_map = {
 
 
 class RoutineType(Enum):
+    MONTHLY_1 = "毎月1日"
     DAILY = "毎日"
     EVERY_SAT = "毎週土"
     EVERY_TUE_AND_FRI = "毎週火・金"
@@ -38,6 +39,8 @@ class RoutineType(Enum):
     def next_date(self, basis_date: date) -> date:  # noqa: PLR0911
         weekday = basis_date.weekday()
         match self:
+            case RoutineType.MONTHLY_1:
+                return basis_date.replace(month=basis_date.month + 1, day=1)
             case RoutineType.DAILY:
                 return basis_date
             case RoutineType.EVERY_SAT:
