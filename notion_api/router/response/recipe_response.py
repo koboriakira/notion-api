@@ -4,6 +4,7 @@ from custom_logger import get_logger
 from recipe.domain.recipe import Recipe as RecipeEntity
 from router.response.base_notion_page_model import BaseNotionPageModel
 from router.response.base_response import BaseResponse
+from util.datetime import jst_now
 
 logger = get_logger(__name__)
 
@@ -27,8 +28,8 @@ class Recipe(BaseNotionPageModel):
             id=entity.id,
             url=entity.url,
             title=entity.title,
-            created_at=entity.created_time.start_datetime,
-            updated_at=entity.last_edited_time.start_datetime,
+            created_at=entity.created_time.start_datetime if entity.created_time else jst_now(),
+            updated_at=entity.last_edited_time.start_datetime if entity.last_edited_time else jst_now(),
         )
 
 
