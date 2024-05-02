@@ -22,7 +22,7 @@ class TaskRepositoryImpl(TaskRepository):
     def __init__(self, notion_client_wrapper: ClientWrapper | None = None) -> None:
         self.client = notion_client_wrapper or ClientWrapper.get_instance()
 
-    def search(
+    def search(  # noqa: PLR0913
         self,
         status_list: list[str | TaskStatusType] | None = None,
         kind_type_list: list[TaskKindType] | None = None,

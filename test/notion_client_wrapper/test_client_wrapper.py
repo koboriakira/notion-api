@@ -164,8 +164,8 @@ class TestClientWrapper(TestCase):
     def test_select_kind_map(self):
         """Selectの選択肢を集めるためのテスト"""
         # pytest test/notion_client_wrapper/test_client_wrapper.py::TestClientWrapper::test_select_kind_map
-        target_database = DatabaseType.RECIPE
-        target_select_name = "状態"
+        target_database = DatabaseType.TASK_ROUTINE
+        target_select_name = "周期"
 
         pages = self.suite.retrieve_database(
             database_id=target_database.value,
@@ -212,7 +212,7 @@ class TestClientWrapper(TestCase):
         result = list({value["name"]: value for value in result}.values())
         import json
 
-        print(json.dumps(result, indent=2, ensure_ascii=False))
+        print(json.dumps(result, ensure_ascii=False))
 
         # 内容を確認したいので、無理やりfailさせる
         self.fail("動作確認用。テストは失敗しても問題ありません。")
