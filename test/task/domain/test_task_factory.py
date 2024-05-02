@@ -1,13 +1,14 @@
 from datetime import datetime
 from unittest import TestCase
 
-from notion_api.task.domain.task import Task
 from notion_api.task.domain.task_kind import TaskKindType
 from notion_api.task.domain.task_status import TaskStatusType
 
+from task.task_factory import TaskFactory
 
-class TestTask(TestCase):
-    def test_タスクを作成する(self):
+
+class TestTaskFactory(TestCase):
+    def test_TODOタスクを作成する(self):
         # Given
         title = "title"
         task_kind_type = TaskKindType.NEXT_ACTION
@@ -15,11 +16,8 @@ class TestTask(TestCase):
         status = TaskStatusType.TODO
 
         # When
-        actual = Task.create(
-            title=title,
-            task_kind_type=task_kind_type,
-            start_date=start_date,
-            status=status
+        actual = TaskFactory.create_todo_task(
+            title=title, task_kind_type=task_kind_type, start_date=start_date, status=status
         )
 
         # Then

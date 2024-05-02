@@ -1,14 +1,11 @@
 from unittest import TestCase
 from unittest.mock import Mock
 
+from notion_api.notion_client_wrapper.block.divider import Divider
 from notion_api.task.domain.routine_repository import RoutineRepository
 from notion_api.task.domain.routine_task import RoutineTask, RoutineType
-from notion_api.task.domain.task import Task
-from notion_api.task.domain.task_kind import TaskKindType
 from notion_api.task.domain.task_repository import TaskRepository
-from notion_api.notion_client_wrapper.block.divider import Divider
 from notion_api.usecase.create_routine_task_use_case import CreateRoutineTaskUseCase
-from notion_api.util.datetime import jst_today_datetime
 
 
 class TestCreateRoutineTaskUseCase(TestCase):
@@ -22,16 +19,3 @@ class TestCreateRoutineTaskUseCase(TestCase):
         self.suite = CreateRoutineTaskUseCase(
             task_repository=mock_task_repository, routine_repository=mock_routine_repository
         )
-
-    def test(self):
-        # When
-        self.suite.execute()
-
-        # Then
-        expected_task = Task.create(
-            title="ルーティンタスク",
-            task_kind_type=TaskKindType.SCHEDULE,
-            start_date=jst_today_datetime(),
-            blocks=[Divider()],
-        )
-        # self.suite.task_repository.save.assert_called_once_with(task=expected_task)

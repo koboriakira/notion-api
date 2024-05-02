@@ -6,11 +6,12 @@ import pytest
 from notion_api.common.value.database_type import DatabaseType
 from notion_api.notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_api.notion_client_wrapper.page.page_id import PageId
-from notion_api.task.domain.task import Task
 from notion_api.task.domain.task_kind import TaskKindType
 from notion_api.task.domain.task_status import TaskStatusType
 from notion_api.task.infrastructure.task_repository_impl import TaskRepositoryImpl
 from notion_api.util.datetime import JST
+
+from task.task_factory import TaskFactory
 
 
 class TestTaskRepositoryImpl(TestCase):
@@ -107,7 +108,7 @@ class TestTaskRepositoryImpl(TestCase):
 
     def test_タスクを保存する(self):
         # Given
-        task = Task.create(
+        task = TaskFactory.create_todo_task(
             title="title",
         )
         self.suite.client.create_page_in_database.return_value = {"id": "dummy-id"}

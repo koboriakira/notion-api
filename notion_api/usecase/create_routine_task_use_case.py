@@ -1,10 +1,10 @@
 from datetime import datetime
 
 from task.domain.routine_repository import RoutineRepository
-from task.domain.task import Task
 from task.domain.task_kind import TaskKindType
 from task.domain.task_repository import TaskRepository
 from task.domain.task_status import TaskStatusType
+from task.task_factory import TaskFactory
 from util.datetime import JST
 
 
@@ -27,7 +27,7 @@ class CreateRoutineTaskUseCase:
                 print(f"Routine task {title} is already exists.")
                 continue
             next_date = routine_task.get_next_date()
-            task = Task.create(
+            task = TaskFactory.create_todo_task(
                 title=title,
                 task_kind_type=TaskKindType.SCHEDULE,
                 start_date=datetime.combine(next_date, datetime.min.time(), JST),
