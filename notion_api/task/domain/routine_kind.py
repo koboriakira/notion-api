@@ -24,19 +24,8 @@ class RoutineType(Enum):
     DAYS_AFTER_7 = "7日後"
     DAYS_AFTER_3 = "3日後"
 
-    @property
-    def selected_name(self) -> str:
-        return self.value
-
-    @property
-    def selected_id(self) -> str:
-        return kind_map[self.value]["selected_id"]
-
-    @property
-    def selected_color(self) -> str:
-        return kind_map[self.value]["selected_color"]
-
     def next_date(self, basis_date: date) -> date:  # noqa: PLR0911
+        """タスクの次回予定日を返す"""
         weekday = basis_date.weekday()
         match self:
             case RoutineType.MONTHLY_1:
@@ -60,6 +49,18 @@ class RoutineType(Enum):
             case _:
                 msg = f"RoutineType not found: {self}"
                 raise ValueError(msg)
+
+    @property
+    def selected_name(self) -> str:
+        return self.value
+
+    @property
+    def selected_id(self) -> str:
+        return kind_map[self.value]["selected_id"]
+
+    @property
+    def selected_color(self) -> str:
+        return kind_map[self.value]["selected_color"]
 
     @staticmethod
     def from_text(text: str) -> "RoutineType":
