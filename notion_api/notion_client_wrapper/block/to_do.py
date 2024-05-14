@@ -11,18 +11,18 @@ class ToDo(Block):
         self,
         rich_text: RichText,
         color: str,
-        checked: bool,
-        id: str,
-        archived: bool,
-        created_time: str,
-        last_edited_time: str,
-        has_children: bool,
-        parent: dict,
+        checked: bool | None = None,
+        id: str | None = None,
+        archived: bool | None = None,
+        created_time: str | None = None,
+        last_edited_time: str | None = None,
+        has_children: bool | None = None,
+        parent: dict | None = None,
     ):
         super().__init__(id, archived, created_time, last_edited_time, has_children, parent)
         self.rich_text = rich_text
         self.color = color
-        self.checked = checked
+        self.checked = checked or False
 
     @staticmethod
     def of(block: dict) -> "ToDo":
@@ -44,7 +44,13 @@ class ToDo(Block):
         return "to_do"
 
     def to_dict_sub(self) -> dict:
-        raise NotImplementedError
+        result = {
+            "rich_text": self.rich_text.to_dict(),
+            "checked": self.checked,
+        }
+        if self.color is not None:
+            result["color"] = self.color
+        return result
 
     def to_slack_text(self) -> str:
         return "[ ] " + self.rich_text.to_slack_text() if not self.checked else "[x] " + self.rich_text.to_slack_text()
