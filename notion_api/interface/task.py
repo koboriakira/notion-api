@@ -9,8 +9,9 @@ from usecase.postpone_task_to_next_day_usecase import PostponeTaskToNextDayUseca
 logger = get_logger(__name__)
 
 
-def fetch_tasks(start_date: DateObject | None = None, status_list: list[str] = []) -> list[dict]:
+def fetch_tasks(start_date: DateObject | None = None, status_list: list[str] | None = None) -> list[Task]:
     """タスク一覧を取得"""
+    status_list = status_list or []
     logger.debug(f"start_date: {start_date}")
     logger.debug(f"status_list: {status_list}")
     usecase = FetchTasksUsecase(task_repository=TaskRepositoryImpl())
