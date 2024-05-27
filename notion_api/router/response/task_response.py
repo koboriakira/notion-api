@@ -11,12 +11,23 @@ from task.domain.task_status import TaskStatusType
 logger = get_logger(__name__)
 
 
+def convert_to_date_if_zero_time(value: datetime | date | None) -> datetime | date | None:
+    """時間が0時の場合は日付のみを返す"""
+    print(value)
+    if value is None:
+        return None
+    if isinstance(value, datetime) and value.time() == datetime.min.time():
+        return value.date()
+    return value
+
+
 class Task(BaseNotionPageModel):
     status: TaskStatusType
     task_kind: str | None  # FIXME: TaskKindTypeにする
     start_date: datetime | date | None
     pomodoro_count: int
     end_date: datetime | date | None  # FIXME: 消す
+    due_date: datetime | date | None
     feeling: str | None  # FIXME: 消す
 
     @staticmethod
@@ -30,8 +41,9 @@ class Task(BaseNotionPageModel):
             status=model.status,
             pomodoro_count=model.pomodoro_count,
             task_kind=model.kind.value if model.kind is not None else None,
-            start_date=model.start_datetime if model.start_datetime is not None else None,
+            start_date=convert_to_date_if_zero_time(model.start_date),
             end_date=None,
+            due_date=convert_to_date_if_zero_time(model.due_date),
             feeling="",
             text=model.get_slack_text_in_block_children(),
         )
