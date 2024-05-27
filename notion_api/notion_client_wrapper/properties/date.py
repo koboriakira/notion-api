@@ -96,15 +96,21 @@ class Date(Property):
     def date(self) -> date:
         return self.start.date()
 
-    def __dict__(self):
+    def __dict__(self) -> dict:
+        # 未指定の場合を考慮している
+        _date = (
+            {
+                "start": self.start,
+                "end": self.end,
+                "time_zone": self.time_zone,
+            }
+            if self.start is not None
+            else None
+        )
         return {
             self.name: {
                 "type": self.type,
-                "date": {
-                    "start": self.start,
-                    "end": self.end,
-                    "time_zone": self.time_zone,
-                },
+                "date": _date,
             },
         }
 

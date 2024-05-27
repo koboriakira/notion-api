@@ -41,7 +41,7 @@ class TestNotionClient(TestCase):
         filter_param = {
             "and": [
                 {"property": "タスク種別", "select": {"does_not_equal": "ゴミ箱"}},
-                {"property": "実施日", "date": {"equals": "2024-03-20"}},
+                {"property": "実施日", "date": {"equals": "2024-05-27"}},
                 {
                     "or": [
                         {"property": "ステータス", "status": {"equals": "ToDo"}},
@@ -51,7 +51,7 @@ class TestNotionClient(TestCase):
             ]
         }
         data = self.client.databases.query(database_id=DatabaseType.TASK.value, filter=filter_param)
-        print(len(data))
+        print(data["results"][0])
         # self.fail()
 
     @pytest.mark.learning()
