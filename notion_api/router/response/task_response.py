@@ -13,7 +13,6 @@ logger = get_logger(__name__)
 
 def convert_to_date_if_zero_time(value: datetime | date | None) -> datetime | date | None:
     """時間が0時の場合は日付のみを返す"""
-    print(value)
     if value is None:
         return None
     if isinstance(value, datetime) and value.time() == datetime.min.time():
@@ -28,6 +27,7 @@ class Task(BaseNotionPageModel):
     pomodoro_count: int
     end_date: datetime | date | None  # FIXME: 消す
     due_date: datetime | date | None
+    order: int
     feeling: str | None  # FIXME: 消す
 
     @staticmethod
@@ -44,6 +44,7 @@ class Task(BaseNotionPageModel):
             start_date=convert_to_date_if_zero_time(model.start_date),
             end_date=None,
             due_date=convert_to_date_if_zero_time(model.due_date),
+            order=model.order,
             feeling="",
             text=model.get_slack_text_in_block_children(),
         )

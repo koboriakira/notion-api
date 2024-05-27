@@ -1,3 +1,4 @@
+import sys
 from dataclasses import dataclass
 from datetime import date, datetime
 
@@ -82,6 +83,17 @@ class Task(BasePage):
         if project_relation is None:
             return []
         return project_relation.page_id_list
+
+    @property
+    def order(self) -> int:
+        if isinstance(self.start_date, datetime) and self.start_date.time() != datetime.min.time():
+            return int(self.start_date.timestamp() - 1)
+        if isinstance(self.due_date, datetime) and self.due_date.time() != datetime.min.time():
+            return int(self.due_date.timestamp())
+        if self.kind is not None:
+            # kindの優先度が高いほどorderを小さくする
+            return sys.maxsize - self.kind.priority
+        return sys.maxsize
 
     def is_kind_trash(self) -> bool:
         return self.kind == TaskKindType.TRASH

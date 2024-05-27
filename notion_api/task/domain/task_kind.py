@@ -47,6 +47,17 @@ class TaskKindType(Enum):
         raise ValueError(msg)
 
     @property
+    def priority(self) -> float:
+        return {
+            TaskKindType.TRASH: 0,
+            TaskKindType.WAIT: 1,
+            TaskKindType.SOMEDAY_MAYBE: 2,
+            TaskKindType.SCHEDULE: 3,
+            TaskKindType.NEXT_ACTION: 4,
+            TaskKindType.DO_NOW: 5,
+        }[self]
+
+    @property
     def selected_name(self) -> str:
         return self.value
 
