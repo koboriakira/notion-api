@@ -1,18 +1,7 @@
 from common.value.database_type import DatabaseType
-from notion_client_wrapper.base_page import BasePage
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from task.domain.routine_repository import RoutineRepository
 from task.domain.routine_task import RoutineTask
-
-
-class RoutineConverter:
-    @staticmethod
-    def convert(page: BasePage) -> RoutineTask:
-        title = page.get_title().text
-        routine_type = page.get_select("周期")
-        if routine_type is None:
-            return None
-        return RoutineTask.create(title=title, routine_type_text=routine_type.selected_name)
 
 
 class RoutineRepositoryImpl(RoutineRepository):
