@@ -3,6 +3,7 @@ from datetime import date, datetime
 
 from notion_client_wrapper.base_page import BasePage
 from notion_client_wrapper.page.page_id import PageId
+from task.domain.due_date import DueDate
 from task.domain.pomodoro_counter import PomodoroCounter
 from task.domain.project_relation import ProjectRelation
 from task.domain.task_kind import TaskKind, TaskKindType
@@ -48,11 +49,18 @@ class Task(BasePage):
         return convert_to_date_or_datetime(value=start_date_model.start, cls=datetime)
 
     @property
-    def start_date(self) -> date | None:
+    def start_date(self) -> date | datetime | None:
         start_date_model = self.get_date(name=TaskStartDate.NAME)
         if start_date_model is None or start_date_model.start is None:
             return None
         return convert_to_date_or_datetime(value=start_date_model.start, cls=date)
+
+    @property
+    def due_date(self) -> date | datetime | None:
+        due_date_model = self.get_date(name=DueDate.NAME)
+        if due_date_model is None or due_date_model.start is None:
+            return None
+        return convert_to_date_or_datetime(value=due_date_model.start, cls=date)
 
     @property
     def kind(self) -> TaskKindType | None:
