@@ -54,6 +54,7 @@ async def add_process_time_header(request: Request, call_next):  # noqa: ANN001,
         response = await call_next(request)
         process_time = int((time.time() - start_time) * 1000)  # 整数値のミリ秒
         response.headers["X-Process-Time"] = str(process_time)
+        response.headers["Content-Type"] = "application/json; charset=utf-8"
         return response
     except:
         ErrorReporter().execute()
