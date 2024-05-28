@@ -2,6 +2,7 @@ import logging
 import time
 
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from mangum import Mangum
 
 from router import books, healthcheck, music, page, projects, prowrestling, recipes, task, tasks, video, webclip
@@ -18,6 +19,17 @@ app = FastAPI(
     title="My Notion API",
     version="0.0.1",
 )
+
+# CORSの設定
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # すべてのオリジンを許可
+    allow_credentials=True,
+    allow_methods=["*"],  # すべてのHTTPメソッドを許可
+    allow_headers=["*"],  # すべてのHTTPヘッダーを許可
+)
+
+
 app.include_router(projects.router, prefix="/projects", tags=["projects"])
 app.include_router(recipes.router, prefix="/recipes", tags=["recipes"])
 app.include_router(healthcheck.router, prefix="/healthcheck", tags=["healthcheck"])
@@ -33,13 +45,14 @@ app.include_router(books.router, prefix="/books", tags=["books"])
 
 handler = Mangum(app, lifespan="off")
 
+
 # ミドルウェア
 @app.middleware("http")
 async def add_process_time_header(request: Request, call_next):  # noqa: ANN001, ANN201
     try:
         start_time = time.time()
         response = await call_next(request)
-        process_time = int((time.time() - start_time) * 1000) # 整数値のミリ秒
+        process_time = int((time.time() - start_time) * 1000)  # 整数値のミリ秒
         response.headers["X-Process-Time"] = str(process_time)
         return response
     except:
