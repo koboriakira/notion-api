@@ -11,5 +11,11 @@ class FindLatestInprogressTaskUsecase:
         self._task_repository = task_repository
 
     def execute(self) -> Task | None:
-        tasks = self._task_repository.search(status_list=[TaskStatusType.IN_PROGRESS])
-        return tasks[0] if tasks else None
+        tasks = self._task_repository.search(
+            status_list=[TaskStatusType.IN_PROGRESS],
+        )
+        if len(tasks) == 0:
+            return None
+
+        task_id = tasks[0].page_id
+        return self._task_repository.find_by_id(task_id.value)
