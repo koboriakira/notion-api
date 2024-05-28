@@ -7,6 +7,7 @@ from router.response import Task as TaskDto
 from task.infrastructure.task_repository_impl import TaskRepositoryImpl
 from usecase.create_new_task_usecase import CreateNewTaskUsecase
 from usecase.find_task_usecase import FindTaskUsecase
+from usecase.task.find_latest_inprogress_task_usecase import FindLatestInprogressTaskUsecase
 from usecase.update_task_use_case import UpdateTaskUsecase
 from util.access_token import valid_access_token
 from util.error_reporter import ErrorReporter
@@ -24,6 +25,15 @@ def find_task(task_id: str, access_token: str | None = Header(None)) -> TaskResp
     usecase = FindTaskUsecase(task_repository=task_repository)
     task = usecase.execute(task_id=task_id)
     return TaskResponse(data=TaskDto.from_model(task))
+
+
+@router.get("/inprogress/", response_model=TaskResponse)
+def get_inprogress(access_token: str | None = Header(None)) -> TaskResponse:
+    """タスクを取得"""
+    valid_access_token(access_token)
+    usecase = FindLatestInprogressTaskUsecase(task_repository=task_repository)
+    task = usecase.execute()
+    return TaskResponse(data=TaskDto.from_model(task) if task is not None else None)
 
 
 @router.post("/{task_id}", response_model=TaskResponse)
