@@ -12,5 +12,4 @@ class FindLatestInprogressTaskUsecase:
 
     def execute(self) -> Task | None:
         tasks = self._task_repository.search(status_list=[TaskStatusType.IN_PROGRESS])
-        print(tasks)
-        return tasks[0]
+        return tasks[0] if tasks else None
