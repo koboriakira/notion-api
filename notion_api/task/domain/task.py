@@ -20,22 +20,25 @@ COLUMN_NAME_KIND = "タスク種別"
 
 @dataclass
 class Task(BasePage):
-    def update_status(self, status: str | TaskStatusType) -> None:
+    def update_status(self, status: str | TaskStatusType) -> "Task":
         if isinstance(status, str):
             status = TaskStatusType.from_text(status)
         task_status = TaskStatus.from_status_type(status)
         properties = self.properties.append_property(task_status)
         self.properties = properties
+        return self
 
-    def update_start_datetime(self, start_datetime: datetime | date | None) -> None:
+    def update_start_datetime(self, start_datetime: datetime | date | None) -> "Task":
         start_date = TaskStartDate.create(start_datetime)
         properties = self.properties.append_property(start_date)
         self.properties = properties
+        return self
 
-    def update_pomodoro_count(self, number: int) -> None:
+    def update_pomodoro_count(self, number: int) -> "Task":
         pomodoro_counter = PomodoroCounter(number=number)
         properties = self.properties.append_property(pomodoro_counter)
         self.properties = properties
+        return self
 
     @property
     def status(self) -> TaskStatusType:

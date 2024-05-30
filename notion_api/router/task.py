@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Header
 
 from notion_client_wrapper.client_wrapper import ClientWrapper
+from notion_client_wrapper.page.page_id import PageId
 from router.request.task_request import CreateNewTaskRequest, UpdateTaskRequest
 from router.response import BaseResponse, TaskResponse
 from router.response import Task as TaskDto
@@ -53,7 +54,7 @@ def complete_task(task_id: str, access_token: str | None = Header(None)) -> Task
         usecase = CompleteTaskUsecase(
             task_repository=task_repository,
         )
-        task = usecase.execute(task_id=task_id)
+        task = usecase.execute(page_id=PageId(value=task_id))
         return TaskResponse(data=TaskDto.from_model(task))
     except:
         ErrorReporter().execute()

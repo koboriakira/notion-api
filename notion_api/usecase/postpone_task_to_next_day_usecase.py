@@ -31,8 +31,8 @@ class PostponeTaskToNextDayUsecase:
 
     def _update_start_datetime(self, tasks: list[Task], target_date: date) -> Task:
         for task in tasks:
-            task.update_start_datetime(target_date)
-            self._task_repository.save(task)
+            updated_task = task.update_start_datetime(target_date)
+            self._task_repository.save(updated_task)
 
 
 if __name__ == "__main__":
