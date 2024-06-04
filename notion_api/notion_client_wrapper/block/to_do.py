@@ -40,6 +40,7 @@ class ToDo(Block):
             checked=to_do["checked"],
         )
 
+    @property
     def type(self) -> str:
         return "to_do"
 
