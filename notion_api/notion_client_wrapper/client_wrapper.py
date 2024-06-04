@@ -21,6 +21,14 @@ from notion_client_wrapper.property_translator import PropertyTranslator
 NOTION_API_ERROR_BAD_GATEWAY = 502
 
 
+class AppendBlockError(Exception):
+    def __init__(self, block_id: str, blocks: list[dict], e: Exception) -> None:
+        self.block_id = block_id
+        self.blocks = blocks
+        self.e = e
+        super().__init__(f"block_id: {block_id}, blocks: {blocks}, error: {e}")
+
+
 class NotionApiError(Exception):
     def __init__(
         self,
@@ -199,6 +207,8 @@ class ClientWrapper:
             if self.__is_able_retry(status=e.status, retry_count=retry_count):
                 return self.__append_block_children(block_id=block_id, children=children, retry_count=retry_count + 1)
             raise NotionApiError(page_id=block_id, e=e) from e
+        except TypeError as e:
+            raise AppendBlockError(block_id=block_id, blocks=children, e=e) from e
 
     def __convert_page_model(
         self,
