@@ -1,4 +1,4 @@
-from book.domain.book_api import BookApi, BookApiResult
+from book.domain.book_api import BookApi, BookApiResult, NotFoundApiError
 from book.domain.book_builder import BookBuilder
 from book.domain.book_repository import BookRepository, ExistedBookError
 from usecase.service.inbox_service import InboxService
@@ -49,8 +49,11 @@ class AddBookUsecase:
         title: str | None = None,
         isbn: str | None = None,
     ) -> BookApiResult | None:
-        if google_book_id is not None:
-            return self._book_api.find_by_id(book_id=google_book_id)
-        if isbn is not None:
-            return self._book_api.find_by_isbn(isbn=isbn)
-        return self._book_api.find_by_title(title=title)
+        try:
+            if google_book_id is not None:
+                return self._book_api.find_by_id(book_id=google_book_id)
+            if isbn is not None:
+                return self._book_api.find_by_isbn(isbn=isbn)
+            return self._book_api.find_by_title(title=title)
+        except NotFoundApiError:
+            return None
