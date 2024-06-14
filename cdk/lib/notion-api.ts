@@ -12,6 +12,8 @@ import {
   aws_events_targets as targets,
   aws_s3 as s3,
   aws_sqs as sqs,
+  aws_logs as logs,
+  aws_cloudwatch as cloudwatch,
 } from "aws-cdk-lib";
 import { Construct } from "constructs";
 import { SCHEDULER_CONFIG } from "./event_bridge_scheduler";
@@ -23,6 +25,9 @@ const RUNTIME = lambda.Runtime.PYTHON_3_11;
 const TIMEOUT = 30;
 const APP_DIR_PATH = "../notion_api";
 const LAYER_ZIP_PATH = "../dependencies.zip";
+
+// メトリクスフィルター
+const METRIC_NAMESPACE = 'notion-api-fatal'
 
 export class NotionApi extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -48,6 +53,18 @@ export class NotionApi extends Stack {
 
     // SQSから呼び出されるイベントの作成
     this.createLambdaAndSqs("create_page", role, myLayer, main);
+
+    // メトリクスアラーム
+    const alarm = new cloudwatch.Alarm(this, 'Alarm', {
+      metric: new cloudwatch.Metric({
+        namespace: METRIC_NAMESPACE,
+        metricName: 'NotionApiFatalErrors',
+        statistic: 'Sum',
+        period: Duration.minutes(1),
+      }),
+      threshold: 1,
+      evaluationPeriods: 1,
+    });
   }
 
   createLambdaAndSqs(
@@ -159,6 +176,13 @@ export class NotionApi extends Stack {
   ): lambda.Function {
     const resourceNameCamel = convertToCamelCase(handlerName);
 
+    // ロググループ
+    const logGroup = new logs.LogGroup(this, `${resourceNameCamel}LogGroup`, {
+      logGroupName: `/aws/lambda/${resourceNameCamel}`,
+      removalPolicy: RemovalPolicy.DESTROY,
+      retention: logs.RetentionDays.ONE_WEEK,
+    });
+
     const fn = new lambda.Function(this, resourceNameCamel, {
       runtime: RUNTIME,
       handler: handlerName + ".handler",
@@ -179,6 +203,22 @@ export class NotionApi extends Stack {
     fn.addEnvironment("OPENAI_API_KEY", process.env.OPENAI_API_KEY || "");
     fn.addEnvironment("LAMBDA_SLACK_CONCIERGE_API_DOMAIN", process.env.LAMBDA_SLACK_CONCIERGE_API_DOMAIN || "");
     fn.addEnvironment("LAMBDA_TWITTER_API_DOMAIN", process.env.LAMBDA_TWITTER_API_DOMAIN || "");
+    fn.addEnvironment("LOG_GROUP_NAME", logGroup.logGroupName);
+
+    // Lambda関数のロググループを既存のロググループに設定
+    new logs.CfnLogGroup(this, 'NotionLogGroup', {
+      logGroupName: logGroup.logGroupName,
+      retentionInDays: 7
+    });
+
+    // メトリクスフィルター
+    const metricFilter = new logs.MetricFilter(this, `${resourceNameCamel}MetricFilter`, {
+      logGroup: logGroup,
+      metricNamespace: METRIC_NAMESPACE,
+      metricName: 'Errors',
+      filterPattern: logs.FilterPattern.literal(`[level=ERROR]`), // FATALレベルのログが出力された場合にカウント
+      metricValue: '1',
+    });
 
     if (function_url_enabled) {
       fn.addFunctionUrl({
