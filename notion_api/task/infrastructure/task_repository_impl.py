@@ -2,6 +2,7 @@ from datetime import date, datetime, time
 
 from common.value.database_type import DatabaseType
 from notion_client_wrapper.client_wrapper import ClientWrapper
+from notion_client_wrapper.filter.condition.checkbox_condition import CheckboxCondition
 from notion_client_wrapper.filter.condition.date_condition import DateCondition
 from notion_client_wrapper.filter.condition.empty_condition import EmptyCondition
 from notion_client_wrapper.filter.condition.or_condition import OrCondition
@@ -9,6 +10,7 @@ from notion_client_wrapper.filter.condition.relation_condition import RelationCo
 from notion_client_wrapper.filter.condition.string_condition import StringCondition
 from notion_client_wrapper.filter.filter_builder import FilterBuilder
 from notion_client_wrapper.page.page_id import PageId
+from task.domain.do_tomorrow_flag import DoTommorowFlag
 from task.domain.project_relation import ProjectRelation
 from task.domain.task import Task
 from task.domain.task_kind import TaskKind, TaskKindType
@@ -29,6 +31,7 @@ class TaskRepositoryImpl(TaskRepository):
         start_datetime: date | datetime | None = None,
         start_datetime_end: date | datetime | None = None,
         project_id: PageId | None = None,
+        do_tomorrow_flag: bool | None = None,
     ) -> list[Task]:
         task_kind_trash = TaskKind.trash()
         filter_builder = FilterBuilder()
@@ -75,6 +78,12 @@ class TaskRepositoryImpl(TaskRepository):
         if project_id is not None:
             project_relation = ProjectRelation.from_id_list(id_list=[project_id.value])
             filter_builder = filter_builder.add_condition(RelationCondition.contains(project_relation))
+
+        if do_tomorrow_flag is not None:
+            do_tomorrow_flag_checkbox = DoTommorowFlag.true() if do_tomorrow_flag else DoTommorowFlag.false()
+            filter_builder = filter_builder.add_condition(
+                CheckboxCondition.equal(do_tomorrow_flag_checkbox),
+            )
 
         tasks: list[Task] = self.client.retrieve_database(
             database_id=DatabaseType.TASK.value,
