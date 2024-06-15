@@ -7,6 +7,8 @@ from util.environment import Environment
 from util.error_reporter import ErrorReporter
 
 logger = get_logger(__name__)
+client = ClientWrapper.get_instance(logger=logger)
+clean_empty_title_page_usecase = CleanEmptyTitlePageUsecase(client=client, logger=logger)
 
 
 # ログ
@@ -17,9 +19,8 @@ if Environment.is_dev():
 
 def handler(event: dict, context: dict) -> None:
     try:
-        client = ClientWrapper.get_instance(logger=logger)
-        usecase = CleanEmptyTitlePageUsecase(client=client, logger=logger)
-        usecase.handle()
+        # タイトルが空のページを削除
+        clean_empty_title_page_usecase.handle()
     except:
         ErrorReporter().execute()
         raise
