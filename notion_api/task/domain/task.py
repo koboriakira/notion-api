@@ -44,7 +44,10 @@ class Task(BasePage):
     def do_tomorrow(self) -> "Task":
         do_tomorrow_flag = DoTommorowFlag.false()
         start_date = TaskStartDate.create(self.start_date + timedelta(days=1))
-        self.properties = self.properties.append_property(do_tomorrow_flag).append_property(start_date)
+        due_date = DueDate.create(self.due_date + timedelta(days=1))
+        self.properties = (
+            self.properties.append_property(do_tomorrow_flag).append_property(start_date).append_property(due_date)
+        )
         return self
 
     @property
