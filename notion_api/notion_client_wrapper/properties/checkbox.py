@@ -8,15 +8,12 @@ class Checkbox(Property):
     checked: bool
     type: str = "checkbox"
 
-    def __init__(self,
-                 name: str,
-                 checked: bool,
-                 id: str | None = None):
+    def __init__(self, name: str, checked: bool, id: str | None = None) -> None:  # noqa: A002, FBT001
         self.name = name
-        self.checked = checked
+        self.checked = checked or False
         self.id = id
 
-    @ staticmethod
+    @staticmethod
     def of(name: str, param: dict) -> "Checkbox":
         return Checkbox(
             name=name,
@@ -25,13 +22,20 @@ class Checkbox(Property):
         )
 
     @staticmethod
-    def from_bool(name: str, checked: bool) -> "Checkbox":
+    def true(name: str) -> "Checkbox":
         return Checkbox(
             name=name,
-            checked=checked,
+            checked=True,
         )
 
-    def __dict__(self):
+    @staticmethod
+    def false(name: str) -> "Checkbox":
+        return Checkbox(
+            name=name,
+            checked=False,
+        )
+
+    def __dict__(self) -> dict:
         result = {
             "type": self.type,
             "checkbox": self.checked,

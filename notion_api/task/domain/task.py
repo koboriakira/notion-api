@@ -4,6 +4,7 @@ from datetime import date, datetime
 
 from notion_client_wrapper.base_page import BasePage
 from notion_client_wrapper.page.page_id import PageId
+from task.domain.do_tomorrow_flag import DoTommorowFlag
 from task.domain.due_date import DueDate
 from task.domain.pomodoro_counter import PomodoroCounter
 from task.domain.project_relation import ProjectRelation
@@ -86,6 +87,10 @@ class Task(BasePage):
         if project_relation is None:
             return []
         return project_relation.page_id_list
+
+    @property
+    def is_do_tomorrow(self) -> bool:
+        return self.get_checkbox(name=DoTommorowFlag.NAME).checked
 
     @property
     def order(self) -> int:
