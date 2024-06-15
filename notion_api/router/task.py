@@ -48,7 +48,7 @@ def upadate_task(task_id: str, request: UpdateTaskRequest, access_token: str | N
     return TaskResponse(data=TaskDto.from_model(task))
 
 
-@router.post("/{task_id}/complete", response_model=TaskResponse)
+@router.post("/{task_id}/complete/", response_model=TaskResponse)
 def complete_task(task_id: str, access_token: str | None = Header(None)) -> TaskResponse:
     try:
         valid_access_token(access_token)
