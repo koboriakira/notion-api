@@ -7,6 +7,14 @@ import { aws_events as events } from "aws-cdk-lib";
  * 値: スケジュール設定
  */
 export const SCHEDULER_CONFIG = {
+  // 5分ごとに実行。できればもっと短い間隔で実行したいけど、コストを考えて
+  every_minutes_batch: events.Schedule.cron({
+    minute: "*/5",
+    hour: "*",
+    month: "*",
+    year: "*",
+    weekDay: "*",
+  }),
   // 月曜10時に実行
   create_daily_log: events.Schedule.cron({
     minute: "0",
@@ -14,14 +22,6 @@ export const SCHEDULER_CONFIG = {
     month: "*",
     year: "*",
     weekDay: "MON",
-  }),
-  // 10分ごとに実行
-  clean_empty_title_page: events.Schedule.cron({
-    minute: "*/10",
-    hour: "*",
-    month: "*",
-    year: "*",
-    weekDay: "*",
   }),
   // 毎日21時に実行
   collect_updated_pages: events.Schedule.cron({

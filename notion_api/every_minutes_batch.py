@@ -26,5 +26,5 @@ def handler(event: dict, context: dict) -> None:
 
 
 if __name__ == "__main__":
-    # python -m notion_api.clean_empty_title_page
+    # python -m notion_api.every_minutes_batch
     handler({}, {})
