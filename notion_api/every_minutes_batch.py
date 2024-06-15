@@ -3,12 +3,14 @@ import logging
 from custom_logger import get_logger
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from usecase.clean_empty_title_page import CleanEmptyTitlePageUsecase
+from usecase.task.do_tomorrow_usecase import DoTommorowUsecase
 from util.environment import Environment
 from util.error_reporter import ErrorReporter
 
 logger = get_logger(__name__)
 client = ClientWrapper.get_instance(logger=logger)
 clean_empty_title_page_usecase = CleanEmptyTitlePageUsecase(client=client, logger=logger)
+do_tomorrow_usecase = DoTommorowUsecase(client=client, logger=logger)
 
 
 # ログ
@@ -21,6 +23,8 @@ def handler(event: dict, context: dict) -> None:
     try:
         # タイトルが空のページを削除
         clean_empty_title_page_usecase.handle()
+        # 「明日やる」が有効になっているタスクを翌日に更新
+        do_tomorrow_usecase.handle()
     except:
         ErrorReporter().execute()
         raise
