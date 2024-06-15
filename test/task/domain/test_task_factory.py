@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date
 from unittest import TestCase
 
 from notion_api.task.domain.task_kind import TaskKindType
@@ -12,7 +12,7 @@ class TestTaskFactory(TestCase):
         # Given
         title = "title"
         task_kind_type = TaskKindType.NEXT_ACTION
-        start_date = datetime(2024, 3, 20)
+        start_date = date(2024, 3, 20)
         status = TaskStatusType.TODO
 
         # When
@@ -23,5 +23,5 @@ class TestTaskFactory(TestCase):
         # Then
         self.assertEqual(title, actual.get_title().text)
         self.assertEqual(task_kind_type.value, actual.kind.value)
-        self.assertEqual(start_date, actual.start_datetime)
+        self.assertEqual(start_date, actual.start_date)
         self.assertEqual(status.value, actual.status.value)
