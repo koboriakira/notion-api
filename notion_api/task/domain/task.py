@@ -1,6 +1,6 @@
 import sys
 from dataclasses import dataclass
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 from notion_client_wrapper.base_page import BasePage
 from notion_client_wrapper.page.page_id import PageId
@@ -39,6 +39,12 @@ class Task(BasePage):
         pomodoro_counter = PomodoroCounter(number=number)
         properties = self.properties.append_property(pomodoro_counter)
         self.properties = properties
+        return self
+
+    def do_tomorrow(self) -> "Task":
+        do_tomorrow_flag = DoTommorowFlag.false()
+        start_date = TaskStartDate.create(self.start_date + timedelta(days=1))
+        self.properties = self.properties.append_property(do_tomorrow_flag).append_property(start_date)
         return self
 
     @property
