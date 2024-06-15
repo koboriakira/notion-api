@@ -10,6 +10,7 @@ from usecase.create_new_task_usecase import CreateNewTaskUsecase
 from usecase.find_task_usecase import FindTaskUsecase
 from usecase.task.complete_task_usecase import CompleteTaskUsecase
 from usecase.task.find_latest_inprogress_task_usecase import FindLatestInprogressTaskUsecase
+from usecase.task.start_task_usecase import StartTaskUsecase
 from usecase.update_task_use_case import UpdateTaskUsecase
 from util.access_token import valid_access_token
 from util.error_reporter import ErrorReporter
@@ -52,6 +53,20 @@ def complete_task(task_id: str, access_token: str | None = Header(None)) -> Task
     try:
         valid_access_token(access_token)
         usecase = CompleteTaskUsecase(
+            task_repository=task_repository,
+        )
+        task = usecase.execute(page_id=PageId(value=task_id))
+        return TaskResponse(data=TaskDto.from_model(task))
+    except:
+        ErrorReporter().execute()
+        raise
+
+
+@router.post("/{task_id}/start/", response_model=TaskResponse)
+def start_task(task_id: str, access_token: str | None = Header(None)) -> TaskResponse:
+    try:
+        valid_access_token(access_token)
+        usecase = StartTaskUsecase(
             task_repository=task_repository,
         )
         task = usecase.execute(page_id=PageId(value=task_id))
