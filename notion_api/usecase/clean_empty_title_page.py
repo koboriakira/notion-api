@@ -3,6 +3,9 @@ from logging import Logger
 from common.value.database_type import DatabaseType
 from custom_logger import get_logger
 from notion_client_wrapper.client_wrapper import ClientWrapper
+from notion_client_wrapper.filter.condition.empty_condition import EmptyCondition
+from notion_client_wrapper.filter.filter_builder import FilterBuilder
+from notion_client_wrapper.properties.title import Title
 
 logger = get_logger(__name__)
 
@@ -19,8 +22,8 @@ database_list = [
 
 
 class CleanEmptyTitlePageUsecase:
-    def __init__(self, client: ClientWrapper, logger: Logger | None = None) -> None:
-        self.client = client
+    def __init__(self, client: ClientWrapper | None = None, logger: Logger | None = None) -> None:
+        self._client = client or ClientWrapper.get_instance()
         self._logger = logger or get_logger(__name__)
 
     def handle(self) -> dict:
@@ -29,15 +32,24 @@ class CleanEmptyTitlePageUsecase:
 
     def _clean(self, database: DatabaseType) -> None:
         self._logger.info(f"Start clean empty title page: {database}")
-        pages = self.client.retrieve_database(database_id=database.value)
+        pages = self._client.retrieve_database(
+            database_id=database.value,
+            filter_param=self._create_filter_param(),
+        )
         self._logger.info(f"length of page: {len(pages)}")
         for page in pages:
             if page.get_title_text() == "":
                 self._logger.info(f"Remove empty title page_id: {page.id}")
-                self.client.remove_page(page_id=page.id)
+                self._client.remove_page(page_id=page.id)
+
+    def _create_filter_param(self) -> dict:
+        title = Title.from_plain_text(text="")
+        filter_builder = FilterBuilder().add_condition(EmptyCondition.true(prop_name=title.name, prop_type=title.type))
+        return filter_builder.build()
 
 
 if __name__ == "__main__":
-    # python -m usecase.clean_empty_title_page
+    # python -m notion_api.usecase.clean_empty_title_page
+
     usecase = CleanEmptyTitlePageUsecase()
     usecase.handle()
