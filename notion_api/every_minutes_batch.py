@@ -23,9 +23,9 @@ if Environment.is_dev():
 
 def handler(event: dict, context: dict) -> None:
     try:
-        # タイトルが空のページを削除
+        logger.info("タイトルが空のページを削除")
         clean_empty_title_page_usecase.handle()
-        # 「明日やる」が有効になっているタスクを翌日に更新
+        logger.info("「明日やる」が有効になっているタスクを翌日に更新")
         do_tomorrow_usecase.execute()
     except:
         ErrorReporter().execute()
