@@ -3,11 +3,13 @@ from datetime import datetime, timedelta
 
 from slack_sdk.web import WebClient
 
+from common.infrastructure.twitter.lambda_twitter_api import LambdaTwitterApi
 from common.value.database_type import DatabaseType
 from custom_logger import get_logger
 from daily_log.domain.daily_log_repository import DailyLogRepository
 from notion_client_wrapper import block
 from notion_client_wrapper.base_page import BasePage
+from notion_client_wrapper.block.embed import Embed
 from notion_client_wrapper.block.rich_text.rich_text_builder import RichTextBuilder
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper.filter.condition.date_condition import DateCondition
@@ -47,6 +49,7 @@ class CollectUpdatedPagesUsecase:
         self._slack_client = WebClient(token=os.environ["SLACK_BOT_TOKEN"])
         self._task_repository = task_repository
         self._daily_log_repository = daily_log_repository
+        self._twitter_api = LambdaTwitterApi()
         self.is_debug = is_debug
 
     def execute(self, target_datetime: datetime | None = None) -> None:
@@ -75,6 +78,12 @@ class CollectUpdatedPagesUsecase:
         for title, database_type in DATABASE_DICT.items():
             pages = self._get_latest_items(target_datetime=target_datetime, database_type=database_type)
             self._append_relation_to_daily_log(daily_log_id=daily_log.id, title=title, pages=pages)
+
+        # 今日のTwitterを集める
+        tweets = self._twitter_api.get_user_tweets(user_screen_name="kobori_akira_pw", start_datetime=target_datetime)
+        for tweet in tweets:
+            embed_tweet = Embed.from_url_and_caption(url=tweet.data.url)
+            self.client.append_block(block_id=daily_log.id, block=embed_tweet)
 
         self._slack_client.chat_postMessage(
             text=f"デイリーログにページを追加しました。\n{daily_log.url}",
@@ -133,4 +142,4 @@ if __name__ == "__main__":
         task_repository=task_repository,
         daily_log_repository=daily_log_repository,
     )
-    usecase.execute(target_datetime=datetime(2024, 4, 11, 21, 0, 0, tzinfo=JST))
+    usecase.execute(target_datetime=datetime(2024, 6, 20, 21, 0, 0, tzinfo=JST))
