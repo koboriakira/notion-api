@@ -1,10 +1,8 @@
-import os
 from datetime import datetime, timedelta
-
-from slack_sdk.web import WebClient
 
 from common.infrastructure.twitter.lambda_twitter_api import LambdaTwitterApi
 from common.value.database_type import DatabaseType
+from common.value.slack_channel_type import ChannelType
 from custom_logger import get_logger
 from daily_log.domain.daily_log_repository import DailyLogRepository
 from notion_client_wrapper import block
@@ -18,6 +16,7 @@ from notion_client_wrapper.properties.last_edited_time import LastEditedTime
 from task.domain.task_repository import TaskRepository
 from task.domain.task_status import TaskStatusType
 from util.datetime import JST, jst_now
+from util.slack.slack_client import SlackClient
 
 logger = get_logger(__name__)
 
@@ -36,7 +35,6 @@ DATABASE_DICT = {
 }
 
 LOG_FORMAT_APPEND_PAGE = "ページを追加しました: %s"
-SLACK_CHANNEL = "C05F6AASERZ"  # diary
 
 
 class CollectUpdatedPagesUsecase:
@@ -47,7 +45,7 @@ class CollectUpdatedPagesUsecase:
         is_debug: bool | None = None,
     ) -> None:
         self.client = ClientWrapper.get_instance()
-        self._slack_client = WebClient(token=os.environ["SLACK_BOT_TOKEN"])
+        self._slack_client = SlackClient.bot(channel_type=ChannelType.DIARY, thread_ts=None)
         self._task_repository = task_repository
         self._daily_log_repository = daily_log_repository
         self._twitter_api = LambdaTwitterApi()
@@ -70,7 +68,7 @@ class CollectUpdatedPagesUsecase:
 
         self._slack_client.chat_postMessage(
             text=f"デイリーログにサマリを追加します。\n{daily_log.url}",
-            channel=SLACK_CHANNEL,  # diary
+            new_thread=True,
         )
 
         # 今日完了したタスクを取得
@@ -93,15 +91,7 @@ class CollectUpdatedPagesUsecase:
             embed_tweet = Embed.from_url_and_caption(url=tweet.data.url)
             if not self.is_debug:
                 self.client.append_block(block_id=daily_log.id, block=embed_tweet)
-                self._slack_client.chat_postMessage(
-                    text=tweet.data.url,
-                    channel=SLACK_CHANNEL,  # diary
-                )
-
-        self._slack_client.chat_postMessage(
-            text=f"デイリーログにページを追加しました。\n{daily_log.url}",
-            channel="C05F6AASERZ",  # diary
-        )
+                self._slack_client.chat_postMessage(text=tweet.data.url)
 
     def _get_latest_items(self, target_datetime: datetime, database_type: DatabaseType) -> list[BasePage]:
         """指定されたカテゴリの、最近更新されたページIDを取得する"""
@@ -124,10 +114,7 @@ class CollectUpdatedPagesUsecase:
         # バックリンクを記録する
         for page in pages:
             self._append_backlink(block_id=daily_log_id, page=page)
-            self._slack_client.chat_postMessage(
-                text=page.title_for_slack(),
-                channel=SLACK_CHANNEL,  # diary
-            )
+            self._slack_client.chat_postMessage(text=page.title_for_slack())
 
     def _append_heading(self, block_id: str, title: str) -> None:
         heading = block.Heading.from_plain_text(heading_size=2, text=title)
