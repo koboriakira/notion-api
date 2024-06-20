@@ -1,27 +1,29 @@
 from logging import Logger, getLogger
 
+from common.service.page_creator import PageCreator
 from webclip.domain.webclip import Webclip
 from webclip.infrastructure.webclip_repository_impl import WebclipRepositoryImpl
 from webclip.service.webclip_generator import WebclipGeneratorRule
 
 
-class WebclipCreator:
+class WebclipCreator(PageCreator):
     def __init__(
-            self,
-            webclip_repository: WebclipRepositoryImpl,
-            webclip_generator_rule: WebclipGeneratorRule,
-            logger: Logger | None = None,
-            ) -> None:
+        self,
+        webclip_repository: WebclipRepositoryImpl,
+        webclip_generator_rule: WebclipGeneratorRule,
+        logger: Logger | None = None,
+    ) -> None:
         self._webclip_repository = webclip_repository
         self._webclip_generator_rule = webclip_generator_rule
         self._logger = logger or getLogger(__name__)
 
     def execute(
-            self,
-            url: str,
-            title: str,
-            cover: str | None = None,
-            ) -> Webclip:
+        self,
+        url: str,
+        title: str,
+        cover: str | None = None,
+        params: dict | None = None,
+    ) -> Webclip:
         info_message = f"{self.__class__} execute: url={url}, title={title}, cover={cover}"
         self._logger.info(info_message)
 
@@ -50,9 +52,11 @@ class WebclipCreator:
         self._logger.info(info_message)
         return None
 
+
 if __name__ == "__main__":
     # python -m notion_api.webclip.service.webclip_creator
     from webclip.injector import WebclipInjector
+
     service = WebclipInjector.create_webclip_creator()
     service.execute(
         url="https://hobby.dengeki.com/news/2222026/",

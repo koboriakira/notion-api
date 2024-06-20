@@ -1,17 +1,17 @@
 from logging import Logger, getLogger
 
 from common.service.page_creator import PageCreator
-from restaurant.domain.restaurant import Restaurant
-from restaurant.infrastructure.restaurant_repository_impl import RestaurantRepositoryImpl as RestaurantRepository
+from music.domain.song import Song
+from music.infrastructure.music_repository_impl import MusicRepositoryImpl as MusicRepository
 
 
-class RestaurantCreator(PageCreator):
+class MusicCreator(PageCreator):
     def __init__(
         self,
-        restaurant_repository: RestaurantRepository,
+        music_repository: MusicRepository,
         logger: Logger | None = None,
     ) -> None:
-        self._restaurant_repository = restaurant_repository
+        self._music_repository = music_repository
         self._logger = logger or getLogger(__name__)
 
     def execute(
@@ -20,7 +20,7 @@ class RestaurantCreator(PageCreator):
         title: str | None = None,
         cover: str | None = None,
         params: dict | None = None,
-    ) -> Restaurant:
+    ) -> Song:
         if title is None:
             msg = "title is required"
             raise ValueError(msg)
@@ -28,32 +28,32 @@ class RestaurantCreator(PageCreator):
         info_message = f"{self.__class__} execute: url={url}, title={title}, cover={cover}"
         self._logger.info(info_message)
 
-        restaurant = self._restaurant_repository.find_by_title(title=title)
-        if restaurant is not None:
-            info_message = f"Restaurant is already registered: {restaurant.restaurant_name}"
+        Music = self._Music_repository.find_by_title(title=title)
+        if Music is not None:
+            info_message = f"Music is already registered: {Music.Music_name}"
             self._logger.info(info_message)
-            return restaurant
+            return Music
 
-        info_message = "Create a Restaurant"
+        info_message = "Create a Music"
         self._logger.info(info_message)
 
-        # Restaurantを生成
-        restaurant = Restaurant.create(
+        # Musicを生成
+        Music = Music.create(
             title=title,
             url=url,
             cover=cover,
         )
 
-        return self._restaurant_repository.save(restaurant)
+        return self._Music_repository.save(Music)
 
 
 if __name__ == "__main__":
-    # python -m notion_api.restaurant.service.restaurant_creator
+    # python -m notion_api.Music.service.Music_creator
     from notion_client_wrapper.client_wrapper import ClientWrapper
 
     client = ClientWrapper.get_instance()
-    suite = RestaurantCreator(
-        restaurant_repository=RestaurantRepository(client=client),
+    suite = MusicCreator(
+        Music_repository=MusicRepository(client=client),
     )
     suite.execute(
         url="https://tabelog.com/tokyo/A1316/A131604/13020181/",

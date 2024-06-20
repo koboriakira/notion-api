@@ -2,6 +2,7 @@ from logging import Logger, getLogger
 
 from common.domain.tag_relation import TagRelation
 from common.infrastructure.default_scraper import DefaultScraper
+from common.service.page_creator import PageCreator
 from common.service.scrape_service.scrape_service import ScrapeService
 from common.service.tag_creator import TagCreator
 from util.tag_analyzer import TagAnalyzer
@@ -9,7 +10,7 @@ from video.domain.video import Video
 from video.infrastructure.video_repository_impl import VideoRepositoryImpl as VideoRepository
 
 
-class VideoCreator:
+class VideoCreator(PageCreator):
     def __init__(  # noqa: PLR0913
         self,
         video_repository: VideoRepository,
@@ -29,6 +30,7 @@ class VideoCreator:
         url: str,
         title: str | None = None,
         cover: str | None = None,
+        params: dict | None = None,
     ) -> Video:
         if title is None:
             msg = "title is required"
