@@ -1,4 +1,3 @@
-
 from fastapi import APIRouter, Header
 
 from custom_logger import get_logger

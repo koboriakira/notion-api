@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date
 
 from notion_client_wrapper.properties.date import Date
 
@@ -6,8 +6,8 @@ from notion_client_wrapper.properties.date import Date
 class ReleaseDate(Date):
     NAME = "リリース日"
 
-    def __init__(self, date_: date | datetime | None) -> None:
+    def __init__(self, date_: date) -> None:
         super().__init__(
             name=self.NAME,
-            start=date_.isoformat() if date_ is not None else None,
+            start=date_.isoformat(),
         )

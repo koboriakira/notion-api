@@ -1,7 +1,9 @@
 from logging import Logger
 
-from common.service.page_creator import NotImplementPageCreator, PageCreator
+from common.service.page_creator import PageCreator
 from common.value.site_kind import SiteKind
+from music.infrastructure.song_repository_impl import SongRepositoryImpl
+from music.service.music_creator import MusicCreator
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from restaurant.infrastructure.restaurant_repository_impl import RestaurantRepositoryImpl
 from restaurant.service.restaurant_creator import RestaurantCreator
@@ -20,6 +22,8 @@ class PageCreatorFactory:
         video_creator = VideoInjector.create_video_creator()
         restaurant_repository = RestaurantRepositoryImpl(client=client)
         restaurant_creator = RestaurantCreator(restaurant_repository=restaurant_repository, logger=logger)
+        song_repository = SongRepositoryImpl(client=client)
+        music_creator = MusicCreator(song_repository=song_repository, logger=logger)
 
         generator_dict = {}
         for site_kind in SiteKind:
@@ -29,7 +33,7 @@ class PageCreatorFactory:
                 case SiteKind.YOUTUBE:
                     generator_dict[site_kind] = video_creator
                 case SiteKind.SPOTIFY:
-                    generator_dict[site_kind] = NotImplementPageCreator()
+                    generator_dict[site_kind] = music_creator
                 case _:
                     generator_dict[site_kind] = webclip_creator
         return PageCreatorFactory(generator_dict=generator_dict)
