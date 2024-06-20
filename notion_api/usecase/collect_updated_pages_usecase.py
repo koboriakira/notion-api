@@ -82,8 +82,11 @@ class CollectUpdatedPagesUsecase:
         # 今日のTwitterを集める
         tweets = self._twitter_api.get_user_tweets(user_screen_name="kobori_akira_pw", start_datetime=target_datetime)
         for tweet in tweets:
+            if not self.is_debug:
+                self._append_heading(block_id=daily_log.id, title="今日のTwitter")
             embed_tweet = Embed.from_url_and_caption(url=tweet.data.url)
-            self.client.append_block(block_id=daily_log.id, block=embed_tweet)
+            if not self.is_debug:
+                self.client.append_block(block_id=daily_log.id, block=embed_tweet)
 
         self._slack_client.chat_postMessage(
             text=f"デイリーログにページを追加しました。\n{daily_log.url}",
