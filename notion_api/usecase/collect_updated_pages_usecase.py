@@ -36,6 +36,7 @@ DATABASE_DICT = {
 }
 
 LOG_FORMAT_APPEND_PAGE = "ページを追加しました: %s"
+SLACK_CHANNEL = "C05F6AASERZ"  # diary
 
 
 class CollectUpdatedPagesUsecase:
@@ -67,6 +68,11 @@ class CollectUpdatedPagesUsecase:
         # デイリーログを取得
         daily_log = self._daily_log_repository.find(date=target_datetime.date())
 
+        self._slack_client.chat_postMessage(
+            text=f"デイリーログにサマリを追加します。\n{daily_log.url}",
+            channel=SLACK_CHANNEL,  # diary
+        )
+
         # 今日完了したタスクを取得
         done_tasks = self._task_repository.search(
             status_list=[TaskStatusType.DONE],
@@ -81,12 +87,16 @@ class CollectUpdatedPagesUsecase:
 
         # 今日のTwitterを集める
         tweets = self._twitter_api.get_user_tweets(user_screen_name="kobori_akira_pw", start_datetime=target_datetime)
+        if not self.is_debug and len(tweets) > 0:
+            self._append_heading(block_id=daily_log.id, title="今日のTwitter")
         for tweet in tweets:
-            if not self.is_debug:
-                self._append_heading(block_id=daily_log.id, title="今日のTwitter")
             embed_tweet = Embed.from_url_and_caption(url=tweet.data.url)
             if not self.is_debug:
                 self.client.append_block(block_id=daily_log.id, block=embed_tweet)
+                self._slack_client.chat_postMessage(
+                    text=tweet.data.url,
+                    channel=SLACK_CHANNEL,  # diary
+                )
 
         self._slack_client.chat_postMessage(
             text=f"デイリーログにページを追加しました。\n{daily_log.url}",
@@ -114,6 +124,10 @@ class CollectUpdatedPagesUsecase:
         # バックリンクを記録する
         for page in pages:
             self._append_backlink(block_id=daily_log_id, page=page)
+            self._slack_client.chat_postMessage(
+                text=page.title_for_slack(),
+                channel=SLACK_CHANNEL,  # diary
+            )
 
     def _append_heading(self, block_id: str, title: str) -> None:
         heading = block.Heading.from_plain_text(heading_size=2, text=title)
