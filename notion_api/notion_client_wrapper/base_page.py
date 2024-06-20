@@ -114,6 +114,7 @@ class BasePage:
         self.url = url
 
     def title_for_slack(self) -> None:
+        """Slackでの表示用のリンクつきタイトルを返す"""
         return f"<{self.url}|{self.get_title_text()}>"
 
     @property
