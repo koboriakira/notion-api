@@ -6,22 +6,22 @@ class Embed(Block):
     embed_url: str
 
     def __init__(  # noqa: PLR0913
-            self,
-            embed_url: str,
-            caption: list|None = None,
-            id: str | None = None,  # noqa: A002
-            archived: bool | None = None,
-            created_time: str | None = None,
-            last_edited_time: str | None = None,
-            has_children: bool | None = None,
-            parent: dict | None = None,
-            ) -> None:
+        self,
+        embed_url: str,
+        caption: list | None = None,
+        id: str | None = None,  # noqa: A002
+        archived: bool | None = None,
+        created_time: str | None = None,
+        last_edited_time: str | None = None,
+        has_children: bool | None = None,
+        parent: dict | None = None,
+    ) -> None:
         super().__init__(id, archived, created_time, last_edited_time, has_children, parent)
         self.embed_url = embed_url
         self.caption = caption or []
 
     @staticmethod
-    def from_url_and_caption(url: str, caption_str: str|None = None) -> "Embed":
+    def from_url_and_caption(url: str, caption_str: str | None = None) -> "Embed":
         if caption_str is not None:
             raise NotImplementedError
         return Embed(
@@ -48,7 +48,13 @@ class Embed(Block):
         return "embed"
 
     def to_dict_sub(self) -> dict:
-        raise NotImplementedError
+        result = {
+            "url": self.embed_url,
+        }
+
+        if self.caption:
+            result["caption"] = self.caption
+        return result
 
     def to_slack_text(self) -> str:
         return self.embed_url
