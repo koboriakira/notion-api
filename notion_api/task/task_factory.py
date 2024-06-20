@@ -5,6 +5,7 @@ from notion_client_wrapper.properties.properties import Properties
 from notion_client_wrapper.properties.text import Text
 from notion_client_wrapper.properties.title import Title
 from task.domain.due_date import DueDate
+from task.domain.pomodoro_start_datetime import PomodoroStartDatetime
 from task.domain.routine_kind import RoutineKind, RoutineType
 from task.domain.routine_task import RoutineTask
 from task.domain.task import Task
@@ -21,6 +22,7 @@ class TaskFactory:
         task_kind_type: TaskKindType | None = None,
         start_date: datetime | date | None = None,
         due_date: datetime | date | None = None,
+        pomodoro_start_datetime: datetime | None = None,
         status: TaskStatusType | None = None,
         blocks: list[Block] | None = None,
     ) -> Task:
@@ -36,6 +38,8 @@ class TaskFactory:
             properties.append(DueDate.create(due_date))
         if status is not None:
             properties.append(TaskStatus.from_status_type(status))
+        if pomodoro_start_datetime is not None:
+            properties.append(PomodoroStartDatetime(pomodoro_start_datetime))
         return Task(properties=Properties(values=properties), block_children=blocks)
 
     @classmethod

@@ -7,11 +7,12 @@ from notion_client_wrapper.page.page_id import PageId
 from task.domain.do_tomorrow_flag import DoTommorowFlag
 from task.domain.due_date import DueDate
 from task.domain.pomodoro_counter import PomodoroCounter
+from task.domain.pomodoro_start_datetime import PomodoroStartDatetime
 from task.domain.project_relation import ProjectRelation
 from task.domain.task_kind import TaskKind, TaskKindType
 from task.domain.task_start_date import TaskStartDate
 from task.domain.task_status import TaskStatus, TaskStatusType
-from util.datetime import convert_to_date_or_datetime
+from util.datetime import convert_to_date_or_datetime, jst_now
 
 COLUMN_NAME_TITLE = "名前"
 COLUMN_NAME_STATUS = "ステータス"
@@ -37,8 +38,8 @@ class Task(BasePage):
 
     def update_pomodoro_count(self, number: int) -> "Task":
         pomodoro_counter = PomodoroCounter(number=number)
-        properties = self.properties.append_property(pomodoro_counter)
-        self.properties = properties
+        pomodoro_start_datetime = PomodoroStartDatetime(jst_now())
+        self.properties = self.properties.append_property(pomodoro_counter).append_property(pomodoro_start_datetime)
         return self
 
     def do_tomorrow(self) -> "Task":
@@ -113,6 +114,13 @@ class Task(BasePage):
             # kindの優先度が高いほどorderを小さくする
             return sys.maxsize - self.kind.priority
         return sys.maxsize
+
+    @property
+    def pomodoro_start_datetime(self) -> datetime | None:
+        pomodoro_start_datetime = self.get_date(name=PomodoroStartDatetime.NAME)
+        if pomodoro_start_datetime is None or pomodoro_start_datetime.start is None:
+            return None
+        return convert_to_date_or_datetime(value=pomodoro_start_datetime.start, cls=datetime)
 
     def is_kind_trash(self) -> bool:
         return self.kind == TaskKindType.TRASH
