@@ -31,8 +31,7 @@ class AddBookUsecase:
             book = self._book_repository.save(book=book)
             # Inboxにタスクを追加
             self._inbox_service.add_inbox_task_by_page_id(
-                page_id=book.id,
-                page_url=book.url,
+                page=book,
                 original_url=book.book_url,
                 slack_channel=slack_channel,
                 slack_thread_ts=slack_thread_ts,

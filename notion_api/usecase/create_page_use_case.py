@@ -54,8 +54,7 @@ class CreatePageUseCase:
 
         # Inboxにタスクを追加
         self._inbox_service.add_inbox_task_by_page_id(
-            page_id=page.id,
-            page_url=page.url,
+            page=page,
             original_url=request.url,
             slack_channel=request.slack_channel,
             slack_thread_ts=request.slack_thread_ts,
