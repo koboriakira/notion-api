@@ -3,7 +3,7 @@ import os
 from slack_sdk.web import WebClient
 
 from common.value.database_type import DatabaseType
-from notion_client_wrapper.block.bookmark import Bookmark
+from notion_client_wrapper.block.embed import Embed
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper.properties import Title
 
@@ -25,8 +25,7 @@ class InboxService:
         title = Title.from_mentioned_page_id(name="名前", page_id=page_id)
         inbox_task_page = self.client.create_page_in_database(database_id=DatabaseType.TASK.value, properties=[title])
         if original_url:
-            bookmark = Bookmark.from_url(url=original_url)
-            self.client.append_block(block_id=inbox_task_page["id"], block=bookmark)
+            self.client.append_block(block_id=inbox_task_page["id"], block=Embed.from_url_and_caption(url=original_url))
         if slack_channel is not None:
             self.slack_client.chat_postMessage(
                 channel=slack_channel,
