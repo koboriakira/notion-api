@@ -12,7 +12,6 @@ from recipe.infrastructure.recipe_repository_impl import RecipeRepositoryImpl
 from recipe.service.recipe_creator import RecipeCreator
 from slack_concierge.injector import SlackConciergeInjector
 from task.infrastructure.task_repository_impl import TaskRepositoryImpl
-from usecase.add_webclip_usecase import AddWebclipUsecase
 from usecase.collect_updated_pages_usecase import CollectUpdatedPagesUsecase
 from usecase.create_page_use_case import CreatePageUseCase
 from usecase.recipe.add_recipe_use_case import AddRecipeUseCase
@@ -22,7 +21,6 @@ from usecase.service.tag_create_service import TagCreateService
 from usecase.service.text_summarizer import TextSummarizer
 from usecase.zettlekasten.create_tag_to_zettlekasten_use_case import CreateTagToZettlekastenUseCase
 from util.openai_executer import OpenaiExecuter
-from webclip.injector import WebclipInjector
 from zettlekasten.infrastructure.zettlekasten_repository_impl import ZettlekastenRepositoryImpl
 
 logger = get_logger(__name__)
@@ -35,18 +33,6 @@ slack_bot_client = WebClient(token=os.environ["SLACK_BOT_TOKEN"])
 
 
 class Injector:
-    @classmethod
-    def create_add_webclip_usecase(cls: "Injector") -> AddWebclipUsecase:
-        webclip_creator = WebclipInjector.create_webclip_creator()
-        inbox_service = cls.create_inbox_service()
-        append_context_service = SlackConciergeInjector.create_append_context_service()
-        return AddWebclipUsecase(
-            webclip_creator=webclip_creator,
-            inbox_service=inbox_service,
-            append_context_service=append_context_service,
-            logger=logger,
-        )
-
     @classmethod
     def get_create_tag_to_zettlekasten_use_case(cls: "Injector") -> CreateTagToZettlekastenUseCase:
         zettlekasten_repository = ZettlekastenRepositoryImpl(
