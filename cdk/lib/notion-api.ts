@@ -21,6 +21,7 @@ import { Timeout } from "aws-cdk-lib/aws-stepfunctions";
 // CONFIG
 const RUNTIME = lambda.Runtime.PYTHON_3_11;
 const TIMEOUT = 30;
+const BATCH_TIMEOUT = 300;
 const APP_DIR_PATH = "../notion_api";
 const LAYER_ZIP_PATH = "../dependencies.zip";
 
@@ -83,7 +84,7 @@ export class NotionApi extends Stack {
     myLayer: lambda.LayerVersion,
     schedule: events.Schedule
   ): lambda.Function {
-    const fn = this.createLambdaFunction(handlerName, role, myLayer, false);
+    const fn = this.createLambdaFunction(handlerName, role, myLayer, false, BATCH_TIMEOUT);
     new events.Rule(this, `${convertToCamelCase(handlerName)}Rule`, {
       schedule: schedule,
       targets: [new targets.LambdaFunction(fn, { retryAttempts: 0 })],
