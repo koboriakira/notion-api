@@ -28,7 +28,18 @@ class DatabaseType(Enum):
     RESTAURANT = "4f10b337-9a1d-4b87-9feb-87a00c511b68"
     GOAL = "f3f8b93f-d89f-4c3d-a47a-01c134a7e2bf"
 
-    def title_name(self) -> str:  # noqa: PLR0911
+    @staticmethod
+    def from_id(id_: str) -> "DatabaseType":
+        """
+        IDからデータベースの種類を取得する
+        """
+        for database_type in DatabaseType:
+            if database_type.value.replace("-", "") == id_.replace("-", ""):
+                return database_type
+        msg = f"ID={id_}に対忋するデータベースが見つかりませんでした"
+        raise ValueError(msg)
+
+    def title_name(self) -> str:  # noqa: PLR0911, C901, PLR0912
         """
         タイトルのプロパティ名を返す
         """

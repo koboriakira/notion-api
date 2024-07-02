@@ -109,6 +109,11 @@ class BasePage:
     def get_number(self, name: str) -> Number:
         return self.properties.get_property(name=name, instance_class=Number)
 
+    def get_parant_database_id(self) -> str | None:
+        if self.parent is None or "database_id" not in self.parent:
+            return None
+        return self.parent["database_id"]
+
     def update_id_and_url(self, page_id: str, url: str) -> None:
         self.id_ = page_id
         self.url = url

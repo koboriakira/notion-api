@@ -22,7 +22,10 @@ class InboxService:
         slack_thread_ts: str | None = None,
     ) -> None:
         """Notionの他ページに関連するタスクを追加する"""
-        title = Title.from_mentioned_page_id(name="名前", page_id=page.id)
+        kind_prefix = self.get_kind_prefix(page)
+        title = Title.from_mentioned_page(
+            mentioned_page_id=page.page_id, mentioned_page_title=page.title, prefix=kind_prefix
+        )
         inbox_task_page = self.client.create_page_in_database(database_id=DatabaseType.TASK.value, properties=[title])
         if original_url:
             self.client.append_block(block_id=inbox_task_page["id"], block=Embed.from_url_and_caption(url=original_url))
@@ -32,3 +35,10 @@ class InboxService:
                 text=f"ページを作成しました: {page.url}",
                 thread_ts=slack_thread_ts,
             )
+
+    def get_kind_prefix(self, page: BasePage) -> str:
+        """ページの種類を取得する"""
+        database_id = page.get_parant_database_id()
+        if database_id is None:
+            return ""
+        return f"【{DatabaseType.from_id(database_id).name}】"
