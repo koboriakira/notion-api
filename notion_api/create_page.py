@@ -40,13 +40,19 @@ if __name__ == "__main__":
     # )
 
     # Spotifyのサンプル
+    # request = CreatePageRequest(
+    #     url="https://open.spotify.com/track/1x99RdrXhjrOwxnumMsBxP",
+    #     title="君といつまでも - together forever mix",
+    #     cover="https://i.scdn.co/image/ab67616d0000b273f8ae712f93a9553ed84a8d1c",
+    #     params={
+    #         "artists": ["ECD", "DJ Mitsu The Beats"],
+    #         "release_date": "2017-03-08",
+    #     },
+    # )
+
+    # Restaurantのサンプル
     request = CreatePageRequest(
-        url="https://open.spotify.com/track/1x99RdrXhjrOwxnumMsBxP",
-        title="君といつまでも - together forever mix",
-        cover="https://i.scdn.co/image/ab67616d0000b273f8ae712f93a9553ed84a8d1c",
-        params={
-            "artists": ["ECD", "DJ Mitsu The Beats"],
-            "release_date": "2017-03-08",
-        },
+        url="https://tabelog.com/tokyo/A1311/A131102/13059980/",
+        title="とんかつ　やまと",
     )
     execute(request=request)

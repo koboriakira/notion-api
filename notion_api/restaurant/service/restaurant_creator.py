@@ -1,5 +1,6 @@
 from logging import Logger, getLogger
 
+from common.injector import CommonInjector
 from common.service.page_creator import PageCreator
 from restaurant.domain.restaurant import Restaurant
 from restaurant.infrastructure.restaurant_repository_impl import RestaurantRepositoryImpl as RestaurantRepository
@@ -13,6 +14,7 @@ class RestaurantCreator(PageCreator):
     ) -> None:
         self._restaurant_repository = restaurant_repository
         self._logger = logger or getLogger(__name__)
+        self._scraper = CommonInjector.get_scrape_service()
 
     def execute(
         self,
@@ -38,6 +40,8 @@ class RestaurantCreator(PageCreator):
         self._logger.info(info_message)
 
         # Restaurantを生成
+        if cover is None:
+            cover = self._scraper.execute(url=url).get_image_url()
         restaurant = Restaurant.create(
             title=title,
             url=url,
