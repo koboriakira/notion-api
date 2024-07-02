@@ -3,10 +3,13 @@ import os
 from slack_sdk.web import WebClient
 
 from common.value.database_type import DatabaseType
+from music.domain.song import Song
 from notion_client_wrapper.base_page import BasePage
+from notion_client_wrapper.block.bookmark import Bookmark
 from notion_client_wrapper.block.embed import Embed
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper.properties import Title
+from video.domain.video import Video
 
 
 class InboxService:
@@ -24,11 +27,18 @@ class InboxService:
         """Notionの他ページに関連するタスクを追加する"""
         kind_prefix = self.get_kind_prefix(page)
         title = Title.from_mentioned_page(
-            mentioned_page_id=page.page_id, mentioned_page_title=page.title, prefix=kind_prefix
+            mentioned_page_id=page.page_id,
+            mentioned_page_title=page.title,
+            prefix=kind_prefix,
         )
         inbox_task_page = self.client.create_page_in_database(database_id=DatabaseType.TASK.value, properties=[title])
         if original_url:
-            self.client.append_block(block_id=inbox_task_page["id"], block=Embed.from_url_and_caption(url=original_url))
+            block = (
+                Embed.from_url_and_caption(url=original_url)
+                if isinstance(page, Song) or isinstance(page, Video)
+                else Bookmark.from_url(url=original_url)
+            )
+            self.client.append_block(block_id=inbox_task_page["id"], block=block)
         if slack_channel is not None:
             self.slack_client.chat_postMessage(
                 channel=slack_channel,
@@ -38,7 +48,6 @@ class InboxService:
 
     def get_kind_prefix(self, page: BasePage) -> str:
         """ページの種類を取得する"""
-        database_id = page.get_parant_database_id()
-        if database_id is None:
-            return ""
-        return f"【{DatabaseType.from_id(database_id).name}】"
+        if isinstance(page, Song):
+            return "【音楽】"
+        return "【未指定】"
