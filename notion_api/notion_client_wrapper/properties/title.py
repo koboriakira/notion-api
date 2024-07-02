@@ -32,13 +32,14 @@ class Title(Property):
             return cls.__of("Title", properties["Title"])
         if "名前" in properties:
             return cls.__of("名前", properties["名前"])
-        raise Exception(f"Title property not found. properties: {properties}")
+        msg = f"Title property not found. properties: {properties}"
+        raise Exception(msg)
 
     @classmethod
     def from_property(cls, key: str, property: dict) -> "Title":
         return cls.__of(key, property)
 
-    def __dict__(self):
+    def __dict__(self) -> dict:
         values = []
         values.append(
             {
@@ -46,7 +47,7 @@ class Title(Property):
                 "text": {
                     "content": self.text,
                 },
-            }
+            },
         )
         if self.mentioned_page_id is not None:
             values.append(
@@ -60,7 +61,7 @@ class Title(Property):
                     },
                     # "plain_text": self.text,
                     # "href": f"https://www.notion.so/{self.mentioned_page_id}"
-                }
+                },
             )
         result = {
             "title": values,
