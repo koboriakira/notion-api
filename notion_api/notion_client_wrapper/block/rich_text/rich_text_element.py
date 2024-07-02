@@ -7,10 +7,11 @@ class RichTextElement(metaclass=ABCMeta):
     href: dict[str, bool] | None
 
     def __init__(
-            self,
-            annotations: dict[str, bool] | None = None,
-            plain_text: dict[str, bool] | None = None,
-            href: dict[str, bool] | None = None) -> None:
+        self,
+        annotations: dict[str, bool] | None = None,
+        plain_text: dict[str, bool] | None = None,
+        href: dict[str, bool] | None = None,
+    ) -> None:
         self.annotations = annotations
         self.plain_text = plain_text
         self.href = href
@@ -34,7 +35,7 @@ class RichTextElement(metaclass=ABCMeta):
 
     @staticmethod
     def from_entity(rich_text_element: dict) -> "RichTextElement":  # noqa: C901
-        """ dictからRichTextElementを生成する """
+        """dictからRichTextElementを生成する"""
         type = rich_text_element["type"]
         if type == "text":
             text = rich_text_element["text"]
@@ -78,22 +79,17 @@ class RichTextElement(metaclass=ABCMeta):
             raise NotImplementedError("equation is not implemented yet")
         raise Exception("invalid type")
 
-    @staticmethod
-    def from_plain_text(text: str) -> "RichTextElement":
-        """ plain_textからRichTextElementを生成する """
-        return RichTextTextElement.of(content=text)
-
     @abstractmethod
     def to_plain_text(self) -> str:
-        """ plain_textに変換する """
+        """plain_textに変換する"""
 
-    @ abstractmethod
+    @abstractmethod
     def get_type(self) -> str:
-        """ text, mention, equationのどれかを返す """
+        """text, mention, equationのどれかを返す"""
 
-    @ abstractmethod
+    @abstractmethod
     def to_dict_sub(self) -> str:
-        """ Text, Mention, Equationのそれぞれで実装する """
+        """Text, Mention, Equationのそれぞれで実装する"""
 
 
 class RichTextTextElement(RichTextElement):
@@ -101,17 +97,18 @@ class RichTextTextElement(RichTextElement):
     link_url: str | None = None
 
     def __init__(
-            self,
-            content: str,
-            link_url: str | None = None,
-            annotations: dict[str, bool] | None = None,
-            plain_text: dict[str, bool] | None = None,
-            href: dict[str, bool] | None = None) -> None:
+        self,
+        content: str,
+        link_url: str | None = None,
+        annotations: dict[str, bool] | None = None,
+        plain_text: dict[str, bool] | None = None,
+        href: dict[str, bool] | None = None,
+    ) -> None:
         self.content = content
         self.link_url = link_url
         super().__init__(annotations, plain_text, href)
 
-    @ staticmethod
+    @staticmethod
     def of(content: str, link_url: str | None = None) -> "RichTextTextElement":
         return RichTextTextElement(
             content=content,
@@ -147,21 +144,27 @@ class RichTextMentionElement(RichTextElement):
     end_date: str | None = None  # dateのみ利用
     link_preview_url: str | None = None  # link_previewのみ利用
 
-    def __init__(self,  # noqa: PLR0913
-                 mention_type: str,
-                 object_id: str | None = None,
-                 start_date: str | None = None,
-                 end_date: str | None = None,
-                 link_preview_url: str | None = None,
-                 annotations: dict[str, bool] | None = None,
-                 plain_text: dict[str, bool] | None = None,
-                 href: dict[str, bool] | None = None) -> None:
+    def __init__(
+        self,
+        mention_type: str,
+        object_id: str | None = None,
+        start_date: str | None = None,
+        end_date: str | None = None,
+        link_preview_url: str | None = None,
+        annotations: dict[str, bool] | None = None,
+        plain_text: dict[str, bool] | None = None,
+        href: dict[str, bool] | None = None,
+    ) -> None:
         self.mention_type = mention_type
         self.object_id = object_id
         self.start_date = start_date
         self.end_date = end_date
         self.link_preview_url = link_preview_url
         super().__init__(annotations, plain_text, href)
+
+    @classmethod
+    def from_page_type(cls: "RichTextMentionElement", page_id: str) -> "RichTextMentionElement":
+        return cls(mention_type="page", object_id=page_id)
 
     def to_slack_text(self) -> str:
         # TODO: メンションの場合、そのタイトルは再度クライアントを使ってretrieveしないといけない
@@ -173,14 +176,14 @@ class RichTextMentionElement(RichTextElement):
         # これをどうするか迷うけど、とりあえず空文字で返す
         return ""
 
-    @ staticmethod
+    @staticmethod
     def of_database(database_id: str) -> "RichTextMentionElement":
         return RichTextMentionElement(
             mention_type="database",
             object_id=database_id,
         )
 
-    @ staticmethod
+    @staticmethod
     def of_page(page_id: str) -> "RichTextMentionElement":
         return RichTextMentionElement(
             mention_type="page",
@@ -191,7 +194,7 @@ class RichTextMentionElement(RichTextElement):
         return "mention"
 
     def to_dict_sub(self) -> str:
-        """ Text, Mention, Equationのそれぞれで実装する """
+        """Text, Mention, Equationのそれぞれで実装する"""
         result = {
             "type": self.mention_type,
         }

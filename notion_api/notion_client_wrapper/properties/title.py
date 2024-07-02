@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 
+from notion_client_wrapper.block.rich_text.rich_text_element import RichTextMentionElement, RichTextTextElement
+from notion_client_wrapper.page.page_id import PageId
 from notion_client_wrapper.properties.property import Property
 
 
@@ -40,6 +42,18 @@ class Title(Property):
         return cls.__of(key, property)
 
     def __dict__(self) -> dict:
+        result = {
+            "title": self._get_value(),
+        }
+        if self.id is not None:
+            result["id"] = self.id
+        return {
+            self.name: result,
+        }
+
+    def _get_value(self) -> list[dict]:
+        if self.value is not None and self.value != []:
+            return self.value
         values = []
         values.append(
             {
@@ -63,14 +77,7 @@ class Title(Property):
                     # "href": f"https://www.notion.so/{self.mentioned_page_id}"
                 },
             )
-        result = {
-            "title": values,
-        }
-        if self.id is not None:
-            result["id"] = self.id
-        return {
-            self.name: result,
-        }
+        return values
 
     @staticmethod
     def __of(name: str, param: dict) -> "Title":
@@ -86,6 +93,30 @@ class Title(Property):
         return Title(
             name=name,
             text=text,
+        )
+
+    @staticmethod
+    def from_mentioned_page(
+        mentioned_page_id: PageId,
+        mentioned_page_title: str,
+        name: str = "名前",
+        prefix: str = "",
+        suffix: str = "",
+    ) -> "Title":
+        title = prefix + mentioned_page_title + suffix
+        values = []
+        if prefix != "":
+            rich_text_element = RichTextTextElement.of(content=prefix)
+            values.append(rich_text_element.to_dict())
+        rich_text_element = RichTextMentionElement.from_page_type(mentioned_page_id)
+        values.append(rich_text_element.to_dict())
+        if suffix != "":
+            rich_text_element = RichTextTextElement.of(content=suffix)
+            values.append(rich_text_element.to_dict())
+        return Title(
+            name=name,
+            value=values,
+            text=title,
         )
 
     @staticmethod

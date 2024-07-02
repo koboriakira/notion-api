@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from notion_client_wrapper.block.rich_text.rich_text_element import RichTextElement
+from notion_client_wrapper.block.rich_text.rich_text_element import RichTextElement, RichTextTextElement
 
 
 @dataclass(frozen=True)
@@ -13,7 +13,7 @@ class RichText:
 
     @staticmethod
     def from_plain_text(text: str) -> "RichText":
-        rich_text_element = RichTextElement.from_plain_text(text)
+        rich_text_element = RichTextTextElement.of(content=text)
         return RichText(elements=[rich_text_element])
 
     def to_plain_text(self) -> str:
