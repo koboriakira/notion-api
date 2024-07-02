@@ -110,6 +110,7 @@ class BasePage:
         return self.properties.get_property(name=name, instance_class=Number)
 
     def get_parant_database_id(self) -> str | None:
+        """未実装。削除すべきかも"""
         if self.parent is None or "database_id" not in self.parent:
             return None
         return self.parent["database_id"]

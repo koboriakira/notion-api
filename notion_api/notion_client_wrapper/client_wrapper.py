@@ -35,7 +35,7 @@ class NotionApiError(Exception):
         page_id: str | None = None,
         database_id: str | None = None,
         e: Exception | None = None,
-        properties: Properties | None = None,
+        properties: Properties | dict | None = None,
     ) -> None:
         self.database_id = database_id
         self.e = e
@@ -49,7 +49,8 @@ class NotionApiError(Exception):
         if database_id is not None:
             message += f"database_id: {database_id}"
         if properties is not None:
-            message += f", properties: {properties.__dict__()}"
+            properties_ = properties.__dict__() if isinstance(properties, Properties) else properties
+            message += f", properties: {properties_}"
         super().__init__(message)
 
 
