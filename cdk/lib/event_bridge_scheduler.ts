@@ -31,10 +31,10 @@ export const SCHEDULER_CONFIG = {
     year: "*",
     weekDay: "*",
   }),
-  // 毎日2時に実行
+  // 毎日0時に実行
   postpone_task: events.Schedule.cron({
     minute: "0",
-    hour: "17",
+    hour: "15",
     month: "*",
     year: "*",
     weekDay: "*",
