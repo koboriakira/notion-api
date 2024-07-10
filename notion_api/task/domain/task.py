@@ -106,9 +106,24 @@ class Task(BasePage):
 
     @property
     def order(self) -> int:
-        if isinstance(self.start_date, datetime) and self.start_date.time() != datetime.min.time():
+        """
+        * 開始時間の30分前になる
+        * 締め切り時間の60分前になる
+        場合は該当時刻のタイムスタンプを、
+        それ以外はすべて下に並べる
+        """
+        now = jst_now().timestamp()
+        if (
+            isinstance(self.start_date, datetime)
+            and self.start_date.time() != datetime.min.time()
+            and (self.start_date - timedelta(minutes=30)).timestamp() <= now
+        ):
             return int(self.start_date.timestamp() - 1)
-        if isinstance(self.due_date, datetime) and self.due_date.time() != datetime.min.time():
+        if (
+            isinstance(self.due_date, datetime)
+            and self.due_date.time() != datetime.min.time()
+            and (self.due_date - timedelta(minutes=60)).timestamp() <= now
+        ):
             return int(self.due_date.timestamp())
         if self.kind is not None:
             # kindの優先度が高いほどorderを小さくする
