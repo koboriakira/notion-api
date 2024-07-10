@@ -17,7 +17,7 @@ class CreateRoutineTaskUseCase:
         routine_tasks = self.routine_repository.fetch_all()
         next_tasks = self.task_repository.search(
             status_list=[TaskStatusType.TODO, TaskStatusType.IN_PROGRESS],
-            kind_type_list=[TaskKindType.SCHEDULE],
+            kind_type_list=[TaskKindType.SCHEDULE, TaskKindType.NEXT_ACTION],
         )
         next_task_titles = [task.get_title().text for task in next_tasks]
 
@@ -29,9 +29,10 @@ class CreateRoutineTaskUseCase:
             next_date = routine_task.get_next_date()
             start_date = datetime.combine(next_date, datetime.min.time(), JST)
             due_date = datetime.combine(next_date, routine_task.due_time(), JST) if routine_task.due_time() else None
+            task_kind_type = TaskKindType.SCHEDULE if due_date else TaskKindType.NEXT_ACTION
             task = TaskFactory.create_todo_task(
                 title=title,
-                task_kind_type=TaskKindType.SCHEDULE,
+                task_kind_type=task_kind_type,
                 start_date=start_date,
                 due_date=due_date,
                 blocks=routine_task.block_children,
