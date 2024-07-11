@@ -126,7 +126,7 @@ class TestTaskRepositoryImpl(TestCase):
         import sys
 
         sys.path.append("notion_api")
-        from task.domain.task import Task as TaskModel
+        from task.domain.task import ToDoTask as TaskModel
 
         self.suite.client.retrieve_database.assert_called_once_with(
             database_id=DatabaseType.TASK.value,

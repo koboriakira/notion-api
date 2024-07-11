@@ -12,7 +12,7 @@ from notion_client_wrapper.filter.filter_builder import FilterBuilder
 from notion_client_wrapper.page.page_id import PageId
 from task.domain.do_tomorrow_flag import DoTommorowFlag
 from task.domain.project_relation import ProjectRelation
-from task.domain.task import Task
+from task.domain.task import ToDoTask
 from task.domain.task_kind import TaskKind, TaskKindType
 from task.domain.task_repository import TaskRepository
 from task.domain.task_start_date import TaskStartDate
@@ -32,7 +32,7 @@ class TaskRepositoryImpl(TaskRepository):
         start_datetime_end: date | datetime | None = None,
         project_id: PageId | None = None,
         do_tomorrow_flag: bool | None = None,
-    ) -> list[Task]:
+    ) -> list[ToDoTask]:
         task_kind_trash = TaskKind.trash()
         filter_builder = FilterBuilder()
         filter_builder = filter_builder.add_condition(StringCondition.not_equal(property=task_kind_trash))
@@ -85,16 +85,16 @@ class TaskRepositoryImpl(TaskRepository):
                 CheckboxCondition.equal(do_tomorrow_flag_checkbox),
             )
 
-        tasks: list[Task] = self.client.retrieve_database(
+        tasks: list[ToDoTask] = self.client.retrieve_database(
             database_id=DatabaseType.TASK.value,
             filter_param=filter_builder.build(),
-            page_model=Task,
+            page_model=ToDoTask,
         )
         # order昇順で並び替え
         tasks.sort(key=lambda x: x.order)
         return tasks
 
-    def save(self, task: Task) -> Task:
+    def save(self, task: ToDoTask) -> ToDoTask:
         if task.id is not None:
             _ = self.client.update_page(page_id=task.id, properties=task.properties.values)
             return task
@@ -103,12 +103,12 @@ class TaskRepositoryImpl(TaskRepository):
             properties=task.properties.values,
             blocks=task.block_children,
         )
-        return self.client.retrieve_page(page_id=page["id"], page_model=Task)
+        return self.client.retrieve_page(page_id=page["id"], page_model=ToDoTask)
 
-    def find_by_id(self, task_id: str) -> Task:
-        return self.client.retrieve_page(page_id=task_id, page_model=Task)
+    def find_by_id(self, task_id: str) -> ToDoTask:
+        return self.client.retrieve_page(page_id=task_id, page_model=ToDoTask)
 
-    def move_to_backup(self, task: Task) -> None:
+    def move_to_backup(self, task: ToDoTask) -> None:
         # バックアップ用のデータベースにレコードを作成
         # タイトル、ステータス、実施日、タグ、プロジェクト、中身のみを移行
         properties = [

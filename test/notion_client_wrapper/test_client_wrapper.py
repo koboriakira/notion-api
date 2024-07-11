@@ -13,7 +13,7 @@ from notion_api.notion_client_wrapper.properties.cover import Cover
 from notion_api.notion_client_wrapper.properties.last_edited_time import LastEditedTime
 from notion_api.notion_client_wrapper.properties.title import Title
 from notion_api.notion_client_wrapper.properties.url import Url
-from notion_api.task.domain.task import Task
+from notion_api.task.domain.task import ToDoTask
 from notion_api.util.datetime import JST
 
 from daily_log.domain.daily_log import DailyLog
@@ -27,7 +27,7 @@ class TestClientWrapper(TestCase):
     def test_ページを取得してみる(self):
         # pipenv run pytest test/notion_client_wrapper/test_client_wrapper.py -k test_ページを取得してみる
         page_id = "5c38fd30714b4ce2bf2d25407f3cfc16"
-        page_model = Task
+        page_model = ToDoTask
         page = self.suite.retrieve_page(page_id=page_id, page_model=page_model)
         print(page)
         print(page.get_slack_text_in_block_children())
@@ -135,7 +135,7 @@ class TestClientWrapper(TestCase):
     @pytest.mark.use_genuine_api()
     def test_現在のタスクを取得する(self):
         # pytest test/notion_client_wrapper/test_client_wrapper.py::TestClientWrapper::test_現在のタスクを取得する
-        from notion_api.task.domain.task import Task
+        from notion_api.task.domain.task import ToDoTask
 
         # Given
         filter_param = {
@@ -154,7 +154,7 @@ class TestClientWrapper(TestCase):
         pages = self.suite.retrieve_database(
             database_id=DatabaseType.TASK.value,
             filter_param=filter_param,
-            page_model=Task,
+            page_model=ToDoTask,
         )
         print(pages)
         print(len(pages))

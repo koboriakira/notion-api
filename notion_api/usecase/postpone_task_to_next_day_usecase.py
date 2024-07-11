@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 from custom_logger import get_logger
-from task.domain.task import Task
+from task.domain.task import ToDoTask
 from task.domain.task_repository import TaskRepository
 from task.domain.task_status import TaskStatusType
 from util.datetime import jst_today
@@ -15,12 +15,12 @@ class PostponeTaskToNextDayUsecase:
 
     def execute(self) -> None:
         # 指定日より前の未了タスクを集めて、do_tomorrowを実行
-        tasks: list[Task] = self._fetch_past_undone_tasks()
+        tasks: list[ToDoTask] = self._fetch_past_undone_tasks()
         for task in tasks:
             updated_task = task.do_tomorrow()
             self._task_repository.save(updated_task)
 
-    def _fetch_past_undone_tasks(self) -> list[Task]:
+    def _fetch_past_undone_tasks(self) -> list[ToDoTask]:
         yesterday = jst_today() - timedelta(days=1)
         return self._task_repository.search(
             status_list=[TaskStatusType.TODO, TaskStatusType.IN_PROGRESS],

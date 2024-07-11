@@ -6,7 +6,7 @@ from project.domain import project_repository
 from project.domain.project import Project
 from project.domain.project_repository import ProjectRepository
 from project.domain.project_status import ProjectStatusType
-from task.domain.task import Task
+from task.domain.task import ToDoTask
 from task.domain.task_kind import TaskKindType
 from task.domain.task_repository import TaskRepository
 from task.domain.task_status import TaskStatusType
@@ -46,7 +46,7 @@ class ProjectHealthcheckUseCase:
             )
             self._execute_project(project, undone_tasks)
 
-    def _execute_project(self, project: Project, tasks: list[Task]) -> None:  # noqa: C901
+    def _execute_project(self, project: Project, tasks: list[ToDoTask]) -> None:  # noqa: C901
         project_title_link = project.title_for_slack()
         message_list = []
 

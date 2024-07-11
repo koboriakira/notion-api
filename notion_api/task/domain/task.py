@@ -21,8 +21,8 @@ COLUMN_NAME_KIND = "タスク種別"
 
 
 @dataclass
-class Task(BasePage):
-    def update_status(self, status: str | TaskStatusType) -> "Task":
+class ToDoTask(BasePage):
+    def update_status(self, status: str | TaskStatusType) -> "ToDoTask":
         if isinstance(status, str):
             status = TaskStatusType.from_text(status)
         task_status = TaskStatus.from_status_type(status)
@@ -30,19 +30,19 @@ class Task(BasePage):
         self.properties = properties
         return self
 
-    def update_start_datetime(self, start_datetime: datetime | date | None) -> "Task":
+    def update_start_datetime(self, start_datetime: datetime | date | None) -> "ToDoTask":
         start_date = TaskStartDate.create(start_datetime)
         properties = self.properties.append_property(start_date)
         self.properties = properties
         return self
 
-    def update_pomodoro_count(self, number: int) -> "Task":
+    def update_pomodoro_count(self, number: int) -> "ToDoTask":
         pomodoro_counter = PomodoroCounter(number=number)
         pomodoro_start_datetime = PomodoroStartDatetime(jst_now())
         self.properties = self.properties.append_property(pomodoro_counter).append_property(pomodoro_start_datetime)
         return self
 
-    def do_tomorrow(self) -> "Task":
+    def do_tomorrow(self) -> "ToDoTask":
         do_tomorrow_flag = DoTommorowFlag.false()
         self.properties = self.properties.append_property(do_tomorrow_flag)
         if self.start_date is not None:
