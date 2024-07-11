@@ -29,7 +29,7 @@ class Song(BasePage):
         properties = [
             title if isinstance(title, SongTitle) else SongTitle(text=title),
             spotify_url if isinstance(spotify_url, SpotifyUrl) else SpotifyUrl(url=spotify_url),
-            artist if isinstance(artist, Artist) else Artist.from_plain_text(text=artist),
+            artist if isinstance(artist, Artist) else Artist.from_str(artists=artist),
         ]
         if tag_relation is not None:
             tag_relation = (

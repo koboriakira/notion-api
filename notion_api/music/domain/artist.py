@@ -11,3 +11,7 @@ class Artist(Text):
             name=text_model.name,
             rich_text=text_model.rich_text,
         )
+
+    @classmethod
+    def from_str(cls: "Artist", artists: str) -> "Artist":
+        return Artist.from_str_list(artists.split(","))

@@ -18,7 +18,7 @@ class TestSong(TestCase):
         # Then
         self.assertEqual(actual.song_title, "マシュマロカカオステーション")
         self.assertEqual(actual.spotify_url, "https://open.spotify.com/track/6lC9dDRmwpKcVWmWy0GfmO")
-        self.assertEqual(actual.artist, "アップアップガールズ(プロレス),らく")
+        self.assertEqual(actual.artist, "アップアップガールズ(プロレス), らく")
         actual_tag_list = actual.tag_relation.to_str_list()
         self.assertCountEqual(actual_tag_list, ["abc123", "def456"])
         self.assertTrue("abc123" in actual_tag_list)
