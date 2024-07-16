@@ -4,11 +4,11 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-fastapi = "==0.99.0"
-pydantic = "==1.10.9"
-mangum = "==0.17.0"
+fastapi = ">=0.99.0"
+pydantic = ">=1.10.9"
+mangum = ">=0.17.0"
 requests = "*"
-pyyaml = "==6.0"
+pyyaml = ">=6.0"
 notion_client = "*"
 boto3 = "*"
 slack_sdk = "*"
@@ -23,4 +23,4 @@ pytest = "*"
 pytest-watch = "*"
 
 [requires]
-python_version = "3.11"
+python_version = "3.12"

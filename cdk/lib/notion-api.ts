@@ -19,7 +19,7 @@ import { convertToCamelCase } from "./utils";
 import { Timeout } from "aws-cdk-lib/aws-stepfunctions";
 
 // CONFIG
-const RUNTIME = lambda.Runtime.PYTHON_3_11;
+const RUNTIME = lambda.Runtime.PYTHON_3_12;
 const TIMEOUT = 30;
 const BATCH_TIMEOUT = 300;
 const APP_DIR_PATH = "../notion_api";

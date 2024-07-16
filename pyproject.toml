@@ -1,5 +1,5 @@
 [tool.ruff]
-target-version = "py311" # Pythonのバージョンを指定
+target-version = "py312" # Pythonのバージョンを指定
 fix = true               # 自動修正を有効にする
 indent-width = 4         # インデントの幅を指定
 src = ["notion_api"]
