@@ -9,6 +9,7 @@ from task.domain.due_date import DueDate
 from task.domain.pomodoro_counter import PomodoroCounter
 from task.domain.pomodoro_start_datetime import PomodoroStartDatetime
 from task.domain.project_relation import ProjectRelation
+from task.domain.task_context import TaskContextType
 from task.domain.task_kind import TaskKind, TaskKindType
 from task.domain.task_start_date import TaskStartDate
 from task.domain.task_status import TaskStatus, TaskStatusType
@@ -103,6 +104,13 @@ class ToDoTask(BasePage):
     @property
     def is_do_tomorrow(self) -> bool:
         return self.get_checkbox(name=DoTommorowFlag.NAME).checked
+
+    @property
+    def context(self) -> list[TaskContextType]:
+        context = self.get_multi_select(name=TaskContextType.NAME)
+        if context is None:
+            return []
+        return [TaskContextType.from_text(el.name) for el in context.values]
 
     @property
     def order(self) -> int:
