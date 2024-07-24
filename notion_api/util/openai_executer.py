@@ -5,7 +5,7 @@ from logging import Logger, getLogger
 from openai import OpenAI
 from openai.types.chat.chat_completion_message import ChatCompletionMessageToolCall
 
-OPENAI_MODEL_DEFAULT = "gpt-3.5-turbo-1106"
+OPENAI_MODEL_DEFAULT = "gpt-4o-mini"
 
 
 class FunctionCallingError(Exception):
@@ -18,8 +18,6 @@ class FunctionCallingError(Exception):
 
 
 class OpenaiExecuter:
-    DEFAULT_GPT_MODEL = "gpt-3.5-turbo-1106"
-
     def __init__(self, model: str = OPENAI_MODEL_DEFAULT, logger: Logger | None = None) -> None:
         self.model = model
         self.logger = logger or getLogger(__name__)

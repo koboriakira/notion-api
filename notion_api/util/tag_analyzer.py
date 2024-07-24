@@ -28,7 +28,7 @@ class TagAnalyzer:
         logger: logging.Logger | None = None,
         is_debug: bool | None = None,
     ) -> None:
-        self.client = client or OpenaiExecuter(model="gpt-3.5-turbo-1106", logger=logger)
+        self.client = client or OpenaiExecuter(logger=logger)
         self.logger = logger or logging.getLogger(__name__)
         self.is_debug = is_debug or False
 

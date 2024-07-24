@@ -25,10 +25,9 @@ from zettlekasten.infrastructure.zettlekasten_repository_impl import Zettlekaste
 
 logger = get_logger(__name__)
 
-DEFAULT_GPT_MODEL = "gpt-3.5-turbo-1106"
 
 client = ClientWrapper.get_instance()
-openai_executer = OpenaiExecuter(model=OpenaiExecuter.DEFAULT_GPT_MODEL, logger=logger)
+openai_executer = OpenaiExecuter(logger=logger)
 slack_bot_client = WebClient(token=os.environ["SLACK_BOT_TOKEN"])
 
 
