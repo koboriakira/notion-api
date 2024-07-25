@@ -15,6 +15,7 @@ slack_sdk = "*"
 openai = "==1.10.0"
 trafilatura = "*"
 bs4 = "*"
+lxml = "*"
 
 [dev-packages]
 uvicorn = "*"
