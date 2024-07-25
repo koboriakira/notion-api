@@ -23,6 +23,8 @@ jobs:
 
       - name: Generate Lambda Layer
         uses: koboriakira/gh-actions/aws/generate-lambda-layer@main
+        with:
+          python-version: "3.12"
 
       - name: CDK Deploy
         uses: koboriakira/gh-actions/aws/deploy_cdk@main
