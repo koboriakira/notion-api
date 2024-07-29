@@ -8,7 +8,7 @@ class FilterBuilder:
     def __init__(self, conditions: list[Condition] | None = None) -> None:
         self.conditions = conditions or []
 
-    def add_condition(self, condition: StringCondition) -> "FilterBuilder":
+    def add_condition(self, condition: Condition) -> "FilterBuilder":
         return FilterBuilder(conditions=[*self.conditions, condition])
 
     @staticmethod
