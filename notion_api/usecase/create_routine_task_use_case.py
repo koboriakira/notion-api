@@ -29,7 +29,7 @@ class CreateRoutineTaskUseCase:
             next_date = routine_task.get_next_date()
             start_date = datetime.combine(next_date, datetime.min.time(), JST)
             due_date = datetime.combine(next_date, routine_task.due_time(), JST) if routine_task.due_time() else None
-            task_kind_type = TaskKindType.SCHEDULE if due_date else TaskKindType.NEXT_ACTION
+            task_kind_type = TaskKindType.NEXT_ACTION
             task = TaskFactory.create_todo_task(
                 title=title,
                 task_kind_type=task_kind_type,
