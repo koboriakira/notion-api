@@ -1,4 +1,5 @@
 from datetime import date, datetime
+from typing import TYPE_CHECKING
 
 from notion_client_wrapper.block.block import Block
 from notion_client_wrapper.properties.properties import Properties
@@ -13,11 +14,14 @@ from task.domain.task_kind import TaskKind, TaskKindType
 from task.domain.task_start_date import TaskStartDate
 from task.domain.task_status import TaskStatus, TaskStatusType
 
+if TYPE_CHECKING:
+    from notion_client_wrapper.properties.property import Property
+
 
 class TaskFactory:
     @classmethod
     def create_todo_task(  # noqa: PLR0913
-        cls: "TaskFactory",
+        cls,
         title: str | Title,
         task_kind_type: TaskKindType | None = None,
         start_date: datetime | date | None = None,
@@ -27,9 +31,8 @@ class TaskFactory:
         blocks: list[Block] | None = None,
     ) -> ToDoTask:
         blocks = blocks or []
-        properties = [
-            title if isinstance(title, Title) else Title.from_plain_text(text=title),
-        ]
+        properties: list[Property] = []
+        properties.append(title if isinstance(title, Title) else Title.from_plain_text(text=title))
         if task_kind_type is not None:
             properties.append(TaskKind.create(task_kind_type))
         if start_date is not None:
@@ -44,11 +47,11 @@ class TaskFactory:
 
     @classmethod
     def create_routine_task(
-        cls: "TaskFactory",
+        cls,
         title: str,
         routine_type: RoutineType,
         due_time: str | None = None,
-    ) -> ToDoTask:
+    ) -> RoutineTask:
         title_property = Title.from_plain_text(text=title)
         routine_kind = RoutineKind.create(routine_type)
         properties = [title_property, routine_kind]

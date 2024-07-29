@@ -83,9 +83,9 @@ class TaskKind(Select):
         )
 
     @classmethod
-    def create(cls: "TaskKind", kind_type: TaskKindType) -> "TaskKind":
+    def create(cls, kind_type: TaskKindType) -> "TaskKind":
         return cls(kind_type=kind_type)
 
     @classmethod
-    def trash(cls: "TaskKind") -> "TaskKind":
+    def trash(cls) -> "TaskKind":
         return cls.create(kind_type=TaskKindType.TRASH)

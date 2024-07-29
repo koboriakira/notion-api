@@ -13,5 +13,5 @@ class DueDate(Date):
         )
 
     @classmethod
-    def create(cls: "DueDate", _date: date | datetime | None) -> "DueDate":
+    def create(cls, _date: date | datetime | None) -> "DueDate":
         return DueDate(_date=_date)

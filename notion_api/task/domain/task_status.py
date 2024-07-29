@@ -7,7 +7,8 @@ class TaskStatusType(Enum):
     """
     タスクのステータス
     """
-    TODO= "ToDo"
+
+    TODO = "ToDo"
     IN_PROGRESS = "InProgress"
     DONE = "Done"
 
@@ -20,7 +21,7 @@ class TaskStatusType(Enum):
         raise ValueError(msg)
 
     @staticmethod
-    def get_status_list(status_list: list[str]|None) -> list["TaskStatusType"]:
+    def get_status_list(status_list: list[str] | None) -> list["TaskStatusType"]:
         if status_list is None:
             return []
         return [TaskStatusType.from_text(status) for status in status_list]
@@ -34,13 +35,13 @@ class TaskStatusType(Enum):
     def is_todo(self) -> bool:
         return self == TaskStatusType.TODO
 
+
 class TaskStatus(Status):
     NAME = "ステータス"
+
     def __init__(self, status_type: TaskStatusType) -> None:
-        super().__init__(
-            self.NAME,
-            status_type.value)
+        super().__init__(self.NAME, status_type.value)
 
     @classmethod
-    def from_status_type(cls: "TaskStatus", status_type: TaskStatusType) -> "TaskStatus":
+    def from_status_type(cls, status_type: TaskStatusType) -> "TaskStatus":
         return cls(status_type=status_type)

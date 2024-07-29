@@ -84,5 +84,5 @@ class RoutineKind(Select):
         )
 
     @classmethod
-    def create(cls: "RoutineKind", routine_type: RoutineType) -> "RoutineKind":
+    def create(cls, routine_type: RoutineType) -> "RoutineKind":
         return cls(routine_type=routine_type)
