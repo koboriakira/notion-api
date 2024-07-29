@@ -2,7 +2,7 @@ from abc import ABCMeta, abstractmethod
 from datetime import date, datetime
 
 from notion_client_wrapper.page.page_id import PageId
-from task.domain.task import ToDoTask
+from task.domain.task import Task
 from task.domain.task_kind import TaskKindType
 from task.domain.task_status import TaskStatusType
 
@@ -17,17 +17,17 @@ class TaskRepository(metaclass=ABCMeta):
         start_datetime_end: date | datetime | None = None,
         project_id: PageId | None = None,
         do_tomorrow_flag: bool | None = None,
-    ) -> list[ToDoTask]:
+    ) -> list[Task]:
         pass
 
     @abstractmethod
-    def save(self, task: ToDoTask) -> ToDoTask:
+    def save(self, task: Task) -> Task:
         pass
 
     @abstractmethod
-    def find_by_id(self, task_id: str) -> ToDoTask:
+    def find_by_id(self, task_id: str) -> Task:
         pass
 
     @abstractmethod
-    def move_to_backup(self, task: ToDoTask) -> None:
+    def move_to_backup(self, task: Task) -> None:
         pass

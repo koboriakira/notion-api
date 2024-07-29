@@ -14,7 +14,7 @@ from notion_client_wrapper.page.page_id import PageId
 from task.domain.do_tomorrow_flag import DoTommorowFlag
 from task.domain.important_flag import ImportantFlag
 from task.domain.project_relation import ProjectRelation
-from task.domain.task import ImportantToDoTask, ToDoTask
+from task.domain.task import ImportantToDoTask, Task, ToDoTask
 from task.domain.task_kind import TaskKind, TaskKindType
 from task.domain.task_repository import TaskRepository
 from task.domain.task_start_date import TaskStartDate
@@ -34,7 +34,7 @@ class TaskRepositoryImpl(TaskRepository):
         start_datetime_end: date | datetime | None = None,
         project_id: PageId | None = None,
         do_tomorrow_flag: bool | None = None,
-    ) -> list[ToDoTask]:
+    ) -> list[Task]:
         task_kind_trash = TaskKind.trash()
         filter_builder = FilterBuilder()
         filter_builder = filter_builder.add_condition(StringCondition.not_equal(property=task_kind_trash))
@@ -96,7 +96,7 @@ class TaskRepositoryImpl(TaskRepository):
         tasks.sort(key=lambda x: x.order)
         return tasks
 
-    def save(self, task: ToDoTask) -> ToDoTask:
+    def save(self, task: Task) -> Task:
         if task.id is not None:
             _ = self.client.update_page(page_id=task.id, properties=task.properties.values)
             return task
@@ -105,12 +105,12 @@ class TaskRepositoryImpl(TaskRepository):
             properties=task.properties.values,
             blocks=task.block_children,
         )
-        return self.client.retrieve_page(page_id=page["id"], page_model=ToDoTask)
+        return self.client.retrieve_page(page_id=page["id"], page_model=Task)
 
-    def find_by_id(self, task_id: str) -> ToDoTask:
-        return self.client.retrieve_page(page_id=task_id, page_model=ToDoTask)
+    def find_by_id(self, task_id: str) -> Task:
+        return self.client.retrieve_page(page_id=task_id, page_model=Task)
 
-    def move_to_backup(self, task: ToDoTask) -> None:
+    def move_to_backup(self, task: Task) -> None:
         # バックアップ用のデータベースにレコードを作成
         # タイトル、ステータス、実施日、タグ、プロジェクト、中身のみを移行
         properties = [
@@ -132,7 +132,7 @@ class TaskRepositoryImpl(TaskRepository):
         # タスクを削除
         self.client.remove_page(page_id=task.id)
 
-    def _cast(self, base_page: BasePage) -> ToDoTask:
+    def _cast(self, base_page: BasePage) -> Task:
         cls = ToDoTask
         important_flag = base_page.get_checkbox(ImportantFlag.NAME)
         if important_flag is not None and important_flag.checked:

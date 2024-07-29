@@ -167,3 +167,6 @@ class ImportantToDoTask(ToDoTask):
     @override
     def is_important(self) -> bool:
         return True
+
+
+type Task = ToDoTask | ImportantToDoTask
