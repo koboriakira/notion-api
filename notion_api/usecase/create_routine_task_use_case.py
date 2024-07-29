@@ -28,18 +28,18 @@ class CreateRoutineTaskUseCase:
                 continue
             next_date = routine_task.get_next_date()
             start_date = datetime.combine(next_date, datetime.min.time(), JST)
-            due_date = datetime.combine(next_date, routine_task.due_time(), JST) if routine_task.due_time() else None
+            due_time = routine_task.due_time()
+            due_date = datetime.combine(next_date, due_time, JST) if due_time else None
             context_types = routine_task.get_contexts()
-            task = TaskFactory.create_todo_task(
+            routine_todo_task = TaskFactory.create_routine_todo_task(
                 title=title,
-                task_kind_type=TaskKindType.ROUTINE,
                 start_date=start_date,
                 due_date=due_date,
                 context_types=context_types,
                 blocks=routine_task.block_children,
             )
-            print(f"Create task: {task.get_title_text()}")
-            self.task_repository.save(task=task)
+            print(f"Create task: {routine_todo_task.get_title_text()}")
+            self.task_repository.save(task=routine_todo_task)
 
 
 if __name__ == "__main__":

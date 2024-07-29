@@ -75,6 +75,10 @@ class TaskKind(Select):
     def trash(cls) -> "TaskKind":
         return cls.create(kind_type=TaskKindType.TRASH)
 
+    @classmethod
+    def routine(cls) -> "TaskKind":
+        return cls.create(kind_type=TaskKindType.ROUTINE)
+
 
 if __name__ == "__main__":
     # 最新の情報を取得するときに使う

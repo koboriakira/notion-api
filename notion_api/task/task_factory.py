@@ -9,7 +9,7 @@ from task.domain.due_date import DueDate
 from task.domain.pomodoro_start_datetime import PomodoroStartDatetime
 from task.domain.routine_kind import RoutineKind, RoutineType
 from task.domain.routine_task import RoutineTask
-from task.domain.task import ToDoTask
+from task.domain.task import RoutineToDoTask, ToDoTask
 from task.domain.task_context import TaskContext, TaskContextTypes
 from task.domain.task_kind import TaskKind, TaskKindType
 from task.domain.task_start_date import TaskStartDate
@@ -48,6 +48,27 @@ class TaskFactory:
         if pomodoro_start_datetime is not None:
             properties.append(PomodoroStartDatetime(pomodoro_start_datetime))
         return ToDoTask(properties=Properties(values=properties), block_children=blocks)
+
+    @classmethod
+    def create_routine_todo_task(
+        cls,
+        title: str,
+        start_date: datetime,
+        due_date: datetime | None = None,
+        context_types: TaskContextTypes | None = None,
+        blocks: list[Block] | None = None,
+    ) -> RoutineToDoTask:
+        blocks = blocks or []
+        properties: list[Property] = [
+            Title.from_plain_text(text=title),
+            TaskKind.routine(),
+            TaskStartDate.create(start_date),
+        ]
+        if due_date is not None:
+            properties.append(DueDate.create(due_date))
+        if context_types is not None:
+            properties.append(TaskContext(context_types))
+        return RoutineToDoTask(properties=Properties(values=properties), block_children=blocks)
 
     @classmethod
     def create_routine_task(
