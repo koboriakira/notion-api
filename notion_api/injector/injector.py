@@ -98,7 +98,7 @@ class Injector:
 
     @classmethod
     def create_collect_updated_pages_usecase(
-        cls: "Injector",
+        cls,
         is_debug: bool | None = None,
     ) -> CollectUpdatedPagesUsecase:
         task_repository = TaskRepositoryImpl(notion_client_wrapper=client)

@@ -119,9 +119,13 @@ class BasePage:
         self.id_ = page_id
         self.url = url
 
-    def title_for_slack(self) -> None:
+    def title_for_slack(self) -> str:
         """Slackでの表示用のリンクつきタイトルを返す"""
         return f"<{self.url}|{self.get_title_text()}>"
+
+    def title_for_markdown(self) -> str:
+        """Markdownでの表示用のリンクつきタイトルを返す"""
+        return f"[{self.get_title_text()}]({self.url})"
 
     @property
     def id(self) -> str | None:

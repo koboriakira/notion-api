@@ -13,6 +13,7 @@ from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper.filter.condition.date_condition import DateCondition
 from notion_client_wrapper.filter.filter_builder import FilterBuilder
 from notion_client_wrapper.properties.last_edited_time import LastEditedTime
+from task.domain.task_kind import TaskKindType
 from task.domain.task_repository import TaskRepository
 from task.domain.task_status import TaskStatusType
 from util.datetime import JST, jst_now
@@ -20,11 +21,8 @@ from util.slack.slack_client import SlackClient
 
 logger = get_logger(__name__)
 
-DATABASE_TYPE_DAILY_LOG = DatabaseType.DAILY_LOG
-
 DATABASE_DICT = {
-    # "今日更新したタスク": DatabaseType.TASK,
-    # "今日更新したプロジェクト": DatabaseType.PROJECT,
+    "今日更新したプロジェクト": DatabaseType.PROJECT,
     "今日更新したZettlekasten": DatabaseType.ZETTLEKASTEN,
     "今日読んだ・登録した書籍": DatabaseType.BOOK,
     "今日更新したwebclip": DatabaseType.WEBCLIP,
@@ -45,7 +43,8 @@ class CollectUpdatedPagesUsecase:
         is_debug: bool | None = None,
     ) -> None:
         self.client = ClientWrapper.get_instance()
-        self._slack_client = SlackClient.bot(channel_type=ChannelType.DIARY, thread_ts=None)
+        channel_type = ChannelType.DIARY if is_debug else ChannelType.TEST
+        self._slack_client = SlackClient.bot(channel_type=channel_type, thread_ts=None)
         self._task_repository = task_repository
         self._daily_log_repository = daily_log_repository
         self._twitter_api = LambdaTwitterApi()
@@ -63,8 +62,19 @@ class CollectUpdatedPagesUsecase:
         # 初期値の整理
         target_datetime = target_datetime or jst_now()
 
+        # ブログ用のマークダウンテキスト
+        markdown_text = f"""---
+title:
+date: {target_datetime.date().isoformat()}
+tags: []
+---
+"""
+
         # デイリーログを取得
         daily_log = self._daily_log_repository.find(date=target_datetime.date())
+        if not daily_log or not daily_log.id:
+            msg = "デイリーログが見つかりません。"
+            raise ValueError(msg)
 
         self._slack_client.chat_postMessage(
             text=f"デイリーログにサマリを追加します。\n{daily_log.url}",
@@ -74,24 +84,42 @@ class CollectUpdatedPagesUsecase:
         # 今日完了したタスクを取得
         done_tasks = self._task_repository.search(
             status_list=[TaskStatusType.DONE],
+            kind_type_list=[
+                TaskKindType.DO_NOW,
+                TaskKindType.WAIT,
+                TaskKindType.NEXT_ACTION,
+                TaskKindType.SOMEDAY_MAYBE,
+                TaskKindType.SCHEDULE,
+            ],
             start_datetime=target_datetime - timedelta(hours=24),
             start_datetime_end=target_datetime,
         )
+        markdown_text += "\n## 今日完了したタスク\n"
+        markdown_text += "\n".join([f"- {task.get_title_text()}" for task in done_tasks])
         self._append_relation_to_daily_log(daily_log_id=daily_log.id, title="今日完了したタスク", pages=done_tasks)
 
+        # 各データベースの更新ページを取得
         for title, database_type in DATABASE_DICT.items():
             pages = self._get_latest_items(target_datetime=target_datetime, database_type=database_type)
             self._append_relation_to_daily_log(daily_log_id=daily_log.id, title=title, pages=pages)
+            markdown_text += f"\n## {title}\n"
+            markdown_text += "\n".join([f"- {page.get_title_text()}" for page in pages])
 
         # 今日のTwitterを集める
         tweets = self._twitter_api.get_user_tweets(user_screen_name="kobori_akira_pw", start_datetime=target_datetime)
         if not self.is_debug and len(tweets) > 0:
             self._append_heading(block_id=daily_log.id, title="今日のTwitter")
+            markdown_text += "\n## 今日のTwitter\n"
+            markdown_text += "\n".join([f"- {tweet.data.url}" for tweet in tweets])
         for tweet in tweets:
             embed_tweet = Embed.from_url_and_caption(url=tweet.data.url)
             if not self.is_debug:
                 self.client.append_block(block_id=daily_log.id, block=embed_tweet)
-                self._slack_client.chat_postMessage(text=tweet.data.url)
+            self._slack_client.chat_postMessage(text=tweet.data.url)
+
+        # マークダウンをファイルとしてSlackにアップロード
+        filename = f"daily_log_{target_datetime.date().isoformat()}.md"
+        self._slack_client.upload_as_file(filename=filename, content=markdown_text)
 
     def _get_latest_items(self, target_datetime: datetime, database_type: DatabaseType) -> list[BasePage]:
         """指定されたカテゴリの、最近更新されたページIDを取得する"""
@@ -109,11 +137,13 @@ class CollectUpdatedPagesUsecase:
         if len(pages) == 0:
             return
         # 見出しタグをつける
-        self._append_heading(block_id=daily_log_id, title=title)
+        if not self.is_debug:
+            self._append_heading(block_id=daily_log_id, title=title)
 
         # バックリンクを記録する
         for page in pages:
-            self._append_backlink(block_id=daily_log_id, page=page)
+            if not self.is_debug:
+                self._append_backlink(block_id=daily_log_id, page=page)
             self._slack_client.chat_postMessage(text=page.title_for_slack())
 
     def _append_heading(self, block_id: str, title: str) -> None:
@@ -146,4 +176,4 @@ if __name__ == "__main__":
         task_repository=task_repository,
         daily_log_repository=daily_log_repository,
     )
-    usecase.execute(target_datetime=datetime(2024, 6, 20, 21, 0, 0, tzinfo=JST))
+    usecase.execute(target_datetime=datetime(2024, 7, 29, 21, 0, 0, tzinfo=JST))
