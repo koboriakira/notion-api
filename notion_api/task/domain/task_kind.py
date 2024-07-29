@@ -47,7 +47,7 @@ class TaskKindType(Enum):
         raise ValueError(msg)
 
     @property
-    def priority(self) -> float:
+    def priority(self) -> int:
         return {
             TaskKindType.TRASH: 0,
             TaskKindType.WAIT: 1,
