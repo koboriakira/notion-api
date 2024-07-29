@@ -2,7 +2,10 @@ from dataclasses import dataclass
 
 from notion_client_wrapper.properties.multi_select import MultiSelect, MultiSelectElement
 
-KIND_LIST = [{"name": "集中", "id": "69615ccf-b98e-4764-b4a7-8cc920e03d92"}]
+KIND_LIST = [
+    {"name": "集中", "id": "69615ccf-b98e-4764-b4a7-8cc920e03d92"},
+    {"name": "2分で終わる", "id": "e7cb77c6-7d3e-4270-8102-5d23f881382f"},
+]
 
 
 @dataclass(frozen=True)
