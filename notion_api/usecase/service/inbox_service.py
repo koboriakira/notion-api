@@ -10,6 +10,7 @@ from notion_client_wrapper.block.embed import Embed
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper.properties import Title
 from video.domain.video import Video
+from webclip.domain.webclip import Webclip
 
 
 class InboxService:
@@ -50,4 +51,8 @@ class InboxService:
         """ページの種類を取得する"""
         if isinstance(page, Song):
             return "【音楽】"
+        if isinstance(page, Video):
+            return "【動画】"
+        if isinstance(page, Webclip):
+            return "【Webクリップ】"
         return "【未指定】"
