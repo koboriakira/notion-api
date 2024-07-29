@@ -26,6 +26,10 @@ class SlackClient:
         if self._thread_ts is None:
             self._thread_ts = event_ts
 
+    def upload_as_file(self, filename: str, content: str) -> None:
+        """テキストをファイルとしてアップロードする"""
+        self._web_client.files_upload_v2(filename=filename, channel=self._channel, content=content)
+
     @staticmethod
     def bot(channel_type: ChannelType, thread_ts: str | None = None) -> "SlackClient":
         return SlackClient(
