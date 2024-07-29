@@ -10,7 +10,7 @@ class TestSong(TestCase):
         actual = Song.create(
             title="マシュマロカカオステーション",
             artist="アップアップガールズ(プロレス),らく",
-            spotify_url="https://open.spotify.com/track/6lC9dDRmwpKcVWmWy0GfmO",
+            spotify_url="https://open.spotify.com/track/6lC9dDRmwpKcVWmWy0GfmO?si=731d95eb095543ac",
             tag_relation=["abc123", "def456"],
             release_date=date.fromisoformat("2020-12-25"),
         )
@@ -26,3 +26,4 @@ class TestSong(TestCase):
         self.assertEqual(actual.release_date, date.fromisoformat("2020-12-25"))
         self.assertEqual(actual.cover, None)
         self.assertEqual(actual.block_children, [])
+        self.assertEqual(actual.spotify_track_id, "6lC9dDRmwpKcVWmWy0GfmO")

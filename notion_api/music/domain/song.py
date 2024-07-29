@@ -58,7 +58,7 @@ class Song(BasePage):
 
     @property
     def spotify_url(self) -> str:
-        return self.get_url(name=SpotifyUrl.NAME).url
+        return self.get_url(name=SpotifyUrl.NAME).url.split("?")[0]
 
     @property
     def tag_relation(self) -> NotionPageIdList:
@@ -72,3 +72,23 @@ class Song(BasePage):
     @property
     def release_date(self) -> date | None:
         return self.get_date(name=ReleaseDate.NAME).start_date
+
+    @property
+    def spotify_track_id(self) -> str:
+        # https://open.spotify.com/intl-ja/track/0VfOZBCILsIrkJPzw3WdvA?si=731d95eb095543ac からクエリを除いた部分
+        return self.spotify_url.split("/")[-1].split("?")[0]
+
+    def embed_html(self) -> str:
+        return f"""<iframe style="border-radius:12px"
+ src="https://open.spotify.com/embed/track/{self.spotify_track_id}?utm_source=generator"
+ width="100%" height="152"
+ frameBorder="0"
+ allowfullscreen=""
+ allow="autoplay;
+ clipboard-write;
+ encrypted-media;
+ fullscreen;
+ picture-in-picture"
+ loading="lazy">
+</iframe>
+"""
