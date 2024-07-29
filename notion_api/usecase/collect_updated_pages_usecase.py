@@ -107,8 +107,9 @@ tags: []
 
         # 今日のTwitterを集める
         tweets = self._twitter_api.get_user_tweets(user_screen_name="kobori_akira_pw", start_datetime=target_datetime)
-        if not self.is_debug and len(tweets) > 0:
-            self._append_heading(block_id=daily_log.id, title="今日のTwitter")
+        if len(tweets) > 0:
+            if not self.is_debug:
+                self._append_heading(block_id=daily_log.id, title="今日のTwitter")
             markdown_text += "\n## 今日のTwitter\n"
             markdown_text += "\n\n".join([f"{tweet.data.embed_tweet_html}" for tweet in tweets])
         for tweet in tweets:

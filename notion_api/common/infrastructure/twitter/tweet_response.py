@@ -10,10 +10,12 @@ class UserModel:
     name: str
     screen_name: str
 
+
 @dataclass
 class MediumModel:
     url: str
     alt_text: str
+
 
 @dataclass
 class TweetModel:
@@ -22,7 +24,9 @@ class TweetModel:
     url: str
     created_at: datetime
     user: UserModel
+    embed_tweet_html: str
     media: list[MediumModel] | None = field(default=None)
+
 
 @dataclass
 class TweetResponse:
@@ -64,10 +68,11 @@ class TweetResponse:
             url=tweet_data["url"],
             created_at=datetime.fromisoformat(tweet_data["created_at"]),
             user=user,
+            embed_tweet_html=tweet_data["embed_tweet_html"],
             media=media,
         )
         return TweetResponse(
             status=data["status"],
             message=data["message"],
             data=tweet,
-         )
+        )
