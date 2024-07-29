@@ -11,6 +11,7 @@ from notion_client_wrapper.filter.condition.relation_condition import RelationCo
 from notion_client_wrapper.filter.condition.string_condition import StringCondition
 from notion_client_wrapper.filter.filter_builder import FilterBuilder
 from notion_client_wrapper.page.page_id import PageId
+from notion_client_wrapper.properties.property import Property
 from task.domain.do_tomorrow_flag import DoTommorowFlag
 from task.domain.important_flag import ImportantFlag
 from task.domain.project_relation import ProjectRelation
@@ -105,15 +106,19 @@ class TaskRepositoryImpl(TaskRepository):
             properties=task.properties.values,
             blocks=task.block_children,
         )
-        return self.client.retrieve_page(page_id=page["id"], page_model=Task)
+        return self.find_by_id(task_id=page["id"])
 
     def find_by_id(self, task_id: str) -> Task:
-        return self.client.retrieve_page(page_id=task_id, page_model=Task)
+        base_page = self.client.retrieve_page(page_id=task_id)
+        return self._cast(base_page)
 
     def move_to_backup(self, task: Task) -> None:
         # バックアップ用のデータベースにレコードを作成
         # タイトル、ステータス、実施日、タグ、プロジェクト、中身のみを移行
-        properties = [
+        if task.id is None:
+            msg = "task.id が None です"
+            raise ValueError(msg)
+        properties: list[Property] = [
             task.get_title(),
         ]
         if task.get_date("実施日").start is not None:
