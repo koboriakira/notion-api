@@ -7,6 +7,7 @@ from common.service.tag_creator.tag_creator import TagCreator
 from custom_logger import get_logger
 from daily_log.infrastructure.daily_log_repository_impl import DailyLogRepositoryImpl
 from injector.page_creator_factory import PageCreatorFactory
+from music.infrastructure.song_repository_impl import SongRepositoryImpl
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from recipe.infrastructure.recipe_repository_impl import RecipeRepositoryImpl
 from recipe.service.recipe_creator import RecipeCreator
@@ -102,9 +103,11 @@ class Injector:
         is_debug: bool | None = None,
     ) -> CollectUpdatedPagesUsecase:
         task_repository = TaskRepositoryImpl(notion_client_wrapper=client)
+        song_repository = SongRepositoryImpl(client=client)
         daily_log_repository = DailyLogRepositoryImpl(client=client)
         return CollectUpdatedPagesUsecase(
             task_repository=task_repository,
+            song_repository=song_repository,
             daily_log_repository=daily_log_repository,
             is_debug=is_debug,
         )

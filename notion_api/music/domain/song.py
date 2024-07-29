@@ -78,8 +78,9 @@ class Song(BasePage):
         # https://open.spotify.com/intl-ja/track/0VfOZBCILsIrkJPzw3WdvA?si=731d95eb095543ac からクエリを除いた部分
         return self.spotify_url.split("/")[-1].split("?")[0]
 
+    @property
     def embed_html(self) -> str:
-        return f"""<iframe style="border-radius:12px"
+        text = f"""<iframe style="border-radius:12px"
  src="https://open.spotify.com/embed/track/{self.spotify_track_id}?utm_source=generator"
  width="100%" height="152"
  frameBorder="0"
@@ -92,3 +93,4 @@ class Song(BasePage):
  loading="lazy">
 </iframe>
 """
+        return text.replace("\n", "")

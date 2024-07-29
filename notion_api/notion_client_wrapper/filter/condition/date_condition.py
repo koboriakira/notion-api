@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import datetime
 from enum import Enum
 
 from notion_client_wrapper.properties.property import Property
@@ -7,10 +8,11 @@ from .condition import Condition
 
 
 class DateConditionType(Enum):
-    EQUALS= "equals"
+    EQUALS = "equals"
     ON_OR_AFTER = "on_or_after"
     ON_OR_BEFORE = "on_or_before"
     BEFORE = "before"
+
 
 @dataclass(frozen=True)
 class DateCondition(Condition):
@@ -35,6 +37,15 @@ class DateCondition(Condition):
             property_type=property.type,
             condition_type=DateConditionType.ON_OR_AFTER,
             value=property.value_for_filter(),
+        )
+
+    @staticmethod
+    def create_manually(name: str, condition_type: DateConditionType, value: datetime) -> "DateCondition":
+        return DateCondition(
+            property_name=name,
+            property_type="date",
+            condition_type=condition_type,
+            value=value.isoformat(),
         )
 
     @staticmethod

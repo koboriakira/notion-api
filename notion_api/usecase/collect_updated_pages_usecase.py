@@ -5,6 +5,7 @@ from common.value.database_type import DatabaseType
 from common.value.slack_channel_type import ChannelType
 from custom_logger import get_logger
 from daily_log.domain.daily_log_repository import DailyLogRepository
+from music.domain.song_repository import SongRepository
 from notion_client_wrapper import block
 from notion_client_wrapper.base_page import BasePage
 from notion_client_wrapper.block.embed import Embed
@@ -16,6 +17,7 @@ from notion_client_wrapper.properties.last_edited_time import LastEditedTime
 from task.domain.task_kind import TaskKindType
 from task.domain.task_repository import TaskRepository
 from task.domain.task_status import TaskStatusType
+from util.date_range import DateRange
 from util.datetime import JST, jst_now
 from util.slack.slack_client import SlackClient
 
@@ -39,6 +41,7 @@ class CollectUpdatedPagesUsecase:
     def __init__(
         self,
         task_repository: TaskRepository,
+        song_repository: SongRepository,
         daily_log_repository: DailyLogRepository,
         is_debug: bool | None = None,
     ) -> None:
@@ -46,6 +49,7 @@ class CollectUpdatedPagesUsecase:
         channel_type = ChannelType.DIARY if is_debug else ChannelType.TEST
         self._slack_client = SlackClient.bot(channel_type=channel_type, thread_ts=None)
         self._task_repository = task_repository
+        self._song_repository = song_repository
         self._daily_log_repository = daily_log_repository
         self._twitter_api = LambdaTwitterApi()
         self.is_debug = is_debug
@@ -104,6 +108,19 @@ tags: []
             self._append_relation_to_daily_log(daily_log_id=daily_log.id, title=title, pages=pages)
             markdown_text += f"\n## {title}\n"
             markdown_text += "\n".join([f"- {page.get_title_text()}" for page in pages])
+
+        # 今日聴いた音楽を集める
+        date_range = DateRange.from_datetime(start=target_datetime - timedelta(hours=24), end=target_datetime)
+        songs = self._song_repository.search(date_range)
+        if len(songs) > 0:
+            if not self.is_debug:
+                self._append_heading(block_id=daily_log.id, title="今日聴いた音楽")
+            markdown_text += "\n## 今日聴いた音楽\n"
+            for song in songs:
+                if not self.is_debug:
+                    self._append_backlink(block_id=daily_log.id, page=song)
+                markdown_text += f"\n{song.get_title_text()}\n"
+                markdown_text += f"\n{song.embed_html}\n"
 
         # 今日のTwitterを集める
         tweets = self._twitter_api.get_user_tweets(user_screen_name="kobori_akira_pw", start_datetime=target_datetime)
@@ -166,15 +183,18 @@ tags: []
 if __name__ == "__main__":
     # python -m notion_api.usecase.collect_updated_pages_usecase
     from daily_log.infrastructure.daily_log_repository_impl import DailyLogRepositoryImpl
+    from music.infrastructure.song_repository_impl import SongRepositoryImpl
     from task.infrastructure.task_repository_impl import TaskRepositoryImpl
 
     client = ClientWrapper.get_instance()
     task_repository = TaskRepositoryImpl(notion_client_wrapper=client)
+    song_repository = SongRepositoryImpl(client=client)
     daily_log_repository = DailyLogRepositoryImpl(client=client)
 
     usecase = CollectUpdatedPagesUsecase(
         is_debug=True,
         task_repository=task_repository,
+        song_repository=song_repository,
         daily_log_repository=daily_log_repository,
     )
-    usecase.execute(target_datetime=datetime(2024, 7, 29, 21, 0, 0, tzinfo=JST))
+    usecase.execute(target_datetime=datetime(2024, 7, 30, 21, 0, 0, tzinfo=JST))

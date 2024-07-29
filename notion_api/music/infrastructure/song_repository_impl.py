@@ -1,5 +1,4 @@
 from logging import Logger, getLogger
-from typing import cast
 
 from common.value.database_type import DatabaseType
 from music.domain.song import Song
@@ -66,4 +65,17 @@ class SongRepositoryImpl(SongRepository):
         return song
 
     def _cast(self, base_page: BasePage) -> Song:
-        return cast(Song, base_page)
+        return Song(
+            properties=base_page.properties,
+            block_children=base_page.block_children,
+            id_=base_page.id_,
+            url=base_page.url,
+            created_time=base_page.created_time,
+            last_edited_time=base_page.last_edited_time,
+            created_by=base_page.created_by,
+            last_edited_by=base_page.last_edited_by,
+            cover=base_page.cover,
+            icon=base_page.icon,
+            archived=base_page.archived,
+            parent=base_page.parent,
+        )
