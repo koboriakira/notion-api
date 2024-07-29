@@ -2,7 +2,9 @@ from dataclasses import dataclass
 from datetime import date, time
 
 from notion_client_wrapper.base_page import BasePage
+from task.domain.rouitne_option import RoutineOption
 from task.domain.routine_kind import RoutineKind, RoutineType
+from task.domain.task_context import TaskContextType, TaskContextTypes
 from util.datetime import jst_today
 
 COLUMN_NAME_TITLE = "名前"
@@ -29,3 +31,10 @@ class RoutineTask(BasePage):
             return time.fromisoformat(due_time_text.text)
         except ValueError:
             return None
+
+    def get_contexts(self) -> TaskContextTypes:
+        routine_option = self.get_text(name=RoutineOption.NAME)
+        if routine_option is None or routine_option.text == "":
+            return TaskContextTypes(values=[])
+        task_context_type_list = [TaskContextType.from_text(text) for text in routine_option.text.split(",")]
+        return TaskContextTypes(values=task_context_type_list)

@@ -10,6 +10,7 @@ from task.domain.pomodoro_start_datetime import PomodoroStartDatetime
 from task.domain.routine_kind import RoutineKind, RoutineType
 from task.domain.routine_task import RoutineTask
 from task.domain.task import ToDoTask
+from task.domain.task_context import TaskContext, TaskContextTypes
 from task.domain.task_kind import TaskKind, TaskKindType
 from task.domain.task_start_date import TaskStartDate
 from task.domain.task_status import TaskStatus, TaskStatusType
@@ -27,6 +28,7 @@ class TaskFactory:
         start_date: datetime | date | None = None,
         due_date: datetime | date | None = None,
         pomodoro_start_datetime: datetime | None = None,
+        context_types: TaskContextTypes | None = None,
         status: TaskStatusType | None = None,
         blocks: list[Block] | None = None,
     ) -> ToDoTask:
@@ -39,6 +41,8 @@ class TaskFactory:
             properties.append(TaskStartDate.create(start_date))
         if due_date is not None:
             properties.append(DueDate.create(due_date))
+        if context_types is not None:
+            properties.append(TaskContext(context_types))
         if status is not None:
             properties.append(TaskStatus.from_status_type(status))
         if pomodoro_start_datetime is not None:

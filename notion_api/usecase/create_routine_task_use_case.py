@@ -29,12 +29,14 @@ class CreateRoutineTaskUseCase:
             next_date = routine_task.get_next_date()
             start_date = datetime.combine(next_date, datetime.min.time(), JST)
             due_date = datetime.combine(next_date, routine_task.due_time(), JST) if routine_task.due_time() else None
+            context_types = routine_task.get_contexts()
             task_kind_type = TaskKindType.NEXT_ACTION
             task = TaskFactory.create_todo_task(
                 title=title,
                 task_kind_type=task_kind_type,
                 start_date=start_date,
                 due_date=due_date,
+                context_types=context_types,
                 blocks=routine_task.block_children,
             )
             print(f"Create task: {task.get_title_text()}")
