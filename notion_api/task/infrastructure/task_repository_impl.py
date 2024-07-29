@@ -1,6 +1,7 @@
 from datetime import date, datetime, time
 
 from common.value.database_type import DatabaseType
+from notion_client_wrapper.base_page import BasePage
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper.filter.condition.checkbox_condition import CheckboxCondition
 from notion_client_wrapper.filter.condition.date_condition import DateCondition
@@ -85,11 +86,11 @@ class TaskRepositoryImpl(TaskRepository):
                 CheckboxCondition.equal(do_tomorrow_flag_checkbox),
             )
 
-        tasks: list[ToDoTask] = self.client.retrieve_database(
+        base_pages = self.client.retrieve_database(
             database_id=DatabaseType.TASK.value,
             filter_param=filter_builder.build(),
-            page_model=ToDoTask,
         )
+        tasks = [self._cast(base_page) for base_page in base_pages]
         # order昇順で並び替え
         tasks.sort(key=lambda x: x.order)
         return tasks
@@ -129,3 +130,20 @@ class TaskRepositoryImpl(TaskRepository):
 
         # タスクを削除
         self.client.remove_page(page_id=task.id)
+
+    def _cast(self, base_page: BasePage) -> ToDoTask:
+        cls = ToDoTask
+        return cls(
+            properties=base_page.properties,
+            block_children=base_page.block_children,
+            id_=base_page.id_,
+            url=base_page.url,
+            created_time=base_page.created_time,
+            last_edited_time=base_page.last_edited_time,
+            created_by=base_page.created_by,
+            last_edited_by=base_page.last_edited_by,
+            cover=base_page.cover,
+            icon=base_page.icon,
+            archived=base_page.archived,
+            parent=base_page.parent,
+        )
