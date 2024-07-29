@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from common.infrastructure.twitter.lambda_twitter_api import LambdaTwitterApi
 from common.value.database_type import DatabaseType
@@ -18,7 +18,7 @@ from task.domain.task_kind import TaskKindType
 from task.domain.task_repository import TaskRepository
 from task.domain.task_status import TaskStatusType
 from util.date_range import DateRange
-from util.datetime import JST, jst_now
+from util.datetime import JST
 from util.slack.slack_client import SlackClient
 
 logger = get_logger(__name__)
@@ -54,7 +54,7 @@ class CollectUpdatedPagesUsecase:
         self._twitter_api = LambdaTwitterApi()
         self.is_debug = is_debug
 
-    def execute(self, target_datetime: datetime | None = None) -> None:
+    def execute(self, date_range: DateRange) -> None:
         """
         指定された日付のデイリーログに、指定されたカテゴリの最新ページを追加する
 
@@ -63,19 +63,17 @@ class CollectUpdatedPagesUsecase:
                 時刻。この時刻の24時間以内に更新されたページを取得する。
                 指定しない場合は現在時刻を使用する。
         """
-        # 初期値の整理
-        target_datetime = target_datetime or jst_now()
-
+        target_date = date_range.end.value.date()
         # ブログ用のマークダウンテキスト
         markdown_text = f"""---
 title:
-date: {target_datetime.date().isoformat()}
+date: {target_date.isoformat()}
 tags: []
 ---
 """
 
         # デイリーログを取得
-        daily_log = self._daily_log_repository.find(date=target_datetime.date())
+        daily_log = self._daily_log_repository.find(date=target_date)
         if not daily_log or not daily_log.id:
             msg = "デイリーログが見つかりません。"
             raise ValueError(msg)
@@ -95,8 +93,8 @@ tags: []
                 TaskKindType.SOMEDAY_MAYBE,
                 TaskKindType.SCHEDULE,
             ],
-            start_datetime=target_datetime - timedelta(hours=24),
-            start_datetime_end=target_datetime,
+            start_datetime=date_range.start.value,
+            start_datetime_end=date_range.end.value,
         )
         markdown_text += "\n## 今日完了したタスク\n"
         markdown_text += "\n".join([f"- {task.get_title_text()}" for task in done_tasks])
@@ -104,13 +102,12 @@ tags: []
 
         # 各データベースの更新ページを取得
         for title, database_type in DATABASE_DICT.items():
-            pages = self._get_latest_items(target_datetime=target_datetime, database_type=database_type)
+            pages = self._get_latest_items(date_range=date_range, database_type=database_type)
             self._append_relation_to_daily_log(daily_log_id=daily_log.id, title=title, pages=pages)
             markdown_text += f"\n## {title}\n"
             markdown_text += "\n".join([f"- {page.get_title_text()}" for page in pages])
 
         # 今日聴いた音楽を集める
-        date_range = DateRange.from_datetime(start=target_datetime - timedelta(hours=24), end=target_datetime)
         songs = self._song_repository.search(date_range)
         if len(songs) > 0:
             if not self.is_debug:
@@ -123,7 +120,10 @@ tags: []
                 markdown_text += f"\n{song.embed_html}\n"
 
         # 今日のTwitterを集める
-        tweets = self._twitter_api.get_user_tweets(user_screen_name="kobori_akira_pw", start_datetime=target_datetime)
+        tweets = self._twitter_api.get_user_tweets(
+            user_screen_name="kobori_akira_pw",
+            start_datetime=date_range.end.value,
+        )
         if len(tweets) > 0:
             if not self.is_debug:
                 self._append_heading(block_id=daily_log.id, title="今日のTwitter")
@@ -136,15 +136,13 @@ tags: []
             self._slack_client.chat_postMessage(text=tweet.data.url)
 
         # マークダウンをファイルとしてSlackにアップロード
-        filename = f"daily_log_{target_datetime.date().isoformat()}.md"
+        filename = f"daily_log_{target_date.isoformat()}.md"
         self._slack_client.upload_as_file(filename=filename, content=markdown_text)
 
-    def _get_latest_items(self, target_datetime: datetime, database_type: DatabaseType) -> list[BasePage]:
+    def _get_latest_items(self, date_range: DateRange, database_type: DatabaseType) -> list[BasePage]:
         """指定されたカテゴリの、最近更新されたページIDを取得する"""
-        start = target_datetime - timedelta(hours=24)
-        last_edited_time_start = LastEditedTime.create(value=start)
-        last_edited_time_end = LastEditedTime.create(value=target_datetime)
-
+        last_edited_time_start = LastEditedTime.create(value=date_range.start.value)
+        last_edited_time_end = LastEditedTime.create(value=date_range.end.value)
         filter_builder = FilterBuilder()
         filter_builder = filter_builder.add_condition(DateCondition.on_or_after(last_edited_time_start))
         filter_builder = filter_builder.add_condition(DateCondition.on_or_before(last_edited_time_end))
@@ -197,4 +195,8 @@ if __name__ == "__main__":
         song_repository=song_repository,
         daily_log_repository=daily_log_repository,
     )
-    usecase.execute(target_datetime=datetime(2024, 7, 30, 21, 0, 0, tzinfo=JST))
+    date_range = DateRange.from_datetime(
+        start=datetime(2024, 7, 29, 21, 0, 0, tzinfo=JST),
+        end=datetime(2024, 7, 30, 21, 0, 0, tzinfo=JST),
+    )
+    usecase.execute(date_range=date_range)
