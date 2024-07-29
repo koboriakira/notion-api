@@ -175,8 +175,26 @@ class ScheduledTask(ToDoTask):
             and self.start_date.time() != datetime.min.time()
             and (self.start_date - timedelta(minutes=30)).timestamp() <= now
         ):
-            return int(self.start_date.timestamp() - 1)
+            return int(self.start_date.timestamp())
         return sys.maxsize
 
 
-type Task = ToDoTask | ImportantToDoTask | ScheduledTask
+class RoutineToDoTask(ToDoTask):
+    @property
+    @override
+    def order(self) -> int:
+        """
+        開始時間の30分前になる場合は該当時刻のタイムスタンプの2倍を、
+        それ以外はすべて優先度最低(sys.maxsize)にする
+        """
+        now = jst_now().timestamp()
+        if (
+            isinstance(self.start_date, datetime)
+            and self.start_date.time() != datetime.min.time()
+            and (self.start_date - timedelta(minutes=30)).timestamp() <= now
+        ):
+            return int(self.start_date.timestamp() * 2)
+        return sys.maxsize
+
+
+type Task = ToDoTask | ImportantToDoTask | ScheduledTask | RoutineToDoTask

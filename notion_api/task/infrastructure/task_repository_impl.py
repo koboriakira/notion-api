@@ -15,7 +15,7 @@ from notion_client_wrapper.properties.property import Property
 from task.domain.do_tomorrow_flag import DoTommorowFlag
 from task.domain.important_flag import ImportantFlag
 from task.domain.project_relation import ProjectRelation
-from task.domain.task import ImportantToDoTask, ScheduledTask, Task, ToDoTask
+from task.domain.task import ImportantToDoTask, RoutineToDoTask, ScheduledTask, Task, ToDoTask
 from task.domain.task_kind import TaskKind, TaskKindType
 from task.domain.task_repository import TaskRepository
 from task.domain.task_start_date import TaskStartDate
@@ -147,6 +147,8 @@ class TaskRepositoryImpl(TaskRepository):
             task_type = TaskKindType(kind_model.selected_name)
             if task_type == TaskKindType.SCHEDULE:
                 cls = ScheduledTask
+            if task_type == TaskKindType.ROUTINE:
+                cls = RoutineToDoTask
         return cls(
             properties=base_page.properties,
             block_children=base_page.block_children,
