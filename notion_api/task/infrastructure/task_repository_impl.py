@@ -12,8 +12,9 @@ from notion_client_wrapper.filter.condition.string_condition import StringCondit
 from notion_client_wrapper.filter.filter_builder import FilterBuilder
 from notion_client_wrapper.page.page_id import PageId
 from task.domain.do_tomorrow_flag import DoTommorowFlag
+from task.domain.important_flag import ImportantFlag
 from task.domain.project_relation import ProjectRelation
-from task.domain.task import ToDoTask
+from task.domain.task import ImportantToDoTask, ToDoTask
 from task.domain.task_kind import TaskKind, TaskKindType
 from task.domain.task_repository import TaskRepository
 from task.domain.task_start_date import TaskStartDate
@@ -133,6 +134,9 @@ class TaskRepositoryImpl(TaskRepository):
 
     def _cast(self, base_page: BasePage) -> ToDoTask:
         cls = ToDoTask
+        important_flag = base_page.get_checkbox(ImportantFlag.NAME)
+        if important_flag is not None and important_flag.checked:
+            cls = ImportantToDoTask
         return cls(
             properties=base_page.properties,
             block_children=base_page.block_children,

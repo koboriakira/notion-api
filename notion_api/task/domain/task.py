@@ -1,12 +1,12 @@
 import sys
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta
+from typing import override
 
 from notion_client_wrapper.base_page import BasePage
 from notion_client_wrapper.page.page_id import PageId
 from task.domain.do_tomorrow_flag import DoTommorowFlag
 from task.domain.due_date import DueDate
-from task.domain.important_flag import ImportantFlag
 from task.domain.pomodoro_counter import PomodoroCounter
 from task.domain.pomodoro_start_datetime import PomodoroStartDatetime
 from task.domain.project_relation import ProjectRelation
@@ -108,7 +108,7 @@ class ToDoTask(BasePage):
 
     @property
     def is_important(self) -> bool:
-        return self.get_checkbox(name=ImportantFlag.NAME).checked
+        return False
 
     @property
     def context(self) -> list[TaskContextType]:
@@ -155,3 +155,15 @@ class ToDoTask(BasePage):
 
     def has_start_datetime(self) -> bool:
         return self.start_datetime is not None
+
+
+class ImportantToDoTask(ToDoTask):
+    @property
+    @override
+    def order(self) -> int:
+        return 1
+
+    @property
+    @override
+    def is_important(self) -> bool:
+        return True
