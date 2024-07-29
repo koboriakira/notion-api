@@ -110,7 +110,7 @@ tags: []
         if not self.is_debug and len(tweets) > 0:
             self._append_heading(block_id=daily_log.id, title="今日のTwitter")
             markdown_text += "\n## 今日のTwitter\n"
-            markdown_text += "\n".join([f"- {tweet.data.url}" for tweet in tweets])
+            markdown_text += "\n\n".join([f"{tweet.data.embed_tweet_html}" for tweet in tweets])
         for tweet in tweets:
             embed_tweet = Embed.from_url_and_caption(url=tweet.data.url)
             if not self.is_debug:
