@@ -1,4 +1,3 @@
-import sys
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta
 from typing import override
@@ -14,6 +13,8 @@ from task.domain.task_context import TaskContext, TaskContextType
 from task.domain.task_kind import TaskKind, TaskKindType
 from task.domain.task_start_date import TaskStartDate
 from task.domain.task_status import TaskStatus, TaskStatusType
+from task.valueobject.task_order import TaskOrder
+from task.valueobject.task_order_rule import TaskOrderRule
 from util.datetime import convert_to_date_or_datetime, jst_now
 
 COLUMN_NAME_TITLE = "名前"
@@ -119,21 +120,11 @@ class ToDoTask(BasePage):
 
     @property
     def order(self) -> int:
-        """
-        場合は該当時刻のタイムスタンプを、
-        それ以外はすべて優先度最低(sys.maxsize)にする
-        """
-        now = jst_now().timestamp()
-        if (
-            isinstance(self.due_date, datetime)
-            and self.due_date.time() != datetime.min.time()
-            and (self.due_date - timedelta(minutes=60)).timestamp() <= now
-        ):
-            return int(self.due_date.timestamp()) + 1
-        if self.kind is not None:
-            # kindの優先度が高いほどorderを小さくする
-            return sys.maxsize - self.kind.priority
-        return sys.maxsize
+        return TaskOrderRule.calculate(
+            start_datetime=self.start_datetime,
+            due_datetime=self.due_date,
+            kind=self.kind,
+        ).value
 
     @property
     def pomodoro_start_datetime(self) -> datetime | None:
@@ -153,7 +144,7 @@ class ImportantToDoTask(ToDoTask):
     @property
     @override
     def order(self) -> int:
-        return 1
+        return TaskOrder.most_important().value
 
     @property
     @override
@@ -162,39 +153,11 @@ class ImportantToDoTask(ToDoTask):
 
 
 class ScheduledTask(ToDoTask):
-    @property
-    @override
-    def order(self) -> int:
-        """
-        開始時間の30分前になる場合は該当時刻のタイムスタンプの半分を、
-        それ以外はすべて優先度最低(sys.maxsize)にする
-        """
-        now = jst_now().timestamp()
-        if (
-            isinstance(self.start_date, datetime)
-            and self.start_date.time() != datetime.min.time()
-            and (self.start_date - timedelta(minutes=30)).timestamp() <= now
-        ):
-            return int(self.start_date.timestamp() / 2)
-        return sys.maxsize
+    """スケジュールされたタスク"""
 
 
 class RoutineToDoTask(ToDoTask):
-    @property
-    @override
-    def order(self) -> int:
-        """
-        開始時間の30分前になる場合は該当時刻のタイムスタンプを、
-        それ以外はすべて優先度最低(sys.maxsize)にする
-        """
-        now = jst_now().timestamp()
-        if (
-            isinstance(self.start_date, datetime)
-            and self.start_date.time() != datetime.min.time()
-            and (self.start_date - timedelta(minutes=30)).timestamp() <= now
-        ):
-            return int(self.start_date.timestamp())
-        return sys.maxsize
+    """ルーティン系のタスク"""
 
 
 type Task = ToDoTask | ImportantToDoTask | ScheduledTask | RoutineToDoTask
