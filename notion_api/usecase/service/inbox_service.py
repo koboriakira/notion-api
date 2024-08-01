@@ -2,6 +2,7 @@ import os
 
 from slack_sdk.web import WebClient
 
+from book.domain.book import Book
 from common.value.database_type import DatabaseType
 from music.domain.song import Song
 from notion_client_wrapper.base_page import BasePage
@@ -9,6 +10,7 @@ from notion_client_wrapper.block.bookmark import Bookmark
 from notion_client_wrapper.block.embed import Embed
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper.properties import Title
+from restaurant.domain.restaurant import Restaurant
 from video.domain.video import Video
 from webclip.domain.webclip import Webclip
 
@@ -47,7 +49,7 @@ class InboxService:
                 thread_ts=slack_thread_ts,
             )
 
-    def get_kind_prefix(self, page: BasePage) -> str:
+    def get_kind_prefix(self, page: BasePage) -> str:  # noqa: C901
         """ページの種類を取得する"""
         if isinstance(page, Song):
             return "【音楽】"
@@ -55,4 +57,8 @@ class InboxService:
             return "【動画】"
         if isinstance(page, Webclip):
             return "【Webクリップ】"
+        if isinstance(page, Restaurant):
+            return "【飲食店】"
+        if isinstance(page, Book):
+            return "【書籍】"
         return "【未指定】"
