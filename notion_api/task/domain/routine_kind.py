@@ -24,6 +24,7 @@ class RoutineType(Enum):
     EVERY_WED = "毎週水"
     DAYS_AFTER_7 = "7日後"
     DAYS_AFTER_3 = "3日後"
+    MONTHLY_END = "月末"
 
     def next_date(self, basis_date: date) -> date:  # noqa: PLR0911
         """タスクの次回予定日を返す"""
@@ -47,6 +48,8 @@ class RoutineType(Enum):
                 return basis_date + timedelta(days=7)
             case RoutineType.DAYS_AFTER_3:
                 return basis_date + timedelta(days=3)
+            case RoutineType.MONTHLY_END:
+                return basis_date.replace(month=basis_date.month + 1, day=1) - timedelta(days=1)
             case _:
                 msg = f"RoutineType not found: {self}"
                 raise ValueError(msg)

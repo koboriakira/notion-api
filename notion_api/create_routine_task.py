@@ -16,7 +16,7 @@ if Environment.is_dev():
     logging.basicConfig(level=logging.DEBUG)
 
 
-def handler(event: dict, context: dict) -> dict:  # noqa: ARG001
+def handler(event: dict, context: dict) -> None:  # noqa: ARG001
     try:
         usecase.execute()
     except Exception:  # noqa: BLE001
