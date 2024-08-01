@@ -1,17 +1,18 @@
 from datetime import date, timedelta
 from enum import Enum
 
+from common.value.database_type import DatabaseType
 from notion_client_wrapper.properties.select import Select
 
-# 新しく追加したら、test_client_wrapper.py::TestClientWrapper::test_select_kind_mapで確認する
 kind_map = {
+    "月末": {"selected_id": "6e0a84e9-17d8-49ec-8d75-117935f3c4ee", "selected_color": "gray"},
     "毎月1日": {"selected_id": "7bc74ed0-6a2b-44bf-9270-723398498e57", "selected_color": "default"},
     "毎日": {"selected_id": "cf42dbf9-6a9d-4375-ad93-543ba7bc3247", "selected_color": "yellow"},
-    "3日後": {"selected_id": "d489a62e-74e6-4dac-86cc-01302c0e898c", "selected_color": "orange"},
-    "毎週土": {"selected_id": "1d561599-7b3b-44d2-9293-fe5553f5ffed", "selected_color": "green"},
     "毎週水": {"selected_id": "7139c597-0c50-4252-8418-5fb3426714fc", "selected_color": "blue"},
+    "3日後": {"selected_id": "d489a62e-74e6-4dac-86cc-01302c0e898c", "selected_color": "orange"},
     "7日後": {"selected_id": "630165b6-46f6-4d24-8ebd-ccc731ed5862", "selected_color": "pink"},
     "毎週火・金": {"selected_id": "c925b802-b5f1-49c6-b9b7-ad55779e44ed", "selected_color": "purple"},
+    "毎週土": {"selected_id": "1d561599-7b3b-44d2-9293-fe5553f5ffed", "selected_color": "green"},
 }
 
 
@@ -86,3 +87,11 @@ class RoutineKind(Select):
     @classmethod
     def create(cls, routine_type: RoutineType) -> "RoutineKind":
         return cls(routine_type=routine_type)
+
+
+if __name__ == "__main__":
+    # 最新の情報を取得するときに使う
+    # python -m notion_api.task.domain.routine_kind
+    from util.localonly import get_select
+
+    get_select(database_id=DatabaseType.TASK_ROUTINE.value, name=RoutineKind.NAME)
