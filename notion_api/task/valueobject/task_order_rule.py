@@ -20,11 +20,11 @@ class TaskOrderRule:
         - そのほかは原則タスク種別ごとに並べる
         """
         # 調整用の数値。重要とみなせば値を小さくし、重要でなければ大きくする
-        num = 0
+        num = 1
 
         # 開始時刻もしくは締め切り時刻が現時刻を過ぎている場合は重要とする
         if _is_run_over(start_datetime) or _is_run_over(due_datetime):
-            return TaskOrder.important()
+            return TaskOrder.important(num)
         num += 1
 
         # 開始時刻もしくは締め切り時刻が現時刻から30分以内の場合は重要とする
