@@ -8,6 +8,7 @@ from notion_client_wrapper.block.callout import Callout
 from notion_client_wrapper.block.child_database import ChildDatabase
 from notion_client_wrapper.block.child_page import ChildPage
 from notion_client_wrapper.block.code import Code
+from notion_client_wrapper.block.column_list import ColumnList
 from notion_client_wrapper.block.divider import Divider
 from notion_client_wrapper.block.embed import Embed
 from notion_client_wrapper.block.heading import Heading
@@ -67,6 +68,8 @@ class BlockFactory:
                 return Callout.of(block)
             case BlockType.CHILD_PAGE:
                 return ChildPage.of(block)
+            case BlockType.COLUMN_LIST:
+                return ColumnList.of(block)
             case _:
                 import json
 

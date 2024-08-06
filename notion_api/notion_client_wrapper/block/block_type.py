@@ -8,6 +8,7 @@ class BlockType(Enum):
     HEADING_1 = "heading_1"
     TABLE = "table"
     CHILD_DATABASE = "child_database"
+    COLUMN_LIST = "column_list"
     # 以下、Copilotによる自動生成
     HEADING_2 = "heading_2"
     HEADING_3 = "heading_3"
@@ -18,7 +19,6 @@ class BlockType(Enum):
     CHILD_PAGE = "child_page"
     EMBED = "embed"
     IMAGE = "image"
-    COLUMN_LIST = "column_list"
     COLUMN = "column"
     DIVIDER = "divider"
     TABLE_OF_CONTENTS = "table_of_contents"

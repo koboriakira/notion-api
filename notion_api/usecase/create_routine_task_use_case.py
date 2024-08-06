@@ -36,7 +36,7 @@ class CreateRoutineTaskUseCase:
                 start_date=start_date,
                 due_date=due_date,
                 context_types=context_types,
-                blocks=routine_task.block_children,
+                blocks=routine_task.block_children if routine_task.get_title_text() != "買い物 & 料理" else [],
             )
             print(f"Create task: {routine_todo_task.get_title_text()}")
             self.task_repository.save(task=routine_todo_task)
