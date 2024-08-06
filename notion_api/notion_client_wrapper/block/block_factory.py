@@ -68,6 +68,8 @@ class BlockFactory:
             case BlockType.CHILD_PAGE:
                 return ChildPage.of(block)
             case _:
-                print(block)
-                msg = f"block type is not supported {block_type}\n{block}"
+                import json
+
+                block_json = json.dumps(block, ensure_ascii=False)
+                msg = f"block type is not supported {block_type}\n{block_json}"
                 raise ValueError(msg)
