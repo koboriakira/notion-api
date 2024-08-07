@@ -116,7 +116,7 @@ tags: []
             for song in songs:
                 if not self.is_debug:
                     self._append_backlink(block_id=daily_log.id, page=song)
-                markdown_text += f"\n{song.get_title_text()}\n"
+                markdown_text += f"\n{song.artist} - {song.get_title_text()}\n"
                 markdown_text += f"\n{song.embed_html}\n"
 
         # 今日のTwitterを集める
