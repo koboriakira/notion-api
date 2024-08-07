@@ -106,7 +106,7 @@ class BasePage:
     def get_url(self, name: str) -> Url:
         return self.properties.get_property(name=name, instance_class=Url)
 
-    def get_number(self, name: str) -> Number:
+    def get_number(self, name: str) -> Number | None:
         return self.properties.get_property(name=name, instance_class=Number)
 
     def get_parant_database_id(self) -> str | None:

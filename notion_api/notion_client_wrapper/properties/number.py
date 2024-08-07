@@ -9,10 +9,11 @@ class Number(Property):
     type: str = "number"
 
     def __init__(
-            self,
-            name: str,
-            id: str | None = None,  # noqa: A002
-            number: int | None = None) -> None:
+        self,
+        name: str,
+        id: str | None = None,  # noqa: A002
+        number: int | None = None,
+    ) -> None:
         self.name = name
         self.id = id
         self.number = number or 0
@@ -36,8 +37,7 @@ class Number(Property):
         )
 
     def __dict__(self) -> dict:
-        result = {
-        }
+        result = {}
         if self.id is not None:
             result["id"] = self.id
         if self.number is not None:
@@ -47,7 +47,7 @@ class Number(Property):
             self.name: result,
         }
 
-    @ staticmethod
+    @staticmethod
     def from_num(name: str, value: int) -> "Number":
         return Number(
             name=name,
