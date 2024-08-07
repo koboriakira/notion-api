@@ -27,6 +27,7 @@ class DatabaseType(Enum):
     TASK_ROUTINE = "d21db86c-9203-4ff4-9899-9d62354e8fe1"
     RESTAURANT = "4f10b337-9a1d-4b87-9feb-87a00c511b68"
     GOAL = "f3f8b93f-d89f-4c3d-a47a-01c134a7e2bf"
+    SHOPPING = "b917fd7e-2fe5-4030-879f-9eea5e8827bb"
 
     @staticmethod
     def from_id(id_: str) -> "DatabaseType":
@@ -39,47 +40,8 @@ class DatabaseType(Enum):
         msg = f"ID={id_}に対忋するデータベースが見つかりませんでした"
         raise ValueError(msg)
 
-    def title_name(self) -> str:  # noqa: PLR0911, C901, PLR0912
-        """
-        タイトルのプロパティ名を返す
-        """
-        match self:
-            case DatabaseType.DAILY_LOG:
-                return "名前"
-            case DatabaseType.MUSIC:
-                return "名前"
-            case DatabaseType.TAG:
-                return "名前"
-            case DatabaseType.HABIT_TRACKER_ALLDAY:
-                return "名前"
-            case DatabaseType.HABIT_TRACKER_MORNING:
-                return "名前"
-            case DatabaseType.HABIT_TRACKER_NIGHT:
-                return "名前"
-            case DatabaseType.INGREDIENTS:
-                return "名前"
-            case DatabaseType.WEEKLY_LOG:
-                return "名前"
-            case DatabaseType.PROJECT:
-                return "名前"
-            case DatabaseType.ZETTLEKASTEN:
-                return "名前"
-            case DatabaseType.RECIPE:
-                return "名前"
-            case DatabaseType.PROWRESTLING:
-                return "名前"
-            case DatabaseType.BOOK:
-                return "名前"
-            case DatabaseType.WEBCLIP:
-                return "名前"
-            case DatabaseType.MONTHLY_LOG:
-                return "日付"
-            case DatabaseType.VIDEO:
-                return "名前"
-            case DatabaseType.TASK:
-                return "名前"
-            case DatabaseType.TASK_BK:
-                return "名前"
+    def title_name(self) -> str:
+        return "名前"
 
     def name_last_edited_time(self) -> str:
         """
