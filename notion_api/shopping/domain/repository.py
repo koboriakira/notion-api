@@ -9,5 +9,5 @@ class ShoppingRepository(metaclass=ABCMeta):
         """Fetch all Shopping items."""
 
     @abstractmethod
-    def save(self, song: Shopping) -> Shopping:
+    def save(self, entity: Shopping) -> Shopping:
         """Save a Shopping item."""

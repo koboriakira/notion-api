@@ -3,6 +3,7 @@ from logging import Logger, getLogger
 from common.value.database_type import DatabaseType
 from notion_client_wrapper.base_page import BasePage
 from notion_client_wrapper.client_wrapper import ClientWrapper
+from notion_client_wrapper.page.page_id import PageId
 from shopping.domain.repository import ShoppingRepository
 from shopping.domain.shopping import Shopping
 
@@ -18,8 +19,20 @@ class ShoppingRepositoryImpl(ShoppingRepository):
         base_pages = self._client.retrieve_database(database_id=self.DATABASE_ID)
         return [self._cast(base_page) for base_page in base_pages]
 
-    def save(self, song: Shopping) -> Shopping:
-        pass
+    def save(self, entity: Shopping) -> Shopping:
+        if entity.id is not None:
+            _ = self._client.update_page(page_id=entity.id, properties=entity.properties.values)
+            return entity
+        page = self._client.create_page_in_database(
+            database_id=self.DATABASE_ID,
+            properties=entity.properties.values,
+            blocks=entity.block_children,
+        )
+        return self._find_by_id(page["id"])
+
+    def _find_by_id(self, shopping_page_id: PageId) -> "Shopping":
+        base_page = self._client.retrieve_page(page_id=shopping_page_id.value)
+        return self._cast(base_page)
 
     def _cast(self, base_page: BasePage) -> Shopping:
         return Shopping(

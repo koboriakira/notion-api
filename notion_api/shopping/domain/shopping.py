@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, timedelta
 
 from notion_client_wrapper.base_page import BasePage
 from shopping.domain.buy_status import BuyStatus, BuyStatusType
@@ -7,11 +7,18 @@ from shopping.domain.last_purchase_date import LastPurchaseDate
 from shopping.domain.purchase_interval import PurchaseInterval
 from shopping.domain.shopping_tag import ShoppingTagType, ShoppingTagTypes
 from shopping.domain.to_buy_flag import ToBuyFlag
-from util.datetime import convert_to_date_or_datetime
+from util.datetime import convert_to_date_or_datetime, jst_today
 
 
 @dataclass
 class Shopping(BasePage):
+    def reset_buy_status_type(self) -> "Shopping":
+        self.properties = self.properties.append_property(BuyStatus.undone())
+        self.properties = self.properties.append_property(ToBuyFlag.false())
+        yesterday = jst_today() - timedelta(days=1)
+        self.properties = self.properties.append_property(LastPurchaseDate.create(yesterday))
+        return self
+
     @property
     def name(self) -> str:
         return self.get_title_text()

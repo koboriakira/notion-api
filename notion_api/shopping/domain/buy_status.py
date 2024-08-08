@@ -41,3 +41,7 @@ class BuyStatus(Status):
     @classmethod
     def from_status_type(cls, status_type: BuyStatusType) -> "BuyStatus":
         return cls(status_type=status_type)
+
+    @classmethod
+    def undone(cls) -> "BuyStatus":
+        return cls(status_type=BuyStatusType.UNDONE)
