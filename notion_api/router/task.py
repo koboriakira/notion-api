@@ -76,7 +76,7 @@ def start_task(task_id: str, access_token: str | None = Header(None)) -> TaskRes
         raise
 
 
-@router.post("", response_model=BaseResponse)
+@router.post("/", response_model=BaseResponse)
 def create_task(request: CreateNewTaskRequest, access_token: str | None = Header(None)) -> BaseResponse:
     try:
         valid_access_token(access_token)
