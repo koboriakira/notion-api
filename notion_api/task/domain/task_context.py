@@ -5,6 +5,7 @@ from notion_client_wrapper.properties.multi_select import MultiSelect, MultiSele
 KIND_LIST = [
     {"name": "集中", "id": "69615ccf-b98e-4764-b4a7-8cc920e03d92"},
     {"name": "2分で終わる", "id": "e7cb77c6-7d3e-4270-8102-5d23f881382f"},
+    {"name": "外出", "id": "c455b93b-dfa8-4e69-bff8-664db9c669ff"},
 ]
 
 
@@ -60,7 +61,6 @@ if __name__ == "__main__":
     from common.value.database_type import DatabaseType
     from notion_client_wrapper.client_wrapper import ClientWrapper
 
-    # python -m notion_api.task.domain.task_context
     pages = ClientWrapper.get_instance().retrieve_database(
         database_id=DatabaseType.TASK.value,
     )
