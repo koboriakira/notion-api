@@ -46,7 +46,7 @@ class CollectUpdatedPagesUsecase:
         is_debug: bool | None = None,
     ) -> None:
         self.client = ClientWrapper.get_instance()
-        channel_type = ChannelType.DIARY if is_debug else ChannelType.TEST
+        channel_type = ChannelType.DIARY if not is_debug else ChannelType.TEST
         self._slack_client = SlackClient.bot(channel_type=channel_type, thread_ts=None)
         self._task_repository = task_repository
         self._song_repository = song_repository
