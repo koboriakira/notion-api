@@ -36,7 +36,7 @@ jobs:
     - name: "コンテナイメージをビルドする"
       uses: docker/build-push-action@v5
       with:
-        file: ./docker/Dockerfile
+        file: ./docker/api/Dockerfile
         push: false
         # tags: ${{ steps.meta.outputs.tags }} # 前ステップで設定したタグを参照する
         # labels: ${{ steps.meta.outputs.labels }} # 前ステップで設定したラベルを参照する
