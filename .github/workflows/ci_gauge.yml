@@ -2,7 +2,15 @@ name: Run Gauge(localhost)
 
 on:
   workflow_dispatch:
-  push:
+  workflow_call:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+
 
 jobs:
   run-gauge:
