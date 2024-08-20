@@ -42,7 +42,7 @@ jobs:
         docker run -d \
           --name notion-api \
           -v $(pwd)/notion_api:/workspace/notion_api:cached \
-          -e ENVIROMENT=dev \
+          -e ENVIRONMENT=dev \
           -e NOTION_SECRET=$NOTION_SECRET \
           -e UNSPLASH_ACCESS_KEY=$UNSPLASH_ACCESS_KEY \
           -e SLACK_BOT_TOKEN=$SLACK_BOT_TOKEN \
