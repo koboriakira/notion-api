@@ -11,5 +11,11 @@
   "python.analysis.extraPaths": [
     "./notion_api"
   ],
-  "python.analysis.typeCheckingMode": "basic" // 新しいプロジェクトならstrictにしたい
+  "python.analysis.typeCheckingMode": "basic",
+  "files.associations": {
+    "*.spec": "gauge",
+    "*.cpt": "gauge"
+  },
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 500 // 新しいプロジェクトならstrictにしたい
 }
