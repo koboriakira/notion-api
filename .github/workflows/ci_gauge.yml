@@ -1,42 +1,73 @@
 name: Run Gauge(localhost)
 
 on:
+  workflow_dispatch:
   push:
 
 jobs:
-  build-and-push:
+  run-gauge:
     runs-on: ubuntu-latest
+    environment: production
     permissions:
-      packages: write
+      id-token: write
       contents: read
+    env:
+      ENVIROMENT: dev
+      NOTION_SECRET: ${{ secrets.NOTION_SECRET }}
+      UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      SLACK_USER_TOKEN: ${{ secrets.SLACK_USER_TOKEN }}
+      AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      LAMBDA_SLACK_CONCIERGE_API_DOMAIN: ${{ secrets.LAMBDA_SLACK_CONCIERGE_API_DOMAIN }}
+      LAMBDA_TWITTER_API_DOMAIN: ${{ secrets.LAMBDA_TWITTER_API_DOMAIN }}
+
     steps:
     - name: "checkoutする"
       uses: actions/checkout@v4
 
-    - name: "docker buildxを使えるようにする"
-      uses: docker/setup-buildx-action@v3
+    - name: "イメージをビルドする"
+      run: docker build -t notion-api:latest -f docker/api/Dockerfile .
 
-    # NOTE: ecr-loginなどに切り替えることで、別サービスへのプッシュも可能です
-    # - name: "ghcr.ioにログインする"
-    #   uses: docker/login-action@v3
-    #   with:
-    #     registry: ghcr.io
-    #     username: ${{ github.actor }}
-    #     password: ${{ secrets.GITHUB_TOKEN }}
+    - name: コンテナを立ち上げる
+      run: |
+        docker run -d \
+          --name notion-api \
+          -v $(pwd)/notion_api:/workspace/notion_api:cached \
+          -e ENVIROMENT=dev \
+          -e NOTION_SECRET=$NOTION_SECRET \
+          -e UNSPLASH_ACCESS_KEY=$UNSPLASH_ACCESS_KEY \
+          -e SLACK_BOT_TOKEN=$SLACK_BOT_TOKEN \
+          -e SLACK_USER_TOKEN=$SLACK_USER_TOKEN \
+          -e AWS_ACCOUNT_ID=$AWS_ACCOUNT_ID \
+          -e OPENAI_API_KEY=$OPENAI_API_KEY \
+          -e LAMBDA_SLACK_CONCIERGE_API_DOMAIN=$LAMBDA_SLACK_CONCIERGE_API_DOMAIN \
+          -e LAMBDA_TWITTER_API_DOMAIN=$LAMBDA_TWITTER_API_DOMAIN \
+          -w /workspace/notion_api \
+          -p 10119:8080 \
+          notion-api:latest \
+          pipenv run uvicorn main:app --reload --port=8080 --host=0.0.0.0
+        sleep 10
 
-    # - name: "メタデータを作成する"
-    #   id: meta # 後段で参照できるようにoutputsに登録する
-    #   uses: docker/metadata-action@v5
-    #   with:
-    #     images: ghcr.io/kei-s16/ghcr-container-push-demo
-    #     tags: |
-    #       type=raw,value=latest
-    #       type=sha,prefix=,suffix=,format=short
+    - name: "ヘルスチェック"
+      run: curl -X GET http://localhost:10119/healthcheck
 
-    - name: "コンテナイメージをビルドする"
-      uses: docker/build-push-action@v5
+    - name: Nodeをセットアップする
+      uses: actions/setup-node@v4
       with:
-        file: ./docker/Dockerfile
-        push: false
-        # tags: ${{ steps.meta.outputs.tags }} # 前ステップで設定したタグを参照する
-        # labels: ${{ steps.meta.outputs.labels }} # 前ステップで設定したラベルを参照する
+        node-version: '20'
+
+    - name: npm install
+      run: |
+        cd e2e
+        npm install
+
+    - run: curl -SsL https://downloads.gauge.org/stable | sh -s -- --location-[custom path]
+
+    - run: gauge install ts
+
+    - run: gauge version
+
+    - run: |
+        cd e2e
+        gauge run specs

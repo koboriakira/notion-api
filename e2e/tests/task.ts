@@ -36,4 +36,18 @@ export default class StepImplementation {
     const pageId = response.data.data.id
     DataStoreFactory.getScenarioDataStore().put("pageId", pageId)
   }
+
+  @Step("Create a task with name <title> and kind <kind>")
+  public async createTaskWithKind(title: string, kind: string) {
+    // http://localhost:10119/tasks にPOSTリクエストを送信する
+    // タスクのタイトルは <title> で指定される
+    const data = {
+      title: title,
+      kind: kind,
+      "start_date": new Date().toISOString(),
+    }
+    const response = await client.post("/task/", data)
+    const pageId = response.data.data.id
+    DataStoreFactory.getScenarioDataStore().put("pageId", pageId)
+  }
 }
