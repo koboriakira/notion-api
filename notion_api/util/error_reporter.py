@@ -26,7 +26,12 @@ class ErrorReporter:
         if Environment.is_dev():
             print(text)
             return
-        self.client.chat_postMessage(text=text, channel=slack_channel or DM_CHANNEL, thread_ts=slack_thread_ts)
+
+        try:
+            self.client.chat_postMessage(text=text, channel=slack_channel or DM_CHANNEL, thread_ts=slack_thread_ts)
+        except:  # noqa: E722
+            print("Failed to send a message to Slack")
+            print(text)
 
 
 def _generate_formatted_exception() -> str:
