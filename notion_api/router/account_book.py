@@ -4,6 +4,7 @@ from injector.injector import Injector
 from router.request.account_book_request import PostAccountBookRequest
 from router.response.base_response import BaseResponse
 from util.access_token import valid_access_token
+from util.datetime import jst_today
 
 router = APIRouter()
 
@@ -21,5 +22,6 @@ def add(
         is_fixed_cost=request.is_fixed_cost,
         category=request.category,
         tag=request.tag,
+        date_=jst_today(),
     )
     return BaseResponse(data=account_book)

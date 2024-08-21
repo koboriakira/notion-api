@@ -1,8 +1,11 @@
+from datetime import date
+
 from account_book.domain.account_book import AccountBook
 from account_book.domain.category import Category, CategoryType
 from account_book.domain.repository import Repository
 from account_book.domain.tag import Tag, TagType, TagTypes
 from notion_client_wrapper.properties.checkbox import Checkbox
+from notion_client_wrapper.properties.date import Date
 from notion_client_wrapper.properties.number import Number
 from notion_client_wrapper.properties.properties import Properties
 from notion_client_wrapper.properties.title import Title
@@ -22,6 +25,7 @@ class AddAccountBookUsecase:
         is_fixed_cost: bool | None = None,
         category: str | None = None,
         tag: list[str] | None = None,
+        date_: date | None = None,
     ) -> dict[str, str]:
         account_book = self._create_entity(
             title=title,
@@ -29,6 +33,7 @@ class AddAccountBookUsecase:
             is_fixed_cost=is_fixed_cost,
             category=category,
             tag=tag,
+            date_=date_,
         )
         return self._account_book_repository.save(account_book).get_id_and_url()
 
@@ -39,6 +44,7 @@ class AddAccountBookUsecase:
         is_fixed_cost: bool | None = None,
         category: str | None = None,
         tag: list[str] | None = None,
+        date_: date | None = None,
     ) -> AccountBook:
         properties = []
 
@@ -59,5 +65,9 @@ class AddAccountBookUsecase:
             tag_type_list = [TagType.from_text(text=value) for value in tag]
             _tag = Tag(kind_types=TagTypes(values=tag_type_list))
             properties.append(_tag)
+
+        if date_:
+            _date = Date.from_start_date(start_date=date_)
+            properties.append(_date)
 
         return AccountBook(properties=Properties(values=properties))
