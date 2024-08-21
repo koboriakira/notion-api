@@ -12,3 +12,7 @@ test:
 .PHONY: gauge
 gauge:
 	cd e2e && gauge run specs
+
+.PHONY: gauge-current
+gauge-current:
+	cd e2e && gauge run --tags "current" specs

@@ -12,7 +12,9 @@ class Date(Property):
     time_zone: str | None = None
     type: str = "date"
 
-    def __init__(  # noqa: PLR0913
+    DEFAULT_NAME = "日付"
+
+    def __init__(
         self,
         name: str,
         id: str | None = None,  # noqa: A002
@@ -63,7 +65,9 @@ class Date(Property):
         return convert_to_date_or_datetime(self.end, cls=datetime)
 
     @staticmethod
-    def of(name: str, param: dict) -> "Date":
+    def of(name: str = DEFAULT_NAME, param: dict | None = None) -> "Date":
+        if param is None:
+            param = {}
         if param["date"] is None:
             return Date(name=name, id=param["id"])
         return Date(
@@ -75,14 +79,14 @@ class Date(Property):
         )
 
     @staticmethod
-    def from_start_date(name: str, start_date: date | datetime | None = None) -> "Date":
+    def from_start_date(name: str = DEFAULT_NAME, start_date: date | datetime | None = None) -> "Date":
         return Date(
             name=name,
             start=start_date.isoformat() if start_date is not None else None,
         )
 
     @staticmethod
-    def from_range(name: str, start: date | datetime, end: date | datetime) -> "Date":
+    def from_range(start: date | datetime, end: date | datetime, name: str = DEFAULT_NAME) -> "Date":
         return Date(
             name=name,
             start=start.isoformat(),
@@ -94,7 +98,7 @@ class Date(Property):
 
     @property
     def date(self) -> date:
-        return self.start.date()
+        return convert_to_date_or_datetime(self.start, cls=date)
 
     def __dict__(self) -> dict:
         # 未指定の場合を考慮している

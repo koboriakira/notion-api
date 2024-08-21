@@ -5,7 +5,20 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from mangum import Mangum
 
-from router import books, healthcheck, music, page, projects, prowrestling, recipes, task, tasks, video, webclip
+from router import (
+    account_book,
+    books,
+    healthcheck,
+    music,
+    page,
+    projects,
+    prowrestling,
+    recipes,
+    task,
+    tasks,
+    video,
+    webclip,
+)
 from util.environment import Environment
 from util.error_reporter import ErrorReporter
 
@@ -41,6 +54,7 @@ app.include_router(tasks.router, prefix="/tasks", tags=["tasks"])
 app.include_router(task.router, prefix="/task", tags=["tasks"])
 app.include_router(page.router, prefix="/page", tags=["page"])
 app.include_router(books.router, prefix="/books", tags=["books"])
+app.include_router(account_book.router, prefix="/account_book", tags=["account_book"])
 
 
 handler = Mangum(app, lifespan="off")

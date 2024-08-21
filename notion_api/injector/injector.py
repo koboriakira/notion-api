@@ -3,6 +3,7 @@ from logging import Logger
 
 from slack_sdk.web import WebClient
 
+from account_book.infrastructure.repository_impl import RepositoryImpl
 from common.service.tag_creator.tag_creator import TagCreator
 from custom_logger import get_logger
 from daily_log.infrastructure.daily_log_repository_impl import DailyLogRepositoryImpl
@@ -13,6 +14,7 @@ from recipe.infrastructure.recipe_repository_impl import RecipeRepositoryImpl
 from recipe.service.recipe_creator import RecipeCreator
 from slack_concierge.injector import SlackConciergeInjector
 from task.infrastructure.task_repository_impl import TaskRepositoryImpl
+from usecase.account_book.add_account_book_usecase import AddAccountBookUsecase
 from usecase.collect_updated_pages_usecase import CollectUpdatedPagesUsecase
 from usecase.create_page_use_case import CreatePageUseCase
 from usecase.recipe.add_recipe_use_case import AddRecipeUseCase
@@ -126,6 +128,12 @@ class Injector:
             slack_client=slack_bot_client,
             logger=logger,
         )
+
+    @classmethod
+    def create_add_account_book_use_case(cls, logger: Logger | None = None) -> AddAccountBookUsecase:
+        logger = logger or get_logger(__name__)
+        repository = RepositoryImpl(client=client, logger=logger)
+        return AddAccountBookUsecase(account_book_repository=repository)
 
     @classmethod
     def __create_openai_executer(

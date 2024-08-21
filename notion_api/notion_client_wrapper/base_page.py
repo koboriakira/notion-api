@@ -88,7 +88,8 @@ class BasePage:
     def get_text(self, name: str) -> Text:
         return self.properties.get_property(name=name, instance_class=Text)
 
-    def get_date(self, name: str) -> Date:
+    def get_date(self, name: str | None = None) -> Date:
+        _name = name or Date.DEFAULT_NAME
         return self.properties.get_property(name=name, instance_class=Date)
 
     def get_select(self, name: str) -> Select:
@@ -139,7 +140,9 @@ class BasePage:
             return PageId(self.id_)
         return self.id_
 
-    def get_id_and_url(self) -> dict:
+    def get_id_and_url(self) -> dict[str, str]:
+        if self.id is None or self.url is None:
+            raise ValueError("id or url is None")
         return {
             "id": self.id,
             "url": self.url,

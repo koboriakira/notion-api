@@ -28,6 +28,7 @@ class DatabaseType(Enum):
     RESTAURANT = "4f10b337-9a1d-4b87-9feb-87a00c511b68"
     GOAL = "f3f8b93f-d89f-4c3d-a47a-01c134a7e2bf"
     SHOPPING = "b917fd7e-2fe5-4030-879f-9eea5e8827bb"
+    ACCOUNT_BOOK = "f2c5fc6e-4c27-429f-add5-2279f1f84e8d"
 
     @staticmethod
     def from_id(id_: str) -> "DatabaseType":
