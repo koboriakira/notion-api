@@ -63,7 +63,8 @@ export class NotionApi extends Stack {
       role,
       myLayer,
       false,
-      timeout
+      timeout,
+      true,
     );
     const appName = convertToCamelCase(handlerName);
     const queue = new sqs.Queue(this, `${appName}Queue`, {
@@ -156,7 +157,8 @@ export class NotionApi extends Stack {
     role: iam.Role,
     myLayer: lambda.LayerVersion,
     function_url_enabled: boolean = false,
-    timeout: number = TIMEOUT
+    timeout: number = TIMEOUT,
+    deadLetterQueueEnabled: boolean = false
   ): lambda.Function {
     const resourceNameCamel = convertToCamelCase(handlerName);
 
@@ -167,6 +169,7 @@ export class NotionApi extends Stack {
       role: role,
       layers: [myLayer],
       timeout: Duration.seconds(timeout),
+      deadLetterQueueEnabled: deadLetterQueueEnabled,
     });
 
     fn.addEnvironment("NOTION_SECRET", process.env.NOTION_SECRET || "");
