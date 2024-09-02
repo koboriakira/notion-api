@@ -25,8 +25,6 @@ export default class StepImplementation {
 
   @Step("Create a task with name <title>")
   public async createTask(title: string) {
-    // http://localhost:10119/tasks にPOSTリクエストを送信する
-    // タスクのタイトルは <title> で指定される
     const data = {
       title: title
     }
@@ -35,10 +33,17 @@ export default class StepImplementation {
     DataStoreFactory.getScenarioDataStore().put("pageId", pageId)
   }
 
+  @Step("Complete a task with name <title>")
+  public async completeTask(title: string) {
+    const data = {
+      status: "Done"
+    }
+    const taskId = DataStoreFactory.getScenarioDataStore().get("pageId")
+    const _response = await client.post(`/task/${taskId}/complete/`, data)
+  }
+
   @Step("Create a task with name <title> and kind <kind>")
   public async createTaskWithKind(title: string, kind: string) {
-    // http://localhost:10119/tasks にPOSTリクエストを送信する
-    // タスクのタイトルは <title> で指定される
     const data = {
       title: title,
       kind: kind,
