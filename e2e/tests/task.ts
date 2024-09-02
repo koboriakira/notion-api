@@ -1,21 +1,13 @@
 import { Step, BeforeSuite, AfterSuite, DataStoreFactory } from "gauge-ts";
-import * as https from 'https';
-import assert = require("assert");
-import axios, { Axios } from "axios";
+import { Axios } from "axios";
+import Client from "./util/client";
 
-require('dotenv').config();
 let client: Axios
 
 export default class StepImplementation {
   @BeforeSuite()
   public async beforeSuite() {
-    client = axios.create({
-      baseURL: "http://localhost:10119",
-      headers: {
-        "access-token": process.env.NOTION_SECRET,
-      },
-      httpsAgent: new https.Agent({ rejectUnauthorized: false })
-    });
+    client = Client.generate();
   }
 
   @AfterSuite()
