@@ -8,6 +8,8 @@ from util.environment import Environment
 
 DM_CHANNEL = Environment.get_dm_channel()
 
+ERROR_MESSAGE_PUBLIC_API_UNAVAILABLE = "Public API service is temporarily unavailable"
+
 
 class ErrorReporter:
     def __init__(self, client: WebClient | None = None) -> None:
@@ -21,14 +23,28 @@ class ErrorReporter:
     ) -> None:
         message = message or "something error"
         formatted_exception = _generate_formatted_exception()
-        text = f"[Notion-API]\n{message}\n\n```\n{formatted_exception}\n```"
 
         if Environment.is_dev():
-            print(text)
+            print(formatted_exception)
             return
 
         try:
-            self.client.chat_postMessage(text=text, channel=slack_channel or DM_CHANNEL, thread_ts=slack_thread_ts)
+            if ERROR_MESSAGE_PUBLIC_API_UNAVAILABLE in formatted_exception:
+                # NotionのAPIトラブルの場合は、簡易なメッセージにする
+                last_line = formatted_exception.split("\n")[-2]
+                self.client.chat_postMessage(
+                    text=f"[Notion-API]\n{message}\n\n```\n{last_line}\n```",
+                    channel=slack_channel or DM_CHANNEL,
+                    thread_ts=slack_thread_ts,
+                )
+                return
+
+            text = f"[Notion-API]\n{message}\n\n```\n{formatted_exception}\n```"
+            self.client.chat_postMessage(
+                text=text,
+                channel=slack_channel or DM_CHANNEL,
+                thread_ts=slack_thread_ts,
+            )
         except:  # noqa: E722
             print("Failed to send a message to Slack")
             print(text)
