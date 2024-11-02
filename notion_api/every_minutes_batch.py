@@ -33,8 +33,8 @@ def handler(event: dict, context: dict) -> None:
         logger.info("買い物リストの購入ステータスをリセット")
         reset_shopping_list_usecase.execute()
 
-    except:
-        ErrorReporter().execute()
+    except Exception as e:
+        ErrorReporter().execute(error=e)
         raise
 
 
