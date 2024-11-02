@@ -2,7 +2,7 @@ import os
 from logging import Logger, getLogger
 
 from notion_client import Client
-from notion_client.errors import APIResponseError
+from notion_client.errors import APIResponseError, HTTPResponseError
 
 from notion_client_wrapper.base_operator import BaseOperator
 from notion_client_wrapper.base_page import BasePage
@@ -34,7 +34,7 @@ class NotionApiError(Exception):
         self,
         page_id: str | None = None,
         database_id: str | None = None,
-        e: Exception | None = None,
+        e: APIResponseError | HTTPResponseError | None = None,
         properties: Properties | dict | None = None,
     ) -> None:
         self.database_id = database_id
@@ -204,7 +204,7 @@ class ClientWrapper:
     def __append_block_children(self, block_id: str, children: list[dict], retry_count: int = 0) -> dict:
         try:
             return self.client.blocks.children.append(block_id=block_id, children=children)
-        except APIResponseError as e:
+        except APIResponseError|HTTPResponseError as e:
             if self.__is_able_retry(status=e.status, retry_count=retry_count):
                 return self.__append_block_children(block_id=block_id, children=children, retry_count=retry_count + 1)
             raise NotionApiError(page_id=block_id, e=e) from e
@@ -251,7 +251,7 @@ class ClientWrapper:
     def __retrieve_page(self, page_id: str, retry_count: int = 0) -> dict:
         try:
             return self.client.pages.retrieve(page_id=page_id)
-        except APIResponseError as e:
+        except APIResponseError|HTTPResponseError as e:
             if self.__is_able_retry(status=e.status, retry_count=retry_count):
                 return self.__retrieve_page(page_id=page_id, retry_count=retry_count + 1)
             raise NotionApiError(page_id=page_id, e=e) from e
@@ -263,7 +263,7 @@ class ClientWrapper:
     def __list_blocks(self, block_id: str, retry_count: int = 0) -> dict:
         try:
             return self.client.blocks.children.list(block_id=block_id)
-        except APIResponseError as e:
+        except APIResponseError|HTTPResponseError as e:
             if self.__is_able_retry(status=e.status, retry_count=retry_count):
                 return self.__list_blocks(block_id=block_id, retry_count=retry_count + 1)
             raise NotionApiError(page_id=block_id, e=e) from e
@@ -274,7 +274,7 @@ class ClientWrapper:
                 page_id=page_id,
                 archived=True,
             )
-        except APIResponseError as e:
+        except APIResponseError|HTTPResponseError as e:
             if self.__is_able_retry(status=e.status, retry_count=retry_count):
                 return self.__archive(page_id=page_id, retry_count=retry_count + 1)
             raise NotionApiError(page_id=page_id, e=e) from e
@@ -285,7 +285,7 @@ class ClientWrapper:
                 page_id=page_id,
                 properties=properties.exclude_button().__dict__(),
             )
-        except APIResponseError as e:
+        except APIResponseError|HTTPResponseError as e:
             if self.__is_able_retry(status=e.status, retry_count=retry_count):
                 return self.__update(page_id=page_id, properties=properties, retry_count=retry_count + 1)
             raise NotionApiError(page_id=page_id, e=e, properties=properties) from e
@@ -303,7 +303,7 @@ class ClientWrapper:
                 cover=cover,
                 properties=properties if properties != {} else None,
             )
-        except APIResponseError as e:
+        except APIResponseError|HTTPResponseError as e:
             if self.__is_able_retry(status=e.status, retry_count=retry_count):
                 self.__create_page(
                     database_id=database_id,
@@ -331,7 +331,7 @@ class ClientWrapper:
                 start_cursor=start_cursor,
                 filter=filter_param,
             )
-        except APIResponseError as e:
+        except APIResponseError|HTTPResponseError as e:
             if self.__is_able_retry(status=e.status, retry_count=retry_count):
                 return self.__database_query(
                     database_id=database_id,
