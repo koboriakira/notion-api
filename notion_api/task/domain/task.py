@@ -46,6 +46,11 @@ class ToDoTask(BasePage):
         self.properties = self.properties.append_property(pomodoro_counter).append_property(pomodoro_start_datetime)
         return self
 
+    def update_is_started(self, status: bool) -> "ToDoTask":
+        is_started = IsStarted(status)
+        self.properties = self.properties.append_property(is_started)
+        return self
+
     def do_tomorrow(self) -> "ToDoTask":
         do_tomorrow_flag = DoTommorowFlag.false()
         self.properties = self.properties.append_property(do_tomorrow_flag)
