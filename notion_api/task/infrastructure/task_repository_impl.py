@@ -20,6 +20,7 @@ from task.domain.task_kind import TaskKind, TaskKindType
 from task.domain.task_repository import TaskRepository
 from task.domain.task_start_date import TaskStartDate
 from task.domain.task_status import TaskStatus, TaskStatusType
+from task.domain.is_started import IsStarted
 from util.datetime import JST
 
 
@@ -35,6 +36,7 @@ class TaskRepositoryImpl(TaskRepository):
         start_datetime_end: date | datetime | None = None,
         project_id: PageId | None = None,
         do_tomorrow_flag: bool | None = None,
+        is_started: bool | None = None,
     ) -> list[Task]:
         task_kind_trash = TaskKind.trash()
         filter_builder = FilterBuilder()
@@ -86,6 +88,12 @@ class TaskRepositoryImpl(TaskRepository):
             do_tomorrow_flag_checkbox = DoTommorowFlag.true() if do_tomorrow_flag else DoTommorowFlag.false()
             filter_builder = filter_builder.add_condition(
                 CheckboxCondition.equal(do_tomorrow_flag_checkbox),
+            )
+
+        if is_started is not None:
+            is_started_checkbox = IsStarted.true() if is_started else IsStarted.false()
+            filter_builder = filter_builder.add_condition(
+                CheckboxCondition.equal(is_started_checkbox),
             )
 
         base_pages = self.client.retrieve_database(

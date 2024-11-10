@@ -17,6 +17,7 @@ class TaskRepository(metaclass=ABCMeta):
         start_datetime_end: date | datetime | None = None,
         project_id: PageId | None = None,
         do_tomorrow_flag: bool | None = None,
+        is_started: bool | None = None,
     ) -> list[Task]:
         pass
 

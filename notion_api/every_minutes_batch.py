@@ -5,6 +5,7 @@ from notion_client_wrapper.client_wrapper import ClientWrapper
 from shopping.infrastructure.repository_impl import ShoppingRepositoryImpl
 from task.infrastructure.task_repository_impl import TaskRepositoryImpl
 from usecase.clean_empty_title_page import CleanEmptyTitlePageUsecase
+from usecase.task.start_task_usecase import StartTaskUsecase
 from usecase.shopping.reset_shopping_list_usecase import ResetShoppingListUseCase
 from usecase.task.do_tomorrow_usecase import DoTommorowUsecase
 from util.environment import Environment
@@ -17,6 +18,7 @@ task_repository = TaskRepositoryImpl(notion_client_wrapper=client)
 do_tomorrow_usecase = DoTommorowUsecase(task_repository=task_repository)
 shopping_repository = ShoppingRepositoryImpl(client)
 reset_shopping_list_usecase = ResetShoppingListUseCase(shopping_repository)
+start_task_usecase = StartTaskUsecase(task_repository=task_repository)
 
 # ログ
 logging.basicConfig(level=logging.INFO)
@@ -26,6 +28,8 @@ if Environment.is_dev():
 
 def handler(event: dict, context: dict) -> None:
     try:
+        logger.info("「開始」が有効になっているタスクについて開始処理をする")
+        start_tasks()
         logger.info("タイトルが空のページを削除")
         clean_empty_title_page_usecase.handle()
         logger.info("「明日やる」が有効になっているタスクを翌日に更新")
@@ -36,6 +40,12 @@ def handler(event: dict, context: dict) -> None:
     except Exception as e:
         ErrorReporter().execute(error=e)
         raise
+
+def start_tasks():
+    try:
+        start_task_usecase.execute()
+    except:
+        return
 
 
 if __name__ == "__main__":
