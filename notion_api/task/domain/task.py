@@ -13,6 +13,7 @@ from task.domain.task_context import TaskContext, TaskContextType
 from task.domain.task_kind import TaskKind, TaskKindType
 from task.domain.task_start_date import TaskStartDate
 from task.domain.task_status import TaskStatus, TaskStatusType
+from task.domain.is_started import IsStarted
 from task.valueobject.task_order import TaskOrder
 from task.valueobject.task_order_rule import TaskOrderRule
 from util.datetime import convert_to_date_or_datetime, jst_now
@@ -110,6 +111,10 @@ class ToDoTask(BasePage):
     @property
     def is_important(self) -> bool:
         return False
+
+    @property
+    def is_started(self) -> bool:
+        return self.get_checkbox(name=IsStarted.NAME).checked
 
     @property
     def context(self) -> list[TaskContextType]:
