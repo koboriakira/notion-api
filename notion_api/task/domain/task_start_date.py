@@ -14,4 +14,6 @@ class TaskStartDate(Date):
 
     @classmethod
     def create(cls, start_date: date | datetime | None) -> "TaskStartDate":
+        if isinstance(start_date, datetime) and start_date.time() == datetime.min.time():
+            start_date = start_date.date()
         return TaskStartDate(start_date=start_date)
