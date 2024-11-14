@@ -37,6 +37,9 @@ def jst_today_datetime() -> datetime:
 def jst_today() -> date:
     return jst_now().date()
 
+def jst_tommorow() -> datetime:
+    return jst_today_datetime() + timedelta(days=1)
+
 
 def convert_to_date_or_datetime(value: str | None, cls: type | None = None) -> date | datetime | None:
     date_type = DateType.get_datetype(value)

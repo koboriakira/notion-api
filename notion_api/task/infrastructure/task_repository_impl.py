@@ -14,13 +14,13 @@ from notion_client_wrapper.page.page_id import PageId
 from notion_client_wrapper.properties.property import Property
 from task.domain.do_tomorrow_flag import DoTommorowFlag
 from task.domain.important_flag import ImportantFlag
+from task.domain.is_started import IsStarted
 from task.domain.project_relation import ProjectRelation
 from task.domain.task import ImportantToDoTask, RoutineToDoTask, ScheduledTask, Task, ToDoTask
 from task.domain.task_kind import TaskKind, TaskKindType
 from task.domain.task_repository import TaskRepository
 from task.domain.task_start_date import TaskStartDate
 from task.domain.task_status import TaskStatus, TaskStatusType
-from task.domain.is_started import IsStarted
 from util.datetime import JST
 
 

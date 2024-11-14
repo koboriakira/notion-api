@@ -5,10 +5,9 @@ from logging import Logger
 import requests
 
 import custom_logger
-from external_calendar.domain.event import Event
+from external_calendar.domain.event import Events
 from external_calendar.domain.event_converter import EventConverter
 from external_calendar.domain.external_calendar_api import ExternalCalendarAPI
-from util.datetime import jst_now
 
 
 class GoogleCalendarApi(ExternalCalendarAPI):
@@ -21,14 +20,15 @@ class GoogleCalendarApi(ExternalCalendarAPI):
             + os.environ["LAMBDA_GOOGLE_CALENDAR_API_ACCESS_TOKEN"],
         }
 
-    def fetch(self, date: date, excludes_past_events: bool | None = None) -> list[Event]:
+    def fetch(self, date_: date) -> Events:
         url = self.domain + "/list"
         params = {
-            "start_date": jst_now().isoformat() if excludes_past_events else date.isoformat(),
-            "end_date": date.isoformat(),
+            "start_date": date_.isoformat(),
+            "end_date": date_.isoformat(),
         }
 
-        response = requests.get(url=url, params=params, headers=self.headers)
+        response = requests.get(url=url, params=params, headers=self.headers, timeout=30)
+        response.raise_for_status()
         self._logger.debug(f"get_gas_calendar: status_code={response.status_code}")
         return EventConverter.to_objects(response.json())
 
