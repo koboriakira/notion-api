@@ -79,6 +79,9 @@ class TaskKind(Select):
     def routine(cls) -> "TaskKind":
         return cls.create(kind_type=TaskKindType.ROUTINE)
 
+    @classmethod
+    def scheduled(cls) -> "TaskKind":
+        return cls.create(kind_type=TaskKindType.SCHEDULE)
 
 if __name__ == "__main__":
     # 最新の情報を取得するときに使う

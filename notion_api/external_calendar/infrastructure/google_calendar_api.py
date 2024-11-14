@@ -5,12 +5,12 @@ from logging import Logger
 import requests
 
 import custom_logger
-from external_calendar.domain.event import Event
+from external_calendar.domain.event import Events
 from external_calendar.domain.event_converter import EventConverter
 from external_calendar.domain.external_calendar_api import ExternalCalendarAPI
 
 
-class LambdaGoogleCalendarApi(ExternalCalendarAPI):
+class GoogleCalendarApi(ExternalCalendarAPI):
     def __init__(self, logger: Logger | None = None) -> None:
         self._logger = logger or custom_logger.get_logger(__name__)
         self.domain = os.environ["LAMBDA_GOOGLE_CALENDAR_API_DOMAIN"]
@@ -20,14 +20,15 @@ class LambdaGoogleCalendarApi(ExternalCalendarAPI):
             + os.environ["LAMBDA_GOOGLE_CALENDAR_API_ACCESS_TOKEN"],
         }
 
-    def fetch(self, date: date) -> list[Event]:
+    def fetch(self, date_: date) -> Events:
         url = self.domain + "/list"
         params = {
-            "start_date": date.isoformat(),
-            "end_date": date.isoformat(),
+            "start_date": date_.isoformat(),
+            "end_date": date_.isoformat(),
         }
 
-        response = requests.get(url=url, params=params, headers=self.headers)
+        response = requests.get(url=url, params=params, headers=self.headers, timeout=30)
+        response.raise_for_status()
         self._logger.debug(f"get_gas_calendar: status_code={response.status_code}")
         return EventConverter.to_objects(response.json())
 
@@ -135,5 +136,5 @@ class LambdaGoogleCalendarApi(ExternalCalendarAPI):
 if __name__ == "__main__":
     # python -m notion_api.external_calendar.infrastructure.google_calendar_api
 
-    suite = LambdaGoogleCalendarApi()
+    suite = GoogleCalendarApi()
     print(suite.fetch(date.today()))

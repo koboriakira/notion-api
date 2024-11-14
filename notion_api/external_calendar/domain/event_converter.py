@@ -1,6 +1,7 @@
 from datetime import datetime
+
+from .event import Event, Events
 from .event_category import EventCategory
-from .event import Event
 
 
 class EventConverter:
@@ -16,5 +17,5 @@ class EventConverter:
         )
 
     @staticmethod
-    def to_objects(events: list[dict]) -> list[Event]:
-        return [EventConverter.to_object(event) for event in events]
+    def to_objects(events: list[dict]) -> Events:
+        return Events([EventConverter.to_object(event) for event in events])
