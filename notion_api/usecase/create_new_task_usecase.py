@@ -16,6 +16,7 @@ class CreateNewTaskUsecase:
         title: str | None,
         mentioned_page_id: str | None,
         start_date: date | datetime | None = None,
+        end_date: date | datetime | None = None,
         status: str | None = None,
         task_kind: str | None = None,
     ) -> dict:

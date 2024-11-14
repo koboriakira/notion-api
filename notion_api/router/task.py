@@ -87,6 +87,7 @@ def create_task(request: CreateNewTaskRequest, access_token: str | None = Header
             title=request.title,
             mentioned_page_id=request.mentioned_page_id,
             start_date=request.start_date,
+            end_date=request.end_date,
             status=request.status,
             task_kind=request.task_kind,
         )
