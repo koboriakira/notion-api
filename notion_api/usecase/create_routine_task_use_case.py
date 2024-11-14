@@ -1,4 +1,5 @@
 
+from datetime import date
 from task.domain.routine_repository import RoutineRepository
 from task.domain.task_kind import TaskKindType
 from task.domain.task_repository import TaskRepository
@@ -11,7 +12,7 @@ class CreateRoutineTaskUseCase:
         self.task_repository = task_repository
         self.routine_repository = routine_repository
 
-    def execute(self) -> None:
+    def execute(self, date_: date) -> None:
         routine_tasks = self.routine_repository.fetch_all()
         next_tasks = self.task_repository.search(
             status_list=[TaskStatusType.TODO, TaskStatusType.IN_PROGRESS],
@@ -24,7 +25,7 @@ class CreateRoutineTaskUseCase:
             if title in next_task_titles:
                 print(f"Routine task {title} is already exists.")
                 continue
-            start_date, end_date = routine_task.get_next_schedule()
+            start_date, end_date = routine_task.get_next_schedule(basis_date=date_)
             context_types = routine_task.get_contexts()
             routine_todo_task = TaskFactory.create_routine_todo_task(
                 title=title,
@@ -45,4 +46,4 @@ if __name__ == "__main__":
     task_repository = TaskRepositoryImpl()
     routine_repository = RoutineRepositoryImpl()
     usecase = CreateRoutineTaskUseCase(task_repository=task_repository, routine_repository=routine_repository)
-    usecase.execute()
+    usecase.execute(date_=date.today())

@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 
 from external_calendar.infrastructure.google_calendar_api import GoogleCalendarApi
 from external_calendar.service.external_calendar_service import ExternalCalendarService
@@ -25,7 +25,7 @@ class SyncExternalCalendarUsecase:
         tasks: list[Task] = []
         for event in events.value:
             task = self._task_repository.save(TaskFactory.create_scheduled_task(
-                title=event.title,
+                title=f"【{event.category.value}】{event.title}",
                 start_date=event.start,
                 end_date=event.end,
             ))

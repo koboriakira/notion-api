@@ -1,8 +1,10 @@
+from datetime import date
 import logging
 
 from task.infrastructure.routine_repository_impl import RoutineRepositoryImpl
 from task.infrastructure.task_repository_impl import TaskRepositoryImpl
 from usecase.create_routine_task_use_case import CreateRoutineTaskUseCase
+from util.datetime import jst_today
 from util.environment import Environment
 from util.error_reporter import ErrorReporter
 
@@ -18,7 +20,7 @@ if Environment.is_dev():
 
 def handler(event: dict, context: dict) -> None:  # noqa: ARG001
     try:
-        usecase.execute()
+        usecase.execute(date_=jst_today())
     except Exception:  # noqa: BLE001
         ErrorReporter().execute()
 
