@@ -7,6 +7,7 @@ from mangum import Mangum
 
 from router import (
     account_book,
+    blog,
     books,
     healthcheck,
     music,
@@ -55,6 +56,7 @@ app.include_router(task.router, prefix="/task", tags=["tasks"])
 app.include_router(page.router, prefix="/page", tags=["page"])
 app.include_router(books.router, prefix="/books", tags=["books"])
 app.include_router(account_book.router, prefix="/account_book", tags=["account_book"])
+app.include_router(blog.router, prefix="/blog", tags=["blog"])
 
 
 handler = Mangum(app, lifespan="off")
