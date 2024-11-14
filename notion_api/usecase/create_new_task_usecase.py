@@ -27,6 +27,7 @@ class CreateNewTaskUsecase:
             title=title_property,
             task_kind_type=task_kind_type,
             start_date=start_date,
+            end_date=end_date,
             status=task_status_type,
         )
         task = self.task_repository.save(task)
