@@ -1,11 +1,11 @@
 from dataclasses import dataclass
-from datetime import date, time
+from datetime import date, datetime, time
 
 from notion_client_wrapper.base_page import BasePage
 from task.domain.rouitne_option import RoutineOption
 from task.domain.routine_kind import RoutineKind, RoutineType
 from task.domain.task_context import TaskContextType, TaskContextTypes
-from util.datetime import jst_today
+from util.datetime import JST, jst_today
 
 COLUMN_NAME_TITLE = "名前"
 
@@ -22,6 +22,18 @@ class RoutineTask(BasePage):
     def get_next_date(self) -> date:
         basis_date = jst_today()
         return self.get_routine_type().next_date(basis_date)
+
+    def get_next_schedule(self) -> tuple[datetime, datetime|None]:
+        next_date = self.get_next_date()
+        routine_time = self.get_text(name="時間")
+        if routine_time is None or routine_time.text == "":
+            return datetime.combine(next_date, datetime.min.time(), JST), None
+        start_time_text, end_time_text = routine_time.text.split("-")
+        start_time = time.fromisoformat(start_time_text)
+        end_time = time.fromisoformat(end_time_text)
+        start_datetime = datetime.combine(next_date, start_time)
+        end_datetime = datetime.combine(next_date, end_time) if end_time is not None else None
+        return start_datetime, end_datetime
 
     def due_time(self) -> time | None:
         due_time_text = self.get_text(name="締め切り")
