@@ -8,9 +8,10 @@ import custom_logger
 from external_calendar.domain.event import Event
 from external_calendar.domain.event_converter import EventConverter
 from external_calendar.domain.external_calendar_api import ExternalCalendarAPI
+from util.datetime import jst_now
 
 
-class LambdaGoogleCalendarApi(ExternalCalendarAPI):
+class GoogleCalendarApi(ExternalCalendarAPI):
     def __init__(self, logger: Logger | None = None) -> None:
         self._logger = logger or custom_logger.get_logger(__name__)
         self.domain = os.environ["LAMBDA_GOOGLE_CALENDAR_API_DOMAIN"]
@@ -20,10 +21,10 @@ class LambdaGoogleCalendarApi(ExternalCalendarAPI):
             + os.environ["LAMBDA_GOOGLE_CALENDAR_API_ACCESS_TOKEN"],
         }
 
-    def fetch(self, date: date) -> list[Event]:
+    def fetch(self, date: date, excludes_past_events: bool | None = None) -> list[Event]:
         url = self.domain + "/list"
         params = {
-            "start_date": date.isoformat(),
+            "start_date": jst_now().isoformat() if excludes_past_events else date.isoformat(),
             "end_date": date.isoformat(),
         }
 
@@ -135,5 +136,5 @@ class LambdaGoogleCalendarApi(ExternalCalendarAPI):
 if __name__ == "__main__":
     # python -m notion_api.external_calendar.infrastructure.google_calendar_api
 
-    suite = LambdaGoogleCalendarApi()
+    suite = GoogleCalendarApi()
     print(suite.fetch(date.today()))
