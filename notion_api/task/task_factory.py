@@ -72,7 +72,7 @@ class TaskFactory:
         cls,
         title: str,
         start_date: datetime,
-        due_date: datetime | None = None,
+        end_date: datetime | None = None,
         context_types: TaskContextTypes | None = None,
         blocks: list[Block] | None = None,
     ) -> RoutineToDoTask:
@@ -80,10 +80,8 @@ class TaskFactory:
         properties: list[Property] = [
             Title.from_plain_text(text=title),
             TaskKind.routine(),
-            TaskStartDate.create(start_date),
+            TaskStartDate.create(start_date, end_date),
         ]
-        if due_date is not None:
-            properties.append(DueDate.create(due_date))
         if context_types is not None:
             properties.append(TaskContext(context_types))
         return RoutineToDoTask(properties=Properties(values=properties), block_children=blocks)
