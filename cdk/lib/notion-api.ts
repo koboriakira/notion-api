@@ -32,7 +32,6 @@ export class NotionApi extends Stack {
 
     // dynamoDBの作成
     const table = new dynamodb.Table(this, "NotionTable", {
-      tableName: "NotionTable",
       partitionKey: {
         name: "key",
         type: dynamodb.AttributeType.STRING,
