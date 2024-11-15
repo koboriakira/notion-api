@@ -123,20 +123,25 @@ tags: []
                 markdown_text += f"\n{song.embed_html}\n"
 
         # 今日のTwitterを集める
-        tweets = self._twitter_api.get_user_tweets(
-            user_screen_name="kobori_akira_pw",
-            start_datetime=date_range.end.value,
-        )
-        if len(tweets) > 0:
-            if not self.is_debug:
-                self._append_heading(block_id=daily_log.id, title="今日のTwitter")
-            markdown_text += "\n## 今日のTwitter\n"
-            markdown_text += "\n\n".join([f"{tweet.data.embed_tweet_html}" for tweet in tweets])
-        for tweet in tweets:
-            embed_tweet = Embed.from_url_and_caption(url=tweet.data.url)
-            if not self.is_debug:
-                self.client.append_block(block_id=daily_log.id, block=embed_tweet)
-            self._slack_client.chat_postMessage(text=tweet.data.url)
+        try:
+            tweets = self._twitter_api.get_user_tweets(
+                user_screen_name="kobori_akira_pw",
+                start_datetime=date_range.start.value,
+                end_datetime=date_range.end.value,
+            )
+            if len(tweets) > 0:
+                if not self.is_debug:
+                    self._append_heading(block_id=daily_log.id, title="今日のTwitter")
+                markdown_text += "\n## 今日のTwitter\n"
+                markdown_text += "\n\n".join([f"{tweet.embed_tweet_html}" for tweet in tweets])
+            for tweet in tweets:
+                embed_tweet = Embed.from_url_and_caption(url=tweet.url)
+                if not self.is_debug:
+                    self.client.append_block(block_id=daily_log.id, block=embed_tweet)
+                self._slack_client.chat_postMessage(text=tweet.url)
+        except Exception as e:
+            logger.error(e)
+            markdown_text += "\n## 今日のTwitterの取得に失敗しました\n"
 
         # マークダウンをファイルとしてSlackにアップロード
         filename = f"daily_log_{target_date.isoformat()}.md"
