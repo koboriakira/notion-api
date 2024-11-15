@@ -1,10 +1,12 @@
 
 from datetime import date
+
 from task.domain.routine_repository import RoutineRepository
 from task.domain.task_kind import TaskKindType
 from task.domain.task_repository import TaskRepository
 from task.domain.task_status import TaskStatusType
 from task.task_factory import TaskFactory
+from util.datetime import jst_tommorow
 
 
 class CreateRoutineTaskUseCase:
@@ -46,4 +48,4 @@ if __name__ == "__main__":
     task_repository = TaskRepositoryImpl()
     routine_repository = RoutineRepositoryImpl()
     usecase = CreateRoutineTaskUseCase(task_repository=task_repository, routine_repository=routine_repository)
-    usecase.execute(date_=date.today())
+    usecase.execute(date_=jst_tommorow().date())
