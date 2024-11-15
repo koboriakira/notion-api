@@ -50,7 +50,7 @@ class MusicCreator(PageCreator):
         info_message = f"{self.__class__} execute: url={url}, title={title}, cover={cover}"
         self._logger.info(info_message)
 
-        song = self._song_repository.find_by_title(title=title)
+        song = self._song_repository.find_by_url(url=url)
         if song is not None:
             info_message = f"The song is already registered: {song.get_title_text()}"
             self._logger.info(info_message)

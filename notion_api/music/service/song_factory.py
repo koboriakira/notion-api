@@ -11,8 +11,8 @@ from notion_client_wrapper.properties.properties import Properties
 
 class SongFactory:
     @classmethod
-    def create_spotify_song(  # noqa: PLR0913
-        cls: "SongFactory",
+    def create_spotify_song(
+        cls,
         title: str,
         spotify_url: str,
         cover_url: str,

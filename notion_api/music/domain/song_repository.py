@@ -10,7 +10,7 @@ class SongRepository(metaclass=ABCMeta):
         """Search songs by insert datetime range."""
 
     @abstractmethod
-    def find_by_title(self, title: str) -> Song | None:
+    def find_by_url(self, url: str) -> Song | None:
         """Find a song by title."""
 
     @abstractmethod
