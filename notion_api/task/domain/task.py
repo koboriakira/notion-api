@@ -6,6 +6,7 @@ from notion_client_wrapper.base_page import BasePage
 from notion_client_wrapper.page.page_id import PageId
 from task.domain.do_tomorrow_flag import DoTommorowFlag
 from task.domain.due_date import DueDate
+from task.domain.is_started import IsStarted
 from task.domain.pomodoro_counter import PomodoroCounter
 from task.domain.pomodoro_start_datetime import PomodoroStartDatetime
 from task.domain.project_relation import ProjectRelation
@@ -13,7 +14,6 @@ from task.domain.task_context import TaskContext, TaskContextType
 from task.domain.task_kind import TaskKind, TaskKindType
 from task.domain.task_start_date import TaskStartDate
 from task.domain.task_status import TaskStatus, TaskStatusType
-from task.domain.is_started import IsStarted
 from task.valueobject.task_order import TaskOrder
 from task.valueobject.task_order_rule import TaskOrderRule
 from util.datetime import convert_to_date_or_datetime, jst_now
@@ -34,8 +34,12 @@ class ToDoTask(BasePage):
         self.properties = properties
         return self
 
-    def update_start_datetime(self, start_datetime: datetime | date | None) -> "ToDoTask":
-        start_date = TaskStartDate.create(start_datetime)
+    def update_start_datetime(
+            self,
+            start_datetime: datetime | date | None,
+            end_datetime: datetime | date | None,
+            ) -> "ToDoTask":
+        start_date = TaskStartDate.create(start_datetime, end_datetime)
         properties = self.properties.append_property(start_date)
         self.properties = properties
         return self
