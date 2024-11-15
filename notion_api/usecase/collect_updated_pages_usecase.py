@@ -133,7 +133,9 @@ tags: []
                 if not self.is_debug:
                     self._append_heading(block_id=daily_log.id, title="今日のTwitter")
                 markdown_text += "\n## 今日のTwitter\n"
-                markdown_text += "\n\n".join([f"{tweet.embed_tweet_html}" for tweet in tweets])
+                for tweet in tweets:
+                    markdown_text += f"\n{tweet.text}"
+                    markdown_text += f"\n{tweet.embed_tweet_html}\n"
             for tweet in tweets:
                 embed_tweet = Embed.from_url_and_caption(url=tweet.url)
                 if not self.is_debug:
@@ -206,7 +208,7 @@ if __name__ == "__main__":
         daily_log_repository=daily_log_repository,
     )
     date_range = DateRange.from_datetime(
-        start=datetime(2024, 7, 29, 21, 0, 0, tzinfo=JST),
-        end=datetime(2024, 7, 30, 21, 0, 0, tzinfo=JST),
+        start=datetime(2024, 11, 15, 3, 0, 0, tzinfo=JST),
+        end=datetime(2024, 11, 16, 2, 16, 0, tzinfo=JST),
     )
-    usecase.execute(date_range=date_range)
+    print(usecase.execute(date_range=date_range))
