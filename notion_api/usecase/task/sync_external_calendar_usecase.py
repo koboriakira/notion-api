@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import date
 
 from external_calendar.infrastructure.google_calendar_api import GoogleCalendarApi
 from external_calendar.service.external_calendar_service import ExternalCalendarService
@@ -6,6 +6,7 @@ from task.domain.task import Task
 from task.domain.task_repository import TaskRepository
 from task.infrastructure.task_repository_impl import TaskRepositoryImpl
 from task.task_factory import TaskFactory
+from util.datetime import jst_tommorow
 
 
 class SyncExternalCalendarUsecase:
@@ -43,4 +44,4 @@ if __name__ == "__main__":
         task_repository=task_repository,
         external_calendar_service=external_calendar_service,
     )
-    print(suite.execute(date_=date.today()))
+    print(suite.execute(date_=jst_tommorow().date()))
