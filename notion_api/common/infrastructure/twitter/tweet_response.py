@@ -28,25 +28,17 @@ class TweetModel:
     media: list[MediumModel] | None = field(default=None)
 
 
-@dataclass
-class TweetResponse:
-    status: str
-    message: str
-    data: TweetModel
-
     def to_entity(self) -> Tweet:
-        data = self.data
         return Tweet(
-            tweet_id=data.id,
-            text=data.text,
-            user_name=data.user.name,
-            url=data.url,
-            media_urls=[medium.url for medium in data.media] if data.media is not None else [],
+            tweet_id=self.id,
+            text=self.text,
+            user_name=self.user.name,
+            url=self.url,
+            media_urls=[medium.url for medium in self.media] if self.media is not None else [],
         )
 
     @staticmethod
-    def from_dict(data: dict) -> "TweetResponse":
-        tweet_data = data["data"]
+    def from_dict(tweet_data: dict) -> "TweetModel":
         user_data = tweet_data["user"]
         user = UserModel(
             id=user_data["id"],
@@ -62,7 +54,7 @@ class TweetResponse:
                 )
                 for medium in tweet_data["media"]
             ]
-        tweet = TweetModel(
+        return TweetModel(
             id=tweet_data["id"],
             text=tweet_data["text"],
             url=tweet_data["url"],
@@ -70,9 +62,4 @@ class TweetResponse:
             user=user,
             embed_tweet_html=tweet_data["embed_tweet_html"],
             media=media,
-        )
-        return TweetResponse(
-            status=data["status"],
-            message=data["message"],
-            data=tweet,
         )
