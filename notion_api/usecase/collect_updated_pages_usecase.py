@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 
 from common.infrastructure.twitter.lambda_twitter_api import LambdaTwitterApi
 from common.value.database_type import DatabaseType
@@ -20,6 +20,7 @@ from task.domain.task_status import TaskStatusType
 from util.date_range import DateRange
 from util.datetime import JST
 from util.slack.slack_client import SlackClient
+from webclip.domain.webclip_repository import WebclipRepository
 
 logger = get_logger(__name__)
 
@@ -27,7 +28,6 @@ DATABASE_DICT = {
     "今日更新したプロジェクト": DatabaseType.PROJECT,
     "今日更新したZettlekasten": DatabaseType.ZETTLEKASTEN,
     "今日読んだ・登録した書籍": DatabaseType.BOOK,
-    "今日更新したwebclip": DatabaseType.WEBCLIP,
     "今日観たプロレス": DatabaseType.PROWRESTLING,
     "今日更新・登録したレシピ": DatabaseType.RECIPE,
     "今日観た動画": DatabaseType.VIDEO,
@@ -43,6 +43,7 @@ class CollectUpdatedPagesUsecase:
         task_repository: TaskRepository,
         song_repository: SongRepository,
         daily_log_repository: DailyLogRepository,
+        webclip_repository: WebclipRepository,
         is_debug: bool | None = None,
     ) -> None:
         self.client = ClientWrapper.get_instance()
@@ -51,6 +52,7 @@ class CollectUpdatedPagesUsecase:
         self._task_repository = task_repository
         self._song_repository = song_repository
         self._daily_log_repository = daily_log_repository
+        self._webclip_repository = webclip_repository
         self._twitter_api = LambdaTwitterApi()
         self.is_debug = is_debug
 
@@ -76,15 +78,7 @@ tags: []
 """
 
         # デイリーログを取得
-        daily_log = self._daily_log_repository.find(date=target_date)
-        if not daily_log or not daily_log.id:
-            msg = "デイリーログが見つかりません。"
-            raise ValueError(msg)
-
-        self._slack_client.chat_postMessage(
-            text=f"デイリーログにサマリを追加します。\n{daily_log.url}",
-            new_thread=True,
-        )
+        daily_log_id = self._proc_daily_log(target_date=target_date)
 
         # 今日完了したタスクを取得
         done_tasks = self._task_repository.search(
@@ -101,26 +95,22 @@ tags: []
         )
         markdown_text += "\n## 今日完了したタスク\n"
         markdown_text += "\n".join([f"- {task.get_title_text()}" for task in done_tasks])
-        self._append_relation_to_daily_log(daily_log_id=daily_log.id, title="今日完了したタスク", pages=done_tasks)
+        self._append_relation_to_daily_log(daily_log_id=daily_log_id, title="今日完了したタスク", pages=done_tasks)
 
         # 各データベースの更新ページを取得
         for title, database_type in DATABASE_DICT.items():
             pages = self._get_latest_items(date_range=date_range, database_type=database_type)
-            self._append_relation_to_daily_log(daily_log_id=daily_log.id, title=title, pages=pages)
+            self._append_relation_to_daily_log(daily_log_id=daily_log_id, title=title, pages=pages)
             markdown_text += f"\n## {title}\n"
             markdown_text += "\n".join([f"- {page.get_title_text()}" for page in pages])
 
+        # Webクリップを集める
+        markdown_text += "\n"
+        markdown_text += self._proc_webclips(date_range=date_range, daily_log_id=daily_log_id)
+
         # 今日聴いた音楽を集める
-        songs = self._song_repository.search(date_range)
-        if len(songs) > 0:
-            if not self.is_debug:
-                self._append_heading(block_id=daily_log.id, title="今日聴いた音楽")
-            markdown_text += "\n## 今日聴いた音楽\n"
-            for song in songs:
-                if not self.is_debug:
-                    self._append_backlink(block_id=daily_log.id, page=song)
-                markdown_text += f"\n{song.artist} - {song.get_title_text()}\n"
-                markdown_text += f"\n{song.embed_html}\n"
+        markdown_text += "\n"
+        markdown_text += self._proc_songs(date_range=date_range, daily_log_id=daily_log_id)
 
         # 今日のTwitterを集める
         try:
@@ -131,7 +121,7 @@ tags: []
             )
             if len(tweets) > 0:
                 if not self.is_debug:
-                    self._append_heading(block_id=daily_log.id, title="今日のTwitter")
+                    self._append_heading(block_id=daily_log_id, title="今日のTwitter")
                 markdown_text += "\n## 今日のTwitter\n"
                 for tweet in tweets:
                     markdown_text += f"\n{tweet.text}"
@@ -139,7 +129,7 @@ tags: []
             for tweet in tweets:
                 embed_tweet = Embed.from_url_and_caption(url=tweet.url)
                 if not self.is_debug:
-                    self.client.append_block(block_id=daily_log.id, block=embed_tweet)
+                    self.client.append_block(block_id=daily_log_id, block=embed_tweet)
                 self._slack_client.chat_postMessage(text=tweet.url)
         except Exception as e:
             logger.error(e)
@@ -149,6 +139,50 @@ tags: []
         filename = f"daily_log_{target_date.isoformat()}.md"
         self._slack_client.upload_as_file(filename=filename, content=markdown_text)
 
+        return markdown_text
+
+    def _proc_daily_log(self, target_date: date) -> str:
+        """デイリーログを取得する。デイリーログのページIDを返す。"""
+        daily_log = self._daily_log_repository.find(date=target_date)
+        if not daily_log or not daily_log.id:
+            msg = "デイリーログが見つかりません。"
+            raise ValueError(msg)
+
+        self._slack_client.chat_postMessage(
+            text=f"デイリーログにサマリを追加します。\n{daily_log.url}",
+            new_thread=True,
+        )
+        return daily_log.id
+
+    def _proc_webclips(self, date_range: DateRange, daily_log_id: str) -> str:
+        """WebClipを処理する"""
+        webclips = self._webclip_repository.search(date_range)
+
+        if len(webclips) == 0:
+            return ""
+
+        if not self.is_debug:
+            self._append_heading(block_id=daily_log_id, title="今日のWebクリップ")
+        markdown_text = "## 今日のWebクリップ\n"
+        for webclip in webclips:
+            if not self.is_debug:
+                self._append_backlink(block_id=daily_log_id, page=webclip)
+            markdown_text += f"\n[{webclip.get_title_text()}]({webclip.cliped_url})\n"
+        return markdown_text
+
+    def _proc_songs(self, date_range: DateRange, daily_log_id: str) -> str:
+        songs = self._song_repository.search(date_range)
+        if len(songs) == 0:
+            return ""
+
+        if not self.is_debug:
+            self._append_heading(block_id=daily_log_id, title="今日聴いた音楽")
+        markdown_text = "## 今日聴いた音楽\n"
+        for song in songs:
+            if not self.is_debug:
+                self._append_backlink(block_id=daily_log_id, page=song)
+            markdown_text += f"\n{song.artist} - {song.get_title_text()}\n"
+            markdown_text += f"\n{song.embed_html}\n"
         return markdown_text
 
     def _get_latest_items(self, date_range: DateRange, database_type: DatabaseType) -> list[BasePage]:
@@ -195,20 +229,24 @@ if __name__ == "__main__":
     from daily_log.infrastructure.daily_log_repository_impl import DailyLogRepositoryImpl
     from music.infrastructure.song_repository_impl import SongRepositoryImpl
     from task.infrastructure.task_repository_impl import TaskRepositoryImpl
+    from webclip.infrastructure.webclip_repository_impl import WebclipRepositoryImpl
 
     client = ClientWrapper.get_instance()
     task_repository = TaskRepositoryImpl(notion_client_wrapper=client)
     song_repository = SongRepositoryImpl(client=client)
     daily_log_repository = DailyLogRepositoryImpl(client=client)
+    webclip_repository = WebclipRepositoryImpl(client=client)
 
     usecase = CollectUpdatedPagesUsecase(
         is_debug=True,
         task_repository=task_repository,
         song_repository=song_repository,
         daily_log_repository=daily_log_repository,
+        webclip_repository=webclip_repository,
     )
     date_range = DateRange.from_datetime(
         start=datetime(2024, 11, 15, 3, 0, 0, tzinfo=JST),
         end=datetime(2024, 11, 16, 2, 16, 0, tzinfo=JST),
     )
-    print(usecase.execute(date_range=date_range))
+    # print(usecase.execute(date_range=date_range))
+    print(usecase._proc_songs(date_range=date_range, daily_log_id="13b6567a3bbf81cb8c7fcbcfbf6ef959"))
