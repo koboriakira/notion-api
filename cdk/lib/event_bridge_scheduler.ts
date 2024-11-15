@@ -23,10 +23,10 @@ export const SCHEDULER_CONFIG = {
     year: "*",
     weekDay: "MON",
   }),
-  // 毎日21時に実行
+  // 毎日23時30分に実行
   collect_updated_pages: events.Schedule.cron({
-    minute: "0",
-    hour: "12",
+    minute: "30",
+    hour: "14",
     month: "*",
     year: "*",
     weekDay: "*",

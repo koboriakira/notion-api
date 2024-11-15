@@ -54,7 +54,7 @@ class CollectUpdatedPagesUsecase:
         self._twitter_api = LambdaTwitterApi()
         self.is_debug = is_debug
 
-    def execute(self, date_range: DateRange) -> None:
+    def execute(self, date_range: DateRange) -> str:
         """
         指定された日付のデイリーログに、指定されたカテゴリの最新ページを追加する
 
@@ -62,6 +62,9 @@ class CollectUpdatedPagesUsecase:
             target_datetime (datetime, optional):
                 時刻。この時刻の24時間以内に更新されたページを取得する。
                 指定しない場合は現在時刻を使用する。
+
+        Returns:
+            str: マークダウンテキスト
         """
         target_date = date_range.end.value.date()
         # ブログ用のマークダウンテキスト
@@ -138,6 +141,8 @@ tags: []
         # マークダウンをファイルとしてSlackにアップロード
         filename = f"daily_log_{target_date.isoformat()}.md"
         self._slack_client.upload_as_file(filename=filename, content=markdown_text)
+
+        return markdown_text
 
     def _get_latest_items(self, date_range: DateRange, database_type: DatabaseType) -> list[BasePage]:
         """指定されたカテゴリの、最近更新されたページIDを取得する"""
