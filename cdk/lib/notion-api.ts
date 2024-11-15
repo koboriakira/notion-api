@@ -36,6 +36,7 @@ export class NotionApi extends Stack {
         name: "key",
         type: dynamodb.AttributeType.STRING,
       },
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
       removalPolicy: RemovalPolicy.DESTROY,
     });
 
@@ -127,12 +128,14 @@ export class NotionApi extends Stack {
         resources: ["*"],
       })
     );
-    // role.addToPrincipalPolicy(
-    //   new iam.PolicyStatement({
-    //     actions: ["s3:*"],
-    //     resources: [bucketArn, bucketArn + "/*"],
-    //   })
-    // );
+
+    // dynamoDBにアクセスするための権限
+    role.addToPrincipalPolicy(
+      new iam.PolicyStatement({
+        actions: ["dynamodb:*"],
+        resources: ["*"],
+      })
+    );
 
     // SQSにメッセージを送信するために必要な権限
     role.addToPrincipalPolicy(
