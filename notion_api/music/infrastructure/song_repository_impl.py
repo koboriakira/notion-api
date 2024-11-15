@@ -3,7 +3,7 @@ from logging import Logger, getLogger
 from common.value.database_type import DatabaseType
 from music.domain.song import Song
 from music.domain.song_repository import SongRepository
-from music.domain.song_title import SongTitle
+from music.domain.spotify_url import SpotifyUrl
 from notion_client_wrapper.base_page import BasePage
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from notion_client_wrapper.filter.condition.date_condition import DateCondition, DateConditionType
@@ -37,9 +37,9 @@ class SongRepositoryImpl(SongRepository):
         base_pages = self._client.retrieve_database(database_id=self.DATABASE_ID, filter_param=filter_builder.build())
         return [self._cast(base_page) for base_page in base_pages]
 
-    def find_by_title(self, title: str) -> Song | None:
-        title_property = SongTitle(text=title)
-        filter_param = FilterBuilder.build_simple_equal_condition(title_property)
+    def find_by_url(self, url: str) -> Song | None:
+        spotify_url = SpotifyUrl(url=url)
+        filter_param = FilterBuilder.build_simple_equal_condition(spotify_url)
         searched_songs = self._client.retrieve_database(
             database_id=self.DATABASE_ID,
             filter_param=filter_param,
@@ -48,7 +48,7 @@ class SongRepositoryImpl(SongRepository):
         if len(searched_songs) == 0:
             return None
         if len(searched_songs) > 1:
-            warning_message = f"Found multiple songs with the same title: {title}"
+            warning_message = f"Found multiple songs with the same url: {url}"
             self._logger.warning(warning_message)
         return searched_songs[0]
 
