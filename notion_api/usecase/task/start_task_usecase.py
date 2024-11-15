@@ -1,8 +1,11 @@
+from datetime import timedelta
+
+from custom_logger import get_logger
 from notion_client_wrapper.page.page_id import PageId
 from task.domain.task import ToDoTask
 from task.domain.task_repository import TaskRepository
 from task.domain.task_status import TaskStatusType
-from custom_logger import get_logger
+from util.datetime import jst_now
 
 
 class StartTaskUsecase:
@@ -29,7 +32,12 @@ class StartTaskUsecase:
         if task is None:
             msg = f"Task not found. page_id={page_id.value}"
             raise ValueError(msg)
-        task = task.update_status(TaskStatusType.IN_PROGRESS).update_pomodoro_count(number=task.pomodoro_count + 1).update_is_started(False)
+        start = jst_now()
+        end = start + timedelta(minutes=30)
+        task = task.update_status(TaskStatusType.IN_PROGRESS)\
+            .update_pomodoro_count(number=task.pomodoro_count + 1)\
+            .update_is_started(False)\
+            .update_start_datetime(start, end)
         return self._task_repository.save(task)
 
 if __name__ == "__main__":
