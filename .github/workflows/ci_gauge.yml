@@ -1,3 +1,5 @@
+# @format
+
 name: Run Gauge(localhost)
 
 on:
@@ -10,7 +12,6 @@ on:
       - opened
       - synchronize
       - reopened
-
 
 jobs:
   run-gauge:
@@ -31,51 +32,51 @@ jobs:
       LAMBDA_TWITTER_API_DOMAIN: ${{ secrets.LAMBDA_TWITTER_API_DOMAIN }}
 
     steps:
-    - name: "checkoutする"
-      uses: actions/checkout@v4
+      - name: "checkoutする"
+        uses: actions/checkout@v4
 
-    - name: "イメージをビルドする"
-      run: docker build -t notion-api:latest -f docker/api/Dockerfile .
+      - name: "イメージをビルドする"
+        run: docker build -t notion-api:latest -f docker/api/Dockerfile .
 
-    - name: コンテナを立ち上げる
-      run: |
-        docker run -d \
-          --name notion-api \
-          -v $(pwd)/notion_api:/workspace/notion_api:cached \
-          -e ENVIRONMENT=dev \
-          -e NOTION_SECRET=$NOTION_SECRET \
-          -e UNSPLASH_ACCESS_KEY=$UNSPLASH_ACCESS_KEY \
-          -e SLACK_BOT_TOKEN=$SLACK_BOT_TOKEN \
-          -e SLACK_USER_TOKEN=$SLACK_USER_TOKEN \
-          -e AWS_ACCOUNT_ID=$AWS_ACCOUNT_ID \
-          -e OPENAI_API_KEY=$OPENAI_API_KEY \
-          -e LAMBDA_SLACK_CONCIERGE_API_DOMAIN=$LAMBDA_SLACK_CONCIERGE_API_DOMAIN \
-          -e LAMBDA_TWITTER_API_DOMAIN=$LAMBDA_TWITTER_API_DOMAIN \
-          -w /workspace/notion_api \
-          -p 10119:8080 \
-          notion-api:latest \
-          pipenv run uvicorn main:app --reload --port=8080 --host=0.0.0.0
-        sleep 10
+      - name: コンテナを立ち上げる
+        run: |
+          docker run -d \
+            --name notion-api \
+            -v $(pwd)/notion_api:/workspace/notion_api:cached \
+            -e ENVIRONMENT=dev \
+            -e NOTION_SECRET=$NOTION_SECRET \
+            -e UNSPLASH_ACCESS_KEY=$UNSPLASH_ACCESS_KEY \
+            -e SLACK_BOT_TOKEN=$SLACK_BOT_TOKEN \
+            -e SLACK_USER_TOKEN=$SLACK_USER_TOKEN \
+            -e AWS_ACCOUNT_ID=$AWS_ACCOUNT_ID \
+            -e OPENAI_API_KEY=$OPENAI_API_KEY \
+            -e LAMBDA_SLACK_CONCIERGE_API_DOMAIN=$LAMBDA_SLACK_CONCIERGE_API_DOMAIN \
+            -e LAMBDA_TWITTER_API_DOMAIN=$LAMBDA_TWITTER_API_DOMAIN \
+            -w /workspace/notion_api \
+            -p 10119:8080 \
+            notion-api:latest \
+            pipenv run uvicorn main:app --reload --port=8080 --host=0.0.0.0
+          sleep 10
 
-    - name: "ヘルスチェック"
-      run: curl -X GET http://localhost:10119/healthcheck
+      - name: "ヘルスチェック"
+        run: curl -X GET http://localhost:10119/healthcheck
 
-    - name: Nodeをセットアップする
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
+      - name: Nodeをセットアップする
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
 
-    - name: npm install
-      run: |
-        cd e2e
-        npm install
+      - name: npm install
+        run: |
+          cd e2e
+          npm install
 
-    - run: curl -SsL https://downloads.gauge.org/stable | sh -s -- --location-[custom path]
+      - run: curl -SsL https://downloads.gauge.org/stable | sh -s -- --location-[custom path]
 
-    - run: gauge install ts
+      - run: gauge install ts
 
-    - run: gauge version
+      - run: gauge version
 
-    - run: |
-        cd e2e
-        gauge run specs
+      - run: |
+          cd e2e
+          gauge run specs
