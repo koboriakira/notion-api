@@ -12,6 +12,7 @@ import {
   aws_events_targets as targets,
   aws_s3 as s3,
   aws_sqs as sqs,
+  aws_dynamodb as dynamodb,
 } from "aws-cdk-lib";
 import { Construct } from "constructs";
 import { SCHEDULER_CONFIG } from "./event_bridge_scheduler";
@@ -29,11 +30,14 @@ export class NotionApi extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    // S3バケットを作成
-    // const bucket = new s3.Bucket(this, "NotionApiBucket", {
-    //   bucketName: "notion-api-bucket-koboriakira",
-    //   removalPolicy: RemovalPolicy.DESTROY,
-    // });
+    // dynamoDBの作成
+    const table = new dynamodb.Table(this, "NotionTable", {
+      partitionKey: {
+        name: "key",
+        type: dynamodb.AttributeType.STRING,
+      },
+      removalPolicy: RemovalPolicy.DESTROY,
+    });
 
     const role = this.makeRole(/*bucket.bucketArn*/);
     const myLayer = this.makeLayer();
@@ -64,7 +68,7 @@ export class NotionApi extends Stack {
       myLayer,
       false,
       timeout,
-      true,
+      true
     );
     const appName = convertToCamelCase(handlerName);
     const queue = new sqs.Queue(this, `${appName}Queue`, {
@@ -85,7 +89,13 @@ export class NotionApi extends Stack {
     myLayer: lambda.LayerVersion,
     schedule: events.Schedule
   ): lambda.Function {
-    const fn = this.createLambdaFunction(handlerName, role, myLayer, false, BATCH_TIMEOUT);
+    const fn = this.createLambdaFunction(
+      handlerName,
+      role,
+      myLayer,
+      false,
+      BATCH_TIMEOUT
+    );
     new events.Rule(this, `${convertToCamelCase(handlerName)}Rule`, {
       schedule: schedule,
       targets: [new targets.LambdaFunction(fn, { retryAttempts: 0 })],
@@ -181,10 +191,22 @@ export class NotionApi extends Stack {
     fn.addEnvironment("SLACK_USER_TOKEN", process.env.SLACK_USER_TOKEN || "");
     fn.addEnvironment("AWS_ACCOUNT_ID", process.env.AWS_ACCOUNT_ID || "");
     fn.addEnvironment("OPENAI_API_KEY", process.env.OPENAI_API_KEY || "");
-    fn.addEnvironment("LAMBDA_SLACK_CONCIERGE_API_DOMAIN", process.env.LAMBDA_SLACK_CONCIERGE_API_DOMAIN || "");
-    fn.addEnvironment("LAMBDA_TWITTER_API_DOMAIN", process.env.LAMBDA_TWITTER_API_DOMAIN || "");
-    fn.addEnvironment("LAMBDA_GOOGLE_CALENDAR_API_DOMAIN", process.env.LAMBDA_GOOGLE_CALENDAR_API_DOMAIN || "");
-    fn.addEnvironment("LAMBDA_GOOGLE_CALENDAR_API_ACCESS_TOKEN", process.env.LAMBDA_GOOGLE_CALENDAR_API_ACCESS_TOKEN || "");
+    fn.addEnvironment(
+      "LAMBDA_SLACK_CONCIERGE_API_DOMAIN",
+      process.env.LAMBDA_SLACK_CONCIERGE_API_DOMAIN || ""
+    );
+    fn.addEnvironment(
+      "LAMBDA_TWITTER_API_DOMAIN",
+      process.env.LAMBDA_TWITTER_API_DOMAIN || ""
+    );
+    fn.addEnvironment(
+      "LAMBDA_GOOGLE_CALENDAR_API_DOMAIN",
+      process.env.LAMBDA_GOOGLE_CALENDAR_API_DOMAIN || ""
+    );
+    fn.addEnvironment(
+      "LAMBDA_GOOGLE_CALENDAR_API_ACCESS_TOKEN",
+      process.env.LAMBDA_GOOGLE_CALENDAR_API_ACCESS_TOKEN || ""
+    );
 
     if (function_url_enabled) {
       fn.addFunctionUrl({
