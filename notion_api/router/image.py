@@ -1,0 +1,40 @@
+from fastapi import APIRouter, Header
+from pydantic import BaseModel
+
+from custom_logger import get_logger
+from notion_client_wrapper.page.page_id import PageId
+from router.response import BaseResponse
+from usecase.image.share_image_usecase import ShareImageRequest, ShareImageUrl, ShareImageUsecase
+from util.access_token import valid_access_token
+
+logger = get_logger(__name__)
+
+router = APIRouter()
+
+
+class ImageUrl(BaseModel):
+    file: str
+    thumbnail: str
+
+
+class ShareImagesRequest(BaseModel):
+    images: list[ImageUrl]
+    additional_page_id: str | None = None
+
+    def to_usecase_request(self) -> ShareImageRequest:
+        return ShareImageRequest(
+            images=[ShareImageUrl(file=i.file, thumbnail=i.thumbnail) for i in self.images],
+            additional_page_id=PageId(self.additional_page_id) if self.additional_page_id else None,
+        )
+
+
+@router.post("/", response_model=BaseResponse)
+def share_images(
+    request: ShareImagesRequest,
+    access_token: str | None = Header(None),
+) -> BaseResponse:
+    valid_access_token(access_token)
+    usecase = ShareImageUsecase()
+
+    usecase.execute(request=request.to_usecase_request())
+    return BaseResponse()
