@@ -22,6 +22,9 @@ class MaintainTasksUsecase:
             if len(task.project_id_list) > 0 and task.kind is None:
                 self._logger.info(f"タスク種別のないプロジェクト関連タスクを処理: {task.title}")  # noqa: G004
                 self._task_repository.save(task=task.update_kind(TaskKindType.NEXT_ACTION))
+            if task.is_started:
+                self._logger.info(f"「開始」タスクを処理: {task.title}")  # noqa: G004
+                self._task_repository.save(task=task.start())
 
 
 if __name__ == "__main__":

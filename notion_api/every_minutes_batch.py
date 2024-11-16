@@ -34,8 +34,7 @@ def handler(event: dict, context: dict) -> None:
         # FIXME: 前回のバッチ実行開始時刻にしたいけど、とりあえずこれで
         latest_edited_at = jst_now() - timedelta(minutes=10)
         maintain_tasks_usecase.execute(latest_edited_at)
-        logger.info("「開始」が有効になっているタスクについて開始処理をする")
-        start_tasks()
+
         logger.info("タイトルが空のページを削除")
         clean_empty_title_page_usecase.handle()
         logger.info("買い物リストの購入ステータスをリセット")
@@ -44,13 +43,6 @@ def handler(event: dict, context: dict) -> None:
     except Exception as e:
         ErrorReporter().execute(error=e)
         raise
-
-
-def start_tasks():
-    try:
-        start_task_usecase.execute()
-    except:
-        return
 
 
 if __name__ == "__main__":
