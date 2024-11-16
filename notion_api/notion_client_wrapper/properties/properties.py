@@ -30,14 +30,20 @@ class Properties:
     def append_property(self, prop: Property) -> "Properties":
         props = []
 
+        is_updated = False
         for original_prop in self.values:
             if original_prop is None:
                 # この場合があるらしい。どこかで混じったかな?
                 continue
             if prop.name == original_prop.name:
                 props.append(prop)
+                is_updated = True
             else:
                 props.append(original_prop)
+
+        # valuesにない場合は新規で追加する
+        if not is_updated:
+            props.append(prop)
 
         return Properties(values=props)
 
