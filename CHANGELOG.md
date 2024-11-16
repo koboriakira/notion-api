@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/koboriakira/notion-api/compare/v1.1.0...v1.2.0) (2024-11-16)
+
+
+### Features
+
+* 自動ページ収集機能を削除 ([#10](https://github.com/koboriakira/notion-api/issues/10)) ([695d6b0](https://github.com/koboriakira/notion-api/commit/695d6b02f5f1fc76734616fc04de45f773f75284))
+
 ## [1.1.0](https://github.com/koboriakira/notion-api/compare/v1.0.0...v1.1.0) (2024-11-16)
 
 
