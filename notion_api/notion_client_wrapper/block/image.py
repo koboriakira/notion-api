@@ -1,4 +1,5 @@
 from notion_client_wrapper.block.block import Block
+from notion_client_wrapper.block.rich_text.rich_text import RichText
 
 
 class Image(Block):
@@ -67,3 +68,14 @@ class Image(Block):
             return self.image_external["url"]
         msg = f"Invalid image type: {self.image_type}"
         raise ValueError(msg)
+
+    @classmethod
+    def from_external_url(cls, url: str, alias_url: str | None = None) -> "Image":
+        image_caption = []
+        if alias_url:
+            image_caption = RichText.from_plain_link(alias_url, alias_url).to_dict()
+        return Image(
+            image_caption=image_caption,
+            image_type="external",
+            image_external={"url": url},
+        )
