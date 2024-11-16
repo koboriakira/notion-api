@@ -34,11 +34,15 @@ class ToDoTask(BasePage):
         self.properties = properties
         return self
 
+    def update_kind(self, kind: TaskKindType) -> "ToDoTask":
+        self.properties = self.properties.append_property(TaskKind.create(kind))
+        return self
+
     def update_start_datetime(
-            self,
-            start_datetime: datetime | date | None,
-            end_datetime: datetime | date | None,
-            ) -> "ToDoTask":
+        self,
+        start_datetime: datetime | date | None,
+        end_datetime: datetime | date | None,
+    ) -> "ToDoTask":
         start_date = TaskStartDate.create(start_datetime, end_datetime)
         properties = self.properties.append_property(start_date)
         self.properties = properties
