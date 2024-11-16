@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/koboriakira/notion-api/compare/v1.2.0...v1.3.0) (2024-11-16)
+
+
+### Features
+
+* 画像共有機能を追加 ([#12](https://github.com/koboriakira/notion-api/issues/12)) ([7176e25](https://github.com/koboriakira/notion-api/commit/7176e250127963a093b21445ed463f036395ca3f))
+
 ## [1.2.0](https://github.com/koboriakira/notion-api/compare/v1.1.0...v1.2.0) (2024-11-16)
 
 
