@@ -10,6 +10,7 @@ from router import (
     blog,
     books,
     healthcheck,
+    image,
     music,
     page,
     projects,
@@ -57,6 +58,7 @@ app.include_router(page.router, prefix="/page", tags=["page"])
 app.include_router(books.router, prefix="/books", tags=["books"])
 app.include_router(account_book.router, prefix="/account_book", tags=["account_book"])
 app.include_router(blog.router, prefix="/blog", tags=["blog"])
+app.include_router(image.router, prefix="/image", tags=["image"])
 
 
 handler = Mangum(app, lifespan="off")

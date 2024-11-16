@@ -34,8 +34,18 @@ def jst_today_datetime() -> datetime:
     return jst_now().replace(hour=0, minute=0, second=0, microsecond=0)
 
 
-def jst_today() -> date:
-    return jst_now().date()
+def jst_today(is_previous_day_until_2am: bool | None = None) -> date:
+    """Return today's date in JST
+    Args:
+        isPreviousDayUntil2AM (bool): If True, return the previous day until 2AM. Defaults to None.
+    Returns:
+        date: today's date in JST
+    """
+    now = jst_now()
+    if is_previous_day_until_2am:
+        return now.date() - timedelta(days=1) if now.hour < 2 else now.date()
+    return now.date()
+
 
 def jst_tommorow() -> datetime:
     return jst_today_datetime() + timedelta(days=1)

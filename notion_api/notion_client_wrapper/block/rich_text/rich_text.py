@@ -16,6 +16,11 @@ class RichText:
         rich_text_element = RichTextTextElement.of(content=text)
         return RichText(elements=[rich_text_element])
 
+    @classmethod
+    def from_plain_link(cls, text: str, url: str) -> "RichText":
+        rich_text_element = RichTextTextElement.of(content=text, link_url=url)
+        return cls(elements=[rich_text_element])
+
     def to_plain_text(self) -> str:
         return "".join(map(lambda x: x.to_plain_text(), self.elements))
 
