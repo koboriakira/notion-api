@@ -1,7 +1,7 @@
 from task.domain.task_repository import TaskRepository
 
 
-class DoTommorowUsecase:
+class MaintainTasksUsecase:
     def __init__(self, task_repository: TaskRepository) -> None:
         self._task_repository = task_repository
 
@@ -19,5 +19,5 @@ if __name__ == "__main__":
     logger = get_logger(__name__)
 
     task_repository = TaskRepositoryImpl()
-    usecase = DoTommorowUsecase(task_repository=task_repository)
+    usecase = MaintainTasksUsecase(task_repository=task_repository)
     usecase.execute()
