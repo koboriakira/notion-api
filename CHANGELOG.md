@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/koboriakira/notion-api/compare/v1.0.0...v1.1.0) (2024-11-16)
+
+
+### Miscellaneous Chores
+
+* release 1.1.0 ([6840d75](https://github.com/koboriakira/notion-api/commit/6840d75bfe239df4af4df7d049b66446f35284a1))
+
 ## 1.0.0 (2024-11-15)
 
 
