@@ -34,11 +34,15 @@ class ToDoTask(BasePage):
         self.properties = properties
         return self
 
+    def update_kind(self, kind: TaskKindType) -> "ToDoTask":
+        self.properties = self.properties.append_property(TaskKind.create(kind))
+        return self
+
     def update_start_datetime(
-            self,
-            start_datetime: datetime | date | None,
-            end_datetime: datetime | date | None,
-            ) -> "ToDoTask":
+        self,
+        start_datetime: datetime | date | None,
+        end_datetime: datetime | date | None,
+    ) -> "ToDoTask":
         start_date = TaskStartDate.create(start_datetime, end_datetime)
         properties = self.properties.append_property(start_date)
         self.properties = properties
@@ -50,9 +54,8 @@ class ToDoTask(BasePage):
         self.properties = self.properties.append_property(pomodoro_counter).append_property(pomodoro_start_datetime)
         return self
 
-    def update_is_started(self, status: bool) -> "ToDoTask":
-        is_started = IsStarted(status)
-        self.properties = self.properties.append_property(is_started)
+    def reset_is_started(self) -> "ToDoTask":
+        self.properties = self.properties.append_property(IsStarted.false())
         return self
 
     def do_tomorrow(self) -> "ToDoTask":
@@ -65,6 +68,16 @@ class ToDoTask(BasePage):
             due_date = DueDate.create(self.due_date + timedelta(days=1))
             self.properties = self.properties.append_property(due_date)
         return self
+
+    def start(self) -> "ToDoTask":
+        start = jst_now()
+        end = start + timedelta(minutes=30)
+        return (
+            self.update_status(TaskStatusType.IN_PROGRESS)
+            .update_pomodoro_count(number=self.pomodoro_count + 1)
+            .reset_is_started()
+            .update_start_datetime(start, end)
+        )
 
     @property
     def status(self) -> TaskStatusType:

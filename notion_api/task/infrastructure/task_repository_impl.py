@@ -11,6 +11,7 @@ from notion_client_wrapper.filter.condition.relation_condition import RelationCo
 from notion_client_wrapper.filter.condition.string_condition import StringCondition
 from notion_client_wrapper.filter.filter_builder import FilterBuilder
 from notion_client_wrapper.page.page_id import PageId
+from notion_client_wrapper.properties.last_edited_time import LastEditedTime
 from notion_client_wrapper.properties.property import Property
 from task.domain.do_tomorrow_flag import DoTommorowFlag
 from task.domain.important_flag import ImportantFlag
@@ -37,6 +38,7 @@ class TaskRepositoryImpl(TaskRepository):
         project_id: PageId | None = None,
         do_tomorrow_flag: bool | None = None,
         is_started: bool | None = None,
+        last_edited_at: datetime | None = None,
     ) -> list[Task]:
         task_kind_trash = TaskKind.trash()
         filter_builder = FilterBuilder()
@@ -94,6 +96,11 @@ class TaskRepositoryImpl(TaskRepository):
             is_started_checkbox = IsStarted.true() if is_started else IsStarted.false()
             filter_builder = filter_builder.add_condition(
                 CheckboxCondition.equal(is_started_checkbox),
+            )
+
+        if last_edited_at is not None:
+            filter_builder = filter_builder.add_condition(
+                DateCondition.on_or_after(property=LastEditedTime.create(value=last_edited_at)),
             )
 
         base_pages = self.client.retrieve_database(
