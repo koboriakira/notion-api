@@ -23,14 +23,6 @@ export const SCHEDULER_CONFIG = {
     year: "*",
     weekDay: "MON",
   }),
-  // 毎日23時30分に実行
-  collect_updated_pages: events.Schedule.cron({
-    minute: "30",
-    hour: "14",
-    month: "*",
-    year: "*",
-    weekDay: "*",
-  }),
   // 毎日0時に実行
   postpone_task: events.Schedule.cron({
     minute: "0",
