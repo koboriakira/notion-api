@@ -18,7 +18,7 @@ from task.domain.task_kind import TaskKindType
 from task.domain.task_repository import TaskRepository
 from task.domain.task_status import TaskStatusType
 from util.date_range import DateRange
-from util.datetime import JST
+from util.datetime import JST, jst_today
 from util.slack.slack_client import SlackClient
 from webclip.domain.webclip_repository import WebclipRepository
 
@@ -68,7 +68,7 @@ class CollectUpdatedPagesUsecase:
         Returns:
             str: マークダウンテキスト
         """
-        target_date = date_range.end.value.date()
+        target_date = jst_today(is_previous_day_until_2am=True)
         # ブログ用のマークダウンテキスト
         markdown_text = f"""---
 title:
