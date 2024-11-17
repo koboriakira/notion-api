@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.4.0](https://github.com/koboriakira/notion-api/compare/v1.3.0...v1.4.0) (2024-11-17)
+
+
+### Features
+
+* 26時までの実行は前日分とする ([bfb925e](https://github.com/koboriakira/notion-api/commit/bfb925ed44be13a69f6804f0759cc52633c52f97))
+* 重複したスケジュールタスクを作成しないようにする ([254cc6a](https://github.com/koboriakira/notion-api/commit/254cc6ae4f10c9e1a291dc3a8bef3cd72415375a))
+
+
+### Bug Fixes
+
+* improve date range checks in is_between method and filter tasks in move_tasks_to_backup_usecase ([6b28504](https://github.com/koboriakira/notion-api/commit/6b285044cad72fb6403e2b81d3b5570629196c5c))
+
 ## [1.3.0](https://github.com/koboriakira/notion-api/compare/v1.2.0...v1.3.0) (2024-11-16)
 
 
