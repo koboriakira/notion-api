@@ -33,3 +33,7 @@ class TaskRepository(metaclass=ABCMeta):
     @abstractmethod
     def move_to_backup(self, task: Task) -> None:
         pass
+
+    @abstractmethod
+    def delete(self, task: Task) -> None:
+        pass

@@ -152,6 +152,12 @@ class TaskRepositoryImpl(TaskRepository):
         # タスクを削除
         self.client.remove_page(page_id=task.id)
 
+    def delete(self, task: Task) -> None:
+        page_id = task.page_id
+        if page_id is None:
+            raise ValueError("page_id is None")
+        self.client.remove_page(page_id=page_id.value)
+
     def _cast(self, base_page: BasePage) -> Task:
         cls = ToDoTask
         important_flag = base_page.get_checkbox(ImportantFlag.NAME)
