@@ -113,27 +113,8 @@ tags: []
         markdown_text += self._proc_songs(date_range=date_range, daily_log_id=daily_log_id)
 
         # 今日のTwitterを集める
-        try:
-            tweets = self._twitter_api.get_user_tweets(
-                user_screen_name="kobori_akira_pw",
-                start_datetime=date_range.start.value,
-                end_datetime=date_range.end.value,
-            )
-            if len(tweets) > 0:
-                if not self.is_debug:
-                    self._append_heading(block_id=daily_log_id, title="今日のTwitter")
-                markdown_text += "\n## 今日のTwitter\n"
-                for tweet in tweets:
-                    markdown_text += f"\n{tweet.text}"
-                    markdown_text += f"\n{tweet.embed_tweet_html}\n"
-            for tweet in tweets:
-                embed_tweet = Embed.from_url_and_caption(url=tweet.url)
-                if not self.is_debug:
-                    self.client.append_block(block_id=daily_log_id, block=embed_tweet)
-                self._slack_client.chat_postMessage(text=tweet.url)
-        except Exception as e:
-            logger.error(e)
-            markdown_text += "\n## 今日のTwitterの取得に失敗しました\n"
+        markdown_text += "\n"
+        markdown_text += self._proc_twitter(date_range=date_range, daily_log_id=daily_log_id)
 
         # マークダウンをファイルとしてSlackにアップロード
         filename = f"daily_log_{target_date.isoformat()}.md"
@@ -184,6 +165,32 @@ tags: []
             markdown_text += f"\n{song.artist} - {song.get_title_text()}\n"
             markdown_text += f"\n{song.embed_html}\n"
         return markdown_text
+
+    def _proc_twitter(self, date_range: DateRange, daily_log_id: str) -> str:
+        # 今日のTwitterを集める
+        try:
+            tweets = self._twitter_api.get_user_tweets(
+                user_screen_name="kobori_akira_pw",
+                start_datetime=date_range.start.value,
+                end_datetime=date_range.end.value,
+            )
+            if len(tweets) == 0:
+                return ""
+
+            if not self.is_debug:
+                self._append_heading(block_id=daily_log_id, title="今日のTwitter")
+            markdown_text = "## 今日のTwitter\n"
+            for tweet in tweets:
+                markdown_text += f"\n{tweet.text}"
+                markdown_text += f"\n{tweet.embed_tweet_html}\n"
+                embed_tweet = Embed.from_url_and_caption(url=tweet.url)
+                if not self.is_debug:
+                    self.client.append_block(block_id=daily_log_id, block=embed_tweet)
+                self._slack_client.chat_postMessage(text=tweet.url)
+            return markdown_text
+        except Exception as e:
+            logger.error(e)
+            return f"※ 今日のTwitterの取得に失敗しました {e}\n"
 
     def _get_latest_items(self, date_range: DateRange, database_type: DatabaseType) -> list[BasePage]:
         """指定されたカテゴリの、最近更新されたページIDを取得する"""
@@ -245,8 +252,8 @@ if __name__ == "__main__":
         webclip_repository=webclip_repository,
     )
     date_range = DateRange.from_datetime(
-        start=datetime(2024, 11, 15, 3, 0, 0, tzinfo=JST),
-        end=datetime(2024, 11, 16, 2, 16, 0, tzinfo=JST),
+        start=datetime(2024, 11, 16, 2, 0, 0, tzinfo=JST),
+        end=datetime(2024, 11, 18, 1, 0, 0, tzinfo=JST),
     )
     # print(usecase.execute(date_range=date_range))
-    print(usecase._proc_songs(date_range=date_range, daily_log_id="13b6567a3bbf81cb8c7fcbcfbf6ef959"))
+    print(usecase._proc_twitter(date_range=date_range, daily_log_id="dummy"))
