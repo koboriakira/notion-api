@@ -20,7 +20,11 @@ class MoveTasksToBackupUsecase:
 
         # 直近更新されたものは無視
         target_datetime = jst_now() - timedelta(days=14)
-        tasks_moving_to_backup = [t for t in tasks if t.last_edited_time.is_between(self.MIN_DATETIME, target_datetime)]
+        tasks_moving_to_backup = [
+            t
+            for t in tasks
+            if t.last_edited_time is not None and t.last_edited_time.is_between(self.MIN_DATETIME, target_datetime)
+        ]
 
         # バックアップ用のデータベースに移動
         for task in tasks_moving_to_backup:

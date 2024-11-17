@@ -94,7 +94,14 @@ class Date(Property):
         )
 
     def is_between(self, start: datetime, end: datetime) -> bool:
-        return start.timestamp() <= self.start_time.timestamp() <= end.timestamp()
+        start_datetime = self.start_datetime
+        if start_datetime is None:
+            return True
+        if start.timestamp() > start_datetime.timestamp():
+            return False
+        if start_datetime.timestamp() > end.timestamp():  # noqa: SIM103
+            return False
+        return True
 
     @property
     def date(self) -> date:
