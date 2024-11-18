@@ -14,6 +14,7 @@ ignore = [
   "S101",   # assertの非推奨を無視
   "EM101",  # Exception内に直接メッセージを書くことを無視
   "G004",   # f-stringの使用を無視
+  "PGH003", # type: ignoreの使用を無視
 ]
 
 select = ["ALL"] # ignore以外のすべてのルールを適用する
