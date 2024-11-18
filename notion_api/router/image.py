@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Header
 from pydantic import BaseModel
 
+from common.domain.external_image import ExternalImage
 from custom_logger import get_logger
 from notion_client_wrapper.page.page_id import PageId
 from router.response import BaseResponse
-from usecase.image.share_image_usecase import ShareImageRequest, ShareImageUrl, ShareImageUsecase
+from usecase.image.share_image_usecase import ShareImageRequest, ShareImageUsecase
 from util.access_token import valid_access_token
 
 logger = get_logger(__name__)
@@ -23,7 +24,7 @@ class ShareImagesRequest(BaseModel):
 
     def to_usecase_request(self) -> ShareImageRequest:
         return ShareImageRequest(
-            images=[ShareImageUrl(file=i.file, thumbnail=i.thumbnail) for i in self.images],
+            images=[ExternalImage(url=i.file, thumbnail_url=i.thumbnail) for i in self.images],
             additional_page_id=PageId(self.additional_page_id) if self.additional_page_id else None,
         )
 
