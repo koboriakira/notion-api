@@ -4,6 +4,7 @@ from typing import override
 
 from notion_client_wrapper.base_page import BasePage
 from notion_client_wrapper.page.page_id import PageId
+from task.domain.completed_flag import CompletedFlag
 from task.domain.do_tomorrow_flag import DoTommorowFlag
 from task.domain.due_date import DueDate
 from task.domain.is_started import IsStarted
@@ -78,6 +79,16 @@ class ToDoTask(BasePage):
             .reset_is_started()
             .update_start_datetime(start, end)
         )
+
+    def update_start_end_datetime(self, end: datetime) -> "ToDoTask":
+        """ タスクの終了日時を更新する """
+        start = self.start_datetime
+        if start is None:
+            # 開始時刻がない場合はなにもしない
+            return self
+        start_date = TaskStartDate.create(start_date=start, end_date=end)
+        self.properties = self.properties.append_property(start_date)
+        return self
 
     @property
     def status(self) -> TaskStatusType:
@@ -166,6 +177,9 @@ class ToDoTask(BasePage):
     def has_start_datetime(self) -> bool:
         return self.start_datetime is not None
 
+    @property
+    def is_completed_flag(self) -> bool:
+        return self.get_checkbox(name=CompletedFlag.NAME).checked
 
 class ImportantToDoTask(ToDoTask):
     @property
