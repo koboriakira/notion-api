@@ -59,6 +59,10 @@ class ToDoTask(BasePage):
         self.properties = self.properties.append_property(IsStarted.false())
         return self
 
+    def reset_is_completed(self) -> "ToDoTask":
+        self.properties = self.properties.append_property(CompletedFlag.false())
+        return self
+
     def do_tomorrow(self) -> "ToDoTask":
         do_tomorrow_flag = DoTommorowFlag.false()
         self.properties = self.properties.append_property(do_tomorrow_flag)
@@ -80,8 +84,11 @@ class ToDoTask(BasePage):
             .update_start_datetime(start, end)
         )
 
+    def complete(self) -> "ToDoTask":
+        return self.update_status(TaskStatusType.DONE).reset_is_completed().update_start_end_datetime(end=jst_now())
+
     def update_start_end_datetime(self, end: datetime) -> "ToDoTask":
-        """ タスクの終了日時を更新する """
+        """タスクの終了日時を更新する"""
         start = self.start_datetime
         if start is None:
             # 開始時刻がない場合はなにもしない
@@ -180,6 +187,11 @@ class ToDoTask(BasePage):
     @property
     def is_completed_flag(self) -> bool:
         return self.get_checkbox(name=CompletedFlag.NAME).checked
+
+    @property
+    def is_started_flag(self) -> bool:
+        return self.get_checkbox(name=IsStarted.NAME).checked
+
 
 class ImportantToDoTask(ToDoTask):
     @property

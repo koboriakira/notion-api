@@ -2,7 +2,7 @@ from notion_client_wrapper.properties.checkbox import Checkbox
 
 
 class IsStarted(Checkbox):
-    NAME = "開始"
+    NAME = "_開始チェック"
 
     def __init__(self, _checked: bool | None = None) -> None:
         super().__init__(
