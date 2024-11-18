@@ -1,9 +1,12 @@
 from common.domain.external_image import ExternalImage
 from common.value.database_type import DatabaseType
 from notion_client_wrapper.client_wrapper import ClientWrapper
+from notion_client_wrapper.filter.condition.date_condition import DateCondition, DateConditionType
+from notion_client_wrapper.filter.filter_builder import FilterBuilder
 from notion_client_wrapper.page.page_id import PageId
 from notion_client_wrapper.properties import Title
 from notion_client_wrapper.properties.cover import Cover
+from util.date_range import DateRange
 
 
 class ExternalImageService:
@@ -22,3 +25,26 @@ class ExternalImageService:
             blocks=[image],
         )
         return PageId(page_dict["id"])
+
+    def get_images(self, date_range: DateRange) -> list[str]:
+        """GIF/JPEGデータベースに登録されている画像の(サムネイル)URLを取得する。"""
+        filter_builder = FilterBuilder()
+        filter_builder = filter_builder.add_condition(
+            DateCondition.create_manually(
+                name="作成日時",
+                condition_type=DateConditionType.ON_OR_AFTER,
+                value=date_range.start.value,
+            ),
+        )
+        filter_builder = filter_builder.add_condition(
+            DateCondition.create_manually(
+                name="作成日時",
+                condition_type=DateConditionType.ON_OR_BEFORE,
+                value=date_range.end.value,
+            ),
+        )
+        base_pages = self._client.retrieve_database(
+            database_id=self.DATABASE_ID,
+            filter_param=filter_builder.build(),
+        )
+        return [base_page.get_url(name="URL").url for base_page in base_pages]

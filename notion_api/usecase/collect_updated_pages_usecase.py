@@ -1,6 +1,7 @@
 from datetime import date, datetime
 
 from common.infrastructure.twitter.lambda_twitter_api import LambdaTwitterApi
+from common.service.image.external_image_service import ExternalImageService
 from common.value.database_type import DatabaseType
 from common.value.slack_channel_type import ChannelType
 from custom_logger import get_logger
@@ -116,6 +117,10 @@ tags: []
         markdown_text += "\n"
         markdown_text += self._proc_twitter(date_range=date_range, daily_log_id=daily_log_id)
 
+        # 今日アップした画像を集める
+        markdown_text += "\n"
+        markdown_text += self._proc_images(date_range=date_range, daily_log_id=daily_log_id)
+
         # マークダウンをファイルとしてSlackにアップロード
         filename = f"daily_log_{target_date.isoformat()}.md"
         self._slack_client.upload_as_file(filename=filename, content=markdown_text)
@@ -166,7 +171,20 @@ tags: []
             markdown_text += f"\n{song.embed_html}\n"
         return markdown_text
 
-    def _proc_twitter(self, date_range: DateRange, daily_log_id: str) -> str:
+    def _proc_images(self, date_range: DateRange) -> str:
+        """画像を処理する"""
+        external_image_service = ExternalImageService()
+        image_urls = external_image_service.get_images(date_range)
+
+        if len(image_urls) == 0:
+            return ""
+
+        markdown_text = "## 今日アップした画像\n"
+        for url in image_urls:
+            markdown_text += f"\n![]({url})\n"
+        return markdown_text
+
+    def _proc_twitter(self, date_range: DateRange, daily_log_id: str) -> str:  # noqa: C901
         # 今日のTwitterを集める
         try:
             tweets = self._twitter_api.get_user_tweets(
@@ -252,8 +270,9 @@ if __name__ == "__main__":
         webclip_repository=webclip_repository,
     )
     date_range = DateRange.from_datetime(
-        start=datetime(2024, 11, 16, 2, 0, 0, tzinfo=JST),
-        end=datetime(2024, 11, 18, 1, 0, 0, tzinfo=JST),
+        start=datetime(2024, 11, 18, 1, 0, 0, tzinfo=JST),
+        end=datetime(2024, 11, 18, 14, 0, 0, tzinfo=JST),
     )
     # print(usecase.execute(date_range=date_range))
-    print(usecase._proc_twitter(date_range=date_range, daily_log_id="dummy"))
+    # print(usecase._proc_twitter(date_range=date_range, daily_log_id="dummy"))
+    print(usecase._proc_images(date_range=date_range))
