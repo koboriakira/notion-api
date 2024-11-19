@@ -31,7 +31,7 @@ export class NotionApi extends Stack {
     super(scope, id, props);
 
     // dynamoDBの作成
-    const table = new dynamodb.Table(this, "NotionTable", {
+    const notionDynamoDb = new dynamodb.Table(this, "NotionTable", {
       partitionKey: {
         name: "key",
         type: dynamodb.AttributeType.STRING,
@@ -40,7 +40,7 @@ export class NotionApi extends Stack {
       removalPolicy: RemovalPolicy.DESTROY,
     });
 
-    const role = this.makeRole(/*bucket.bucketArn*/);
+    const role = this.makeRole(notionDynamoDb.tableArn);
     const myLayer = this.makeLayer();
 
     // FastAPI(API Gateway)の作成
@@ -108,7 +108,7 @@ export class NotionApi extends Stack {
    * Create or retrieve an IAM role for the Lambda function.
    * @returns {iam.Role} The created or retrieved IAM role.
    */
-  makeRole(/*bucketArn: string*/) {
+  makeRole(dynamoDbArn: string): iam.Role {
     // Lambdaの実行ロールを取得または新規作成
     const role = new iam.Role(this, "LambdaRole", {
       assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
@@ -133,7 +133,7 @@ export class NotionApi extends Stack {
     role.addToPrincipalPolicy(
       new iam.PolicyStatement({
         actions: ["dynamodb:*"],
-        resources: ["*"],
+        resources: [dynamoDbArn],
       })
     );
 
