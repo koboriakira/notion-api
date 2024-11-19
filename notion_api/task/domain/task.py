@@ -8,6 +8,7 @@ from task.domain.completed_flag import CompletedFlag
 from task.domain.do_tomorrow_flag import DoTommorowFlag
 from task.domain.due_date import DueDate
 from task.domain.is_started import IsStarted
+from task.domain.later_flag import LaterFlag
 from task.domain.pomodoro_counter import PomodoroCounter
 from task.domain.pomodoro_start_datetime import PomodoroStartDatetime
 from task.domain.project_relation import ProjectRelation
@@ -63,6 +64,10 @@ class ToDoTask(BasePage):
         self.properties = self.properties.append_property(CompletedFlag.false())
         return self
 
+    def reset_later_flag(self) -> "ToDoTask":
+        self.properties = self.properties.append_property(LaterFlag.false())
+        return self
+
     def do_tomorrow(self) -> "ToDoTask":
         do_tomorrow_flag = DoTommorowFlag.false()
         self.properties = self.properties.append_property(do_tomorrow_flag)
@@ -86,6 +91,7 @@ class ToDoTask(BasePage):
 
     def complete(self) -> "ToDoTask":
         return self.update_status(TaskStatusType.DONE).reset_is_completed().update_start_end_datetime(end=jst_now())
+
 
     def update_start_end_datetime(self, end: datetime) -> "ToDoTask":
         """タスクの終了日時を更新する"""
@@ -191,6 +197,11 @@ class ToDoTask(BasePage):
     @property
     def is_started_flag(self) -> bool:
         return self.get_checkbox(name=IsStarted.NAME).checked
+
+    @property
+    def is_later_flag(self) -> bool:
+        return self.get_checkbox(name=LaterFlag.NAME).checked
+
 
 
 class ImportantToDoTask(ToDoTask):

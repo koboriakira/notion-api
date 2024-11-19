@@ -4,6 +4,8 @@ from logging import Logger
 from custom_logger import get_logger
 from task.domain.task_kind import TaskKindType
 from task.domain.task_repository import TaskRepository
+from task.domain.task_status import TaskStatusType
+from task.task_factory import TaskFactory
 from util.datetime import jst_now
 
 
@@ -28,6 +30,18 @@ class MaintainTasksUsecase:
             if task.is_started:
                 self._logger.info(f"「_開始チェック」タスクを処理: {task.title}")
                 self._task_repository.save(task=task.start())
+            if task.is_later_flag and not task.status.is_done():
+                self._logger.info(f"「_あとでチェック」タスクを処理: {task.title}")
+                # このタスクは完了にして、新規TODOタスクを作成
+                self._task_repository.save(task=task.complete())
+                new_task = TaskFactory.create_todo_task(
+                    title=task.title,
+                    task_kind_type=task.kind,
+                    start_date=jst_now().date(),
+                    status=TaskStatusType.TODO,
+                    blocks=task.block_children,
+                )
+                self._task_repository.save(task=new_task)
 
 
 if __name__ == "__main__":
