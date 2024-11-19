@@ -19,7 +19,7 @@ def get_blog_template(last_execution_time: bool | None = None) -> BaseResponse:
     """
     ブログのテンプレート文章を返却する
     """
-    dynamodb_client = DynamoDBClient("NotionApi-NotionTableF26AF3BC-4263X0XU1OXU")
+    dynamodb_client = DynamoDBClient.get_attributes_client()
     try:
         # start_str = dynamodb_client.find("key", KEY)["datetime"]
         # start = datetime.fromisoformat(start_str)
