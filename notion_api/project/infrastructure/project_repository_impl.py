@@ -39,6 +39,11 @@ class ProjectRepositoryImpl(ProjectRepository):
             blocks=project.block_children,
         )
 
+        self.remove(project)
+
+    def remove(self, project: Project) -> None:
+        if project.id is None:
+            raise ValueError("Project id is None")
         self._client.remove_page(page_id=project.id)
 
     def _cast(self, base_page: BasePage) -> Project:

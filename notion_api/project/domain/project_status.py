@@ -30,6 +30,9 @@ class ProjectStatusType(Enum):
     def is_in_progress(self) -> bool:
         return self == ProjectStatusType.IN_PROGRESS
 
+    def is_trash(self) -> bool:
+        return self == ProjectStatusType.TRASH
+
 
 class ProjectStatus(Status):
     NAME = "ステータス"

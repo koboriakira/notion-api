@@ -11,3 +11,7 @@ class ProjectRepository(metaclass=ABCMeta):
     @abstractmethod
     def archive(self, project: Project) -> None:
         """プロジェクトをバックアップ用にアーカイブする"""
+
+    @abstractmethod
+    def remove(self, project: Project) -> None:
+        """プロジェクトを削除する"""

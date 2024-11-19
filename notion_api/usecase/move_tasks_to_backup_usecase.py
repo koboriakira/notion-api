@@ -21,6 +21,7 @@ class MoveTasksToBackupUsecase:
         target_datetime = jst_now() - timedelta(days=14)
         self._proc_tasks(target_datetime)
         self._proc_projects(target_datetime)
+        self._trash_projects()
 
     def _proc_tasks(self, target_datetime: datetime) -> None:
         # まず全てのタスクを集める
@@ -56,6 +57,17 @@ class MoveTasksToBackupUsecase:
         for project in projects:
             self._project_repository.archive(project)
             print(project.get_title().text + "をバックアップに移動しました。")
+
+    def _trash_projects(self) -> None:
+        """ Trashステータスのプロジェクトを削除する """
+        projects = self._project_repository.fetch_all()
+        projects = [t for t in projects if t.project_status.is_trash()]
+        for project in projects:
+            tasks = self._task_repository.search(project_id=project.page_id)
+            for task in tasks:
+                self._task_repository.delete(task)
+            self._project_repository.remove(project)
+            print(project.get_title().text + "を削除しました。")
 
 if __name__ == "__main__":
     # python -m notion_api.usecase.move_tasks_to_backup_usecase
