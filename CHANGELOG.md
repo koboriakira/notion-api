@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.6.0](https://github.com/koboriakira/notion-api/compare/v1.5.0...v1.6.0) (2024-11-19)
+
+
+### Features
+
+* 「_あとでチェック」フラグ機能を追加し、タスクの「あとまわし」処理を追加 ([6effd8a](https://github.com/koboriakira/notion-api/commit/6effd8abf345011702b80d1113a636e293c54d20))
+* 「明日やる」ときは、開始時刻を消して翌日の日付のみ記載する ([35949e8](https://github.com/koboriakira/notion-api/commit/35949e84f0258823d5176628bdf31d1b64ac9b3f))
+* Trashステータスのプロジェクトを削除する処理を実装 ([04d899b](https://github.com/koboriakira/notion-api/commit/04d899b195c1d8ef3719cd8c949f76b13907f21d))
+* プロジェクトをバックアップ用にアーカイブする機能を追加 ([c3f26e7](https://github.com/koboriakira/notion-api/commit/c3f26e781eb4855d2f3dfd76116f6e2bbfeb92fd))
+
 ## [1.5.0](https://github.com/koboriakira/notion-api/compare/v1.4.0...v1.5.0) (2024-11-19)
 
 
