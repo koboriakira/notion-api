@@ -119,7 +119,7 @@ tags: []
 
         # 今日アップした画像を集める
         markdown_text += "\n"
-        markdown_text += self._proc_images(date_range=date_range, daily_log_id=daily_log_id)
+        markdown_text += self._proc_images(date_range=date_range)
 
         # マークダウンをファイルとしてSlackにアップロード
         filename = f"daily_log_{target_date.isoformat()}.md"
