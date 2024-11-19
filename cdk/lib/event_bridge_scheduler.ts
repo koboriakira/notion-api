@@ -7,9 +7,9 @@ import { aws_events as events } from "aws-cdk-lib";
  * 値: スケジュール設定
  */
 export const SCHEDULER_CONFIG = {
-  // 5分ごとに実行。できればもっと短い間隔で実行したいけど、コストを考えて
+  // 1分ごとに実行
   every_minutes_batch: events.Schedule.cron({
-    minute: "*/5",
+    minute: "*/1",
     hour: "*",
     month: "*",
     year: "*",
