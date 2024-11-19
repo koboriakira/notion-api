@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.5.0](https://github.com/koboriakira/notion-api/compare/v1.4.0...v1.5.0) (2024-11-19)
+
+
+### Features
+
+* タスクの開始チェック機能を追加し ([6514655](https://github.com/koboriakira/notion-api/commit/65146556def6ffab9d76e98a71a1af90e54e97ca))
+* 完了チェック機能を追加し、タスクの終了日時を更新するメソッドを実装 ([84a56ef](https://github.com/koboriakira/notion-api/commit/84a56ef93154ecb7433711c334148a662481e37f))
+* 画像の取得機能を追加し、日付範囲に基づいて画像を処理するメソッドを実装 ([61b2b20](https://github.com/koboriakira/notion-api/commit/61b2b20077cef506acb77c89a079a3680fdeac0b))
+
 ## [1.4.0](https://github.com/koboriakira/notion-api/compare/v1.3.0...v1.4.0) (2024-11-17)
 
 
