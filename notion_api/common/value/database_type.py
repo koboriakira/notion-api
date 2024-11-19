@@ -15,6 +15,7 @@ class DatabaseType(Enum):
     INGREDIENTS = "dba77be1-c1a6-40a2-858e-85878ee55b0d"
     WEEKLY_LOG = "3ae412cf-6c87-4119-a9c6-ffdb2eee2a1e"
     PROJECT = "458c69ce-4e1c-49fe-810c-f26c2291e294"
+    PROJECT_BK = "1436567a-3bbf-8020-9d12-d71654dd9f6d"
     ZETTLEKASTEN = "2dd39a65-3f14-45e1-a51e-2c3d857a8321"
     RECIPE = "64b6d5f1-2547-41a2-a74d-25f0c4df041e"
     PROWRESTLING = "2816de0d-9a02-4289-85c1-f54b2a14064a"
