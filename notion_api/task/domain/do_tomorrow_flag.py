@@ -2,7 +2,7 @@ from notion_client_wrapper.properties.checkbox import Checkbox
 
 
 class DoTommorowFlag(Checkbox):
-    NAME = "明日やる"
+    NAME = "_明日やるチェック"
 
     def __init__(self, _checked: bool | None = None) -> None:
         super().__init__(
