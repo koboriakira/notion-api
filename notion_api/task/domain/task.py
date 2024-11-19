@@ -72,7 +72,8 @@ class ToDoTask(BasePage):
         do_tomorrow_flag = DoTommorowFlag.false()
         self.properties = self.properties.append_property(do_tomorrow_flag)
         if self.start_date is not None:
-            start_date = TaskStartDate.create(self.start_date + timedelta(days=1))
+            date_ = self.start_date.date() if isinstance(self.start_date, datetime) else self.start_date
+            start_date = TaskStartDate.create(date_ + timedelta(days=1))
             self.properties = self.properties.append_property(start_date)
         if self.due_date is not None:
             due_date = DueDate.create(self.due_date + timedelta(days=1))
