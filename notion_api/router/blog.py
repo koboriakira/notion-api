@@ -6,7 +6,7 @@ from fastapi import APIRouter
 from injector.injector import Injector
 from router.response import BaseResponse
 from util.date_range import DateRange
-from util.datetime import JST, jst_now
+from util.datetime import jst_now
 from util.dynamodb.dynamodb import DynamoDBClient
 
 router = APIRouter()
@@ -21,9 +21,9 @@ def get_blog_template(last_execution_time: bool | None = None) -> BaseResponse:
     """
     dynamodb_client = DynamoDBClient.get_attributes_client()
     try:
-        # start_str = dynamodb_client.find("key", KEY)["datetime"]
-        # start = datetime.fromisoformat(start_str)
-        start = datetime(2024, 11, 16, 2, 0, 0, 0, JST)
+        start_str = dynamodb_client.find("key", KEY)["datetime"]
+        start = datetime.fromisoformat(start_str)
+        # start = datetime(2024, 11, 18, 1, 0, 0, 0, JST)
         now = jst_now()
 
         usecase = Injector.create_collect_updated_pages_usecase()
