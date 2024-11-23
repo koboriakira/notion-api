@@ -42,8 +42,8 @@ class ToDoTask(BasePage):
 
     def update_start_datetime(
         self,
-        start_datetime: datetime | date | None,
-        end_datetime: datetime | date | None,
+        start_datetime: datetime | date | None = None,
+        end_datetime: datetime | date | None = None,
     ) -> "ToDoTask":
         start_date = TaskStartDate.create(start_datetime, end_datetime)
         properties = self.properties.append_property(start_date)
@@ -92,7 +92,6 @@ class ToDoTask(BasePage):
 
     def complete(self) -> "ToDoTask":
         return self.update_status(TaskStatusType.DONE).reset_is_completed().update_start_end_datetime(end=jst_now())
-
 
     def update_start_end_datetime(self, end: datetime) -> "ToDoTask":
         """タスクの終了日時を更新する"""
@@ -202,7 +201,6 @@ class ToDoTask(BasePage):
     @property
     def is_later_flag(self) -> bool:
         return self.get_checkbox(name=LaterFlag.NAME).checked
-
 
 
 class ImportantToDoTask(ToDoTask):

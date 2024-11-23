@@ -12,8 +12,10 @@ from project.domain.project_repository import ProjectRepository
 
 
 class ProjectRepositoryImpl(ProjectRepository):
-    def __init__(self, client: ClientWrapper, logger: Logger | None = None) -> None:
-        self._client = client
+    DATABASE_ID = DatabaseType.PROJECT.value
+
+    def __init__(self, client: ClientWrapper | None = None, logger: Logger | None = None) -> None:
+        self._client = client or ClientWrapper.get_instance()
         self._logger = logger or getLogger(__name__)
 
     def fetch_all(self) -> list[Project]:
@@ -26,8 +28,8 @@ class ProjectRepositoryImpl(ProjectRepository):
 
         properties: list[Property] = [
             project.get_title(),
-            Date.from_start_date(name="完了日", start_date=project.last_edited_time.date), # type: ignore
-        ] # type: ignore
+            Date.from_start_date(name="完了日", start_date=project.last_edited_time.date),  # type: ignore
+        ]  # type: ignore
         if project.get_relation(GoalRelation.NAME) is not None:
             properties.append(project.get_relation(GoalRelation.NAME))
         if project.get_relation(TagRelation.NAME) is not None:
@@ -40,6 +42,21 @@ class ProjectRepositoryImpl(ProjectRepository):
         )
 
         self.remove(project)
+
+    def save(self, project: Project) -> "Project":
+        if project.id is not None:
+            _ = self._client.update_page(page_id=project.id, properties=project.properties.values)
+            return project
+        page = self._client.create_page_in_database(
+            database_id=self.DATABASE_ID,
+            properties=project.properties.values,
+            blocks=project.block_children,
+        )
+        return self.find_by_id(page_id=page["id"])
+
+    def find_by_id(self, page_id: str) -> Project:
+        base_page = self._client.retrieve_page(page_id=page_id)
+        return self._cast(base_page)
 
     def remove(self, project: Project) -> None:
         if project.id is None:

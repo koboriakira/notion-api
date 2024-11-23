@@ -2,11 +2,13 @@ from datetime import date, datetime
 from typing import TYPE_CHECKING
 
 from notion_client_wrapper.block.block import Block
+from notion_client_wrapper.page.page_id import PageId
 from notion_client_wrapper.properties.properties import Properties
 from notion_client_wrapper.properties.text import Text
 from notion_client_wrapper.properties.title import Title
 from task.domain.due_date import DueDate
 from task.domain.pomodoro_start_datetime import PomodoroStartDatetime
+from task.domain.project_relation import ProjectRelation
 from task.domain.routine_kind import RoutineKind, RoutineType
 from task.domain.routine_task import RoutineTask
 from task.domain.task import RoutineToDoTask, ScheduledTask, ToDoTask
@@ -30,6 +32,7 @@ class TaskFactory:
         due_date: datetime | date | None = None,
         pomodoro_start_datetime: datetime | None = None,
         context_types: TaskContextTypes | None = None,
+        project_id: PageId | None = None,
         status: TaskStatusType | None = None,
         blocks: list[Block] | None = None,
     ) -> ToDoTask:
@@ -48,15 +51,17 @@ class TaskFactory:
             properties.append(TaskStatus.from_status_type(status))
         if pomodoro_start_datetime is not None:
             properties.append(PomodoroStartDatetime(pomodoro_start_datetime))
+        if project_id is not None:
+            properties.append(ProjectRelation.from_id(project_id.value))
         return ToDoTask(properties=Properties(values=properties), block_children=blocks)
 
     @classmethod
     def create_scheduled_task(
-            cls,
-            title: str,
-            start_date: datetime | date,
-            end_date: datetime | date,
-            ) -> ScheduledTask:
+        cls,
+        title: str,
+        start_date: datetime | date,
+        end_date: datetime | date,
+    ) -> ScheduledTask:
         blocks = []
         properties: list[Property] = [
             Title.from_plain_text(text=title),
@@ -66,7 +71,7 @@ class TaskFactory:
         return ScheduledTask(
             properties=Properties(values=properties),
             block_children=blocks,
-            )
+        )
 
     @classmethod
     def create_routine_todo_task(

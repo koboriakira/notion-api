@@ -120,7 +120,10 @@ class Title(Property):
         )
 
     @staticmethod
-    def from_mentioned_page_id(name: str, page_id: str) -> "Title":
+    def from_mentioned_page_id(
+        page_id: str,
+        name: str = "名前",
+    ) -> "Title":
         return Title(
             name=name,
             text="",

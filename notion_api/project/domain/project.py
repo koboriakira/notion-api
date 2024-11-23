@@ -110,3 +110,7 @@ class Project(BasePage):
     @property
     def project_status(self) -> ProjectStatusType:
         return ProjectStatusType.from_text(text=self.get_status(name=ProjectStatus.NAME).status_name)
+
+    @property
+    def status(self) -> ProjectStatusType:
+        return self.project_status

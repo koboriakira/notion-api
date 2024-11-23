@@ -21,6 +21,10 @@ class ProjectRelation(Relation):
             id_list=[id_.value if isinstance(id_, NotionPageId) else id_ for id_ in id_list],
         )
 
+    @staticmethod
+    def from_id(id_: str) -> "ProjectRelation":
+        return ProjectRelation(id_list=[id_])
+
     def add(self, notion_page_id: NotionPageId | str) -> "ProjectRelation":
         str_value = notion_page_id.value if isinstance(notion_page_id, NotionPageId) else notion_page_id
         return ProjectRelation(id_list=[*self.id_list, str_value])

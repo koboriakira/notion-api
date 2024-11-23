@@ -13,5 +13,13 @@ class ProjectRepository(metaclass=ABCMeta):
         """プロジェクトをバックアップ用にアーカイブする"""
 
     @abstractmethod
+    def save(self, project: Project) -> Project:
+        """プロジェクトを保存する"""
+
+    @abstractmethod
+    def find_by_id(self, page_id: str) -> Project:
+        """プロジェクトを取得する"""
+
+    @abstractmethod
     def remove(self, project: Project) -> None:
         """プロジェクトを削除する"""
