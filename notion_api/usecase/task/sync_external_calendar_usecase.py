@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 
 from external_calendar.infrastructure.google_calendar_api import GoogleCalendarApi
 from external_calendar.service.external_calendar_service import ExternalCalendarService
@@ -20,6 +20,14 @@ class SyncExternalCalendarUsecase:
         self._external_calendar_service = external_calendar_service
 
     def execute(self, date_: date) -> list[Task]:
+        # 指定された日付から3日分の予定を取得
+        tasks: list[Task] = []
+        for _ in range(3):
+            tasks.extend(self._sub_execute(date_=date_))
+            date_ = date_ + timedelta(days=1)
+        return tasks
+
+    def _sub_execute(self, date_: date) -> list[Task]:
         scheduled_tasks = self._task_repository.search(
             start_datetime=date_,
             start_datetime_end=date_,
@@ -34,10 +42,8 @@ class SyncExternalCalendarUsecase:
         tasks: list[Task] = []
         for event in events.value:
             title = f"【{event.category.value}】{event.title}"
-            for scheduled_task in scheduled_tasks:
-                if scheduled_task.title == title:
-                    self._task_repository.delete(scheduled_task)
-                    break
+            self._remove_if_exists(tasks=scheduled_tasks, title=title)
+
             task = self._task_repository.save(
                 TaskFactory.create_scheduled_task(
                     title=title,
@@ -47,6 +53,12 @@ class SyncExternalCalendarUsecase:
             )
             tasks.append(task)
         return tasks
+
+    def _remove_if_exists(self, tasks: list[Task], title: str) -> None:
+        for task in tasks:
+            if task.title == title:
+                self._task_repository.delete(task)
+                return
 
 
 if __name__ == "__main__":
