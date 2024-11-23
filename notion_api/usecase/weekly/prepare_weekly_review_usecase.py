@@ -59,9 +59,9 @@ class PrepareWeeklyReviewUsecase:
         """スケジュールを設定してからタスクを保存する"""
         task_ = task.update_start_datetime(start_datetime=self._start_date)
 
-        # 次のタスク作成に、start_dateを15分進める
+        # 次のタスク作成に、start_dateを5分進める
         # この開始時刻がこのタスクの終了時刻になる
-        self._start_date = self._start_date + timedelta(minutes=15)
+        self._start_date = self._start_date + timedelta(minutes=5)
         task_ = task_.update_start_end_datetime(end=self._start_date)
 
         self._task_repository.save(task_)
