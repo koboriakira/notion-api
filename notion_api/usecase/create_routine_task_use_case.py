@@ -19,6 +19,7 @@ class CreateRoutineTaskUseCase:
         next_tasks = self.task_repository.search(
             status_list=[TaskStatusType.TODO, TaskStatusType.IN_PROGRESS],
             kind_type_list=[TaskKindType.ROUTINE],
+            start_datetime=date_,
         )
         next_task_titles = [task.get_title().text for task in next_tasks]
 
