@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.6.1](https://github.com/koboriakira/notion-api/compare/v1.6.0...v1.6.1) (2024-11-22)
+
+
+### Bug Fixes
+
+* DynamoDBを利用する ([f71fac5](https://github.com/koboriakira/notion-api/commit/f71fac57ab01957661828e13ceb72efe97b4329f))
+* remove unnecessary parameter from image processing function ([96b1195](https://github.com/koboriakira/notion-api/commit/96b1195483e014e3a0deefdb272a50826c820e41))
+* コンストラクタの指定漏れを修正 ([e6effe6](https://github.com/koboriakira/notion-api/commit/e6effe6755969f5ecbd98a68efebd785b719addd))
+
 ## [1.6.0](https://github.com/koboriakira/notion-api/compare/v1.5.0...v1.6.0) (2024-11-19)
 
 
