@@ -15,6 +15,8 @@ kind_map = {
     "毎週土": {"selected_id": "1d561599-7b3b-44d2-9293-fe5553f5ffed", "selected_color": "green"},
 }
 
+MONTHLY_OVERFLOW = 13
+
 
 class RoutineType(Enum):
     MONTHLY_1 = "毎月1日"
@@ -31,7 +33,10 @@ class RoutineType(Enum):
         weekday = basis_date.weekday()
         match self:
             case RoutineType.MONTHLY_1:
-                return basis_date.replace(month=basis_date.month + 1, day=1)
+                month = basis_date.month + 1
+                if month == MONTHLY_OVERFLOW:
+                    return basis_date.replace(year=basis_date.year + 1, month=1, day=1)
+                return basis_date.replace(month=month, day=1)
             case RoutineType.DAILY:
                 return basis_date
             case RoutineType.EVERY_SAT:
@@ -49,7 +54,10 @@ class RoutineType(Enum):
             case RoutineType.DAYS_AFTER_3:
                 return basis_date + timedelta(days=3)
             case RoutineType.MONTHLY_END:
-                return basis_date.replace(month=basis_date.month + 1, day=1) - timedelta(days=1)
+                month = basis_date.month + 1
+                if month == MONTHLY_OVERFLOW:
+                    return basis_date.replace(year=basis_date.year + 1, month=1, day=1) - timedelta(days=1)
+                return basis_date.replace(month=month, day=1) - timedelta(days=1)
             case _:
                 msg = f"RoutineType not found: {self}"
                 raise ValueError(msg)
