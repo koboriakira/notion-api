@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 from common.domain.external_image import ExternalImage
 from common.value.database_type import DatabaseType
 from notion_client_wrapper.client_wrapper import ClientWrapper
@@ -6,6 +8,7 @@ from notion_client_wrapper.filter.filter_builder import FilterBuilder
 from notion_client_wrapper.page.page_id import PageId
 from notion_client_wrapper.properties import Title
 from notion_client_wrapper.properties.cover import Cover
+from notion_client_wrapper.properties.url import Url
 from util.date_range import DateRange
 
 
@@ -20,7 +23,12 @@ class ExternalImageService:
         image = external_image.to_notion_image_block(use_thumbnail=True)
         page_dict = self._client.create_page_in_database(
             database_id=self.DATABASE_ID,
-            properties=[Title.from_plain_text(text=external_image.get_title())],
+            properties=[
+                Title.from_plain_text(
+                    text=external_image.get_title() + uuid4().hex,
+                ),
+                Url.from_url(url=external_image.url),
+            ],
             cover=Cover.from_external_url(external_url=external_image.thumbnail_url),
             blocks=[image],
         )

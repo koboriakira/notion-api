@@ -22,7 +22,7 @@ class Url(Property):
         )
 
     @staticmethod
-    def from_url(name: str, url: str) -> "Url":
+    def from_url(url: str, name: str = "URL") -> "Url":
         return Url(
             name=name,
             url=url,
