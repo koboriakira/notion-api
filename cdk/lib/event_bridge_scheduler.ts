@@ -54,4 +54,12 @@ export const SCHEDULER_CONFIG = {
     year: "*",
     weekDay: "*",
   }),
+  // 毎日20時に実行
+  sync_external_calendar: events.Schedule.cron({
+    minute: "0",
+    hour: "11",
+    month: "*",
+    year: "*",
+    weekDay: "*",
+  }),
 };
