@@ -3,7 +3,9 @@ from logging import Logger, getLogger
 from common.value.database_type import DatabaseType
 from notion_client_wrapper.base_page import BasePage
 from notion_client_wrapper.client_wrapper import ClientWrapper
+from notion_client_wrapper.filter.condition.date_condition import DateCondition, DateConditionType
 from notion_client_wrapper.filter.filter_builder import FilterBuilder
+from util.date_range import DateRange
 from video.domain.video import Video
 from video.domain.video_repository import VideoRepository
 from video.domain.video_title import VideoName
@@ -15,6 +17,30 @@ class VideoRepositoryImpl(VideoRepository):
     def __init__(self, client: ClientWrapper, logger: Logger | None = None) -> None:
         self._client = client
         self._logger = logger or getLogger(__name__)
+
+    def search(self, date_range: DateRange) -> list[Video]:
+        """Search videos by insert datetime range"""
+        filter_builder = FilterBuilder()
+        filter_builder = filter_builder.add_condition(
+            DateCondition.create_manually(
+                name="最終更新日時",
+                condition_type=DateConditionType.ON_OR_AFTER,
+                value=date_range.start.value,
+            ),
+        )
+        filter_builder = filter_builder.add_condition(
+            DateCondition.create_manually(
+                name="最終更新日時",
+                condition_type=DateConditionType.ON_OR_BEFORE,
+                value=date_range.end.value,
+            ),
+        )
+        base_pages = self._client.retrieve_database(
+            database_id=self.DATABASE_ID,
+            filter_param=filter_builder.build(),
+        )
+        return [self._cast(base_page) for base_page in base_pages]
+
 
     def find_by_title(self, title: str) -> Video | None:
         title_property = VideoName(text=title)
