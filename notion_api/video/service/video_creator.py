@@ -7,11 +7,12 @@ from common.service.scrape_service.scrape_service import ScrapeService
 from common.service.tag_creator import TagCreator
 from util.tag_analyzer import TagAnalyzer
 from video.domain.video import Video
-from video.infrastructure.video_repository_impl import VideoRepositoryImpl as VideoRepository
+from video.domain.video_repository import VideoRepository
+from video.infrastructure.video_repository_impl import VideoRepositoryImpl
 
 
 class VideoCreator(PageCreator):
-    def __init__(  # noqa: PLR0913
+    def __init__(
         self,
         video_repository: VideoRepository,
         scrape_service: ScrapeService,
@@ -76,7 +77,7 @@ if __name__ == "__main__":
     default_scraper = DefaultScraper()
     scrape_service = ScrapeService(scraper=default_scraper)
     suite = VideoCreator(
-        video_repository=VideoRepository(client=client),
+        video_repository=VideoRepositoryImpl(client=client),
         scrape_service=scrape_service,
         tag_creator=TagCreator(),
         tag_analyzer=TagAnalyzer(),

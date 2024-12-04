@@ -21,7 +21,7 @@ scrape_service=ScrapeService(scraper=scraper)
 
 class VideoInjector:
     @classmethod
-    def create_video_creator(cls: "VideoInjector") -> VideoCreator:
+    def create_video_creator(cls) -> VideoCreator:
         return VideoCreator(
             video_repository=video_repository,
             scrape_service=scrape_service,
