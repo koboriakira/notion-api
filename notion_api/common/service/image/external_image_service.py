@@ -1,5 +1,3 @@
-from uuid import uuid4
-
 from common.domain.external_image import ExternalImage
 from common.value.database_type import DatabaseType
 from notion_client_wrapper.client_wrapper import ClientWrapper
@@ -24,9 +22,7 @@ class ExternalImageService:
         page_dict = self._client.create_page_in_database(
             database_id=self.DATABASE_ID,
             properties=[
-                Title.from_plain_text(
-                    text=external_image.get_title() + uuid4().hex,
-                ),
+                Title.from_plain_text(text=external_image.get_title()),
                 Url.from_url(url=external_image.url),
             ],
             cover=Cover.from_external_url(external_url=external_image.thumbnail_url),
