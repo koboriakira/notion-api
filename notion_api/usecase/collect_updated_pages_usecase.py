@@ -21,6 +21,7 @@ from task.domain.task_status import TaskStatusType
 from util.date_range import DateRange
 from util.datetime import JST, jst_today
 from util.slack.slack_client import SlackClient
+from video.domain.video_repository import VideoRepository
 from webclip.domain.webclip_repository import WebclipRepository
 
 logger = get_logger(__name__)
@@ -31,8 +32,6 @@ DATABASE_DICT = {
     "今日読んだ・登録した書籍": DatabaseType.BOOK,
     "今日観たプロレス": DatabaseType.PROWRESTLING,
     "今日更新・登録したレシピ": DatabaseType.RECIPE,
-    "今日観た動画": DatabaseType.VIDEO,
-    "今日聴いた音楽": DatabaseType.MUSIC,
 }
 
 LOG_FORMAT_APPEND_PAGE = "ページを追加しました: %s"
@@ -45,6 +44,7 @@ class CollectUpdatedPagesUsecase:
         song_repository: SongRepository,
         daily_log_repository: DailyLogRepository,
         webclip_repository: WebclipRepository,
+        video_repository: VideoRepository,
         is_debug: bool | None = None,
     ) -> None:
         self.client = ClientWrapper.get_instance()
@@ -54,6 +54,7 @@ class CollectUpdatedPagesUsecase:
         self._song_repository = song_repository
         self._daily_log_repository = daily_log_repository
         self._webclip_repository = webclip_repository
+        self._video_repository = video_repository
         self._twitter_api = LambdaTwitterApi()
         self.is_debug = is_debug
 
@@ -108,6 +109,10 @@ tags: []
         # Webクリップを集める
         markdown_text += "\n"
         markdown_text += self._proc_webclips(date_range=date_range, daily_log_id=daily_log_id)
+
+        # 今日見た動画を集める
+        markdown_text += "\n"
+        markdown_text += self._proc_videos(date_range=date_range, daily_log_id=daily_log_id)
 
         # 今日聴いた音楽を集める
         markdown_text += "\n"
@@ -169,6 +174,21 @@ tags: []
                 self._append_backlink(block_id=daily_log_id, page=song)
             markdown_text += f"\n{song.artist} - {song.get_title_text()}\n"
             markdown_text += f"\n{song.embed_html}\n"
+        return markdown_text
+
+    def _proc_videos(self, date_range: DateRange, daily_log_id: str) -> str:
+        videos = self._video_repository.search(date_range)
+        if len(videos) == 0:
+            return ""
+
+        if not self.is_debug:
+            self._append_heading(block_id=daily_log_id, title="今日見た動画")
+        markdown_text = "## 今日見た動画\n"
+        for video in videos:
+            if not self.is_debug:
+                self._append_backlink(block_id=daily_log_id, page=video)
+            markdown_text += f"\n[{video.get_title_text()}]({video.video_url})\n"
+            markdown_text += f"\n{video.embed_youtube_url}\n"
         return markdown_text
 
     def _proc_images(self, date_range: DateRange) -> str:
@@ -254,6 +274,7 @@ if __name__ == "__main__":
     from daily_log.infrastructure.daily_log_repository_impl import DailyLogRepositoryImpl
     from music.infrastructure.song_repository_impl import SongRepositoryImpl
     from task.infrastructure.task_repository_impl import TaskRepositoryImpl
+    from video.infrastructure.video_repository_impl import VideoRepositoryImpl
     from webclip.infrastructure.webclip_repository_impl import WebclipRepositoryImpl
 
     client = ClientWrapper.get_instance()
@@ -261,6 +282,7 @@ if __name__ == "__main__":
     song_repository = SongRepositoryImpl(client=client)
     daily_log_repository = DailyLogRepositoryImpl(client=client)
     webclip_repository = WebclipRepositoryImpl(client=client)
+    video_repository = VideoRepositoryImpl(client=client)
 
     usecase = CollectUpdatedPagesUsecase(
         is_debug=True,
@@ -268,11 +290,12 @@ if __name__ == "__main__":
         song_repository=song_repository,
         daily_log_repository=daily_log_repository,
         webclip_repository=webclip_repository,
+        video_repository=video_repository,
     )
     date_range = DateRange.from_datetime(
-        start=datetime(2024, 11, 18, 1, 0, 0, tzinfo=JST),
-        end=datetime(2024, 11, 18, 14, 0, 0, tzinfo=JST),
+        start=datetime(2024, 12, 2, 0, 0, 0, tzinfo=JST),
+        end=datetime(2024, 12, 4, 0, 0, 0, tzinfo=JST),
     )
     # print(usecase.execute(date_range=date_range))
-    # print(usecase._proc_twitter(date_range=date_range, daily_log_id="dummy"))
-    print(usecase._proc_images(date_range=date_range))
+    print(usecase._proc_videos(date_range=date_range, daily_log_id="dummy"))
+    # print(usecase._proc_images(date_range=date_range))

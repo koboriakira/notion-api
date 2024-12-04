@@ -9,6 +9,7 @@ from notion_client_wrapper.properties.properties import Properties
 from video.domain.video_title import VideoName
 from video.domain.video_url import VideoUrl
 
+EMBED_YOUTUBE_URL_TEMPLATE = """<iframe width="560" height="315" src="https://www.youtube.com/embed/%s" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>"""
 
 @dataclass
 class Video(BasePage):
@@ -47,3 +48,10 @@ class Video(BasePage):
     def tag_relation(self) -> NotionPageIdList:
         id_list = self.get_relation(TagRelation.NAME).id_list
         return NotionPageIdList.from_str_list(id_list)
+
+    @property
+    def embed_youtube_url(self) -> str:
+        # https://www.youtube.com/watch?v=sVegt6PdQOw&amp%3Bsi=M7Z4IT0tpe__8ap9 から sVegt6PdQOw を取り出す
+        url = self.video_url
+        video_id = url.split("v=")[1].split("&")[0]
+        return EMBED_YOUTUBE_URL_TEMPLATE % video_id

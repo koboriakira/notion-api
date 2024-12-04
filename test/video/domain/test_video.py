@@ -19,3 +19,4 @@ class TestVideo(TestCase):
         self.assertEqual(2, len(actual_tag_id_list))
         self.assertIn("abc123", actual_tag_id_list)
         self.assertIn("def456", actual_tag_id_list)
+        self.assertEqual(actual.embed_youtube_url, '<iframe width="560" height="315" src="https://www.youtube.com/embed/Xj6YiZZagzc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>')
