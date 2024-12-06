@@ -23,14 +23,6 @@ export const SCHEDULER_CONFIG = {
     year: "*",
     weekDay: "MON",
   }),
-  // 毎日3時に実行
-  postpone_task: events.Schedule.cron({
-    minute: "0",
-    hour: "18",
-    month: "*",
-    year: "*",
-    weekDay: "*",
-  }),
   move_completed_task_to_backup: events.Schedule.cron({
     minute: "5",
     hour: "17",
