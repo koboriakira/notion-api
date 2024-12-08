@@ -26,3 +26,13 @@ def find_project(project_id: str, access_token: str | None = Header(None)) -> Pr
     valid_access_token(access_token)
     project_result = project.find_project(project_id)
     return ProjectResponse(data=Project.from_params(project_result))
+
+
+@router.post("/")
+def create_new_project(
+    request: dict,
+    access_token: str | None = Header(None),
+) -> ProjectResponse:
+    valid_access_token(access_token)
+    print(request)
+    return ProjectResponse(data=None)
