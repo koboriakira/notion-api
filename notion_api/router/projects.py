@@ -38,7 +38,7 @@ def find_project(project_id: str, access_token: str | None = Header(None)) -> Pr
     return ProjectResponse(data=Project.from_params(project_result))
 
 
-@router.post("/")
+@router.post("/from_automation/")
 def create_new_project(
     request: NotionAutomationRequest,
     access_token: str | None = Header(None),
