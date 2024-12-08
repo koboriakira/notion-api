@@ -84,7 +84,6 @@ class MoveTasksToBackupUsecase:
         for goal in goals:
             self._goal_repository.archive(goal)
             print(goal.get_title().text + "をバックアップに移動しました。")
-            return
 
     def _trash_projects(self) -> None:
         """Trashステータスのプロジェクトを削除する"""
