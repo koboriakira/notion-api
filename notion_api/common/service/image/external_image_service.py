@@ -30,6 +30,11 @@ class ExternalImageService:
         )
         return PageId(page_dict["id"])
 
+    def append_image(self, block_id: str, external_image: ExternalImage) -> None:
+        """指定された画像を指定されたブロックに追加する。"""
+        image = external_image.to_notion_image_block(use_thumbnail=True)
+        self._client.append_block(block_id=block_id, block=image)
+
     def get_images(self, date_range: DateRange) -> list[str]:
         """GIF/JPEGデータベースに登録されている画像の(サムネイル)URLを取得する。"""
         filter_builder = FilterBuilder()

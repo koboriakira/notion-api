@@ -58,6 +58,14 @@ export default class StepImplementation {
     const response = await client.delete(`/projects/${pageId}/`);
   }
 
+  @Step("Append a sample image in page <pageId>")
+  public async appendSampleImage(pageId: string) {
+    const data = {
+      image_url: "https://d3swar8tu7yuby.cloudfront.net/IMG_6286_thumb.jpg",
+    };
+    const response = await client.post(`/page/${pageId}/image/`, data);
+  }
+
   @Step("Open todo application")
   public async openTodo() {
     await goto("todo.taiko.dev");
