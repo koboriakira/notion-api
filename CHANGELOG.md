@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.7.0](https://github.com/koboriakira/notion-api/compare/v1.6.1...v1.7.0) (2024-12-08)
+
+
+### Features
+
+* Notionからの複製リクエストに対応 ([#20](https://github.com/koboriakira/notion-api/issues/20)) ([0a78b6a](https://github.com/koboriakira/notion-api/commit/0a78b6a59014ee04797b105732ed91f6f1e0bf80))
+* 今日見た動画を収集する機能を追加し、YouTube埋め込みURLを生成 ([a59305c](https://github.com/koboriakira/notion-api/commit/a59305c36e4bc3c6892f7efa889951c9ea5f316d))
+* 動画リポジトリに挿入日時範囲で検索する機能を追加 ([e834bb4](https://github.com/koboriakira/notion-api/commit/e834bb4d5e708ac46280d0ab20fcda525e99eca7))
+* 外部カレンダーを同期する新しい機能を追加し、毎日20時に実行されるようにスケジュールを設定 ([f8afd03](https://github.com/koboriakira/notion-api/commit/f8afd034e527f937d1daea54a9b6a495ad940aa4))
+* 毎日実行されるタスクの延期機能を削除し、関連コードを整理 ([dd59693](https://github.com/koboriakira/notion-api/commit/dd596930727b718a62ce7931b510a5e874ec36fa))
+* 画像のタイトルにuuidを指定し、URL欄も埋める ([17ea1ce](https://github.com/koboriakira/notion-api/commit/17ea1ce8560f4be89271a4fde1e41f38f8f758dd))
+* 目標データベースのバックアップ機能を追加 ([e7519ab](https://github.com/koboriakira/notion-api/commit/e7519ab8ae0b2ced4173ce367400fb8d47385bd4))
+* 週次レビューの各タスクに開始時刻を付与しない ([90241d5](https://github.com/koboriakira/notion-api/commit/90241d529a88f3e1e8b53dca379472d1b4c9dc49))
+
+
+### Bug Fixes
+
+* 12月の翌月が翌年の1月になるように修正 ([#19](https://github.com/koboriakira/notion-api/issues/19)) ([272f10b](https://github.com/koboriakira/notion-api/commit/272f10b0106e71b47a78c3fbbcdd433e3eac0eaa))
+* Remove UUID from external image title generation in ExternalImageService ([2412358](https://github.com/koboriakira/notion-api/commit/24123586e5869f5924b30e6c2aec6ab43f008b90))
+* VideoRepositoryImplをInjectorに追加し、CollectUpdatedPagesUsecaseに統合 ([f8f300a](https://github.com/koboriakira/notion-api/commit/f8f300a9d2b09528d8ce1317b837bfe6135f17b1))
+
 ## [1.6.1](https://github.com/koboriakira/notion-api/compare/v1.6.0...v1.6.1) (2024-11-22)
 
 
