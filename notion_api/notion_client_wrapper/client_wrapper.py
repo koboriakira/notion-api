@@ -1,3 +1,4 @@
+import json
 import os
 from logging import Logger, getLogger
 
@@ -50,7 +51,7 @@ class NotionApiError(Exception):
             message += f"database_id: {database_id}"
         if properties is not None:
             properties_ = properties.__dict__() if isinstance(properties, Properties) else properties
-            message += f", properties: {properties_}"
+            message += f", properties: {json.dumps(properties_, ensure_ascii=False)}"
         super().__init__(message)
 
 
@@ -99,7 +100,7 @@ class ClientWrapper:
             self.append_blocks(block_id=page["id"], blocks=blocks)
         return page
 
-    def retrieve_database(  # noqa: PLR0913
+    def retrieve_database(
         self,
         database_id: str,
         title: str | None = None,
@@ -207,7 +208,7 @@ class ClientWrapper:
         except APIResponseError as e:
             if self.__is_able_retry(status=e.status, retry_count=retry_count):
                 return self.__append_block_children(block_id=block_id, children=children, retry_count=retry_count + 1)
-            raise NotionApiError(page_id=block_id, e=e) from e
+            raise NotionApiError(page_id=block_id, e=e, properties={"children": children}) from e
         except HTTPResponseError as e:
             if self.__is_able_retry(status=e.status, retry_count=retry_count):
                 return self.__append_block_children(block_id=block_id, children=children, retry_count=retry_count + 1)
@@ -378,5 +379,6 @@ class ClientWrapper:
                     retry_count=retry_count + 1,
                 )
             raise NotionApiError(database_id=database_id, e=e) from e
+
     def __is_able_retry(self, status: int, retry_count: int) -> bool:
         return status == NOTION_API_ERROR_BAD_GATEWAY and retry_count < self.max_retry_count
