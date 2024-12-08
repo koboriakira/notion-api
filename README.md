@@ -8,7 +8,8 @@ https://6yhkmd3lcl.execute-api.ap-northeast-1.amazonaws.com/v1/projects
 
 ## Deploy
 
-GitHub Actionsのdeployワークフローを利用。
+[Deploy](https://github.com/koboriakira/notion-api/actions/workflows/deploy.yml)を実行。  
+Pull Requestからマージしたときは自動で実行される。
 
 ## Development
 
