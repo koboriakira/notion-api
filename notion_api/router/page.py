@@ -13,19 +13,19 @@ logger = get_logger(__name__)
 router = APIRouter()
 
 
-@router.post("/feeling", response_model=BaseResponse)
+@router.post("/feeling")
 def append_feeling(
     request: AddFeelingRequest,
     access_token: str | None = Header(None),
-):
+) -> BaseResponse:
     valid_access_token(access_token)
     logger.debug(request)
     page.append_feeling(page_id=request.page_id, value=request.value)
     return BaseResponse()
 
 
-@router.post("/pomodoro-count", response_model=BaseResponse)
-def add_pomodoro_count(request: AddPomodoroCountRequest, access_token: str | None = Header(None)):
+@router.post("/pomodoro-count")
+def add_pomodoro_count(request: AddPomodoroCountRequest, access_token: str | None = Header(None)) -> BaseResponse:
     valid_access_token(access_token)
     logger.debug(request)
     # 一応requestにカウントを入れているが、現状はただ+1するだけとする
@@ -33,23 +33,23 @@ def add_pomodoro_count(request: AddPomodoroCountRequest, access_token: str | Non
     return BaseResponse()
 
 
-@router.post("/status", response_model=BaseResponse)
-def update_status(request: UpdateStatusRequest, access_token: str | None = Header(None)):
+@router.post("/status")
+def update_status(request: UpdateStatusRequest, access_token: str | None = Header(None)) -> BaseResponse:
     valid_access_token(access_token)
     logger.debug(request)
     page.update_status(page_id=request.page_id, value=request.value)
     return BaseResponse()
 
 
-@router.post("/block/text", response_model=BaseResponse)
-def append_text_block(request: AppendTextBlockRequest, access_token: str | None = Header(None)):
+@router.post("/block/text")
+def append_text_block(request: AppendTextBlockRequest, access_token: str | None = Header(None)) -> BaseResponse:
     valid_access_token(access_token)
     logger.debug(request)
     page.append_text_block(page_id=request.page_id, value=request.value)
     return BaseResponse()
 
 
-@router.delete("/{page_id}", response_model=BaseResponse)
+@router.delete("/{page_id}")
 def remove_page(page_id: str, access_token: str | None = Header(None)) -> BaseResponse:
     valid_access_token(access_token)
     page_remover = PageRemover()
