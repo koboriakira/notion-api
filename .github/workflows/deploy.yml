@@ -9,7 +9,38 @@ on:
       - main
 
 jobs:
+  # 直近のコミットについて、cdkもしくはnotion_apiディレクトリに変更があった場合にのみ実行する
+  check_changes:
+    runs-on: ubuntu-latest
+    outputs:
+      IS_CHANGED: ${{ steps.check_cdk.outputs.CDK_CHANGED == 'true' || steps.check_notion_api.outputs.SRC_CHANGED == 'true' }}
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Check cdk changes
+        id: check_cdk
+        run: |
+          if git diff --quiet HEAD^ cdk; then
+            echo CDK_CHANGED=false >> $GITHUB_OUTPUT
+          else
+            echo CDK_CHANGED=true >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check notion_api changes
+        id: check_notion_api
+        run: |
+          if git diff --quiet HEAD^ notion_api; then
+            echo SRC_CHANGED=false >> $GITHUB_OUTPUT
+          else
+            echo SRC_CHANGED=true >> $GITHUB_OUTPUT
+          fi
+
   deploy:
+    needs: check_changes
+    if: ${{ needs.check_changes.outputs.IS_CHANGED == 'true' }}
     runs-on: ubuntu-latest
     environment: production
     permissions:
