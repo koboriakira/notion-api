@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod
+from typing import Any
 
 
 class RichTextElement(metaclass=ABCMeta):
@@ -17,7 +18,7 @@ class RichTextElement(metaclass=ABCMeta):
         self.href = href
 
     def to_dict(self) -> dict:
-        result = {
+        result: dict[str, Any] = {
             "type": self.get_type(),
         }
         if self.annotations is not None:
@@ -60,8 +61,8 @@ class RichTextElement(metaclass=ABCMeta):
             if mention_type == "date":
                 return RichTextMentionElement(
                     mention_type=mention_type,
-                    start_date=mention["date"]["start"],
-                    end_date=mention["date"]["end"],
+                    start_date=mention[mention_type]["start"],
+                    end_date=mention[mention_type]["end"],
                     annotations=rich_text_element["annotations"],
                     plain_text=rich_text_element["plain_text"],
                     href=rich_text_element["href"],
@@ -88,7 +89,7 @@ class RichTextElement(metaclass=ABCMeta):
         """text, mention, equationのどれかを返す"""
 
     @abstractmethod
-    def to_dict_sub(self) -> str:
+    def to_dict_sub(self) -> dict:
         """Text, Mention, Equationのそれぞれで実装する"""
 
 
@@ -193,17 +194,27 @@ class RichTextMentionElement(RichTextElement):
     def get_type(self) -> str:
         return "mention"
 
-    def to_dict_sub(self) -> str:
-        """Text, Mention, Equationのそれぞれで実装する"""
-        result = {
+    def to_dict_sub(self) -> dict:
+        result: dict[str, Any] = {
             "type": self.mention_type,
         }
         if self.mention_type in ["database", "page"]:
             result[self.mention_type] = {
                 "id": self.object_id,
             }
-
-        return result
+            return result
+        if self.mention_type == "date":
+            result[self.mention_type] = {
+                "start": self.start_date,
+                "end": self.end_date,
+            }
+            return result
+        if self.mention_type == "link_preview":
+            result[self.mention_type] = {
+                "url": self.link_preview_url,
+            }
+            return result
+        raise Exception("invalid mention type")
 
 
 class RichTextEquationElement(RichTextElement):
