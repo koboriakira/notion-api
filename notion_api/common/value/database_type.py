@@ -32,6 +32,7 @@ class DatabaseType(Enum):
     SHOPPING = "b917fd7e-2fe5-4030-879f-9eea5e8827bb"
     ACCOUNT_BOOK = "f2c5fc6e-4c27-429f-add5-2279f1f84e8d"
     GIF_JPEG = "1156567a-3bbf-808f-ae6f-cf20cbba8f28"
+    FOOD = "57513fd2-92d3-477d-8720-99667f992636"
 
     @staticmethod
     def from_id(id_: str) -> "DatabaseType":
