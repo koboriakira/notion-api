@@ -74,7 +74,7 @@ export default class StepImplementation {
       },
     };
     const response = await client.post("/projects/", data);
-    // const pageId = response.data.data.id;
-    // DataStoreFactory.getScenarioDataStore().put("pageId", pageId);
+    const pageId = response.data.data.id;
+    DataStoreFactory.getScenarioDataStore().put("projectId", pageId);
   }
 }

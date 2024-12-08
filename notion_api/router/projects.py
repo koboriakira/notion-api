@@ -3,10 +3,20 @@ from datetime import date
 from fastapi import APIRouter, Header
 
 from interface import project
+from notion_client_wrapper.client_wrapper import ClientWrapper
+from notion_client_wrapper.page.page_id import PageId
+from project.infrastructure.project_repository_impl import ProjectRepositoryImpl
+from router.request.notion_automation_request import NotionAutomationRequest
+from router.response.base_response import BaseResponse
 from router.response.projects_response import Project, ProjectResponse, ProjectsResponse
+from task.infrastructure.task_repository_impl import TaskRepositoryImpl
+from usecase.project.create_project_from_template_usecase import CreateProjectFromTemplateUsecase
+from usecase.project.remove_project_service import RemoveProjectService
 from util.access_token import valid_access_token
 
 router = APIRouter()
+
+client = ClientWrapper.get_instance()
 
 
 @router.get("")
@@ -30,9 +40,31 @@ def find_project(project_id: str, access_token: str | None = Header(None)) -> Pr
 
 @router.post("/")
 def create_new_project(
-    request: dict,
+    request: NotionAutomationRequest,
     access_token: str | None = Header(None),
-) -> ProjectResponse:
+) -> BaseResponse:
     valid_access_token(access_token)
-    print(request)
-    return ProjectResponse(data=None)
+    project_template_id = PageId(value=request.data.id)
+    usecase = CreateProjectFromTemplateUsecase(
+        client=client,
+        project_repository=ProjectRepositoryImpl(client=client),
+        task_repository=TaskRepositoryImpl(notion_client_wrapper=client),
+    )
+    project = usecase.execute(project_template_id=project_template_id)
+    if project.page_id is None:
+        raise Exception("Project page_id is None")
+    return BaseResponse(data={"id": project.page_id.value, "url": project.url})
+
+
+@router.delete("/{project_id}/")
+def remove_project(
+    project_id: str,
+    access_token: str | None = Header(None),
+) -> BaseResponse:
+    valid_access_token(access_token)
+    remove_project_service = RemoveProjectService(
+        task_repository=TaskRepositoryImpl(notion_client_wrapper=client),
+        project_repository=ProjectRepositoryImpl(client=client),
+    )
+    remove_project_service.execute(id_=PageId(value=project_id))
+    return BaseResponse()
