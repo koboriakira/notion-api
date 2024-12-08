@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.8.0](https://github.com/koboriakira/notion-api/compare/v1.7.0...v1.8.0) (2024-12-08)
+
+
+### Features
+
+* ページに画像を追加するAPIを追加 ([#25](https://github.com/koboriakira/notion-api/issues/25)) ([c9e90a6](https://github.com/koboriakira/notion-api/commit/c9e90a6153a9d8ebc35389fdd96236b94078d45b))
+* 飲食ページ作成機能を追加 ([#23](https://github.com/koboriakira/notion-api/issues/23)) ([b802579](https://github.com/koboriakira/notion-api/commit/b802579a4d3753e4fd026883a6b0873d2f37e074))
+
 ## [1.7.0](https://github.com/koboriakira/notion-api/compare/v1.6.1...v1.7.0) (2024-12-08)
 
 
