@@ -4,7 +4,7 @@ name: Deploy
 
 on:
   workflow_dispatch:
-  push:
+  pull_request:
     branches:
       - main
 
@@ -13,29 +13,39 @@ jobs:
   check_changes:
     runs-on: ubuntu-latest
     outputs:
-      IS_CHANGED: ${{ steps.check_cdk.outputs.CDK_CHANGED == 'true' || steps.check_notion_api.outputs.SRC_CHANGED == 'true' }}
+      IS_CHANGED: ${{ steps.set-is-changed.outputs.IS_CHANGED }}
     steps:
-      - name: Checkout branch
-        uses: actions/checkout@v4
+      # fetch-depth の計算
+      - name: Calculate fetch-depth
+        id: calculate-fetch-depth
+        run: echo "FETCH_DEPTH=$(( commits + 1 ))" >> $GITHUB_OUTPUT
+        env:
+          commits: ${{ github.event.pull_request.commits }}
+
+      # 必要な履歴だけを fetch
+      - uses: actions/checkout@v4
         with:
-          ref: ${{ github.head_ref }}
+          fetch-depth: ${{ steps.calculate-fetch-depth.outputs.FETCH_DEPTH }}
 
       - name: Check cdk changes
-        id: check_cdk
+        id: check-cdk
         run: |
-          if git diff --quiet HEAD^ cdk; then
-            echo CDK_CHANGED=false >> $GITHUB_OUTPUT
-          else
-            echo CDK_CHANGED=true >> $GITHUB_OUTPUT
-          fi
+          git diff --quiet HEAD^ cdk || echo "CDK_CHANGED=true" >> $GITHUB_OUTPUT
 
       - name: Check notion_api changes
-        id: check_notion_api
+        id: check-src
         run: |
-          if git diff --quiet HEAD^ notion_api; then
-            echo SRC_CHANGED=false >> $GITHUB_OUTPUT
+          git diff --quiet HEAD^ notion_api || echo "SRC_CHANGED=true" >> $GITHUB_OUTPUT
+
+      - name: Set IS_CHANGED
+        id: set-is-changed
+        run: |
+          echo ${{ steps.check-cdk.outputs.CDK_CHANGED }}
+          echo ${{ steps.check-src.outputs.SRC_CHANGED }}
+          if [ "${{ steps.check-cdk.outputs.CDK_CHANGED }}" == "true" ] || [ "${{ steps.check-src.outputs.SRC_CHANGED }}" == "true" ]; then
+            echo "IS_CHANGED=true" >> $GITHUB_OUTPUT
           else
-            echo SRC_CHANGED=true >> $GITHUB_OUTPUT
+            echo "IS_CHANGED=false" >> $GITHUB_OUTPUT
           fi
 
   deploy:
