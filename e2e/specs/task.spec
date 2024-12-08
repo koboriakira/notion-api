@@ -7,8 +7,6 @@
 
 ## Complete a task
 
-tags: current
-
 * Create a task with name "Gauge complete task"
 * Complete a task with name "Gauge complete task"
 

@@ -16,12 +16,11 @@ GitHub Actionsのdeployワークフローを利用。
 make run
 ```
 
-### Test
+### Test (Gauge)
 
 ```shell
-# インストール
-npm install -g stepci
-
-# 実行
-stepci run ./stepci_workflow.yml --secret NOTION_SECRET={type a secret}
+cd e2e 
+npm install
 ```
+
+`make gauge`または`make gauge-current`を実行
