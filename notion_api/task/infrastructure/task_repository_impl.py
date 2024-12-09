@@ -1,4 +1,4 @@
-from datetime import date, datetime, time
+from datetime import date, datetime, time, timedelta
 
 from common.value.database_type import DatabaseType
 from notion_client_wrapper.base_page import BasePage
@@ -58,6 +58,10 @@ class TaskRepositoryImpl(TaskRepository):
                 if isinstance(start_datetime_end, datetime)
                 else datetime.combine(start_datetime_end, time.max, tzinfo=JST)
             )
+            task_start_date_before = TaskStartDate.create(start_datetime_end)
+            filter_builder = filter_builder.add_condition(DateCondition.on_or_before(property=task_start_date_before))
+        elif start_datetime is not None:
+            start_datetime_end = start_datetime + timedelta(days=1) - timedelta(seconds=1)
             task_start_date_before = TaskStartDate.create(start_datetime_end)
             filter_builder = filter_builder.add_condition(DateCondition.on_or_before(property=task_start_date_before))
 

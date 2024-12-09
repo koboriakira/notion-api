@@ -5,9 +5,10 @@ from external_calendar.service.external_calendar_service import ExternalCalendar
 from task.domain.task import Task
 from task.domain.task_kind import TaskKindType
 from task.domain.task_repository import TaskRepository
+from task.domain.task_status import TaskStatusType
 from task.infrastructure.task_repository_impl import TaskRepositoryImpl
 from task.task_factory import TaskFactory
-from util.datetime import jst_now
+from util.datetime import jst_tommorow
 
 
 class SyncExternalCalendarUsecase:
@@ -23,17 +24,24 @@ class SyncExternalCalendarUsecase:
         # 指定された日付から3日分の予定を取得
         tasks: list[Task] = []
         for _ in range(3):
+            self._remove_scheduled_tasks(date_=date_)
             tasks.extend(self._sub_execute(date_=date_))
             date_ = date_ + timedelta(days=1)
         return tasks
 
-    def _sub_execute(self, date_: date) -> list[Task]:
+    def _remove_scheduled_tasks(self, date_: date) -> None:
         scheduled_tasks = self._task_repository.search(
-            start_datetime=date_,
-            start_datetime_end=date_,
             kind_type_list=[TaskKindType.SCHEDULE],
+            status_list=[TaskStatusType.TODO],
         )
+        for task in scheduled_tasks:
+            if not task.start_datetime:
+                continue
+            if task.start_datetime.date() == date_:
+                print(f"Remove scheduled task: {task.title}")
+                self._task_repository.delete(task)
 
+    def _sub_execute(self, date_: date) -> list[Task]:
         events = self._external_calendar_service.get_events(
             date_=date_,
             excludes_past_events=True,
@@ -42,8 +50,6 @@ class SyncExternalCalendarUsecase:
         tasks: list[Task] = []
         for event in events.value:
             title = f"【{event.category.value}】{event.title}"
-            self._remove_if_exists(tasks=scheduled_tasks, title=title)
-
             task = self._task_repository.save(
                 TaskFactory.create_scheduled_task(
                     title=title,
@@ -51,14 +57,9 @@ class SyncExternalCalendarUsecase:
                     end_date=event.end,
                 ),
             )
+            print(f"Create scheduled task: {task.title}")
             tasks.append(task)
         return tasks
-
-    def _remove_if_exists(self, tasks: list[Task], title: str) -> None:
-        for task in tasks:
-            if task.title == title:
-                self._task_repository.delete(task)
-                return
 
 
 if __name__ == "__main__":
@@ -72,4 +73,4 @@ if __name__ == "__main__":
         task_repository=task_repository,
         external_calendar_service=external_calendar_service,
     )
-    print(suite.execute(date_=jst_now().date()))
+    print(suite.execute(date_=jst_tommorow().date()))

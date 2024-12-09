@@ -1,4 +1,3 @@
-from datetime import date
 import logging
 
 from task.infrastructure.routine_repository_impl import RoutineRepositoryImpl
