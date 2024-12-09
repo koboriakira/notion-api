@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.0](https://github.com/koboriakira/notion-api/compare/v1.8.0...v1.9.0) (2024-12-09)
+
+
+### Features
+
+* スケジュールタスク作成のときに重複が起きないようにする ([b744acb](https://github.com/koboriakira/notion-api/commit/b744acb650ae00df69b4d2787cf9a030b3f9b5a3))
+
 ## [1.8.0](https://github.com/koboriakira/notion-api/compare/v1.7.0...v1.8.0) (2024-12-08)
 
 
