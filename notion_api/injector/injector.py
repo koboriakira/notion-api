@@ -7,21 +7,26 @@ from account_book.infrastructure.repository_impl import RepositoryImpl
 from common.service.tag_creator.tag_creator import TagCreator
 from custom_logger import get_logger
 from daily_log.infrastructure.daily_log_repository_impl import DailyLogRepositoryImpl
+from external_calendar.infrastructure.google_calendar_api import GoogleCalendarApi
+from external_calendar.service.external_calendar_service import ExternalCalendarService
 from injector.page_creator_factory import PageCreatorFactory
 from music.infrastructure.song_repository_impl import SongRepositoryImpl
 from notion_client_wrapper.client_wrapper import ClientWrapper
 from recipe.infrastructure.recipe_repository_impl import RecipeRepositoryImpl
 from recipe.service.recipe_creator import RecipeCreator
 from slack_concierge.injector import SlackConciergeInjector
+from task.infrastructure.routine_repository_impl import RoutineRepositoryImpl
 from task.infrastructure.task_repository_impl import TaskRepositoryImpl
 from usecase.account_book.add_account_book_usecase import AddAccountBookUsecase
 from usecase.collect_updated_pages_usecase import CollectUpdatedPagesUsecase
 from usecase.create_page_use_case import CreatePageUseCase
+from usecase.create_routine_task_use_case import CreateRoutineTaskUseCase
 from usecase.recipe.add_recipe_use_case import AddRecipeUseCase
 from usecase.service.inbox_service import InboxService
 from usecase.service.tag_analyzer import TagAnalyzer
 from usecase.service.tag_create_service import TagCreateService
 from usecase.service.text_summarizer import TextSummarizer
+from usecase.task.sync_external_calendar_usecase import SyncExternalCalendarUsecase
 from usecase.zettlekasten.create_tag_to_zettlekasten_use_case import CreateTagToZettlekastenUseCase
 from util.openai_executer import OpenaiExecuter
 from video.infrastructure.video_repository_impl import VideoRepositoryImpl
@@ -148,3 +153,19 @@ class Injector:
         logger: Logger | None = None,
     ) -> TagAnalyzer:
         return OpenaiExecuter(model=model, logger=logger)
+
+    @staticmethod
+    def create_routine_task_use_case() -> CreateRoutineTaskUseCase:
+        task_repository = TaskRepositoryImpl()
+        routine_repository = RoutineRepositoryImpl()
+        return CreateRoutineTaskUseCase(task_repository=task_repository, routine_repository=routine_repository)
+
+    @staticmethod
+    def sync_external_calendar_usecase() -> SyncExternalCalendarUsecase:
+        external_calendar_service = ExternalCalendarService(
+            api=GoogleCalendarApi(),
+        )
+        return SyncExternalCalendarUsecase(
+            task_repository=TaskRepositoryImpl(),
+            external_calendar_service=external_calendar_service,
+        )

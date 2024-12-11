@@ -1,4 +1,3 @@
-
 from datetime import date
 
 from task.domain.routine_repository import RoutineRepository
