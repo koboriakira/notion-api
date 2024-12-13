@@ -16,6 +16,7 @@ openai = "==1.10.0"
 trafilatura = "*"
 bs4 = "*"
 lxml = "*"
+lotion = "==0.0.1a3"
 
 [dev-packages]
 uvicorn = "*"
