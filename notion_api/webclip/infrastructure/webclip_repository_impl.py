@@ -1,11 +1,11 @@
 from logging import Logger, getLogger
 
-from notion_client_wrapper.base_page import BasePage
+from lotion.base_page import BasePage
 from lotion import Lotion
 from notion_client_wrapper.database.database_type import DatabaseType
 from notion_client_wrapper.filter.condition.date_condition import DateCondition, DateConditionType
 from notion_client_wrapper.filter.filter_builder import FilterBuilder
-from notion_client_wrapper.properties.title import Title
+from lotion.properties import Title
 from util.date_range import DateRange
 from webclip.domain.webclip import Webclip
 from webclip.domain.webclip_repository import WebclipRepository

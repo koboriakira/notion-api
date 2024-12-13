@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import date, datetime, timedelta
 from typing import override
 
-from notion_client_wrapper.base_page import BasePage
+from lotion.base_page import BasePage
 from notion_client_wrapper.page.page_id import PageId
 from task.domain.completed_flag import CompletedFlag
 from task.domain.do_tomorrow_flag import DoTommorowFlag

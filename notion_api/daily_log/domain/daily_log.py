@@ -7,7 +7,7 @@ from daily_log.domain.daily_log_date import DailyLogDate
 from daily_log.domain.daily_retro_comment import DailyRetroComment
 from daily_log.domain.previous_relation import PreviousRelation
 from daily_log.domain.weekly_log_relation import WeeklyLogRelation
-from notion_client_wrapper.base_page import BasePage
+from lotion.base_page import BasePage
 from notion_client_wrapper.page.page_id import PageId
 
 

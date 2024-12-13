@@ -1,6 +1,6 @@
 from enum import Enum
 
-from notion_client_wrapper.properties.select import Select
+from lotion.properties import Select
 
 kind_map = {
     "次にとるべき行動リスト": {"selected_id": "d73dbc77-702d-4b2e-88e1-22b54a17a333", "selected_color": "brown"},

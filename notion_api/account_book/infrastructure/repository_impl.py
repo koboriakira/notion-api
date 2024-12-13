@@ -1,10 +1,11 @@
 from logging import Logger, getLogger
 
+from lotion import Lotion
+from lotion.base_page import BasePage
+
 from account_book.domain.account_book import AccountBook
 from account_book.domain.repository import Repository
 from common.value.database_type import DatabaseType
-from notion_client_wrapper.base_page import BasePage
-from lotion import Lotion
 from notion_client_wrapper.page.page_id import PageId
 
 

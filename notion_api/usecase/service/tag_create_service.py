@@ -4,7 +4,7 @@ from common.value.database_type import DatabaseType
 from custom_logger import get_logger
 from lotion import Lotion
 from notion_client_wrapper.page.page_id import PageId
-from notion_client_wrapper.properties import Title
+from lotion.properties Title
 
 logger = get_logger(__name__)
 

@@ -6,7 +6,7 @@ from notion_client_wrapper.page.page_id import PageId
 sys.path.append("notion_api")
 
 # クラス名の一致をチェックするロジックがあるので、完全に合わせておく
-from notion_client_wrapper.properties.title import Title
+from lotion.properties import Title
 
 
 class TestTitle(TestCase):

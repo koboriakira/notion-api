@@ -2,10 +2,10 @@ from logging import Logger, getLogger
 
 from common.domain.tag_relation import TagRelation
 from common.value.database_type import DatabaseType
-from notion_client_wrapper.base_page import BasePage
+from lotion.base_page import BasePage
 from lotion import Lotion
-from notion_client_wrapper.properties.date import Date
-from notion_client_wrapper.properties.property import Property
+from lotion.properties import Date
+from lotion.properties import Property
 from project.domain.goal_relation import GoalRelation
 from project.domain.project import Project
 from project.domain.project_repository import ProjectRepository

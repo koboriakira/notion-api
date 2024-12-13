@@ -2,7 +2,7 @@ from common.value.database_type import DatabaseType
 from lotion import Lotion
 from notion_client_wrapper.filter.filter_builder import FilterBuilder
 from notion_client_wrapper.page.page_id import PageId
-from notion_client_wrapper.properties import Title
+from lotion.properties Title
 
 
 class TagCreator:

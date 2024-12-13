@@ -4,7 +4,7 @@ from unittest import TestCase
 import pytest
 from notion_api.book.domain.book import Book
 from notion_api.common.value.database_type import DatabaseType
-from notion_api.notion_client_wrapper.base_page import BasePage
+from notion_api.lotion.base_page import BasePage
 from notion_api.notion_client_wrapper.client_wrapper import Lotion
 from notion_api.notion_client_wrapper.filter.condition.date_condition import DateCondition
 from notion_api.notion_client_wrapper.filter.condition.string_condition import StringCondition

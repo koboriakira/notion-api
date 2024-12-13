@@ -1,7 +1,7 @@
 from datetime import date, datetime, time, timedelta
 
 from common.value.database_type import DatabaseType
-from notion_client_wrapper.base_page import BasePage
+from lotion.base_page import BasePage
 from lotion import Lotion
 from notion_client_wrapper.filter.condition.checkbox_condition import CheckboxCondition
 from notion_client_wrapper.filter.condition.date_condition import DateCondition
@@ -11,8 +11,8 @@ from notion_client_wrapper.filter.condition.relation_condition import RelationCo
 from notion_client_wrapper.filter.condition.string_condition import StringCondition
 from notion_client_wrapper.filter.filter_builder import FilterBuilder
 from notion_client_wrapper.page.page_id import PageId
-from notion_client_wrapper.properties.last_edited_time import LastEditedTime
-from notion_client_wrapper.properties.property import Property
+from lotion.properties import LastEditedTime
+from lotion.properties import Property
 from task.domain.do_tomorrow_flag import DoTommorowFlag
 from task.domain.important_flag import ImportantFlag
 from task.domain.is_started import IsStarted

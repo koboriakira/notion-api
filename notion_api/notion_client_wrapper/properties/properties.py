@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
-from notion_client_wrapper.properties.property import Property
-from notion_client_wrapper.properties.title import Title
+from lotion.properties import Property
+from lotion.properties import Title
 
 
 @dataclass(frozen=True)

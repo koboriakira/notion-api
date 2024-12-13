@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from enum import Enum
 
-from notion_client_wrapper.properties.checkbox import Checkbox
+from lotion.properties import Checkbox
 
 from .condition import Condition
 

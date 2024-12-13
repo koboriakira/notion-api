@@ -1,6 +1,6 @@
 from typing import override
 
-from notion_client_wrapper.properties.text import Text
+from lotion.properties import Text
 
 
 class RoutineOption(Text):

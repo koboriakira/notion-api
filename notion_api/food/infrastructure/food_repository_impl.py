@@ -3,10 +3,10 @@ from logging import Logger, getLogger
 from common.value.database_type import DatabaseType
 from food.domain.food import Food
 from food.domain.food_repository import FoodRepository
-from notion_client_wrapper.base_page import BasePage
+from lotion.base_page import BasePage
 from lotion import Lotion
 from notion_client_wrapper.filter.filter_builder import FilterBuilder
-from notion_client_wrapper.properties.title import Title
+from lotion.properties import Title
 
 
 class FoodRepositoryImpl(FoodRepository):

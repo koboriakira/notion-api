@@ -1,6 +1,6 @@
 from datetime import date, datetime
 
-from notion_client_wrapper.properties import Title
+from lotion.properties Title
 from task.domain.task_kind import TaskKindType
 from task.domain.task_repository import TaskRepository
 from task.domain.task_status import TaskStatusType

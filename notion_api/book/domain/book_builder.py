@@ -10,9 +10,9 @@ from book.domain.published_date import PublishedDate
 from book.domain.publisher import Publisher
 from common.service.tag_creator.tag_creator import TagCreator
 from notion_client_wrapper.block.block import Block
-from notion_client_wrapper.properties.cover import Cover
-from notion_client_wrapper.properties.properties import Properties
-from notion_client_wrapper.properties.property import Property
+from lotion.properties import Cover
+from lotion.properties import Properties
+from lotion.properties import Property
 
 
 @dataclass

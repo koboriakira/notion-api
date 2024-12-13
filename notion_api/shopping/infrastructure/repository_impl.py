@@ -1,7 +1,7 @@
 from logging import Logger, getLogger
 
 from common.value.database_type import DatabaseType
-from notion_client_wrapper.base_page import BasePage
+from lotion.base_page import BasePage
 from lotion import Lotion
 from notion_client_wrapper.page.page_id import PageId
 from shopping.domain.repository import ShoppingRepository

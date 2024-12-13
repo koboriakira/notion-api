@@ -4,8 +4,8 @@ from unittest import TestCase
 sys.path.append("notion_api")
 
 # クラス名の一致をチェックするロジックがあるので、完全に合わせておく
-from notion_client_wrapper.properties.properties import Properties
-from notion_client_wrapper.properties.title import Title
+from lotion.properties import Properties
+from lotion.properties import Title
 
 
 class TestProperties(TestCase):

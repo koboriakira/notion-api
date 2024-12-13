@@ -1,5 +1,5 @@
 from common.value.notion_page_id import NotionPageId
-from notion_client_wrapper.properties.relation import Relation
+from lotion.properties import Relation
 
 
 class GoalRelation(Relation):

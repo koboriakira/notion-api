@@ -2,7 +2,7 @@ from datetime import date, timedelta
 from enum import Enum
 
 from common.value.database_type import DatabaseType
-from notion_client_wrapper.properties.select import Select
+from lotion.properties import Select
 
 kind_map = {"Webクリップ": {"selected_id": "06f76a53-2354-4911-b15e-7182fb0c845c", "selected_color": "gray"}, "音楽": {"selected_id": "3c4bcf1e-fdb0-4400-a738-e494eb1cdb93", "selected_color": "purple"}, "飲食店": {"selected_id": "17fb8433-e807-415e-9936-e1e912a6b61e", "selected_color": "orange"}, "動画": {"selected_id": "a2155981-a906-47b0-8b52-3dbce2676024", "selected_color": "default"}, "未指定": {"selected_id": "03d9bb99-2d78-4abf-b9bb-7bf772a90524", "selected_color": "yellow"}}
 

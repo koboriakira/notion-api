@@ -1,6 +1,6 @@
 from datetime import date, datetime
 
-from notion_client_wrapper.properties.date import Date
+from lotion.properties import Date
 from util.datetime import convert_to_date_or_datetime
 
 

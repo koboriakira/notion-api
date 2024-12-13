@@ -2,7 +2,7 @@ from datetime import timedelta
 from logging import Logger
 
 from custom_logger import get_logger
-from notion_client_wrapper.properties.title import Title
+from lotion.properties import Title
 from project.domain.project import Project
 from project.domain.project_repository import ProjectRepository
 from project.domain.project_status import ProjectStatusType

@@ -3,9 +3,9 @@ from typing import TYPE_CHECKING
 
 from notion_client_wrapper.block.block import Block
 from notion_client_wrapper.page.page_id import PageId
-from notion_client_wrapper.properties.properties import Properties
-from notion_client_wrapper.properties.text import Text
-from notion_client_wrapper.properties.title import Title
+from lotion.properties import Properties
+from lotion.properties import Text
+from lotion.properties import Title
 from task.domain.due_date import DueDate
 from task.domain.pomodoro_start_datetime import PomodoroStartDatetime
 from task.domain.project_relation import ProjectRelation
@@ -18,7 +18,7 @@ from task.domain.task_start_date import TaskStartDate
 from task.domain.task_status import TaskStatus, TaskStatusType
 
 if TYPE_CHECKING:
-    from notion_client_wrapper.properties.property import Property
+    from lotion.properties import Property
 
 
 class TaskFactory:

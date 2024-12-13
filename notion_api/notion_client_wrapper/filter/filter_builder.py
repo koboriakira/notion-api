@@ -1,7 +1,7 @@
 from notion_client_wrapper.filter.condition.condition import Condition
 from notion_client_wrapper.filter.condition.string_condition import StringCondition
-from notion_client_wrapper.properties.property import Property
-from notion_client_wrapper.properties.title import Title
+from lotion.properties import Property
+from lotion.properties import Title
 
 
 class FilterBuilder:

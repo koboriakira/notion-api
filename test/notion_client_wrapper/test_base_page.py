@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from notion_api.notion_client_wrapper.base_page import BasePage
+from notion_api.lotion.base_page import BasePage
 
 
 class TestBasePage(TestCase):
@@ -16,7 +16,7 @@ class TestBasePage(TestCase):
         import sys
 
         sys.path.append("notion_api")
-        from notion_client_wrapper.properties.title import Title
+        from lotion.properties import Title
 
         # Given
         base_page = BasePage.create(

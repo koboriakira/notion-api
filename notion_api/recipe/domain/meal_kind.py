@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from enum import Enum
 
-from notion_client_wrapper.properties.multi_select import MultiSelect, MultiSelectElement
+from lotion.properties import MultiSelect, MultiSelectElement
 
 KIND_LIST = [
     {"name": "副菜", "id": "f1557d37-1470-4d8a-8010-0cbfcac8481a"},

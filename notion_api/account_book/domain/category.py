@@ -1,6 +1,6 @@
 from enum import Enum
 
-from notion_client_wrapper.properties.select import Select
+from lotion.properties import Select
 
 kind_map = {
     "住居・水道光熱・通信費": {"selected_id": "f3a44bbf-234e-494c-8fdf-3269475da426", "selected_color": "blue"},

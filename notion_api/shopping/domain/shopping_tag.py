@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from notion_client_wrapper.properties.multi_select import MultiSelect, MultiSelectElement
+from lotion.properties import MultiSelect, MultiSelectElement
 
 KIND_LIST = [
     {"name": "野菜・くだもの", "id": "9df15b00-acca-431e-9061-108048447758"},

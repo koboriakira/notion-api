@@ -1,12 +1,12 @@
 from dataclasses import dataclass
 
 from common.domain.tag_relation import TagRelation
-from notion_client_wrapper.base_page import BasePage
+from lotion.base_page import BasePage
 from notion_client_wrapper.block.block import Block
-from notion_client_wrapper.properties.cover import Cover
-from notion_client_wrapper.properties.properties import Properties
-from notion_client_wrapper.properties.title import Title
-from notion_client_wrapper.properties.url import Url
+from lotion.properties import Cover
+from lotion.properties import Properties
+from lotion.properties import Title
+from lotion.properties import Url
 from webclip.domain.summary import Summary
 
 COLUMN_NAME_TITLE = "名前"

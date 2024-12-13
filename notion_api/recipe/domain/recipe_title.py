@@ -1,4 +1,4 @@
-from notion_client_wrapper.properties.title import Title
+from lotion.properties import Title
 
 
 class RecipeTitle(Title):

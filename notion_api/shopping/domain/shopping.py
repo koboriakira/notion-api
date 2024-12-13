@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import date, timedelta
 
-from notion_client_wrapper.base_page import BasePage
+from lotion.base_page import BasePage
 from shopping.domain.buy_status import BuyStatus, BuyStatusType
 from shopping.domain.last_purchase_date import LastPurchaseDate
 from shopping.domain.purchase_interval import PurchaseInterval

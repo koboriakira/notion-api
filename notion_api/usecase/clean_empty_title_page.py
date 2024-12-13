@@ -5,7 +5,7 @@ from custom_logger import get_logger
 from lotion import Lotion
 from notion_client_wrapper.filter.condition.empty_condition import EmptyCondition
 from notion_client_wrapper.filter.filter_builder import FilterBuilder
-from notion_client_wrapper.properties.title import Title
+from lotion.properties import Title
 
 logger = get_logger(__name__)
 

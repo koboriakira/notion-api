@@ -4,9 +4,9 @@ from common.value.database_type import DatabaseType
 from goal.domain.goal import Goal
 from goal.domain.goal_repository import GoalRepository
 from goal.domain.vision_relation import VisionRelation
-from notion_client_wrapper.base_page import BasePage
+from lotion.base_page import BasePage
 from lotion import Lotion
-from notion_client_wrapper.properties.property import Property
+from lotion.properties import Property
 
 
 class GoalRepositoryImpl(GoalRepository):

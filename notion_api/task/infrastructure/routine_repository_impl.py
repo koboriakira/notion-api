@@ -1,5 +1,5 @@
 from common.value.database_type import DatabaseType
-from notion_client_wrapper.base_page import BasePage
+from lotion.base_page import BasePage
 from lotion import Lotion
 from task.domain.routine_repository import RoutineRepository
 from task.domain.routine_task import RoutineTask

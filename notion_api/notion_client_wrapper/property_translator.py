@@ -1,21 +1,21 @@
 from typing import Any
 
-from notion_client_wrapper.properties.button import Button
-from notion_client_wrapper.properties.checkbox import Checkbox
-from notion_client_wrapper.properties.created_time import CreatedTime
-from notion_client_wrapper.properties.date import Date
-from notion_client_wrapper.properties.last_edited_time import LastEditedTime
-from notion_client_wrapper.properties.multi_select import MultiSelect
-from notion_client_wrapper.properties.number import Number
-from notion_client_wrapper.properties.properties import Properties
-from notion_client_wrapper.properties.property import Property
-from notion_client_wrapper.properties.relation import Relation
-from notion_client_wrapper.properties.rollup import Rollup
-from notion_client_wrapper.properties.select import Select
-from notion_client_wrapper.properties.status import Status
-from notion_client_wrapper.properties.text import Text
-from notion_client_wrapper.properties.title import Title
-from notion_client_wrapper.properties.url import Url
+from lotion.properties import Button
+from lotion.properties import Checkbox
+from lotion.properties import CreatedTime
+from lotion.properties import Date
+from lotion.properties import LastEditedTime
+from lotion.properties import MultiSelect
+from lotion.properties import Number
+from lotion.properties import Properties
+from lotion.properties import Property
+from lotion.properties import Relation
+from lotion.properties import Rollup
+from lotion.properties import Select
+from lotion.properties import Status
+from lotion.properties import Text
+from lotion.properties import Title
+from lotion.properties import Url
 
 
 class PropertyTranslator:

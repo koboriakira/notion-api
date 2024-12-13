@@ -5,8 +5,8 @@ from music.domain.release_date import ReleaseDate
 from music.domain.song import Song
 from music.domain.song_title import SongTitle
 from music.domain.spotify_url import SpotifyUrl
-from notion_client_wrapper.properties.cover import Cover
-from notion_client_wrapper.properties.properties import Properties
+from lotion.properties import Cover
+from lotion.properties import Properties
 
 
 class SongFactory:

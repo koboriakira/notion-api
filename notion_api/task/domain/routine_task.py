@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import date, datetime, time
 
-from notion_client_wrapper.base_page import BasePage
+from lotion.base_page import BasePage
 from task.domain.rouitne_option import RoutineOption
 from task.domain.routine_kind import RoutineKind, RoutineType
 from task.domain.task_context import TaskContextType, TaskContextTypes

@@ -6,11 +6,11 @@ from goal.domain.goal_name import GoalName
 from goal.domain.goal_status import GoalStatus, GoalStatusType
 from goal.domain.project_relation import ProjectRelation
 from goal.domain.vision_relation import VisionRelation
-from notion_client_wrapper.base_page import BasePage
+from lotion.base_page import BasePage
 from notion_client_wrapper.block.block import Block
 from notion_client_wrapper.page.page_id import PageId
-from notion_client_wrapper.properties.cover import Cover
-from notion_client_wrapper.properties.properties import Properties
+from lotion.properties import Cover
+from lotion.properties import Properties
 
 
 @dataclass

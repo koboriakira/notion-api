@@ -1,6 +1,6 @@
 from common.value.notion_page_id import NotionPageId
 from notion_client_wrapper.page.page_id import PageId
-from notion_client_wrapper.properties.relation import Relation
+from lotion.properties import Relation
 
 
 def convert_page_id(id_: str | NotionPageId | PageId) -> str:

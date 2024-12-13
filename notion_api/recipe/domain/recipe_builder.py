@@ -4,9 +4,9 @@ from notion_client_wrapper.block.block import Block
 from notion_client_wrapper.block.bulleted_list_item import BulletedlistItem
 from notion_client_wrapper.block.heading import Heading
 from notion_client_wrapper.page.page_id import PageId
-from notion_client_wrapper.properties.cover import Cover
-from notion_client_wrapper.properties.properties import Properties
-from notion_client_wrapper.properties.property import Property
+from lotion.properties import Cover
+from lotion.properties import Properties
+from lotion.properties import Property
 from recipe.domain.carbohydrate import Carbohydrate
 from recipe.domain.fat import Fat
 from recipe.domain.ingredient_relation import IngredientRelation

@@ -6,17 +6,17 @@ from notion_client import Client
 from notion_client.errors import APIResponseError, HTTPResponseError
 
 from notion_client_wrapper.base_operator import BaseOperator
-from notion_client_wrapper.base_page import BasePage
+from lotion.base_page import BasePage
 from notion_client_wrapper.block import Block, BlockFactory
 from notion_client_wrapper.filter.filter_builder import FilterBuilder
 from notion_client_wrapper.page.page_id import PageId
-from notion_client_wrapper.properties.cover import Cover
-from notion_client_wrapper.properties.created_time import CreatedTime
-from notion_client_wrapper.properties.icon import Icon
-from notion_client_wrapper.properties.last_edited_time import LastEditedTime
-from notion_client_wrapper.properties.properties import Properties
-from notion_client_wrapper.properties.property import Property
-from notion_client_wrapper.properties.title import Title
+from lotion.properties import Cover
+from lotion.properties import CreatedTime
+from lotion.properties import Icon
+from lotion.properties import LastEditedTime
+from lotion.properties import Properties
+from lotion.properties import Property
+from lotion.properties import Title
 from notion_client_wrapper.property_translator import PropertyTranslator
 
 NOTION_API_ERROR_BAD_GATEWAY = 502

@@ -2,11 +2,11 @@ from datetime import date as DateObject
 
 from common.value.database_type import DatabaseType
 from custom_logger import get_logger
-from notion_client_wrapper.base_page import BasePage
+from lotion.base_page import BasePage
 from notion_client_wrapper.block import Paragraph
 from notion_client_wrapper.block.rich_text.rich_text_builder import RichTextBuilder
 from lotion import Lotion
-from notion_client_wrapper.properties import Cover, Date, Relation, Select, Title, Url
+from lotion.properties Cover, Date, Relation, Select, Title, Url
 from usecase.service.tag_create_service import TagCreateService
 
 logger = get_logger(__name__)

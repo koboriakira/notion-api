@@ -2,10 +2,10 @@ from dataclasses import dataclass
 
 from common.domain.tag_relation import TagRelation
 from common.value.notion_page_id_list import NotionPageIdList
-from notion_client_wrapper.base_page import BasePage
+from lotion.base_page import BasePage
 from notion_client_wrapper.block.block import Block
-from notion_client_wrapper.properties.cover import Cover
-from notion_client_wrapper.properties.properties import Properties
+from lotion.properties import Cover
+from lotion.properties import Properties
 from zettlekasten.domain.reference_url import ReferenceUrl
 from zettlekasten.domain.zettlekasten_title import ZettlekastenName
 

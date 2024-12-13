@@ -5,7 +5,7 @@ from daily_log.domain.daily_log_repository import DailyLogRepository, ExistedDai
 from daily_log.value.isoweek import Isoweek
 from lotion import Lotion
 from notion_client_wrapper.page.page_id import PageId
-from notion_client_wrapper.properties import Date, Title
+from lotion.properties Date, Title
 
 
 class CreateDailyLogUsecase:

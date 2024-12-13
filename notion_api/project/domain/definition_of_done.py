@@ -1,4 +1,4 @@
-from notion_client_wrapper.properties.text import Text
+from lotion.properties import Text
 
 
 class DefinitionOfDone(Text):

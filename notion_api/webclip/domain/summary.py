@@ -1,5 +1,5 @@
 from notion_client_wrapper.block.rich_text import RichText
-from notion_client_wrapper.properties.text import Text
+from lotion.properties import Text
 
 
 class Summary(Text):

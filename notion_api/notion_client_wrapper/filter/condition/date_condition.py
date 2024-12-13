@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
 
-from notion_client_wrapper.properties.property import Property
+from lotion.properties import Property
 
 from .condition import Condition
 

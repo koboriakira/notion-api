@@ -1,5 +1,5 @@
 from notion_client_wrapper.page.page_id import PageId
-from notion_client_wrapper.properties.relation import Relation
+from lotion.properties import Relation
 
 
 class PreviousRelation(Relation):

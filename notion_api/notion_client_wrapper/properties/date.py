@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import date, datetime
 
-from notion_client_wrapper.properties.property import Property
+from lotion.properties import Property
 from util.datetime import convert_to_date_or_datetime
 
 
