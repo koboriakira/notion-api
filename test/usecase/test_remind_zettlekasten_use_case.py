@@ -1,3 +1,4 @@
+from datetime import datetime
 from unittest import TestCase
 from unittest.mock import Mock
 
@@ -18,8 +19,11 @@ class TestRemindZettlekastenUseCase(TestCase):
     def test_execute(self):
         # Given
 
-        # 1つのZettlekastenを返す
-        self.suite._zettlekasten_repository.fetch_all.return_value = [Zettlekasten.create(title="テスト")]
+        # 1つのZettlekastenを返す。作成済にしたいので作成日時を埋め込む
+        mock_zettlekasten = Zettlekasten.create(title="テスト")
+        mock_zettlekasten.created_time = datetime.now()
+
+        self.suite._zettlekasten_repository.fetch_all.return_value = [mock_zettlekasten]
 
         # When, Then: ふつうに実行ができれば終わり
         self.assertIsNone(self.suite.execute())

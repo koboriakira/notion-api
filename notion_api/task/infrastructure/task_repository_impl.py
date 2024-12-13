@@ -76,7 +76,7 @@ class TaskRepositoryImpl(TaskRepository):
                 or_condition = OrCondition(task_kind_equal_conditions)
                 filter_builder = filter_builder.add_condition(or_condition)
             if len(kind_type_list) == 0:
-                filter_builder = filter_builder.add_condition(EmptyCondition.true(TaskKind.NAME, TaskKind.TYPE))
+                filter_builder = filter_builder.add_condition(EmptyCondition.true(TaskKind.NAME, ""))
 
         if status_list is not None and len(status_list) > 0:
             if isinstance(status_list[0], str):
@@ -106,14 +106,19 @@ class TaskRepositoryImpl(TaskRepository):
 
         if last_edited_at is not None:
             filter_builder = filter_builder.add_condition(
-                DateCondition.on_or_after(property=LastEditedTime.create(value=last_edited_at)),
+                DateCondition.on_or_after(
+                    property=LastEditedTime.create(key="dummy", value=last_edited_at.isoformat()),
+                ),
             )
 
         base_pages = self.client.retrieve_database(
             database_id=DatabaseType.TASK.value,
             filter_param=filter_builder.build(),
         )
-        tasks = [self._cast(base_page) for base_page in base_pages]
+        print(base_pages)
+        tasks:list[Task] = []
+        for base_page in base_pages:
+            tasks.append(self._cast(base_page))
         # order昇順で並び替え
         tasks.sort(key=lambda x: x.order)
         return tasks
@@ -127,7 +132,7 @@ class TaskRepositoryImpl(TaskRepository):
             properties=task.properties.values,
             blocks=task.block_children,
         )
-        return self.find_by_id(task_id=page["id"])
+        return self.find_by_id(task_id=page.page_id.value)
 
     def find_by_id(self, task_id: str) -> Task:
         base_page = self.client.retrieve_page(page_id=task_id)
@@ -183,8 +188,8 @@ class TaskRepositoryImpl(TaskRepository):
             url=base_page.url,
             created_time=base_page.created_time,
             last_edited_time=base_page.last_edited_time,
-            created_by=base_page.created_by,
-            last_edited_by=base_page.last_edited_by,
+            _created_by=base_page._created_by,
+            _last_edited_by=base_page._last_edited_by,
             cover=base_page.cover,
             icon=base_page.icon,
             archived=base_page.archived,

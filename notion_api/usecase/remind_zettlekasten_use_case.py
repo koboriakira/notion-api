@@ -39,7 +39,8 @@ class RemindZettlekastenUseCase:
             self._print_if_specified_date(zettlekasten)
 
     def _print_if_specified_date(self, zettlekasten: Zettlekasten) -> None:
-        created_date = zettlekasten.get_created_at().date()
+        print(zettlekasten)
+        created_date = zettlekasten.created_at.date()
         past_days = self._calculate_past_days(created_date)
         if past_days is None:
             return
@@ -64,6 +65,7 @@ if __name__ == "__main__":
     import os
 
     from lotion import Lotion
+
     from zettlekasten.infrastructure.zettlekasten_repository_impl import ZettlekastenRepositoryImpl
 
     repository = ZettlekastenRepositoryImpl(client=Lotion.get_instance())

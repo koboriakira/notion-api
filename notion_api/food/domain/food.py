@@ -2,10 +2,7 @@ from dataclasses import dataclass
 
 from lotion.base_page import BasePage
 from lotion.block import Block
-from lotion.properties import Cover
-from lotion.properties import Properties
-from lotion.properties import Property
-from lotion.properties import Title
+from lotion.properties import Cover, Properties, Property, Title
 
 
 @dataclass
