@@ -1,8 +1,9 @@
 from logging import Logger
 
+from lotion import Lotion
+
 from common.domain.tag_relation import TagRelation
 from common.service.tag_creator.tag_creator import TagCreator
-from lotion import Lotion
 from util.tag_analyzer import TagAnalyzer
 from zettlekasten.domain.zettlekasten import Zettlekasten
 from zettlekasten.infrastructure.zettlekasten_repository_impl import (
