@@ -4,7 +4,7 @@ from common.value.database_type import DatabaseType
 from daily_log.domain.daily_log_repository import DailyLogRepository, ExistedDailyLogError
 from daily_log.value.isoweek import Isoweek
 from lotion import Lotion
-from notion_client_wrapper.page.page_id import PageId
+from lotion.page import PageId
 from lotion.properties Date, Title
 
 

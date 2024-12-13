@@ -1,10 +1,10 @@
 from datetime import date
 
 from fastapi import APIRouter, Header
+from lotion import Lotion
+from lotion.page import PageId
 
 from interface import project
-from lotion import Lotion
-from notion_client_wrapper.page.page_id import PageId
 from project.infrastructure.project_repository_impl import ProjectRepositoryImpl
 from router.request.notion_automation_request import NotionAutomationRequest
 from router.response.base_response import BaseResponse

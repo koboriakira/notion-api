@@ -1,7 +1,7 @@
 import sys
 from unittest import TestCase
 
-from notion_client_wrapper.page.page_id import PageId
+from lotion.page import PageId
 
 sys.path.append("notion_api")
 

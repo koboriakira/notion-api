@@ -5,7 +5,7 @@ from unittest.mock import Mock
 from notion_api.book.domain.book_api import BookApiResult
 from notion_api.book.domain.book_builder import BookBuilder
 from notion_api.common.service.tag_creator.tag_creator import TagCreator
-from notion_api.notion_client_wrapper.page.page_id import PageId
+from notion_api.lotion.page import PageId
 
 
 class TestBookBuilder(TestCase):

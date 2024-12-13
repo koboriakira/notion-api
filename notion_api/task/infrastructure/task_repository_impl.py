@@ -10,7 +10,7 @@ from notion_client_wrapper.filter.condition.or_condition import OrCondition
 from notion_client_wrapper.filter.condition.relation_condition import RelationCondition
 from notion_client_wrapper.filter.condition.string_condition import StringCondition
 from notion_client_wrapper.filter.filter_builder import FilterBuilder
-from notion_client_wrapper.page.page_id import PageId
+from lotion.page import PageId
 from lotion.properties import LastEditedTime
 from lotion.properties import Property
 from task.domain.do_tomorrow_flag import DoTommorowFlag

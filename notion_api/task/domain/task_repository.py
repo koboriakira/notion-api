@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
 from datetime import date, datetime
 
-from notion_client_wrapper.page.page_id import PageId
+from lotion.page import PageId
 from task.domain.task import Task
 from task.domain.task_kind import TaskKindType
 from task.domain.task_status import TaskStatusType

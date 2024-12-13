@@ -1,11 +1,10 @@
 from datetime import date, datetime
 from typing import TYPE_CHECKING
 
+from lotion.page import PageId
+from lotion.properties import Properties, Text, Title
+
 from notion_client_wrapper.block.block import Block
-from notion_client_wrapper.page.page_id import PageId
-from lotion.properties import Properties
-from lotion.properties import Text
-from lotion.properties import Title
 from task.domain.due_date import DueDate
 from task.domain.pomodoro_start_datetime import PomodoroStartDatetime
 from task.domain.project_relation import ProjectRelation

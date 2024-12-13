@@ -2,7 +2,7 @@ from logging import Logger, getLogger
 
 from notion_client_wrapper.block.bulleted_list_item import BulletedlistItem
 from lotion import Lotion
-from notion_client_wrapper.page.page_id import PageId
+from lotion.page import PageId
 from project.domain.project import Project
 from project.domain.project_repository import ProjectRepository
 from task.domain.task_repository import TaskRepository

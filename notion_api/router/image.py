@@ -3,7 +3,7 @@ from pydantic import BaseModel
 
 from common.domain.external_image import ExternalImage
 from custom_logger import get_logger
-from notion_client_wrapper.page.page_id import PageId
+from lotion.page import PageId
 from router.response import BaseResponse
 from usecase.image.share_image_usecase import ShareImageRequest, ShareImageUsecase
 from util.access_token import valid_access_token

@@ -5,7 +5,7 @@ from common.service.image.external_image_service import ExternalImageService
 from custom_logger import get_logger
 from interface import page
 from lotion import Lotion
-from notion_client_wrapper.page.page_id import PageId
+from lotion.page import PageId
 from router.request import AddFeelingRequest, AddPomodoroCountRequest, AppendTextBlockRequest, UpdateStatusRequest
 from router.request.page_request import AppendImageBlockRequest
 from router.response import BaseResponse

@@ -8,7 +8,7 @@ from goal.domain.project_relation import ProjectRelation
 from goal.domain.vision_relation import VisionRelation
 from lotion.base_page import BasePage
 from notion_client_wrapper.block.block import Block
-from notion_client_wrapper.page.page_id import PageId
+from lotion.page import PageId
 from lotion.properties import Cover
 from lotion.properties import Properties
 

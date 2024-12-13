@@ -10,7 +10,7 @@ from daily_log.domain.daily_retro_comment import DailyRetroComment
 from daily_log.domain.previous_relation import PreviousRelation
 from daily_log.domain.weekly_log_relation import WeeklyLogRelation
 from notion_client_wrapper.block.block import Block
-from notion_client_wrapper.page.page_id import PageId
+from lotion.page import PageId
 from lotion.properties import Cover
 from lotion.properties import Properties
 from lotion.properties import Property

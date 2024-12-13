@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from notion_client_wrapper.page.page_id import PageId
+from lotion.page import PageId
 from lotion.properties import Property
 
 

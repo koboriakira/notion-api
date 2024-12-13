@@ -3,7 +3,7 @@ from datetime import datetime
 
 from notion_client_wrapper.base_operator import BaseOperator
 from notion_client_wrapper.block import Block
-from notion_client_wrapper.page.page_id import PageId
+from lotion.page import PageId
 from lotion.properties import Checkbox
 from lotion.properties import Cover
 from lotion.properties import CreatedTime

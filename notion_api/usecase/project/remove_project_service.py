@@ -1,5 +1,5 @@
 from custom_logger import get_logger
-from notion_client_wrapper.page.page_id import PageId
+from lotion.page import PageId
 from project.domain.project_repository import ProjectRepository
 from task.domain.task_repository import TaskRepository
 

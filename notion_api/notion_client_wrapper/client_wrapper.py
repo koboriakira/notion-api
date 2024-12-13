@@ -9,7 +9,7 @@ from notion_client_wrapper.base_operator import BaseOperator
 from lotion.base_page import BasePage
 from notion_client_wrapper.block import Block, BlockFactory
 from notion_client_wrapper.filter.filter_builder import FilterBuilder
-from notion_client_wrapper.page.page_id import PageId
+from lotion.page import PageId
 from lotion.properties import Cover
 from lotion.properties import CreatedTime
 from lotion.properties import Icon

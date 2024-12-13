@@ -1,5 +1,5 @@
 from lotion import Lotion
-from notion_client_wrapper.page.page_id import PageId
+from lotion.page import PageId
 
 
 class PageRemover:

@@ -6,7 +6,7 @@ from daily_log.domain.daily_log import DailyLog
 from daily_log.domain.daily_log_builder import DailyLogBuilder
 from daily_log.domain.daily_log_repository import DailyLogRepository, ExistedDailyLogError, NotFoundDailyLogError
 from lotion import Lotion
-from notion_client_wrapper.page.page_id import PageId
+from lotion.page import PageId
 
 
 class DailyLogRepositoryImpl(DailyLogRepository):
