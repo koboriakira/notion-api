@@ -7,6 +7,7 @@ from mangum import Mangum
 
 from router import (
     account_book,
+    batch,
     blog,
     books,
     food,
@@ -61,6 +62,7 @@ app.include_router(account_book.router, prefix="/account_book", tags=["account_b
 app.include_router(blog.router, prefix="/blog", tags=["blog"])
 app.include_router(image.router, prefix="/image", tags=["image"])
 app.include_router(food.router, prefix="/food", tags=["food"])
+app.include_router(batch.router, prefix="/batch", tags=["batch"])
 
 
 handler = Mangum(app, lifespan="off")

@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 
 from task.domain.routine_repository import RoutineRepository
 from task.domain.task_kind import TaskKindType
@@ -19,6 +19,7 @@ class CreateRoutineTaskUseCase:
             status_list=[TaskStatusType.TODO, TaskStatusType.IN_PROGRESS],
             kind_type_list=[TaskKindType.ROUTINE],
             start_datetime=date_,
+            start_datetime_end=date_ + timedelta(days=90),
         )
         next_task_titles = [task.get_title().text for task in next_tasks]
 
