@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from notion_client_wrapper.block.to_do import ToDo
+from lotion.block import ToDo
 
 
 class TestToDo(TestCase):

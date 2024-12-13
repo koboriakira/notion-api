@@ -1,7 +1,7 @@
 from unittest import TestCase
 
-from notion_api.notion_client_wrapper.block.bulleted_list_item import BulletedlistItem
-from notion_api.notion_client_wrapper.block.rich_text import RichText
+from lotion.block import BulletedlistItem
+from lotion.block.rich_text import RichText
 
 
 class TestBulletedlistItem(TestCase):

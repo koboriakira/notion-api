@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from notion_api.notion_client_wrapper.block.code import Code
+from lotion.block import Code
 
 
 class TestCode(TestCase):

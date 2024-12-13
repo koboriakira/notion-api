@@ -5,7 +5,7 @@ from food.domain.food import Food
 from food.domain.food_repository import FoodRepository
 from lotion.base_page import BasePage
 from lotion import Lotion
-from notion_client_wrapper.filter.filter_builder import FilterBuilder
+from lotion.filter import FilterBuilder
 from lotion.properties import Title
 
 

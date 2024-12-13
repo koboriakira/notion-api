@@ -7,8 +7,8 @@ from common.value.database_type import DatabaseType
 from music.domain.song import Song
 from task.domain.memo_genre import MemoGenreKind, MemoGenreType
 from lotion.base_page import BasePage
-from notion_client_wrapper.block.bookmark import Bookmark
-from notion_client_wrapper.block.embed import Embed
+from lotion.block import Bookmark
+from lotion.block import Embed
 from lotion import Lotion
 from lotion.properties Title
 from restaurant.domain.restaurant import Restaurant

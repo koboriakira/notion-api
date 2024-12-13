@@ -1,7 +1,7 @@
 from unittest import TestCase
 
-from notion_api.notion_client_wrapper.filter.condition.empty_condition import EmptyCondition
-from notion_api.notion_client_wrapper.properties.relation import Relation
+from lotion.filter.condition import EmptyCondition
+from lotion.properties import Relation
 
 
 class TestEmptyCondition(TestCase):

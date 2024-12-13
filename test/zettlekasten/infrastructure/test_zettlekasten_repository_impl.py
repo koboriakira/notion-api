@@ -3,7 +3,7 @@ from unittest import TestCase
 from unittest.mock import Mock
 
 import pytest
-from notion_api.notion_client_wrapper.client_wrapper import Lotion
+from lotion import Lotion
 from notion_api.zettlekasten.infrastructure.zettlekasten_repository_impl import ZettlekastenRepositoryImpl
 
 

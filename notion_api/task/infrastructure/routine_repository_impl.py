@@ -1,6 +1,7 @@
-from common.value.database_type import DatabaseType
-from lotion.base_page import BasePage
 from lotion import Lotion
+from lotion.base_page import BasePage
+
+from common.value.database_type import DatabaseType
 from task.domain.routine_repository import RoutineRepository
 from task.domain.routine_task import RoutineTask
 

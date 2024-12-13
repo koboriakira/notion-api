@@ -1,5 +1,5 @@
 from lotion import Lotion
-from notion_client_wrapper.block import Paragraph
+from lotion.block Paragraph
 from custom_logger import get_logger
 
 

@@ -1,6 +1,7 @@
 import os
 from logging import Logger
 
+from lotion import Lotion
 from slack_sdk.web import WebClient
 
 from account_book.infrastructure.repository_impl import RepositoryImpl
@@ -11,7 +12,6 @@ from external_calendar.infrastructure.google_calendar_api import GoogleCalendarA
 from external_calendar.service.external_calendar_service import ExternalCalendarService
 from injector.page_creator_factory import PageCreatorFactory
 from music.infrastructure.song_repository_impl import SongRepositoryImpl
-from lotion import Lotion
 from recipe.infrastructure.recipe_repository_impl import RecipeRepositoryImpl
 from recipe.service.recipe_creator import RecipeCreator
 from slack_concierge.injector import SlackConciergeInjector

@@ -4,8 +4,8 @@ from unittest import TestCase
 from unittest.mock import Mock
 
 import pytest
+from lotion import Lotion
 from notion_api.daily_log.infrastructure.daily_log_repository_impl import DailyLogRepositoryImpl
-from notion_api.notion_client_wrapper.client_wrapper import Lotion
 
 
 class TestDailyLogRepositoryImpl(TestCase):

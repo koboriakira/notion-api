@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from lotion.base_page import BasePage
-from notion_client_wrapper.block.block import Block
+from lotion.block import Block
 from lotion.properties import Cover
 from lotion.properties import Properties
 from lotion.properties import Property

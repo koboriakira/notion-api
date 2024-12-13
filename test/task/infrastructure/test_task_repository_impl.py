@@ -3,9 +3,9 @@ from unittest import TestCase
 from unittest.mock import Mock
 
 import pytest
+from lotion import Lotion
+from lotion.page import PageId
 from notion_api.common.value.database_type import DatabaseType
-from notion_api.notion_client_wrapper.client_wrapper import Lotion
-from notion_api.lotion.page import PageId
 from notion_api.task.domain.task_kind import TaskKindType
 from notion_api.task.domain.task_status import TaskStatusType
 from notion_api.task.infrastructure.task_repository_impl import TaskRepositoryImpl

@@ -1,11 +1,11 @@
 from unittest import TestCase
 from unittest.mock import Mock
 
+from lotion import Lotion
+from lotion.base_page import BasePage
+from lotion.page import PageId
+from lotion.properties import Properties
 from notion_api.common.service.tag_creator.tag_creator import TagCreator
-from notion_api.lotion.base_page import BasePage
-from notion_api.notion_client_wrapper.client_wrapper import Lotion
-from notion_api.lotion.page import PageId
-from notion_api.notion_client_wrapper.properties.properties import Properties
 
 
 class TestTagCreator(TestCase):

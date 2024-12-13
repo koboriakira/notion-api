@@ -2,17 +2,13 @@ from datetime import datetime
 from unittest import TestCase
 
 import pytest
+from lotion import Lotion
+from lotion.base_page import BasePage
+from lotion.filter import FilterBuilder
+from lotion.filter.condition import DateCondition, StringCondition
+from lotion.properties import Cover, LastEditedTime, Title, Url
 from notion_api.book.domain.book import Book
 from notion_api.common.value.database_type import DatabaseType
-from notion_api.lotion.base_page import BasePage
-from notion_api.notion_client_wrapper.client_wrapper import Lotion
-from notion_api.notion_client_wrapper.filter.condition.date_condition import DateCondition
-from notion_api.notion_client_wrapper.filter.condition.string_condition import StringCondition
-from notion_api.notion_client_wrapper.filter.filter_builder import FilterBuilder
-from notion_api.notion_client_wrapper.properties.cover import Cover
-from notion_api.notion_client_wrapper.properties.last_edited_time import LastEditedTime
-from notion_api.notion_client_wrapper.properties.title import Title
-from notion_api.notion_client_wrapper.properties.url import Url
 from notion_api.task.domain.task import ToDoTask
 from notion_api.util.datetime import JST
 

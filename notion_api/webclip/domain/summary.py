@@ -1,4 +1,4 @@
-from notion_client_wrapper.block.rich_text import RichText
+from lotion.block import RichText
 from lotion.properties import Text
 
 

@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from datetime import date
 
+from lotion.block import Block
 from lotion.properties import Cover, Properties, Property
 
 from book.domain.authors import Authors
@@ -11,7 +12,6 @@ from book.domain.book_url import BookUrl
 from book.domain.published_date import PublishedDate
 from book.domain.publisher import Publisher
 from common.service.tag_creator.tag_creator import TagCreator
-from notion_client_wrapper.block.block import Block
 
 
 @dataclass

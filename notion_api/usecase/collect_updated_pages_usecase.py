@@ -1,5 +1,13 @@
 from datetime import date, datetime
 
+from lotion import Lotion
+from lotion.base_page import BasePage
+from lotion.block import Embed, block
+from lotion.block.rich_text import RichTextBuilder
+from lotion.filter import FilterBuilder
+from lotion.filter.condition import DateCondition
+from lotion.properties import LastEditedTime
+
 from common.infrastructure.twitter.lambda_twitter_api import LambdaTwitterApi
 from common.service.image.external_image_service import ExternalImageService
 from common.value.database_type import DatabaseType
@@ -7,14 +15,6 @@ from common.value.slack_channel_type import ChannelType
 from custom_logger import get_logger
 from daily_log.domain.daily_log_repository import DailyLogRepository
 from music.domain.song_repository import SongRepository
-from notion_client_wrapper import block
-from lotion.base_page import BasePage
-from notion_client_wrapper.block.embed import Embed
-from notion_client_wrapper.block.rich_text.rich_text_builder import RichTextBuilder
-from lotion import Lotion
-from notion_client_wrapper.filter.condition.date_condition import DateCondition
-from notion_client_wrapper.filter.filter_builder import FilterBuilder
-from lotion.properties import LastEditedTime
 from task.domain.task_kind import TaskKindType
 from task.domain.task_repository import TaskRepository
 from task.domain.task_status import TaskStatusType

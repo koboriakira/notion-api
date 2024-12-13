@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 
-from notion_client_wrapper.block.block import Block
-from notion_client_wrapper.block.bulleted_list_item import BulletedlistItem
-from notion_client_wrapper.block.heading import Heading
+from lotion.block import Block
+from lotion.block import BulletedlistItem
+from lotion.block import Heading
 from lotion.page import PageId
 from lotion.properties import Cover
 from lotion.properties import Properties

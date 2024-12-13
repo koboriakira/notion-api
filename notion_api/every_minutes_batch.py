@@ -1,8 +1,9 @@
 import logging
 from datetime import timedelta
 
-from custom_logger import get_logger
 from lotion import Lotion
+
+from custom_logger import get_logger
 from shopping.infrastructure.repository_impl import ShoppingRepositoryImpl
 from task.infrastructure.task_repository_impl import TaskRepositoryImpl
 from usecase.clean_empty_title_page import CleanEmptyTitlePageUsecase

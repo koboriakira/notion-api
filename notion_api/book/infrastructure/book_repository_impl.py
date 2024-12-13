@@ -1,9 +1,10 @@
 from logging import Logger, getLogger
 
+from lotion import Lotion
+
 from book.domain.book import Book
 from book.domain.book_repository import BookRepository, ExistedBookError, NotFoundBookError
-from lotion import Lotion
-from notion_client_wrapper.database.database_type import DatabaseType
+from common.value.database_type import DatabaseType
 
 DATABASE_ID = DatabaseType.BOOK.value
 

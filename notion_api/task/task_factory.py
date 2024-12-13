@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 from lotion.page import PageId
 from lotion.properties import Properties, Text, Title
 
-from notion_client_wrapper.block.block import Block
+from lotion.block import Block
 from task.domain.due_date import DueDate
 from task.domain.pomodoro_start_datetime import PomodoroStartDatetime
 from task.domain.project_relation import ProjectRelation

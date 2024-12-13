@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from notion_client_wrapper.block.image import Image
+from lotion.block import Image
 
 
 @dataclass

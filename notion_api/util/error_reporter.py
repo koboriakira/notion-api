@@ -2,10 +2,10 @@ import os
 import sys
 import traceback
 
+from lotion.lotion import NotionApiError
 from slack_sdk.web import WebClient
 
 from util.environment import Environment
-from notion_client_wrapper.client_wrapper import NotionApiError
 
 DM_CHANNEL = Environment.get_dm_channel()
 

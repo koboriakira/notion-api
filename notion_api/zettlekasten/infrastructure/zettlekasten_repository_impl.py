@@ -3,8 +3,8 @@ from logging import Logger, getLogger
 from common.domain.tag_relation import TagRelation
 from common.value.database_type import DatabaseType
 from lotion import Lotion
-from notion_client_wrapper.filter.condition.empty_condition import EmptyCondition
-from notion_client_wrapper.filter.filter_builder import FilterBuilder
+from lotion.filter.condition import EmptyCondition
+from lotion.filter import FilterBuilder
 from zettlekasten.domain.zettlekasten import Zettlekasten
 from zettlekasten.domain.zettlekasten_repository import ZettlekastenRepository
 from zettlekasten.domain.zettlekasten_title import ZettlekastenName

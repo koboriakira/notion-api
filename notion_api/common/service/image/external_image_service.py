@@ -1,12 +1,11 @@
+from lotion import Lotion
+from lotion.filter import FilterBuilder
+from lotion.page import PageId
+from lotion.properties import Cover, Title, Url
+
 from common.domain.external_image import ExternalImage
 from common.value.database_type import DatabaseType
-from lotion import Lotion
-from notion_client_wrapper.filter.condition.date_condition import DateCondition, DateConditionType
-from notion_client_wrapper.filter.filter_builder import FilterBuilder
-from lotion.page import PageId
-from lotion.properties Title
-from lotion.properties import Cover
-from lotion.properties import Url
+from lotion.filter.condition import DateCondition, DateConditionType
 from util.date_range import DateRange
 
 

@@ -1,7 +1,8 @@
 import logging
 
-from goal.infrastructure.goal_repository_impl import GoalRepositoryImpl
 from lotion import Lotion
+
+from goal.infrastructure.goal_repository_impl import GoalRepositoryImpl
 from project.infrastructure.project_repository_impl import ProjectRepositoryImpl
 from task.infrastructure.task_repository_impl import TaskRepositoryImpl
 from usecase.move_tasks_to_backup_usecase import MoveTasksToBackupUsecase

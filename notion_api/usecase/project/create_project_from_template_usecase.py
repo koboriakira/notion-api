@@ -1,6 +1,6 @@
 from logging import Logger, getLogger
 
-from notion_client_wrapper.block.bulleted_list_item import BulletedlistItem
+from lotion.block import BulletedlistItem
 from lotion import Lotion
 from lotion.page import PageId
 from project.domain.project import Project

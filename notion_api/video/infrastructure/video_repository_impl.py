@@ -3,8 +3,8 @@ from logging import Logger, getLogger
 from common.value.database_type import DatabaseType
 from lotion.base_page import BasePage
 from lotion import Lotion
-from notion_client_wrapper.filter.condition.date_condition import DateCondition, DateConditionType
-from notion_client_wrapper.filter.filter_builder import FilterBuilder
+from lotion.filter.condition import DateCondition, DateConditionType
+from lotion.filter import FilterBuilder
 from util.date_range import DateRange
 from video.domain.video import Video
 from video.domain.video_repository import VideoRepository

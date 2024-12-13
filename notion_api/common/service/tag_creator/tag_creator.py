@@ -1,6 +1,6 @@
 from common.value.database_type import DatabaseType
 from lotion import Lotion
-from notion_client_wrapper.filter.filter_builder import FilterBuilder
+from lotion.filter import FilterBuilder
 from lotion.page import PageId
 from lotion.properties Title
 

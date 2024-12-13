@@ -1,21 +1,19 @@
 from logging import Logger, getLogger
 
 from lotion import Lotion
-from notion_client_wrapper.database.database_type import DatabaseType
-from notion_client_wrapper.filter.filter_builder import FilterBuilder
+from lotion.filter import FilterBuilder
+
+from common.value.database_type import DatabaseType
 from restaurant.domain.restaurant import Restaurant
 from restaurant.domain.restaurant_title import RestaurantName
 
 
 class RestaurantRepositoryImpl:
-    def __init__(
-            self,
-            client: Lotion,
-            logger: Logger|None = None) -> None :
+    def __init__(self, client: Lotion, logger: Logger | None = None) -> None:
         self._client = client
         self._logger = logger or getLogger(__name__)
 
-    def find_by_title(self, title: str) -> Restaurant|None:
+    def find_by_title(self, title: str) -> Restaurant | None:
         title_property = RestaurantName(text=title)
         filter_param = FilterBuilder.build_simple_equal_condition(title_property)
         searched_restaurant = self._client.retrieve_database(

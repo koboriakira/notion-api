@@ -1,4 +1,4 @@
-from notion_client_wrapper.block.paragraph import Paragraph
+from lotion.block import Paragraph
 
 MAX_LENGTH = 1500
 
