@@ -3,7 +3,7 @@ from datetime import date
 from fastapi import APIRouter, Header
 
 from interface import project
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 from notion_client_wrapper.page.page_id import PageId
 from project.infrastructure.project_repository_impl import ProjectRepositoryImpl
 from router.request.notion_automation_request import NotionAutomationRequest
@@ -16,7 +16,7 @@ from util.access_token import valid_access_token
 
 router = APIRouter()
 
-client = ClientWrapper.get_instance()
+client = Lotion.get_instance()
 
 
 @router.get("")

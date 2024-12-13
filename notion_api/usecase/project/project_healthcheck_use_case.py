@@ -1,7 +1,7 @@
 from logging import Logger, getLogger
 
 from common.value.slack_channel_type import ChannelType
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 from project.domain import project_repository
 from project.domain.project import Project
 from project.domain.project_repository import ProjectRepository
@@ -95,11 +95,11 @@ if __name__ == "__main__":
 
     logging.basicConfig(level=logging.INFO)
     project_repository = ProjectRepositoryImpl(
-        client=ClientWrapper.get_instance(),
+        client=Lotion.get_instance(),
         logger=logging.getLogger(__name__),
     )
     task_repository = TaskRepositoryImpl(
-        notion_client_wrapper=ClientWrapper.get_instance(),
+        notion_client_wrapper=Lotion.get_instance(),
     )
     slack_client = SlackClient.bot(ChannelType.TEST, thread_ts=None)
     use_case = ProjectHealthcheckUseCase(

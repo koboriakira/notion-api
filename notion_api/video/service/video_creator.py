@@ -71,9 +71,9 @@ class VideoCreator(PageCreator):
 
 if __name__ == "__main__":
     # python -m notion_api.video.service.video_creator
-    from notion_client_wrapper.client_wrapper import ClientWrapper
+    from lotion import Lotion
 
-    client = ClientWrapper.get_instance()
+    client = Lotion.get_instance()
     default_scraper = DefaultScraper()
     scrape_service = ScrapeService(scraper=default_scraper)
     suite = VideoCreator(

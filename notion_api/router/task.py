@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Header
 
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 from notion_client_wrapper.page.page_id import PageId
 from router.request.task_request import CreateNewTaskRequest, UpdateTaskRequest
 from router.response import BaseResponse, TaskResponse
@@ -17,7 +17,7 @@ from util.error_reporter import ErrorReporter
 
 router = APIRouter()
 
-client = ClientWrapper.get_instance()
+client = Lotion.get_instance()
 task_repository = TaskRepositoryImpl(notion_client_wrapper=client)
 
 

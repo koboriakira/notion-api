@@ -55,16 +55,16 @@ class NotionApiError(Exception):
         super().__init__(message)
 
 
-class ClientWrapper:
+class Lotion:
     def __init__(self, client: Client, max_retry_count: int = 3, logger: Logger | None = None) -> None:
         self.client = client
         self.max_retry_count = max_retry_count
         self._logger = logger or getLogger(__name__)
 
     @staticmethod
-    def get_instance(max_retry_count: int = 3, logger: Logger | None = None) -> "ClientWrapper":
+    def get_instance(max_retry_count: int = 3, logger: Logger | None = None) -> "Lotion":
         client = Client(auth=os.getenv("NOTION_SECRET"))
-        return ClientWrapper(client, max_retry_count=max_retry_count, logger=logger)
+        return Lotion(client, max_retry_count=max_retry_count, logger=logger)
 
     def retrieve_page(self, page_id: str, page_model: BasePage | None = None) -> BasePage:
         """指定されたページを取得する"""

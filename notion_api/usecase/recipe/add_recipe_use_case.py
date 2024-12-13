@@ -3,7 +3,7 @@ from logging import Logger
 from slack_sdk import WebClient
 
 from common.value.slack_channel_type import ChannelType
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 from recipe.domain.recipe import Recipe
 from recipe.domain.recipe_builder import RecipeBuilder
 from recipe.domain.recipe_kind import RecipeKindType
@@ -94,7 +94,7 @@ if __name__ == "__main__":
 
     openai_executer = OpenaiExecuter(logger=logger)
     # recipe_creator = RecipeCreator(openai_executer=openai_executer, logger=logger)
-    recipe_repository = RecipeRepositoryImpl(client=ClientWrapper.get_instance(), logger=logger)
+    recipe_repository = RecipeRepositoryImpl(client=Lotion.get_instance(), logger=logger)
     slack_client = WebClient(token=os.environ["SLACK_BOT_TOKEN"])
     usecase = AddRecipeUseCase(
         recipe_creator=MockRecipeCreator(),

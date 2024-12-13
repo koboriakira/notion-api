@@ -9,7 +9,7 @@ from task.domain.memo_genre import MemoGenreKind, MemoGenreType
 from notion_client_wrapper.base_page import BasePage
 from notion_client_wrapper.block.bookmark import Bookmark
 from notion_client_wrapper.block.embed import Embed
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 from notion_client_wrapper.properties import Title
 from restaurant.domain.restaurant import Restaurant
 from video.domain.video import Video
@@ -18,9 +18,9 @@ from webclip.domain.webclip import Webclip
 
 class InboxService:
     def __init__(
-        self, slack_client: WebClient | None = None, client: ClientWrapper | None = None
+        self, slack_client: WebClient | None = None, client: Lotion | None = None
     ) -> None:
-        self.client = client or ClientWrapper.get_instance()
+        self.client = client or Lotion.get_instance()
         self.slack_client = slack_client or WebClient(
             token=os.environ["SLACK_BOT_TOKEN"]
         )

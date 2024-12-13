@@ -5,7 +5,7 @@ import pytest
 from notion_api.book.domain.book import Book
 from notion_api.common.value.database_type import DatabaseType
 from notion_api.notion_client_wrapper.base_page import BasePage
-from notion_api.notion_client_wrapper.client_wrapper import ClientWrapper
+from notion_api.notion_client_wrapper.client_wrapper import Lotion
 from notion_api.notion_client_wrapper.filter.condition.date_condition import DateCondition
 from notion_api.notion_client_wrapper.filter.condition.string_condition import StringCondition
 from notion_api.notion_client_wrapper.filter.filter_builder import FilterBuilder
@@ -19,9 +19,9 @@ from notion_api.util.datetime import JST
 from daily_log.domain.daily_log import DailyLog
 
 
-class TestClientWrapper(TestCase):
+class TestLotion(TestCase):
     def setUp(self):
-        self.suite = ClientWrapper.get_instance()
+        self.suite = Lotion.get_instance()
 
     @pytest.mark.skip()
     def test_ページを取得してみる(self):
@@ -122,7 +122,7 @@ class TestClientWrapper(TestCase):
 
     @pytest.mark.use_genuine_api()
     def test_ブロックもあわせてページをひとつ取得する(self):
-        # pytest test/notion_client_wrapper/test_client_wrapper.py::TestClientWrapper::test_ブロックもあわせてページをひとつ取得する
+        # pytest test/notion_client_wrapper/test_client_wrapper.py::TestLotion::test_ブロックもあわせてページをひとつ取得する
 
         # When
         task = self.suite.retrieve_page(
@@ -134,7 +134,7 @@ class TestClientWrapper(TestCase):
 
     @pytest.mark.use_genuine_api()
     def test_現在のタスクを取得する(self):
-        # pytest test/notion_client_wrapper/test_client_wrapper.py::TestClientWrapper::test_現在のタスクを取得する
+        # pytest test/notion_client_wrapper/test_client_wrapper.py::TestLotion::test_現在のタスクを取得する
         from notion_api.task.domain.task import ToDoTask
 
         # Given
@@ -163,7 +163,7 @@ class TestClientWrapper(TestCase):
     @pytest.mark.skip()
     def test_select_kind_map(self):
         """Selectの選択肢を集めるためのテスト"""
-        # pytest test/notion_client_wrapper/test_client_wrapper.py::TestClientWrapper::test_select_kind_map
+        # pytest test/notion_client_wrapper/test_client_wrapper.py::TestLotion::test_select_kind_map
         target_database = DatabaseType.TASK_ROUTINE
         target_select_name = "周期"
 
@@ -193,7 +193,7 @@ class TestClientWrapper(TestCase):
     @pytest.mark.skip()
     def test_multi_select_kind_map(self):
         """MultiSelectの選択肢を集めるためのテスト"""
-        # pytest test/notion_client_wrapper/test_client_wrapper.py::TestClientWrapper::test_multi_select_kind_map
+        # pytest test/notion_client_wrapper/test_client_wrapper.py::TestLotion::test_multi_select_kind_map
         target_database = DatabaseType.RECIPE
         target_multi_select_name = "種類"
 
@@ -219,7 +219,7 @@ class TestClientWrapper(TestCase):
 
     @pytest.mark.skip("実際にページが作成されるので注意")
     def test_ページを作成してみる(self):
-        # pytest test/notion_client_wrapper/test_client_wrapper.py::TestClientWrapper::test_ページを作成してみる
+        # pytest test/notion_client_wrapper/test_client_wrapper.py::TestLotion::test_ページを作成してみる
         title = Title.from_plain_text(name="名前", text="テストページ")
         cover = Cover(type="external", external_url="https://i.ytimg.com/vi/82KT4FNyNdY/maxresdefault.jpg")
         page = self.suite.create_page_in_database(
@@ -231,7 +231,7 @@ class TestClientWrapper(TestCase):
 
     @pytest.mark.use_genuine_api()
     def test_タイトルだけで検索する(self):
-        # pytest test/notion_client_wrapper/test_client_wrapper.py::TestClientWrapper::test_タイトルだけで検索する
+        # pytest test/notion_client_wrapper/test_client_wrapper.py::TestLotion::test_タイトルだけで検索する
         page = self.suite.find_page_by_title(
             database_id=DatabaseType.BOOK.value,
             title="ジェームズ・クリアー式 複利で伸びる1つの習慣",
@@ -242,7 +242,7 @@ class TestClientWrapper(TestCase):
 
     @pytest.mark.skip("実際にページが作成されるので注意")
     def test_ページを作成する(self):
-        # pytest test/notion_client_wrapper/test_client_wrapper.py::TestClientWrapper::test_ページを作成する
+        # pytest test/notion_client_wrapper/test_client_wrapper.py::TestLotion::test_ページを作成する
         title = Title.from_plain_text(name="名前", text="テストページ")
         page = self.suite.create_page_in_database(
             database_id=DatabaseType.TASK.value,

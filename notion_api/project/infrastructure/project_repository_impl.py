@@ -3,7 +3,7 @@ from logging import Logger, getLogger
 from common.domain.tag_relation import TagRelation
 from common.value.database_type import DatabaseType
 from notion_client_wrapper.base_page import BasePage
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 from notion_client_wrapper.properties.date import Date
 from notion_client_wrapper.properties.property import Property
 from project.domain.goal_relation import GoalRelation
@@ -14,8 +14,8 @@ from project.domain.project_repository import ProjectRepository
 class ProjectRepositoryImpl(ProjectRepository):
     DATABASE_ID = DatabaseType.PROJECT.value
 
-    def __init__(self, client: ClientWrapper | None = None, logger: Logger | None = None) -> None:
-        self._client = client or ClientWrapper.get_instance()
+    def __init__(self, client: Lotion | None = None, logger: Logger | None = None) -> None:
+        self._client = client or Lotion.get_instance()
         self._logger = logger or getLogger(__name__)
 
     def fetch_all(self) -> list[Project]:

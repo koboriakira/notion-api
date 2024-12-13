@@ -4,14 +4,14 @@ from account_book.domain.account_book import AccountBook
 from account_book.domain.repository import Repository
 from common.value.database_type import DatabaseType
 from notion_client_wrapper.base_page import BasePage
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 from notion_client_wrapper.page.page_id import PageId
 
 
 class RepositoryImpl(Repository):
     DATABASE_ID = DatabaseType.ACCOUNT_BOOK.value
 
-    def __init__(self, client: ClientWrapper, logger: Logger | None = None) -> None:
+    def __init__(self, client: Lotion, logger: Logger | None = None) -> None:
         self._client = client
         self._logger = logger or getLogger(__name__)
 

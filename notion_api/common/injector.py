@@ -3,9 +3,9 @@ from common.infrastructure.twitter.lambda_twitter_api import LambdaTwitterApi
 from common.service.scrape_service.scrape_service import ScrapeService
 from common.service.tag_creator.tag_creator import TagCreator
 from common.service.tweet.tweet_fetcher import TweetFetcher
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 
-client = ClientWrapper.get_instance()
+client = Lotion.get_instance()
 
 class CommonInjector:
     @staticmethod

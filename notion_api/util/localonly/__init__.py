@@ -1,6 +1,6 @@
 import json
 
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 
 
 def get_select(
@@ -8,7 +8,7 @@ def get_select(
     name: str,
 ) -> None:
     # python -m notion_api.task.domain.task_context
-    pages = ClientWrapper.get_instance().retrieve_database(database_id=database_id)
+    pages = Lotion.get_instance().retrieve_database(database_id=database_id)
 
     result = {}
     for page in pages:

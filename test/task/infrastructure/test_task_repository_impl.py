@@ -4,7 +4,7 @@ from unittest.mock import Mock
 
 import pytest
 from notion_api.common.value.database_type import DatabaseType
-from notion_api.notion_client_wrapper.client_wrapper import ClientWrapper
+from notion_api.notion_client_wrapper.client_wrapper import Lotion
 from notion_api.notion_client_wrapper.page.page_id import PageId
 from notion_api.task.domain.task_kind import TaskKindType
 from notion_api.task.domain.task_status import TaskStatusType
@@ -16,7 +16,7 @@ from task.task_factory import TaskFactory
 
 class TestTaskRepositoryImpl(TestCase):
     def setUp(self) -> None:
-        mock_client = Mock(spec=ClientWrapper)
+        mock_client = Mock(spec=Lotion)
         self.suite = TaskRepositoryImpl(notion_client_wrapper=mock_client)
         return super().setUp()
 
@@ -137,7 +137,7 @@ class TestTaskRepositoryImpl(TestCase):
     @pytest.mark.use_genuine_api()
     def test_プロジェクトにひもづくタスクを取得する(self):
         # モックを使わない
-        suite = TaskRepositoryImpl(notion_client_wrapper=ClientWrapper.get_instance())
+        suite = TaskRepositoryImpl(notion_client_wrapper=Lotion.get_instance())
 
         project_page_id = PageId("5673db2d520f48fbad6622a38cf2ecad")
         tasks = suite.search(project_id=project_page_id)

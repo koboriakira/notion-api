@@ -3,13 +3,13 @@ import contextlib
 from common.value.database_type import DatabaseType
 from daily_log.domain.daily_log_repository import DailyLogRepository, ExistedDailyLogError
 from daily_log.value.isoweek import Isoweek
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 from notion_client_wrapper.page.page_id import PageId
 from notion_client_wrapper.properties import Date, Title
 
 
 class CreateDailyLogUsecase:
-    def __init__(self, client: ClientWrapper, daily_log_repository: DailyLogRepository) -> None:
+    def __init__(self, client: Lotion, daily_log_repository: DailyLogRepository) -> None:
         self.client = client
         self._daily_log_repository = daily_log_repository
 

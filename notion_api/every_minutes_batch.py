@@ -2,7 +2,7 @@ import logging
 from datetime import timedelta
 
 from custom_logger import get_logger
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 from shopping.infrastructure.repository_impl import ShoppingRepositoryImpl
 from task.infrastructure.task_repository_impl import TaskRepositoryImpl
 from usecase.clean_empty_title_page import CleanEmptyTitlePageUsecase
@@ -14,7 +14,7 @@ from util.environment import Environment
 from util.error_reporter import ErrorReporter
 
 logger = get_logger(__name__)
-client = ClientWrapper.get_instance(logger=logger)
+client = Lotion.get_instance(logger=logger)
 clean_empty_title_page_usecase = CleanEmptyTitlePageUsecase(client=client, logger=logger)
 task_repository = TaskRepositoryImpl(notion_client_wrapper=client)
 maintain_tasks_usecase = MaintainTasksUsecase(task_repository=task_repository)

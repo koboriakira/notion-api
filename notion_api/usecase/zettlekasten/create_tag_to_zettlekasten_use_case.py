@@ -2,7 +2,7 @@ from logging import Logger
 
 from common.domain.tag_relation import TagRelation
 from common.service.tag_creator.tag_creator import TagCreator
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 from util.tag_analyzer import TagAnalyzer
 from zettlekasten.domain.zettlekasten import Zettlekasten
 from zettlekasten.infrastructure.zettlekasten_repository_impl import (
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     import logging
 
     logging.basicConfig(level=logging.INFO)
-    client = ClientWrapper.get_instance()
+    client = Lotion.get_instance()
     zettlekasten_repository = ZettlekastenRepository(
         client=client,
         logger=logging.getLogger(__name__),

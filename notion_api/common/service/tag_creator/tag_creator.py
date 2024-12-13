@@ -1,5 +1,5 @@
 from common.value.database_type import DatabaseType
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 from notion_client_wrapper.filter.filter_builder import FilterBuilder
 from notion_client_wrapper.page.page_id import PageId
 from notion_client_wrapper.properties import Title
@@ -8,8 +8,8 @@ from notion_client_wrapper.properties import Title
 class TagCreator:
     DATABASE_ID = DatabaseType.TAG.value
 
-    def __init__(self, client: ClientWrapper | None = None) -> None:
-        self.client = client or ClientWrapper.get_instance()
+    def __init__(self, client: Lotion | None = None) -> None:
+        self.client = client or Lotion.get_instance()
 
     def execute(self, tag: list[str] | str | None) -> list[PageId]:
         """指定されたタグをタグデータベースに追加する。タグページのIDを返却する。"""

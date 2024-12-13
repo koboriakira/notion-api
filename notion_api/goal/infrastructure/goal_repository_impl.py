@@ -5,7 +5,7 @@ from goal.domain.goal import Goal
 from goal.domain.goal_repository import GoalRepository
 from goal.domain.vision_relation import VisionRelation
 from notion_client_wrapper.base_page import BasePage
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 from notion_client_wrapper.properties.property import Property
 
 
@@ -13,7 +13,7 @@ class GoalRepositoryImpl(GoalRepository):
     DATABASE_ID = DatabaseType.GOAL.value
     BACKUP_DATABASE_ID = DatabaseType.GOAL_BK.value
 
-    def __init__(self, client: ClientWrapper, logger: Logger | None = None) -> None:
+    def __init__(self, client: Lotion, logger: Logger | None = None) -> None:
         self._client = client
         self._logger = logger or getLogger(__name__)
 

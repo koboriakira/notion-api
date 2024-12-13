@@ -1,7 +1,7 @@
 from logging import Logger, getLogger
 
 from notion_client_wrapper.block.bulleted_list_item import BulletedlistItem
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 from notion_client_wrapper.page.page_id import PageId
 from project.domain.project import Project
 from project.domain.project_repository import ProjectRepository
@@ -12,7 +12,7 @@ from usecase.project.create_project_service import CreateProjectService
 class CreateProjectFromTemplateUsecase:
     def __init__(
         self,
-        client: ClientWrapper,
+        client: Lotion,
         project_repository: ProjectRepository,
         task_repository: TaskRepository,
         logger: Logger | None = None,

@@ -2,7 +2,7 @@ from logging import Logger
 
 from common.value.database_type import DatabaseType
 from custom_logger import get_logger
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 from notion_client_wrapper.filter.condition.empty_condition import EmptyCondition
 from notion_client_wrapper.filter.filter_builder import FilterBuilder
 from notion_client_wrapper.properties.title import Title
@@ -22,8 +22,8 @@ database_list = [
 
 
 class CleanEmptyTitlePageUsecase:
-    def __init__(self, client: ClientWrapper | None = None, logger: Logger | None = None) -> None:
-        self._client = client or ClientWrapper.get_instance()
+    def __init__(self, client: Lotion | None = None, logger: Logger | None = None) -> None:
+        self._client = client or Lotion.get_instance()
         self._logger = logger or get_logger(__name__)
 
     def handle(self) -> dict:

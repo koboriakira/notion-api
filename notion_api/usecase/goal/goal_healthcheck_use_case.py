@@ -3,7 +3,7 @@ from logging import Logger, getLogger
 from common.value.slack_channel_type import ChannelType
 from goal.domain.goal import Goal
 from goal.domain.goal_repository import GoalRepository
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 from util.datetime import jst_today
 from util.slack.slack_client import SlackClient
 
@@ -58,7 +58,7 @@ if __name__ == "__main__":
 
     logging.basicConfig(level=logging.INFO)
     goal_repository = GoalRepositoryImpl(
-        client=ClientWrapper.get_instance(),
+        client=Lotion.get_instance(),
         logger=logging.getLogger(__name__),
     )
     # slack_client = MockSlackClient()

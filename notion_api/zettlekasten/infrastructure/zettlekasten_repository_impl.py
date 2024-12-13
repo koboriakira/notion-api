@@ -2,7 +2,7 @@ from logging import Logger, getLogger
 
 from common.domain.tag_relation import TagRelation
 from common.value.database_type import DatabaseType
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 from notion_client_wrapper.filter.condition.empty_condition import EmptyCondition
 from notion_client_wrapper.filter.filter_builder import FilterBuilder
 from zettlekasten.domain.zettlekasten import Zettlekasten
@@ -13,7 +13,7 @@ from zettlekasten.domain.zettlekasten_title import ZettlekastenName
 class ZettlekastenRepositoryImpl(ZettlekastenRepository):
     DATABASE_ID = DatabaseType.ZETTLEKASTEN.value
 
-    def __init__(self, client: ClientWrapper, logger: Logger | None = None) -> None:
+    def __init__(self, client: Lotion, logger: Logger | None = None) -> None:
         self._client = client
         self._logger = logger or getLogger(__name__)
 

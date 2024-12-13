@@ -2,7 +2,7 @@ from logging import Logger, getLogger
 
 from common.value.database_type import DatabaseType
 from notion_client_wrapper.base_page import BasePage
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 from notion_client_wrapper.filter.condition.date_condition import DateCondition, DateConditionType
 from notion_client_wrapper.filter.filter_builder import FilterBuilder
 from util.date_range import DateRange
@@ -14,7 +14,7 @@ from video.domain.video_title import VideoName
 class VideoRepositoryImpl(VideoRepository):
     DATABASE_ID = DatabaseType.VIDEO.value
 
-    def __init__(self, client: ClientWrapper, logger: Logger | None = None) -> None:
+    def __init__(self, client: Lotion, logger: Logger | None = None) -> None:
         self._client = client
         self._logger = logger or getLogger(__name__)
 

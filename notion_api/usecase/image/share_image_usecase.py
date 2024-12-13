@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from common.domain.external_image import ExternalImage
 from common.service.image.external_image_service import ExternalImageService
 from daily_log.infrastructure.daily_log_repository_impl import DailyLogRepositoryImpl
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 from notion_client_wrapper.page.page_id import PageId
 from util.datetime import jst_today
 
@@ -17,9 +17,9 @@ class ShareImageRequest:
 class ShareImageUsecase:
     def __init__(
         self,
-        client: ClientWrapper | None = None,
+        client: Lotion | None = None,
     ) -> None:
-        self._client = client or ClientWrapper.get_instance()
+        self._client = client or Lotion.get_instance()
         self._image_service = ExternalImageService(client=self._client)
         self._daily_log_repository = DailyLogRepositoryImpl(client=self._client)
 

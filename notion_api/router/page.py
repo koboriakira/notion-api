@@ -4,7 +4,7 @@ from common.domain.external_image import ExternalImage
 from common.service.image.external_image_service import ExternalImageService
 from custom_logger import get_logger
 from interface import page
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 from notion_client_wrapper.page.page_id import PageId
 from router.request import AddFeelingRequest, AddPomodoroCountRequest, AppendTextBlockRequest, UpdateStatusRequest
 from router.request.page_request import AppendImageBlockRequest
@@ -69,6 +69,6 @@ def append_image_block(
 ) -> BaseResponse:
     valid_access_token(access_token)
     external_image = ExternalImage(url=request.image_url)
-    external_image_service = ExternalImageService(client=ClientWrapper.get_instance())
+    external_image_service = ExternalImageService(client=Lotion.get_instance())
     external_image_service.append_image(block_id=PageId(page_id).value, external_image=external_image)
     return BaseResponse()

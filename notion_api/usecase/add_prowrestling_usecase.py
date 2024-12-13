@@ -5,7 +5,7 @@ from custom_logger import get_logger
 from notion_client_wrapper.base_page import BasePage
 from notion_client_wrapper.block import Paragraph
 from notion_client_wrapper.block.rich_text.rich_text_builder import RichTextBuilder
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 from notion_client_wrapper.properties import Cover, Date, Relation, Select, Title, Url
 from usecase.service.tag_create_service import TagCreateService
 
@@ -22,7 +22,7 @@ def find_promotion(pages: list[BasePage], promotion_name: str) -> Select | None:
 
 class AddProwrestlingUsecase:
     def __init__(self):
-        self.client = ClientWrapper.get_instance()
+        self.client = Lotion.get_instance()
         self.tag_create_service = TagCreateService()
 
     def execute(

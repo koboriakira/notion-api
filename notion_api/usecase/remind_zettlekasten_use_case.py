@@ -63,10 +63,10 @@ if __name__ == "__main__":
     # python -m notion_api.usecase.remind_zettlekasten_use_case
     import os
 
-    from notion_client_wrapper.client_wrapper import ClientWrapper
+    from lotion import Lotion
     from zettlekasten.infrastructure.zettlekasten_repository_impl import ZettlekastenRepositoryImpl
 
-    repository = ZettlekastenRepositoryImpl(client=ClientWrapper.get_instance())
+    repository = ZettlekastenRepositoryImpl(client=Lotion.get_instance())
     use_case = RemindZettlekastenUseCase(
         zettlekasten_repository=repository,
         slack_client=WebClient(token=os.environ["SLACK_BOT_TOKEN"]),

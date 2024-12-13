@@ -1,6 +1,6 @@
 from logging import Logger, getLogger
 
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 from notion_client_wrapper.database.database_type import DatabaseType
 from notion_client_wrapper.filter.filter_builder import FilterBuilder
 from restaurant.domain.restaurant import Restaurant
@@ -10,7 +10,7 @@ from restaurant.domain.restaurant_title import RestaurantName
 class RestaurantRepositoryImpl:
     def __init__(
             self,
-            client: ClientWrapper,
+            client: Lotion,
             logger: Logger|None = None) -> None :
         self._client = client
         self._logger = logger or getLogger(__name__)

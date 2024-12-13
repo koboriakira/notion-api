@@ -2,7 +2,7 @@ from datetime import date, datetime, time, timedelta
 
 from common.value.database_type import DatabaseType
 from notion_client_wrapper.base_page import BasePage
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 from notion_client_wrapper.filter.condition.checkbox_condition import CheckboxCondition
 from notion_client_wrapper.filter.condition.date_condition import DateCondition
 from notion_client_wrapper.filter.condition.empty_condition import EmptyCondition
@@ -26,8 +26,8 @@ from util.datetime import JST
 
 
 class TaskRepositoryImpl(TaskRepository):
-    def __init__(self, notion_client_wrapper: ClientWrapper | None = None) -> None:
-        self.client = notion_client_wrapper or ClientWrapper.get_instance()
+    def __init__(self, notion_client_wrapper: Lotion | None = None) -> None:
+        self.client = notion_client_wrapper or Lotion.get_instance()
 
     def search(  # noqa: PLR0913
         self,

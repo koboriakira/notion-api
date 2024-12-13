@@ -5,14 +5,14 @@ from common.value.database_type import DatabaseType
 from daily_log.domain.daily_log import DailyLog
 from daily_log.domain.daily_log_builder import DailyLogBuilder
 from daily_log.domain.daily_log_repository import DailyLogRepository, ExistedDailyLogError, NotFoundDailyLogError
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 from notion_client_wrapper.page.page_id import PageId
 
 
 class DailyLogRepositoryImpl(DailyLogRepository):
     DATABASE_ID = DatabaseType.DAILY_LOG.value
 
-    def __init__(self, client: ClientWrapper, logger: Logger | None = None) -> None:
+    def __init__(self, client: Lotion, logger: Logger | None = None) -> None:
         self._client = client
         self._logger = logger or getLogger(__name__)
 

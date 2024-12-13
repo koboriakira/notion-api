@@ -2,7 +2,7 @@ from common.injector import CommonInjector
 from common.service.tag_creator import TagCreator
 from common.value.site_kind import SiteKind
 from custom_logger import get_logger
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 from util.openai_executer import OpenaiExecuter
 from util.tag_analyzer import TagAnalyzer
 from util.text_summarizer import TextSummarizer
@@ -16,7 +16,7 @@ from webclip.service.webclip_generator import (
 )
 
 logger = get_logger(__name__)
-client = ClientWrapper.get_instance()
+client = Lotion.get_instance()
 scrape_service = CommonInjector.get_scrape_service()
 tag_creator = TagCreator(client=client)
 openai_executer = OpenaiExecuter(logger=logger)

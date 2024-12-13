@@ -2,7 +2,7 @@ from typing_extensions import deprecated
 
 from common.value.database_type import DatabaseType
 from custom_logger import get_logger
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 from notion_client_wrapper.page.page_id import PageId
 from notion_client_wrapper.properties import Title
 
@@ -10,8 +10,8 @@ logger = get_logger(__name__)
 
 
 class TagCreateService:
-    def __init__(self, client: ClientWrapper | None = None) -> None:
-        self.client = client or ClientWrapper.get_instance()
+    def __init__(self, client: Lotion | None = None) -> None:
+        self.client = client or Lotion.get_instance()
 
     @deprecated("use add_tag_page instead")
     def add_tag(self, name: str) -> str:

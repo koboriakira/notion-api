@@ -1,6 +1,6 @@
 from common.domain.external_image import ExternalImage
 from common.value.database_type import DatabaseType
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 from notion_client_wrapper.filter.condition.date_condition import DateCondition, DateConditionType
 from notion_client_wrapper.filter.filter_builder import FilterBuilder
 from notion_client_wrapper.page.page_id import PageId
@@ -13,8 +13,8 @@ from util.date_range import DateRange
 class ExternalImageService:
     DATABASE_ID = DatabaseType.GIF_JPEG.value
 
-    def __init__(self, client: ClientWrapper | None = None) -> None:
-        self._client = client or ClientWrapper.get_instance()
+    def __init__(self, client: Lotion | None = None) -> None:
+        self._client = client or Lotion.get_instance()
 
     def add_external_image(self, external_image: ExternalImage) -> PageId:
         """指定された画像をGIF/JPEGデータベースに追加する。画像ページのIDを返却する。"""

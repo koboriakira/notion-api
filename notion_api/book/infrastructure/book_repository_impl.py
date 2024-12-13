@@ -2,14 +2,14 @@ from logging import Logger, getLogger
 
 from book.domain.book import Book
 from book.domain.book_repository import BookRepository, ExistedBookError, NotFoundBookError
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 from notion_client_wrapper.database.database_type import DatabaseType
 
 DATABASE_ID = DatabaseType.BOOK.value
 
 
 class BookRepositoryImpl(BookRepository):
-    def __init__(self, client: ClientWrapper, logger: Logger | None = None) -> None:
+    def __init__(self, client: Lotion, logger: Logger | None = None) -> None:
         self._client = client
         self._logger = logger or getLogger(__name__)
 

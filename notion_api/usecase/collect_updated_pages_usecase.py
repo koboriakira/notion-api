@@ -11,7 +11,7 @@ from notion_client_wrapper import block
 from notion_client_wrapper.base_page import BasePage
 from notion_client_wrapper.block.embed import Embed
 from notion_client_wrapper.block.rich_text.rich_text_builder import RichTextBuilder
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 from notion_client_wrapper.filter.condition.date_condition import DateCondition
 from notion_client_wrapper.filter.filter_builder import FilterBuilder
 from notion_client_wrapper.properties.last_edited_time import LastEditedTime
@@ -47,7 +47,7 @@ class CollectUpdatedPagesUsecase:
         video_repository: VideoRepository,
         is_debug: bool | None = None,
     ) -> None:
-        self.client = ClientWrapper.get_instance()
+        self.client = Lotion.get_instance()
         channel_type = ChannelType.DIARY if not is_debug else ChannelType.TEST
         self._slack_client = SlackClient.bot(channel_type=channel_type, thread_ts=None)
         self._task_repository = task_repository
@@ -277,7 +277,7 @@ if __name__ == "__main__":
     from video.infrastructure.video_repository_impl import VideoRepositoryImpl
     from webclip.infrastructure.webclip_repository_impl import WebclipRepositoryImpl
 
-    client = ClientWrapper.get_instance()
+    client = Lotion.get_instance()
     task_repository = TaskRepositoryImpl(notion_client_wrapper=client)
     song_repository = SongRepositoryImpl(client=client)
     daily_log_repository = DailyLogRepositoryImpl(client=client)

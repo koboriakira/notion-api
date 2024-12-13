@@ -1,10 +1,10 @@
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 from notion_client_wrapper.page.page_id import PageId
 
 
 class PageRemover:
-    def __init__(self, client: ClientWrapper | None = None) -> None:
-        self._client = client or ClientWrapper.get_instance()
+    def __init__(self, client: Lotion | None = None) -> None:
+        self._client = client or Lotion.get_instance()
 
     def execute(
         self,

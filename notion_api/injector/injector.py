@@ -11,7 +11,7 @@ from external_calendar.infrastructure.google_calendar_api import GoogleCalendarA
 from external_calendar.service.external_calendar_service import ExternalCalendarService
 from injector.page_creator_factory import PageCreatorFactory
 from music.infrastructure.song_repository_impl import SongRepositoryImpl
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 from recipe.infrastructure.recipe_repository_impl import RecipeRepositoryImpl
 from recipe.service.recipe_creator import RecipeCreator
 from slack_concierge.injector import SlackConciergeInjector
@@ -36,7 +36,7 @@ from zettlekasten.infrastructure.zettlekasten_repository_impl import Zettlekaste
 logger = get_logger(__name__)
 
 
-client = ClientWrapper.get_instance()
+client = Lotion.get_instance()
 openai_executer = OpenaiExecuter(logger=logger)
 slack_bot_client = WebClient(token=os.environ["SLACK_BOT_TOKEN"])
 

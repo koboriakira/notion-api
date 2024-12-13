@@ -53,9 +53,9 @@ class RestaurantCreator(PageCreator):
 
 if __name__ == "__main__":
     # python -m notion_api.restaurant.service.restaurant_creator
-    from notion_client_wrapper.client_wrapper import ClientWrapper
+    from lotion import Lotion
 
-    client = ClientWrapper.get_instance()
+    client = Lotion.get_instance()
     suite = RestaurantCreator(
         restaurant_repository=RestaurantRepository(client=client),
     )

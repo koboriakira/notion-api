@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from custom_logger import get_logger
 from goal.domain.goal_repository import GoalRepository
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 from project.domain.project_repository import ProjectRepository
 from task.domain.task_repository import TaskRepository
 from task.domain.task_status import TaskStatusType
@@ -103,7 +103,7 @@ if __name__ == "__main__":
     from project.infrastructure.project_repository_impl import ProjectRepositoryImpl
     from task.infrastructure.task_repository_impl import TaskRepositoryImpl
 
-    client = ClientWrapper.get_instance()
+    client = Lotion.get_instance()
     usecase = MoveTasksToBackupUsecase(
         task_repository=TaskRepositoryImpl(),
         project_repository=ProjectRepositoryImpl(client=client),

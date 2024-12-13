@@ -1,4 +1,4 @@
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 from notion_client_wrapper.block import Paragraph
 from custom_logger import get_logger
 
@@ -7,7 +7,7 @@ logger = get_logger(__name__)
 
 class AppendBlockUsecase:
     def __init__(self):
-        self.client = ClientWrapper.get_instance()
+        self.client = Lotion.get_instance()
 
     def append_text(self,
                     page_id: str,

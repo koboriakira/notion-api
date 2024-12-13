@@ -3,7 +3,7 @@ import os
 
 from slack_sdk import WebClient
 
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 from usecase.remind_zettlekasten_use_case import RemindZettlekastenUseCase
 from util.environment import Environment
 from util.error_reporter import ErrorReporter
@@ -18,7 +18,7 @@ if Environment.is_dev():
 def handler(event: dict, context: dict) -> dict:  # noqa: ARG001
     try:
         slack_client = WebClient(token=os.environ["SLACK_BOT_TOKEN"])
-        zettlekasten_repository = ZettlekastenRepositoryImpl(client=ClientWrapper.get_instance())
+        zettlekasten_repository = ZettlekastenRepositoryImpl(client=Lotion.get_instance())
         usecase = RemindZettlekastenUseCase(
             zettlekasten_repository=zettlekasten_repository,
             slack_client=slack_client,
