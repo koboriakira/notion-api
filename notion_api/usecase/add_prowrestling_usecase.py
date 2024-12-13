@@ -1,12 +1,13 @@
 from datetime import date as DateObject
 
+from lotion import Lotion
+from lotion.base_page import BasePage
+from lotion.block import Paragraph
+from lotion.block.rich_text import RichTextBuilder
+from lotion.properties import Cover, Date, Relation, Select, Title, Url
+
 from common.value.database_type import DatabaseType
 from custom_logger import get_logger
-from lotion.base_page import BasePage
-from lotion.block Paragraph
-from lotion.block.rich_text_builder import RichTextBuilder
-from lotion import Lotion
-from lotion.properties Cover, Date, Relation, Select, Title, Url
 from usecase.service.tag_create_service import TagCreateService
 
 logger = get_logger(__name__)
