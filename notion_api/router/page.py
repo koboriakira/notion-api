@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Header
+from lotion import Lotion
+from lotion.page import PageId
 
 from common.domain.external_image import ExternalImage
 from common.service.image.external_image_service import ExternalImageService
 from custom_logger import get_logger
 from interface import page
-from lotion import Lotion
-from lotion.page import PageId
 from router.request import AddFeelingRequest, AddPomodoroCountRequest, AppendTextBlockRequest, UpdateStatusRequest
 from router.request.page_request import AppendImageBlockRequest
 from router.response import BaseResponse
@@ -57,7 +57,8 @@ def append_text_block(request: AppendTextBlockRequest, access_token: str | None 
 def remove_page(page_id: str, access_token: str | None = Header(None)) -> BaseResponse:
     valid_access_token(access_token)
     page_remover = PageRemover()
-    page_remover.execute(page_id=PageId(value=page_id))
+    print(page_id)
+    page_remover.execute(page_id=PageId(page_id))
     return BaseResponse(data={"page_id": page_id})
 
 

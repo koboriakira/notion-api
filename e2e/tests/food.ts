@@ -24,6 +24,7 @@ export default class StepImplementation {
     };
     const response = await client.post("/food/", data);
     const pageId = response.data.data.id;
+    console.log(pageId)
     DataStoreFactory.getScenarioDataStore().put("pageId", pageId);
   }
 }

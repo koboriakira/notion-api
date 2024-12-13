@@ -44,7 +44,7 @@ def create_new_project(
     access_token: str | None = Header(None),
 ) -> BaseResponse:
     valid_access_token(access_token)
-    project_template_id = PageId(value=request.data.id)
+    project_template_id = PageId(request.data.id)
     usecase = CreateProjectFromTemplateUsecase(
         client=client,
         project_repository=ProjectRepositoryImpl(client=client),
@@ -66,5 +66,5 @@ def remove_project(
         task_repository=TaskRepositoryImpl(notion_client_wrapper=client),
         project_repository=ProjectRepositoryImpl(client=client),
     )
-    remove_project_service.execute(id_=PageId(value=project_id))
+    remove_project_service.execute(id_=PageId(project_id))
     return BaseResponse()

@@ -58,7 +58,7 @@ class InboxService:
                 if isinstance(page, Song) or isinstance(page, Video)
                 else Bookmark.from_url(url=original_url)
             )
-            self.client.append_block(block_id=inbox_task_page["id"], block=block)
+            self.client.append_block(block_id=inbox_task_page.page_id.value, block=block)
 
         # Slackに通知
         if slack_channel is not None:

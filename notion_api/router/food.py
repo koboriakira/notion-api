@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Header
+from lotion import Lotion
 from pydantic import BaseModel
 
 from custom_logger import get_logger
 from food.infrastructure.food_repository_impl import FoodRepositoryImpl
-from lotion import Lotion
 from router.response import BaseResponse
 from usecase.add_food_usecase import AddFoodUsecase
 from util.access_token import valid_access_token
@@ -23,4 +23,4 @@ def add_track_page(request: AddFoodRequest, access_token: str | None = Header(No
     food_repository = FoodRepositoryImpl(client=Lotion.get_instance())
     usecase = AddFoodUsecase(food_repository=food_repository)
     food = usecase.execute(title=request.title)
-    return BaseResponse(data={"id": food.id_, "url": food.url})
+    return BaseResponse(data={"id": food.page_id.value, "url": food.url})

@@ -26,7 +26,7 @@ class RepositoryImpl(Repository):
             properties=entity.properties.values,
             blocks=entity.block_children,
         )
-        return self._find_by_id(PageId(page["id"]))
+        return self._find_by_id(page.page_id)
 
     def _find_by_id(self, page_id: PageId) -> AccountBook:
         base_page = self._client.retrieve_page(page_id=page_id.value)
@@ -40,8 +40,8 @@ class RepositoryImpl(Repository):
             url=base_page.url,
             created_time=base_page.created_time,
             last_edited_time=base_page.last_edited_time,
-            created_by=base_page.created_by,
-            last_edited_by=base_page.last_edited_by,
+            _created_by=base_page._created_by,
+            _last_edited_by=base_page._last_edited_by,
             cover=base_page.cover,
             icon=base_page.icon,
             archived=base_page.archived,

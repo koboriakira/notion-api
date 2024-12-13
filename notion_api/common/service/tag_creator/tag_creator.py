@@ -25,14 +25,14 @@ class TagCreator:
         filter_param = FilterBuilder.build_title_equal_condition(title=title)
         tags = self.client.retrieve_database(database_id=self.DATABASE_ID, filter_param=filter_param)
         if len(tags) > 0:
-            return PageId(tags[0].id)
+            return tags[0].page_id
 
         # 作成
         tag_page = self.client.create_page_in_database(
             database_id=self.DATABASE_ID,
             properties=[Title.from_plain_text(name="名前", text=title)],
         )
-        return PageId(tag_page["id"])
+        return tag_page.page_id
 
 
 if __name__ == "__main__":

@@ -1,12 +1,13 @@
 from logging import Logger, getLogger
 
+from lotion import Lotion
+from lotion.base_page import BasePage
+from lotion.filter import FilterBuilder
+from lotion.properties import Title
+
 from common.value.database_type import DatabaseType
 from food.domain.food import Food
 from food.domain.food_repository import FoodRepository
-from lotion.base_page import BasePage
-from lotion import Lotion
-from lotion.filter import FilterBuilder
-from lotion.properties import Title
 
 
 class FoodRepositoryImpl(FoodRepository):
@@ -49,8 +50,8 @@ class FoodRepositoryImpl(FoodRepository):
             url=base_page.url,
             created_time=base_page.created_time,
             last_edited_time=base_page.last_edited_time,
-            created_by=base_page.created_by,
-            last_edited_by=base_page.last_edited_by,
+            _created_by=base_page._created_by,
+            _last_edited_by=base_page._last_edited_by,
             cover=base_page.cover,
             icon=base_page.icon,
             archived=base_page.archived,

@@ -1,11 +1,11 @@
 from logging import Logger, getLogger
 
+from lotion import Lotion
+from lotion.base_page import BasePage
+from lotion.properties import Date, Property
+
 from common.domain.tag_relation import TagRelation
 from common.value.database_type import DatabaseType
-from lotion.base_page import BasePage
-from lotion import Lotion
-from lotion.properties import Date
-from lotion.properties import Property
 from project.domain.goal_relation import GoalRelation
 from project.domain.project import Project
 from project.domain.project_repository import ProjectRepository
@@ -52,7 +52,7 @@ class ProjectRepositoryImpl(ProjectRepository):
             properties=project.properties.values,
             blocks=project.block_children,
         )
-        return self.find_by_id(page_id=page["id"])
+        return self.find_by_id(page_id=page.page_id.value)
 
     def find_by_id(self, page_id: str) -> Project:
         base_page = self._client.retrieve_page(page_id=page_id)
@@ -71,8 +71,8 @@ class ProjectRepositoryImpl(ProjectRepository):
             url=base_page.url,
             created_time=base_page.created_time,
             last_edited_time=base_page.last_edited_time,
-            created_by=base_page.created_by,
-            last_edited_by=base_page.last_edited_by,
+            _created_by=base_page._created_by,
+            _last_edited_by=base_page._last_edited_by,
             cover=base_page.cover,
             icon=base_page.icon,
             archived=base_page.archived,

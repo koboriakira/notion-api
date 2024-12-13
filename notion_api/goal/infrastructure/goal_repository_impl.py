@@ -1,12 +1,13 @@
 from logging import Logger, getLogger
 
+from lotion import Lotion
+from lotion.base_page import BasePage
+from lotion.properties import Property
+
 from common.value.database_type import DatabaseType
 from goal.domain.goal import Goal
 from goal.domain.goal_repository import GoalRepository
 from goal.domain.vision_relation import VisionRelation
-from lotion.base_page import BasePage
-from lotion import Lotion
-from lotion.properties import Property
 
 
 class GoalRepositoryImpl(GoalRepository):
@@ -54,8 +55,8 @@ class GoalRepositoryImpl(GoalRepository):
             url=base_page.url,
             created_time=base_page.created_time,
             last_edited_time=base_page.last_edited_time,
-            created_by=base_page.created_by,
-            last_edited_by=base_page.last_edited_by,
+            _created_by=base_page._created_by,
+            _last_edited_by=base_page._last_edited_by,
             cover=base_page.cover,
             icon=base_page.icon,
             archived=base_page.archived,
