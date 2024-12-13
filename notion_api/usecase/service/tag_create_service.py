@@ -1,10 +1,10 @@
+from lotion import Lotion
+from lotion.page import PageId
+from lotion.properties import Title
 from typing_extensions import deprecated
 
 from common.value.database_type import DatabaseType
 from custom_logger import get_logger
-from lotion import Lotion
-from lotion.page import PageId
-from lotion.properties Title
 
 logger = get_logger(__name__)
 

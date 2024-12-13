@@ -1,8 +1,9 @@
-from common.value.database_type import DatabaseType
 from lotion import Lotion
 from lotion.filter import FilterBuilder
 from lotion.page import PageId
-from lotion.properties Title
+from lotion.properties import Title
+
+from common.value.database_type import DatabaseType
 
 
 class TagCreator:

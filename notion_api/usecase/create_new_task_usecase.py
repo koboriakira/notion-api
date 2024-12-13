@@ -1,6 +1,7 @@
 from datetime import date, datetime
 
-from lotion.properties Title
+from lotion.properties import Title
+
 from task.domain.task_kind import TaskKindType
 from task.domain.task_repository import TaskRepository
 from task.domain.task_status import TaskStatusType

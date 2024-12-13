@@ -1,5 +1,5 @@
 
-from lotion.block import RichText
+from lotion.block.rich_text import RichText
 from lotion.properties import Text
 
 

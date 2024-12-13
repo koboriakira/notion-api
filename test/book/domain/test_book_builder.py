@@ -2,10 +2,10 @@ from datetime import date
 from unittest import TestCase
 from unittest.mock import Mock
 
+from lotion.page import PageId
 from notion_api.book.domain.book_api import BookApiResult
 from notion_api.book.domain.book_builder import BookBuilder
 from notion_api.common.service.tag_creator.tag_creator import TagCreator
-from notion_api.lotion.page import PageId
 
 
 class TestBookBuilder(TestCase):
