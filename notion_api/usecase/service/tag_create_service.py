@@ -19,7 +19,7 @@ class TagCreateService:
         # すでに存在するか確認
         tags = self.client.retrieve_database(database_id=DatabaseType.TAG.value, title=name)
         if len(tags) > 0:
-            return tags[0].id
+            return tags[0].page_id.value
 
         # 作成
         result = self.client.create_page_in_database(
@@ -28,7 +28,7 @@ class TagCreateService:
                 Title.from_plain_text(name="名前", text=name),
             ],
         )
-        return result["id"]
+        return result.page_id.value
 
     def add_tag_page(self, name: str) -> PageId:
         """指定されたタグをタグデータベースに追加する。タグページのIDを返却する"""

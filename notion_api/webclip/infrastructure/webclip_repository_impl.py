@@ -39,12 +39,12 @@ class WebclipRepositoryImpl(WebclipRepository):
             properties=webclip.properties.values,
         )
         self._client.append_blocks(
-            block_id=result["id"],
+            block_id=result.page_id.value,
             blocks=webclip.block_children,
         )
         webclip.update_id_and_url(
-            page_id=result["id"],
-            url=result["url"],
+            page_id=result.page_id.value,
+            url=result.url,
         )
         return webclip
 

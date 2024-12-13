@@ -1,7 +1,8 @@
 from logging import Logger, getLogger
 
-from common.value.database_type import DatabaseType
 from lotion import Lotion
+
+from common.value.database_type import DatabaseType
 from recipe.domain.recipe import Recipe
 from recipe.domain.recipe_repository import RecipeRepository
 
@@ -21,7 +22,7 @@ class RecipeRepositoryImpl(RecipeRepository):
             blocks=recipe.block_children,
         )
         recipe.update_id_and_url(
-            page_id=result["id"],
-            url=result["url"],
+            page_id=result.page_id.value,
+            url=result.url,
         )
         return recipe

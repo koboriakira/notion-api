@@ -37,8 +37,8 @@ class FoodRepositoryImpl(FoodRepository):
             properties=food.properties.values,
         )
         food.update_id_and_url(
-            page_id=result["id"],
-            url=result["url"],
+            page_id=result.page_id.value,
+            url=result.url,
         )
         return food
 

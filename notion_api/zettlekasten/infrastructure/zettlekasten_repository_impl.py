@@ -1,10 +1,11 @@
 from logging import Logger, getLogger
 
+from lotion import Lotion
+from lotion.filter import FilterBuilder
+from lotion.filter.condition import EmptyCondition
+
 from common.domain.tag_relation import TagRelation
 from common.value.database_type import DatabaseType
-from lotion import Lotion
-from lotion.filter.condition import EmptyCondition
-from lotion.filter import FilterBuilder
 from zettlekasten.domain.zettlekasten import Zettlekasten
 from zettlekasten.domain.zettlekasten_repository import ZettlekastenRepository
 from zettlekasten.domain.zettlekasten_title import ZettlekastenName
@@ -67,7 +68,7 @@ class ZettlekastenRepositoryImpl(ZettlekastenRepository):
             properties=zettlekasten.properties.values,
         )
         zettlekasten.update_id_and_url(
-            page_id=result["id"],
-            url=result["url"],
+            page_id=result.page_id.value,
+            url=result.url,
         )
         return zettlekasten

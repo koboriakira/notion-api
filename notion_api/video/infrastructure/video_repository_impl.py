@@ -63,8 +63,8 @@ class VideoRepositoryImpl(VideoRepository):
             properties=video.properties.values,
         )
         video.update_id_and_url(
-            page_id=result["id"],
-            url=result["url"],
+            page_id=result.page_id.value,
+            url=result.url,
         )
         return video
 

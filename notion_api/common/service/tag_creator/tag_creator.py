@@ -32,7 +32,7 @@ class TagCreator:
             database_id=self.DATABASE_ID,
             properties=[Title.from_plain_text(name="名前", text=title)],
         )
-        return tag_page.page_id
+        return tag_page["id"]
 
 
 if __name__ == "__main__":

@@ -76,8 +76,8 @@ class AddProwrestlingUsecase:
             properties=properties,
         )
         page = {
-            "id": result["id"],
-            "url": result["url"],
+            page_id: result.page_id.value,
+            url: result.url,
         }
 
         # ページ本文を追加

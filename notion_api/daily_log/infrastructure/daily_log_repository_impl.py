@@ -1,12 +1,13 @@
 from datetime import date, datetime, timedelta
 from logging import Logger, getLogger
 
+from lotion import Lotion
+from lotion.page import PageId
+
 from common.value.database_type import DatabaseType
 from daily_log.domain.daily_log import DailyLog
 from daily_log.domain.daily_log_builder import DailyLogBuilder
 from daily_log.domain.daily_log_repository import DailyLogRepository, ExistedDailyLogError, NotFoundDailyLogError
-from lotion import Lotion
-from lotion.page import PageId
 
 
 class DailyLogRepositoryImpl(DailyLogRepository):
@@ -30,8 +31,8 @@ class DailyLogRepositoryImpl(DailyLogRepository):
             blocks=daily_log.block_children,
         )
         daily_log.update_id_and_url(
-            page_id=result["id"],
-            url=result["url"],
+            page_id=result.page_id.value,
+            url=result.url,
         )
         return daily_log
 

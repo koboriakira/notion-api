@@ -1,11 +1,11 @@
 from lotion import Lotion
 from lotion.filter import FilterBuilder
+from lotion.filter.condition import DateCondition, DateConditionType
 from lotion.page import PageId
 from lotion.properties import Cover, Title, Url
 
 from common.domain.external_image import ExternalImage
 from common.value.database_type import DatabaseType
-from lotion.filter.condition import DateCondition, DateConditionType
 from util.date_range import DateRange
 
 
@@ -27,7 +27,7 @@ class ExternalImageService:
             cover=Cover.from_external_url(external_url=external_image.thumbnail_url),
             blocks=[image],
         )
-        return PageId(page_dict["id"])
+        return page_dict.page_id
 
     def append_image(self, block_id: str, external_image: ExternalImage) -> None:
         """指定された画像を指定されたブロックに追加する。"""

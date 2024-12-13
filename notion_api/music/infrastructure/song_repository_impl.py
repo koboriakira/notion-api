@@ -60,8 +60,8 @@ class SongRepositoryImpl(SongRepository):
             properties=song.properties.values,
         )
         song.update_id_and_url(
-            page_id=result["id"],
-            url=result["url"],
+            page_id=result.page_id.value,
+            url=result.url,
         )
         return song
 

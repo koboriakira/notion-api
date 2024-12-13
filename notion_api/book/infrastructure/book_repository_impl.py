@@ -30,8 +30,8 @@ class BookRepositoryImpl(BookRepository):
             cover=book.cover,
         )
         book.update_id_and_url(
-            page_id=result["id"],
-            url=result["url"],
+            page_id=result.page_id.value,
+            url=result.url,
         )
         return book
 
