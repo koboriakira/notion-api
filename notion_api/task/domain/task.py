@@ -4,6 +4,7 @@ from typing import override
 
 from lotion.base_page import BasePage
 from lotion.page import PageId
+
 from task.domain.completed_flag import CompletedFlag
 from task.domain.do_tomorrow_flag import DoTommorowFlag
 from task.domain.due_date import DueDate
@@ -132,7 +133,7 @@ class ToDoTask(BasePage):
     @property
     def kind(self) -> TaskKindType | None:
         kind_model = self.get_select(name=TaskKind.NAME)
-        if kind_model is None or kind_model.selected_name is None:
+        if kind_model.selected_name == "":
             return None
         return TaskKindType(kind_model.selected_name)
 

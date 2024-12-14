@@ -42,7 +42,6 @@ class RecipeBuilder:
 
     def add_meal_kind(self, meal_kind_types: MealKindTypes) -> "RecipeBuilder":
         meal_kind = MealKind(kind_types=meal_kind_types)
-        print(meal_kind)
         self.properties.append(meal_kind)
         return self
 

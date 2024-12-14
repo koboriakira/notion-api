@@ -1,6 +1,10 @@
 from dataclasses import dataclass
 from datetime import date
 
+from lotion.block import Block
+from lotion.page import PageId
+from lotion.properties import Cover, Properties, Property
+
 from common.domain.tag_relation import TagRelation
 from daily_log.domain.daily_goal import DailyGoal
 from daily_log.domain.daily_log import DailyLog
@@ -9,11 +13,6 @@ from daily_log.domain.daily_log_title import DailyLogTitle
 from daily_log.domain.daily_retro_comment import DailyRetroComment
 from daily_log.domain.previous_relation import PreviousRelation
 from daily_log.domain.weekly_log_relation import WeeklyLogRelation
-from lotion.block import Block
-from lotion.page import PageId
-from lotion.properties import Cover
-from lotion.properties import Properties
-from lotion.properties import Property
 
 
 @dataclass
@@ -35,7 +34,6 @@ class DailyLogBuilder:
         return DailyLogBuilder(properties=properties, blocks=blocks, cover=None)
 
     def build(self) -> DailyLog:
-        print(self.properties)
         return DailyLog(properties=Properties(self.properties), block_children=self.blocks, cover=self.cover)
 
     def add_daily_goal(self, daily_goal: str | DailyGoal) -> "DailyLogBuilder":

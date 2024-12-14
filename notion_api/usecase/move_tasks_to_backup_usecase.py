@@ -1,8 +1,9 @@
 from datetime import datetime, timedelta
 
+from lotion import Lotion
+
 from custom_logger import get_logger
 from goal.domain.goal_repository import GoalRepository
-from lotion import Lotion
 from project.domain.project_repository import ProjectRepository
 from task.domain.task_repository import TaskRepository
 from task.domain.task_status import TaskStatusType
@@ -39,7 +40,7 @@ class MoveTasksToBackupUsecase:
         tasks_moving_to_backup = [
             t
             for t in tasks
-            if t.last_edited_time is not None and t.last_edited_time.is_between(self.MIN_DATETIME, target_datetime)
+            if t.last_edited_time is not None and _is_between(t.last_edited_time, self.MIN_DATETIME, target_datetime)
         ]
 
         # バックアップ用のデータベースに移動
@@ -58,7 +59,7 @@ class MoveTasksToBackupUsecase:
         projects = [
             p
             for p in projects
-            if p.last_edited_time is not None and p.last_edited_time.is_between(self.MIN_DATETIME, target_datetime)
+            if p.last_edited_time is not None and _is_between(p.last_edited_time, self.MIN_DATETIME, target_datetime)
         ]
 
         # バックアップ用のデータベースに移動
@@ -77,7 +78,7 @@ class MoveTasksToBackupUsecase:
         goals = [
             g
             for g in goals
-            if g.last_edited_time is not None and g.last_edited_time.is_between(self.MIN_DATETIME, target_datetime)
+            if g.last_edited_time is not None and _is_between(g.last_edited_time, self.MIN_DATETIME, target_datetime)
         ]
 
         # バックアップ用のデータベースに移動
@@ -97,6 +98,10 @@ class MoveTasksToBackupUsecase:
             print(project.get_title().text + "を削除しました。")
 
 
+def _is_between(target: datetime, start: datetime, end: datetime) -> bool:
+    return start <= target <= end
+
+
 if __name__ == "__main__":
     # python -m notion_api.usecase.move_tasks_to_backup_usecase
     from goal.infrastructure.goal_repository_impl import GoalRepositoryImpl
@@ -109,4 +114,5 @@ if __name__ == "__main__":
         project_repository=ProjectRepositoryImpl(client=client),
         goal_repository=GoalRepositoryImpl(client=client),
     )
-    usecase._proc_goals(target_datetime=jst_now() - timedelta(days=14))
+    usecase.execute()
+    # usecase._proc_goals(target_datetime=jst_now() - timedelta(days=14))

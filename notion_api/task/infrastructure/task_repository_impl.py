@@ -115,10 +115,10 @@ class TaskRepositoryImpl(TaskRepository):
             database_id=DatabaseType.TASK.value,
             filter_param=filter_builder.build(),
         )
-        print(base_pages)
         tasks: list[Task] = []
         for base_page in base_pages:
-            tasks.append(self._cast(base_page))
+            task = self._cast(base_page)
+            tasks.append(task)
         # order昇順で並び替え
         tasks.sort(key=lambda x: x.order)
         return tasks
@@ -175,7 +175,7 @@ class TaskRepositoryImpl(TaskRepository):
         if important_flag is not None and important_flag.checked:
             cls = ImportantToDoTask
         kind_model = base_page.get_select(name=TaskKind.NAME)
-        if kind_model is not None and kind_model.selected_name is not None:
+        if kind_model is not None and kind_model.selected_name != "":
             task_type = TaskKindType(kind_model.selected_name)
             if task_type == TaskKindType.SCHEDULE:
                 cls = ScheduledTask

@@ -12,7 +12,7 @@ class DefaultScraper:
     """シンプルなスクレイピング"""
 
     def execute(self, url: str) -> ScrapedResult:
-        """指定したURLのページをスクレイピングする """
+        """指定したURLのページをスクレイピングする"""
         data = trafilatura.fetch_url(url)
 
         # とりあえずテキストをいい感じに抜き出す
@@ -27,8 +27,8 @@ class DefaultScraper:
         ogp_tags = {}
         other_meta_tags = {}
         for property_tag in soup.find_all("meta", attrs={"property": True}):
-            key:str = property_tag["property"]
-            value:str = property_tag.get("content") or property_tag.get("value")
+            key: str = property_tag["property"]
+            value: str = property_tag.get("content") or property_tag.get("value")
             if value is None:
                 continue
             if key.startswith("og:"):
@@ -37,8 +37,8 @@ class DefaultScraper:
                 other_meta_tags[key] = value
 
         for name_tag in soup.find_all("meta", attrs={"name": True}):
-            key:str = name_tag["name"]
-            value:str = name_tag.get("content") or name_tag.get("value")
+            key: str = name_tag["name"]
+            value: str = name_tag.get("content") or name_tag.get("value")
             if value is None:
                 continue
             other_meta_tags[key] = value
@@ -49,7 +49,6 @@ class DefaultScraper:
             ogp_tags=OgpTags(values=ogp_tags),
             other_meta_tags=OtherMetaTags(values=other_meta_tags),
         )
-
 
 
 if __name__ == "__main__":
