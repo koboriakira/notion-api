@@ -7,6 +7,8 @@ on:
   pull_request:
     branches:
       - main
+    type:
+      - co
 
 jobs:
   # 直近のコミットについて、cdkもしくはnotion_apiディレクトリに変更があった場合にのみ実行する
