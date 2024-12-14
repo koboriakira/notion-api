@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.9.0](https://github.com/koboriakira/notion-api/compare/v1.8.0...v1.9.0) (2024-12-14)
+
+
+### Features
+
+* Add routine task creation and external calendar synchronization endpoints ([46312ef](https://github.com/koboriakira/notion-api/commit/46312ef65dc2c9c6f39bcbaff6737658e27cbdb4))
+* Update DAILY_LOG ID and add batch router with create_next_schedule endpoint ([96626a0](https://github.com/koboriakira/notion-api/commit/96626a04c92dab8ecbd07e04666adefb19d909b5))
+* スケジュールタスク作成のときに重複が起きないようにする ([b744acb](https://github.com/koboriakira/notion-api/commit/b744acb650ae00df69b4d2787cf9a030b3f9b5a3))
+
 ## [1.8.0](https://github.com/koboriakira/notion-api/compare/v1.7.0...v1.8.0) (2024-12-08)
 
 
