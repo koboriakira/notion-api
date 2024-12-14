@@ -107,7 +107,7 @@ class TaskRepositoryImpl(TaskRepository):
         if last_edited_at is not None:
             filter_builder = filter_builder.add_condition(
                 DateCondition.on_or_after(
-                    property=LastEditedTime.create(key="dummy", value=last_edited_at.isoformat()),
+                    property=LastEditedTime.create(key="最終更新日時", value=last_edited_at.isoformat()),
                 ),
             )
 
@@ -116,7 +116,7 @@ class TaskRepositoryImpl(TaskRepository):
             filter_param=filter_builder.build(),
         )
         print(base_pages)
-        tasks:list[Task] = []
+        tasks: list[Task] = []
         for base_page in base_pages:
             tasks.append(self._cast(base_page))
         # order昇順で並び替え
