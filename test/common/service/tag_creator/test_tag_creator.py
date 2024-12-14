@@ -24,8 +24,8 @@ class TestTagCreator(TestCase):
         tag_page_id_aaa = PageId.dummy().value
         tag_page_id_bbb = PageId.dummy().value
         self.mock_client.create_page_in_database.side_effect = [
-            {"id": tag_page_id_aaa},
-            {"id": tag_page_id_bbb},
+            BasePage(properties=Properties([]), id_=tag_page_id_aaa),
+            BasePage(properties=Properties([]), id_=tag_page_id_bbb),
         ]
 
         # When

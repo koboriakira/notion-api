@@ -1,12 +1,9 @@
 from dataclasses import dataclass
 
-from lotion.block import Block
-from lotion.block import BulletedlistItem
-from lotion.block import Heading
+from lotion.block import Block, BulletedListItem, Heading
 from lotion.page import PageId
-from lotion.properties import Cover
-from lotion.properties import Properties
-from lotion.properties import Property
+from lotion.properties import Cover, Properties, Property
+
 from recipe.domain.carbohydrate import Carbohydrate
 from recipe.domain.fat import Fat
 from recipe.domain.ingredient_relation import IngredientRelation
@@ -60,6 +57,6 @@ class RecipeBuilder:
     def add_bulletlist_block(self, heading: str, texts: list[str]) -> "RecipeBuilder":
         heading_block = Heading.from_plain_text(heading_size=2, text=heading)
         self.blocks.append(heading_block)
-        items = [BulletedlistItem.from_plain_text(text=text) for text in texts]
+        items = [BulletedListItem.from_plain_text(text=text) for text in texts]
         self.blocks.extend(items)
         return self
