@@ -7,10 +7,25 @@ on:
   pull_request:
     branches:
       - main
-    type:
-      - co
+    types:
+      - closed
 
 jobs:
+  stop_if_not_merged:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if PR is merged
+        id: check-merged
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ] && [ "${{ github.event.action }}" != "closed" ]; then
+            echo "PR is not closed. Exiting..."
+            exit 1
+          fi
+          if [ "${{ github.event_name }}" == "pull_request" ] && [ "${{ github.event.pull_request.merged }}" != "true" ]; then
+            echo "PR is not merged. Exiting..."
+            exit 1
+          fi
+
   # 直近のコミットについて、cdkもしくはnotion_apiディレクトリに変更があった場合にのみ実行する
   check_changes:
     runs-on: ubuntu-latest
