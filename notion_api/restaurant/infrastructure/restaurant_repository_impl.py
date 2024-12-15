@@ -2,11 +2,11 @@ from logging import Logger, getLogger
 
 from lotion import Lotion
 from lotion.base_page import BasePage
-from lotion.filter import FilterBuilder
+from lotion.filter import Builder
+from lotion.filter.condition import Cond, Prop
 
 from common.value.database_type import DatabaseType
 from restaurant.domain.restaurant import Restaurant
-from restaurant.domain.restaurant_title import RestaurantName
 
 
 class RestaurantRepositoryImpl:
@@ -15,11 +15,10 @@ class RestaurantRepositoryImpl:
         self._logger = logger or getLogger(__name__)
 
     def find_by_title(self, title: str) -> Restaurant | None:
-        title_property = RestaurantName(text=title)
-        filter_param = FilterBuilder.build_simple_equal_condition(title_property)
+        builder = Builder.create().add(Prop.RICH_TEXT, "名前", Cond.EQUALS, title)
         searched_restaurant = self._client.retrieve_database(
             database_id=DatabaseType.RESTAURANT.value,
-            filter_param=filter_param,
+            filter_param=builder.build(),
         )
         if len(searched_restaurant) == 0:
             return None

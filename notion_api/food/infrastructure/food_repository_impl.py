@@ -2,8 +2,8 @@ from logging import Logger, getLogger
 
 from lotion import Lotion
 from lotion.base_page import BasePage
-from lotion.filter import FilterBuilder
-from lotion.properties import Title
+from lotion.filter import Builder
+from lotion.filter.condition import Cond, Prop
 
 from common.value.database_type import DatabaseType
 from food.domain.food import Food
@@ -18,11 +18,10 @@ class FoodRepositoryImpl(FoodRepository):
         self._logger = logger or getLogger(__name__)
 
     def find_by_title(self, title: str) -> Food | None:
-        title_property = Title.from_plain_text(text=title)
-        filter_param = FilterBuilder.build_simple_equal_condition(title_property)
+        builder = Builder.create().add(Prop.RICH_TEXT, "名前", Cond.EQUALS, title)
         searched_food = self._client.retrieve_database(
             database_id=self.DATABASE_ID,
-            filter_param=filter_param,
+            filter_param=builder.build(),
         )
         if len(searched_food) == 0:
             return None

@@ -1,5 +1,6 @@
 from lotion import Lotion
-from lotion.filter import FilterBuilder
+from lotion.filter import Builder
+from lotion.filter.condition import Cond, Prop
 from lotion.page import PageId
 from lotion.properties import Title
 
@@ -22,8 +23,8 @@ class TagCreator:
 
     def __create(self, title: str) -> PageId:
         # すでに存在するか確認
-        filter_param = FilterBuilder.build_title_equal_condition(title=title)
-        tags = self.client.retrieve_database(database_id=self.DATABASE_ID, filter_param=filter_param)
+        builder = Builder.create().add(Prop.RICH_TEXT, "名前", Cond.EQUALS, title)
+        tags = self.client.retrieve_database(database_id=self.DATABASE_ID, filter_param=builder.build())
         if len(tags) > 0:
             return tags[0].page_id
 

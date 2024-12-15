@@ -2,9 +2,8 @@ from logging import Logger, getLogger
 
 from lotion import Lotion
 from lotion.base_page import BasePage
-from lotion.filter import FilterBuilder
-from lotion.filter.condition import DateCondition, DateConditionType
-from lotion.properties import Title
+from lotion.filter import Builder
+from lotion.filter.condition import Cond, Prop
 
 from common.value.database_type import DatabaseType
 from util.date_range import DateRange
@@ -20,11 +19,10 @@ class WebclipRepositoryImpl(WebclipRepository):
         self._logger = logger or getLogger(__name__)
 
     def find_by_title(self, title: str) -> Webclip | None:
-        title_property = Title.from_plain_text(name="名前", text=title)
-        filter_param = FilterBuilder.build_simple_equal_condition(title_property)
+        builder = Builder.create().add(Prop.RICH_TEXT, "名前", Cond.EQUALS, title)
         base_pages = self._client.retrieve_database(
             database_id=self.DATABASE_ID,
-            filter_param=filter_param,
+            filter_param=builder.build(),
         )
         if len(base_pages) == 0:
             return None
@@ -49,24 +47,17 @@ class WebclipRepositoryImpl(WebclipRepository):
         return webclip
 
     def search(self, date_range: DateRange) -> list[Webclip]:
-        filter_builder = FilterBuilder()
-        filter_builder = filter_builder.add_condition(
-            DateCondition.create_manually(
-                name="最終更新日時",
-                condition_type=DateConditionType.ON_OR_AFTER,
-                value=date_range.start.value,
-            ),
-        )
-        filter_builder = filter_builder.add_condition(
-            DateCondition.create_manually(
-                name="最終更新日時",
-                condition_type=DateConditionType.ON_OR_BEFORE,
-                value=date_range.end.value,
-            ),
+        builder = (
+            Builder.create()
+            .add_last_edited_at(Cond.ON_OR_AFTER, date_range.start.value.isoformat())
+            .add_last_edited_at(
+                Cond.ON_OR_BEFORE,
+                date_range.end.value.isoformat(),
+            )
         )
         base_pages = self._client.retrieve_database(
             database_id=self.DATABASE_ID,
-            filter_param=filter_builder.build(),
+            filter_param=builder.build(),
         )
         return [self._cast(base_page) for base_page in base_pages]
 

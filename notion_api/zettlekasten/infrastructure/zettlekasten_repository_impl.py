@@ -2,14 +2,13 @@ from logging import Logger, getLogger
 
 from lotion import Lotion
 from lotion.base_page import BasePage
-from lotion.filter import FilterBuilder
-from lotion.filter.condition import EmptyCondition
+from lotion.filter import Builder
+from lotion.filter.condition import Cond, Prop
 
 from common.domain.tag_relation import TagRelation
 from common.value.database_type import DatabaseType
 from zettlekasten.domain.zettlekasten import Zettlekasten
 from zettlekasten.domain.zettlekasten_repository import ZettlekastenRepository
-from zettlekasten.domain.zettlekasten_title import ZettlekastenName
 
 
 class ZettlekastenRepositoryImpl(ZettlekastenRepository):
@@ -30,12 +29,10 @@ class ZettlekastenRepositoryImpl(ZettlekastenRepository):
         is_tag_empty: bool | None = None,
         include_children: bool | None = None,
     ) -> list[Zettlekasten]:
-        filter_builder = FilterBuilder()
+        builder = Builder.create()
         if is_tag_empty is not None:
-            filter_builder = filter_builder.add_condition(
-                EmptyCondition.true(prop_name=TagRelation.NAME, prop_type=TagRelation.TYPE),
-            )
-        filter_param = filter_builder.build()
+            builder = builder.add(Prop.RELATION, TagRelation.NAME, Cond.IS_EMPTY, True)
+        filter_param = builder.build()
         base_pages = self._client.retrieve_database(
             database_id=self.DATABASE_ID,
             filter_param=filter_param,
@@ -44,11 +41,10 @@ class ZettlekastenRepositoryImpl(ZettlekastenRepository):
         return [self._cast(page) for page in base_pages]
 
     def find_by_title(self, title: str) -> Zettlekasten | None:
-        title_property = ZettlekastenName(text=title)
-        filter_param = FilterBuilder.build_simple_equal_condition(title_property)
+        builder = Builder.create().add(Prop.RICH_TEXT, "名前", Cond.EQUALS, title)
         searched_zettlekasten = self._client.retrieve_database(
             database_id=self.DATABASE_ID,
-            filter_param=filter_param,
+            filter_param=builder.build(),
             include_children=True,
         )
         if len(searched_zettlekasten) == 0:

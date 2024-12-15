@@ -2,17 +2,10 @@ from datetime import date, datetime, time, timedelta
 
 from lotion import Lotion
 from lotion.base_page import BasePage
-from lotion.filter import FilterBuilder
-from lotion.filter.condition import (
-    CheckboxCondition,
-    DateCondition,
-    EmptyCondition,
-    RelationCondition,
-    StringCondition,
-)
-from lotion.filter.condition.or_condition import OrCondition
+from lotion.filter import Builder
+from lotion.filter.condition import Cond, Prop
 from lotion.page import PageId
-from lotion.properties import LastEditedTime, Property
+from lotion.properties import Property
 
 from common.value.database_type import DatabaseType
 from task.domain.do_tomorrow_flag import DoTommorowFlag
@@ -42,17 +35,15 @@ class TaskRepositoryImpl(TaskRepository):
         is_started: bool | None = None,
         last_edited_at: datetime | None = None,
     ) -> list[Task]:
-        task_kind_trash = TaskKind.trash()
-        filter_builder = FilterBuilder()
-        filter_builder = filter_builder.add_condition(StringCondition.not_equal(property=task_kind_trash))
+        builder = Builder.create()
+        builder = builder.add(Prop.SELECT, TaskKind.NAME, Cond.DOES_NOT_EQUAL, TaskKindType.TRASH.value)
         if start_datetime is not None:
             start_datetime = (
                 start_datetime
                 if isinstance(start_datetime, datetime)
                 else datetime.combine(start_datetime, time.min, tzinfo=JST)
             )
-            task_start_date_after = TaskStartDate.create(start_datetime)
-            filter_builder = filter_builder.add_condition(DateCondition.on_or_after(property=task_start_date_after))
+            builder = builder.add(Prop.DATE, TaskStartDate.NAME, Cond.ON_OR_AFTER, start_datetime.isoformat())
 
         if start_datetime_end is not None:
             start_datetime_end = (
@@ -60,60 +51,59 @@ class TaskRepositoryImpl(TaskRepository):
                 if isinstance(start_datetime_end, datetime)
                 else datetime.combine(start_datetime_end, time.max, tzinfo=JST)
             )
-            task_start_date_before = TaskStartDate.create(start_datetime_end)
-            filter_builder = filter_builder.add_condition(DateCondition.on_or_before(property=task_start_date_before))
+            builder = builder.add(Prop.DATE, TaskStartDate.NAME, Cond.ON_OR_BEFORE, start_datetime_end.isoformat())
         elif start_datetime is not None:
             start_datetime_end = start_datetime + timedelta(days=1) - timedelta(seconds=1)
-            task_start_date_before = TaskStartDate.create(start_datetime_end)
-            filter_builder = filter_builder.add_condition(DateCondition.on_or_before(property=task_start_date_before))
-
-        if kind_type_list is not None:
-            if len(kind_type_list) > 0:
-                task_kind_properties = [TaskKind.create(kind_type=kind_type) for kind_type in kind_type_list]
-                task_kind_equal_conditions = [
-                    StringCondition.equal(property=task_kind) for task_kind in task_kind_properties
-                ]
-                or_condition = OrCondition(task_kind_equal_conditions)
-                filter_builder = filter_builder.add_condition(or_condition)
-            if len(kind_type_list) == 0:
-                filter_builder = filter_builder.add_condition(EmptyCondition.true(TaskKind.NAME, ""))
-
-        if status_list is not None and len(status_list) > 0:
-            if isinstance(status_list[0], str):
-                status_list = TaskStatusType.get_status_list(status_list)
-            task_status_list = [TaskStatus.from_status_type(status_type) for status_type in status_list]
-            task_status_equal_conditon = [
-                StringCondition.equal(property=task_status) for task_status in task_status_list
-            ]
-            or_condition = OrCondition(task_status_equal_conditon)
-            filter_builder = filter_builder.add_condition(or_condition)
+            builder = builder.add(Prop.DATE, TaskStartDate.NAME, Cond.ON_OR_BEFORE, start_datetime_end.isoformat())
 
         if project_id is not None:
-            project_relation = ProjectRelation.from_id_list(id_list=[project_id.value])
-            filter_builder = filter_builder.add_condition(RelationCondition.contains(project_relation))
+            builder = builder.add(Prop.RELATION, ProjectRelation.NAME, Cond.EQUALS, project_id.value)
 
         if do_tomorrow_flag is not None:
-            do_tomorrow_flag_checkbox = DoTommorowFlag.true() if do_tomorrow_flag else DoTommorowFlag.false()
-            filter_builder = filter_builder.add_condition(
-                CheckboxCondition.equal(do_tomorrow_flag_checkbox),
-            )
+            builder = builder.add(Prop.CHECKBOX, DoTommorowFlag.NAME, Cond.EQUALS, do_tomorrow_flag)
 
         if is_started is not None:
-            is_started_checkbox = IsStarted.true() if is_started else IsStarted.false()
-            filter_builder = filter_builder.add_condition(
-                CheckboxCondition.equal(is_started_checkbox),
-            )
+            builder = builder.add(Prop.CHECKBOX, IsStarted.NAME, Cond.EQUALS, is_started)
 
         if last_edited_at is not None:
-            filter_builder = filter_builder.add_condition(
-                DateCondition.on_or_after(
-                    property=LastEditedTime.create(key="最終更新日時", value=last_edited_at.isoformat()),
-                ),
+            builder = builder.add_last_edited_at(Cond.ON_OR_AFTER, last_edited_at.isoformat())
+
+        if kind_type_list is not None and len(kind_type_list) == 0:
+            builder = builder.add(Prop.SELECT, TaskKind.NAME, Cond.IS_EMPTY, True)
+
+        # このあとor条件の追加をしていく
+
+        if kind_type_list is not None and len(kind_type_list) > 0:
+            values = [kind_type.value for kind_type in kind_type_list]
+            builder = Builder(
+                conditions=[
+                    *builder.conditions,
+                    {
+                        "or": [
+                            Builder.create().add(Prop.SELECT, TaskKind.NAME, Cond.EQUALS, v).build() for v in values
+                        ],
+                    },
+                ],
             )
 
+        if status_list is not None and len(status_list) > 0:
+            status_type_list = [s.value if isinstance(s, TaskStatusType) else s for s in status_list]
+            builder = Builder(
+                conditions=[
+                    *builder.conditions,
+                    {
+                        "or": [
+                            Builder.create().add(Prop.STATUS, TaskStatus.NAME, Cond.EQUALS, v).build()
+                            for v in status_type_list
+                        ],
+                    },
+                ],
+            )
+
+        # print(json.dumps(builder.build(), ensure_ascii=False, indent=4))
         base_pages = self.client.retrieve_database(
             database_id=DatabaseType.TASK.value,
-            filter_param=filter_builder.build(),
+            filter_param=builder.build(),
         )
         tasks: list[Task] = []
         for base_page in base_pages:

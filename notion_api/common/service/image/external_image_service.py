@@ -1,6 +1,6 @@
 from lotion import Lotion
-from lotion.filter import FilterBuilder
-from lotion.filter.condition import DateCondition, DateConditionType
+from lotion.filter import Builder
+from lotion.filter.condition import Cond
 from lotion.page import PageId
 from lotion.properties import Cover, Title, Url
 
@@ -36,23 +36,17 @@ class ExternalImageService:
 
     def get_images(self, date_range: DateRange) -> list[str]:
         """GIF/JPEGデータベースに登録されている画像の(サムネイル)URLを取得する。"""
-        filter_builder = FilterBuilder()
-        filter_builder = filter_builder.add_condition(
-            DateCondition.create_manually(
-                name="作成日時",
-                condition_type=DateConditionType.ON_OR_AFTER,
-                value=date_range.start.value,
-            ),
+        builder = (
+            Builder.create()
+            .add_created_at(Cond.ON_OR_AFTER, date_range.start.value.isoformat())
+            .add_created_at(
+                Cond.ON_OR_BEFORE,
+                date_range.end.value.isoformat(),
+            )
         )
-        filter_builder = filter_builder.add_condition(
-            DateCondition.create_manually(
-                name="作成日時",
-                condition_type=DateConditionType.ON_OR_BEFORE,
-                value=date_range.end.value,
-            ),
-        )
+
         base_pages = self._client.retrieve_database(
             database_id=self.DATABASE_ID,
-            filter_param=filter_builder.build(),
+            filter_param=builder.build(),
         )
         return [base_page.get_url(name="URL").url for base_page in base_pages]

@@ -2,14 +2,13 @@ from logging import Logger, getLogger
 
 from lotion import Lotion
 from lotion.base_page import BasePage
-from lotion.filter import FilterBuilder
-from lotion.filter.condition import DateCondition, DateConditionType
+from lotion.filter import Builder
+from lotion.filter.condition import Cond, Prop
 
 from common.value.database_type import DatabaseType
 from util.date_range import DateRange
 from video.domain.video import Video
 from video.domain.video_repository import VideoRepository
-from video.domain.video_title import VideoName
 
 
 class VideoRepositoryImpl(VideoRepository):
@@ -21,33 +20,25 @@ class VideoRepositoryImpl(VideoRepository):
 
     def search(self, date_range: DateRange) -> list[Video]:
         """Search videos by insert datetime range"""
-        filter_builder = FilterBuilder()
-        filter_builder = filter_builder.add_condition(
-            DateCondition.create_manually(
-                name="最終更新日時",
-                condition_type=DateConditionType.ON_OR_AFTER,
-                value=date_range.start.value,
-            ),
-        )
-        filter_builder = filter_builder.add_condition(
-            DateCondition.create_manually(
-                name="最終更新日時",
-                condition_type=DateConditionType.ON_OR_BEFORE,
-                value=date_range.end.value,
-            ),
+        builder = (
+            Builder.create()
+            .add_last_edited_at(Cond.ON_OR_AFTER, date_range.start.value.isoformat())
+            .add_last_edited_at(
+                Cond.ON_OR_BEFORE,
+                date_range.end.value.isoformat(),
+            )
         )
         base_pages = self._client.retrieve_database(
             database_id=self.DATABASE_ID,
-            filter_param=filter_builder.build(),
+            filter_param=builder.build(),
         )
         return [self._cast(base_page) for base_page in base_pages]
 
     def find_by_title(self, title: str) -> Video | None:
-        title_property = VideoName(text=title)
-        filter_param = FilterBuilder.build_simple_equal_condition(title_property)
+        builder = Builder.create().add(Prop.RICH_TEXT, "名前", Cond.EQUALS, title)
         base_pages = self._client.retrieve_database(
             database_id=self.DATABASE_ID,
-            filter_param=filter_param,
+            filter_param=builder.build(),
         )
         if len(base_pages) == 0:
             return None

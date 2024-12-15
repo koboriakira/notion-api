@@ -4,9 +4,8 @@ from lotion import Lotion
 from lotion.base_page import BasePage
 from lotion.block import Embed, block
 from lotion.block.rich_text import RichTextBuilder
-from lotion.filter import FilterBuilder
-from lotion.filter.condition import DateCondition
-from lotion.properties import LastEditedTime
+from lotion.filter import Builder
+from lotion.filter.condition import Cond
 
 from common.infrastructure.twitter.lambda_twitter_api import LambdaTwitterApi
 from common.service.image.external_image_service import ExternalImageService
@@ -232,12 +231,12 @@ tags: []
 
     def _get_latest_items(self, date_range: DateRange, database_type: DatabaseType) -> list[BasePage]:
         """指定されたカテゴリの、最近更新されたページIDを取得する"""
-        last_edited_time_start = LastEditedTime.create(value=date_range.start.value)
-        last_edited_time_end = LastEditedTime.create(value=date_range.end.value)
-        filter_builder = FilterBuilder()
-        filter_builder = filter_builder.add_condition(DateCondition.on_or_after(last_edited_time_start))
-        filter_builder = filter_builder.add_condition(DateCondition.on_or_before(last_edited_time_end))
-        filter_param = filter_builder.build()
+        builder = (
+            Builder.create()
+            .add_last_edited_at(Cond.ON_OR_AFTER, date_range.start.value.isoformat())
+            .add_last_edited_at(Cond.ON_OR_BEFORE, date_range.end.value.isoformat())
+        )
+        filter_param = builder.build()
         return self.client.retrieve_database(database_id=database_type.value, filter_param=filter_param)
 
     def _append_relation_to_daily_log(self, daily_log_id: str, title: str, pages: list[BasePage]) -> None:

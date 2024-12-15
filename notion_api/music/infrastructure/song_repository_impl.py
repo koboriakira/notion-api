@@ -2,8 +2,8 @@ from logging import Logger, getLogger
 
 from lotion import Lotion
 from lotion.base_page import BasePage
-from lotion.filter import FilterBuilder
-from lotion.filter.condition import DateCondition, DateConditionType
+from lotion.filter import Builder
+from lotion.filter.condition import Cond, Prop
 
 from common.value.database_type import DatabaseType
 from music.domain.song import Song
@@ -20,30 +20,22 @@ class SongRepositoryImpl(SongRepository):
         self._logger = logger or getLogger(__name__)
 
     def search(self, insert_datetime_range: DateRange) -> list[Song]:
-        filter_builder = FilterBuilder()
-        filter_builder = filter_builder.add_condition(
-            DateCondition.create_manually(
-                name="最終更新日時",
-                condition_type=DateConditionType.ON_OR_AFTER,
-                value=insert_datetime_range.start.value,
-            ),
+        builder = (
+            Builder.create()
+            .add_created_at(Cond.ON_OR_AFTER, insert_datetime_range.start.value.isoformat())
+            .add_created_at(
+                Cond.ON_OR_BEFORE,
+                insert_datetime_range.end.value.isoformat(),
+            )
         )
-        filter_builder = filter_builder.add_condition(
-            DateCondition.create_manually(
-                name="最終更新日時",
-                condition_type=DateConditionType.ON_OR_BEFORE,
-                value=insert_datetime_range.end.value,
-            ),
-        )
-        base_pages = self._client.retrieve_database(database_id=self.DATABASE_ID, filter_param=filter_builder.build())
+        base_pages = self._client.retrieve_database(database_id=self.DATABASE_ID, filter_param=builder.build())
         return [self._cast(base_page) for base_page in base_pages]
 
     def find_by_url(self, url: str) -> Song | None:
-        spotify_url = SpotifyUrl(url=url)
-        filter_param = FilterBuilder.build_simple_equal_condition(spotify_url)
+        builder = Builder.create().add(Prop.RICH_TEXT, SpotifyUrl.NAME, Cond.EQUALS, url)
         searched_songs = self._client.retrieve_database(
             database_id=self.DATABASE_ID,
-            filter_param=filter_param,
+            filter_param=builder.build(),
         )
         if len(searched_songs) == 0:
             return None
