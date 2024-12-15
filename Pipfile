@@ -16,7 +16,7 @@ openai = "==1.10.0"
 trafilatura = "*"
 bs4 = "*"
 lxml = "*"
-lotion = ">=0.2.0"
+lotion = ">=0.5.0"
 httpx = "==0.27.2"
 
 [dev-packages]
