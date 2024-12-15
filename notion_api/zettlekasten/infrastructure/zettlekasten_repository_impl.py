@@ -1,6 +1,7 @@
 from logging import Logger, getLogger
 
 from lotion import Lotion
+from lotion.base_page import BasePage
 from lotion.filter import FilterBuilder
 from lotion.filter.condition import EmptyCondition
 
@@ -19,10 +20,10 @@ class ZettlekastenRepositoryImpl(ZettlekastenRepository):
         self._logger = logger or getLogger(__name__)
 
     def fetch_all(self) -> list[Zettlekasten]:
-        return self._client.retrieve_database(
+        base_pages = self._client.retrieve_database(
             database_id=self.DATABASE_ID,
-            page_model=Zettlekasten,
         )
+        return [self._cast(page) for page in base_pages]
 
     def search(
         self,
@@ -35,12 +36,12 @@ class ZettlekastenRepositoryImpl(ZettlekastenRepository):
                 EmptyCondition.true(prop_name=TagRelation.NAME, prop_type=TagRelation.TYPE),
             )
         filter_param = filter_builder.build()
-        return self._client.retrieve_database(
+        base_pages = self._client.retrieve_database(
             database_id=self.DATABASE_ID,
             filter_param=filter_param,
-            page_model=Zettlekasten,
             include_children=include_children,
         )
+        return [self._cast(page) for page in base_pages]
 
     def find_by_title(self, title: str) -> Zettlekasten | None:
         title_property = ZettlekastenName(text=title)
@@ -48,7 +49,6 @@ class ZettlekastenRepositoryImpl(ZettlekastenRepository):
         searched_zettlekasten = self._client.retrieve_database(
             database_id=self.DATABASE_ID,
             filter_param=filter_param,
-            page_model=Zettlekasten,
             include_children=True,
         )
         if len(searched_zettlekasten) == 0:
@@ -56,7 +56,7 @@ class ZettlekastenRepositoryImpl(ZettlekastenRepository):
         if len(searched_zettlekasten) > 1:
             warning_message = f"Found multiple zettlekasten with the same title: {title}"
             self._logger.warning(warning_message)
-        return searched_zettlekasten[0]
+        return self._cast(searched_zettlekasten[0])
 
     def save(self, zettlekasten: Zettlekasten) -> Zettlekasten:
         if zettlekasten.id is not None:
@@ -72,3 +72,19 @@ class ZettlekastenRepositoryImpl(ZettlekastenRepository):
             url=result.url,
         )
         return zettlekasten
+
+    def _cast(self, base_page: BasePage) -> Zettlekasten:
+        return Zettlekasten(
+            properties=base_page.properties,
+            block_children=base_page.block_children,
+            id_=base_page.id_,
+            url=base_page.url,
+            created_time=base_page.created_time,
+            last_edited_time=base_page.last_edited_time,
+            _created_by=base_page._created_by,
+            _last_edited_by=base_page._last_edited_by,
+            cover=base_page.cover,
+            icon=base_page.icon,
+            archived=base_page.archived,
+            parent=base_page.parent,
+        )

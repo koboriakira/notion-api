@@ -1,6 +1,7 @@
 from logging import Logger, getLogger
 
 from lotion import Lotion
+from lotion.base_page import BasePage
 
 from book.domain.book import Book
 from book.domain.book_repository import BookRepository, ExistedBookError, NotFoundBookError
@@ -36,9 +37,27 @@ class BookRepositoryImpl(BookRepository):
         return book
 
     def __find_by_title(self, title: str) -> Book | None:
-        return self._client.find_page_by_title(
+        base_page = self._client.find_page_by_title(
             database_id=DATABASE_ID,
             title=title,
             title_key_name="Title",
-            page_model=Book,
+        )
+        if base_page is None:
+            return None
+        return self._cast(base_page)
+
+    def _cast(self, base_page: BasePage) -> Book:
+        return Book(
+            properties=base_page.properties,
+            block_children=base_page.block_children,
+            id_=base_page.id_,
+            url=base_page.url,
+            created_time=base_page.created_time,
+            last_edited_time=base_page.last_edited_time,
+            _created_by=base_page._created_by,
+            _last_edited_by=base_page._last_edited_by,
+            cover=base_page.cover,
+            icon=base_page.icon,
+            archived=base_page.archived,
+            parent=base_page.parent,
         )

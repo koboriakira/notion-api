@@ -44,14 +44,13 @@ class SongRepositoryImpl(SongRepository):
         searched_songs = self._client.retrieve_database(
             database_id=self.DATABASE_ID,
             filter_param=filter_param,
-            page_model=Song,
         )
         if len(searched_songs) == 0:
             return None
         if len(searched_songs) > 1:
             warning_message = f"Found multiple songs with the same url: {url}"
             self._logger.warning(warning_message)
-        return searched_songs[0]
+        return self._cast(searched_songs[0])
 
     def save(self, song: Song) -> Song:
         result = self._client.create_page_in_database(
