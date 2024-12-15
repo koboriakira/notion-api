@@ -2,7 +2,7 @@ from datetime import date, datetime
 
 from lotion import Lotion
 from lotion.base_page import BasePage
-from lotion.block import Embed, block
+from lotion.block import Embed, Heading, Paragraph
 from lotion.block.rich_text import RichTextBuilder
 from lotion.filter import Builder
 from lotion.filter.condition import Cond
@@ -81,22 +81,9 @@ tags: []
         # デイリーログを取得
         daily_log_id = self._proc_daily_log(target_date=target_date)
 
-        # 今日完了したタスクを取得
-        done_tasks = self._task_repository.search(
-            status_list=[TaskStatusType.DONE],
-            kind_type_list=[
-                TaskKindType.DO_NOW,
-                TaskKindType.WAIT,
-                TaskKindType.NEXT_ACTION,
-                TaskKindType.SOMEDAY_MAYBE,
-                TaskKindType.SCHEDULE,
-            ],
-            start_datetime=date_range.start.value,
-            start_datetime_end=date_range.end.value,
-        )
-        markdown_text += "\n## 今日完了したタスク\n"
-        markdown_text += "\n".join([f"- {task.get_title_text()}" for task in done_tasks])
-        self._append_relation_to_daily_log(daily_log_id=daily_log_id, title="今日完了したタスク", pages=done_tasks)
+        # 今日完了したタスクを集める
+        markdown_text += "\n"
+        markdown_text += self._proc_tasks(date_range=date_range, daily_log_id=daily_log_id)
 
         # 各データベースの更新ページを取得
         for title, database_type in DATABASE_DICT.items():
@@ -143,6 +130,28 @@ tags: []
             new_thread=True,
         )
         return daily_log.id
+
+    def _proc_tasks(self, date_range: DateRange, daily_log_id: str) -> str:
+        done_tasks = self._task_repository.search(
+            status_list=[TaskStatusType.DONE],
+            kind_type_list=[
+                TaskKindType.DO_NOW,
+                TaskKindType.WAIT,
+                TaskKindType.NEXT_ACTION,
+                TaskKindType.SOMEDAY_MAYBE,
+                TaskKindType.SCHEDULE,
+            ],
+            start_datetime=date_range.start.value,
+            start_datetime_end=date_range.end.value,
+        )
+        if not self.is_debug:
+            self._append_heading(block_id=daily_log_id, title="今日完了したタスク")
+        markdown_text = "\n## 今日完了したタスク\n"
+        for done_task in done_tasks:
+            if not self.is_debug:
+                self._append_backlink(block_id=daily_log_id, page=done_task)
+            markdown_text += f"\n- {done_task.get_title_text()}"
+        return markdown_text
 
     def _proc_webclips(self, date_range: DateRange, daily_log_id: str) -> str:
         """WebClipを処理する"""
@@ -253,13 +262,13 @@ tags: []
             self._slack_client.chat_postMessage(text=page.title_for_slack())
 
     def _append_heading(self, block_id: str, title: str) -> None:
-        heading = block.Heading.from_plain_text(heading_size=2, text=title)
+        heading = Heading.from_plain_text(heading_size=2, text=title)
         if not self.is_debug:
             self.client.append_block(block_id=block_id, block=heading)
 
     def _append_backlink(self, block_id: str, page: BasePage) -> None:
-        rich_text = RichTextBuilder.get_instance().add_page_mention(page_id=page.id).build()
-        paragraph = block.Paragraph.from_rich_text(rich_text=rich_text)
+        rich_text = RichTextBuilder.get_instance().add_page_mention(page_id=page.page_id.value).build()
+        paragraph = Paragraph.from_rich_text(rich_text=rich_text)
         if not self.is_debug:
             self.client.append_block(
                 block_id=block_id,
@@ -292,9 +301,10 @@ if __name__ == "__main__":
         video_repository=video_repository,
     )
     date_range = DateRange.from_datetime(
-        start=datetime(2024, 12, 2, 0, 0, 0, tzinfo=JST),
-        end=datetime(2024, 12, 4, 0, 0, 0, tzinfo=JST),
+        start=datetime(2024, 12, 14, 0, 0, 0, tzinfo=JST),
+        end=datetime(2024, 12, 16, 0, 0, 0, tzinfo=JST),
     )
     # print(usecase.execute(date_range=date_range))
-    print(usecase._proc_videos(date_range=date_range, daily_log_id="dummy"))
+    # print(usecase._proc_videos(date_range=date_range, daily_log_id="dummy"))
     # print(usecase._proc_images(date_range=date_range))
+    print(usecase._proc_tasks(date_range=date_range, daily_log_id="dummy"))
