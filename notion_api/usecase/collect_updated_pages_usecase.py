@@ -79,7 +79,7 @@ tags: []
 """
 
         # デイリーログを取得
-        daily_log_id = self._proc_daily_log(target_date=target_date)
+        daily_log_id = "dummy" if self.is_debug else self._proc_daily_log(target_date=target_date)
 
         # 今日完了したタスクを集める
         markdown_text += "\n"
@@ -304,7 +304,7 @@ if __name__ == "__main__":
         start=datetime(2024, 12, 14, 0, 0, 0, tzinfo=JST),
         end=datetime(2024, 12, 16, 0, 0, 0, tzinfo=JST),
     )
-    # print(usecase.execute(date_range=date_range))
+    print(usecase.execute(date_range=date_range))
     # print(usecase._proc_videos(date_range=date_range, daily_log_id="dummy"))
     # print(usecase._proc_images(date_range=date_range))
     print(usecase._proc_tasks(date_range=date_range, daily_log_id="dummy"))
