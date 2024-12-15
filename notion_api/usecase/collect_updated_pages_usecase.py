@@ -304,7 +304,8 @@ if __name__ == "__main__":
         start=datetime(2024, 12, 14, 0, 0, 0, tzinfo=JST),
         end=datetime(2024, 12, 16, 0, 0, 0, tzinfo=JST),
     )
-    print(usecase.execute(date_range=date_range))
+    print(usecase._proc_daily_log(target_date=date_range.end.value.date()))
+    # print(usecase.execute(date_range=date_range))
     # print(usecase._proc_videos(date_range=date_range, daily_log_id="dummy"))
     # print(usecase._proc_images(date_range=date_range))
-    print(usecase._proc_tasks(date_range=date_range, daily_log_id="dummy"))
+    # print(usecase._proc_tasks(date_range=date_range, daily_log_id="dummy"))
