@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/koboriakira/notion-api/compare/v1.9.0...v2.0.0) (2024-12-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* lotionを利用する ([#27](https://github.com/koboriakira/notion-api/issues/27))
+
+### Miscellaneous Chores
+
+* lotionを利用する ([#27](https://github.com/koboriakira/notion-api/issues/27)) ([460b8e2](https://github.com/koboriakira/notion-api/commit/460b8e2b876d1c1634ce6580808df577d496aa3a))
+
 ## [1.9.0](https://github.com/koboriakira/notion-api/compare/v1.8.0...v1.9.0) (2024-12-14)
 
 
