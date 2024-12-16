@@ -5,8 +5,8 @@ from book.domain.authors import Authors
 from book.domain.book_url import BookUrl
 from book.domain.published_date import PublishedDate
 from book.domain.publisher import Publisher
-from notion_client_wrapper.base_page import BasePage
-from notion_client_wrapper.page.page_id import PageId
+from lotion.base_page import BasePage
+from lotion.page import PageId
 
 
 @dataclass

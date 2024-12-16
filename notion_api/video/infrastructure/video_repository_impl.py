@@ -1,53 +1,44 @@
 from logging import Logger, getLogger
 
+from lotion import Lotion
+from lotion.base_page import BasePage
+from lotion.filter import Builder
+from lotion.filter.condition import Cond, Prop
+
 from common.value.database_type import DatabaseType
-from notion_client_wrapper.base_page import BasePage
-from notion_client_wrapper.client_wrapper import ClientWrapper
-from notion_client_wrapper.filter.condition.date_condition import DateCondition, DateConditionType
-from notion_client_wrapper.filter.filter_builder import FilterBuilder
 from util.date_range import DateRange
 from video.domain.video import Video
 from video.domain.video_repository import VideoRepository
-from video.domain.video_title import VideoName
 
 
 class VideoRepositoryImpl(VideoRepository):
     DATABASE_ID = DatabaseType.VIDEO.value
 
-    def __init__(self, client: ClientWrapper, logger: Logger | None = None) -> None:
+    def __init__(self, client: Lotion, logger: Logger | None = None) -> None:
         self._client = client
         self._logger = logger or getLogger(__name__)
 
     def search(self, date_range: DateRange) -> list[Video]:
         """Search videos by insert datetime range"""
-        filter_builder = FilterBuilder()
-        filter_builder = filter_builder.add_condition(
-            DateCondition.create_manually(
-                name="最終更新日時",
-                condition_type=DateConditionType.ON_OR_AFTER,
-                value=date_range.start.value,
-            ),
-        )
-        filter_builder = filter_builder.add_condition(
-            DateCondition.create_manually(
-                name="最終更新日時",
-                condition_type=DateConditionType.ON_OR_BEFORE,
-                value=date_range.end.value,
-            ),
+        builder = (
+            Builder.create()
+            .add_last_edited_at(Cond.ON_OR_AFTER, date_range.start.value.isoformat())
+            .add_last_edited_at(
+                Cond.ON_OR_BEFORE,
+                date_range.end.value.isoformat(),
+            )
         )
         base_pages = self._client.retrieve_database(
             database_id=self.DATABASE_ID,
-            filter_param=filter_builder.build(),
+            filter_param=builder.build(),
         )
         return [self._cast(base_page) for base_page in base_pages]
 
-
     def find_by_title(self, title: str) -> Video | None:
-        title_property = VideoName(text=title)
-        filter_param = FilterBuilder.build_simple_equal_condition(title_property)
+        builder = Builder.create().add(Prop.RICH_TEXT, "名前", Cond.EQUALS, title)
         base_pages = self._client.retrieve_database(
             database_id=self.DATABASE_ID,
-            filter_param=filter_param,
+            filter_param=builder.build(),
         )
         if len(base_pages) == 0:
             return None
@@ -63,8 +54,8 @@ class VideoRepositoryImpl(VideoRepository):
             properties=video.properties.values,
         )
         video.update_id_and_url(
-            page_id=result["id"],
-            url=result["url"],
+            page_id=result.page_id.value,
+            url=result.url,
         )
         return video
 
@@ -76,8 +67,8 @@ class VideoRepositoryImpl(VideoRepository):
             url=base_page.url,
             created_time=base_page.created_time,
             last_edited_time=base_page.last_edited_time,
-            created_by=base_page.created_by,
-            last_edited_by=base_page.last_edited_by,
+            _created_by=base_page._created_by,
+            _last_edited_by=base_page._last_edited_by,
             cover=base_page.cover,
             icon=base_page.icon,
             archived=base_page.archived,

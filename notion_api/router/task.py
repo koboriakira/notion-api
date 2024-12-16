@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Header
+from lotion import Lotion
+from lotion.page import PageId
 
-from notion_client_wrapper.client_wrapper import ClientWrapper
-from notion_client_wrapper.page.page_id import PageId
 from router.request.task_request import CreateNewTaskRequest, UpdateTaskRequest
 from router.response import BaseResponse, TaskResponse
 from router.response import Task as TaskDto
@@ -17,11 +17,11 @@ from util.error_reporter import ErrorReporter
 
 router = APIRouter()
 
-client = ClientWrapper.get_instance()
+client = Lotion.get_instance()
 task_repository = TaskRepositoryImpl(notion_client_wrapper=client)
 
 
-@router.get("/{task_id}", response_model=TaskResponse)
+@router.get("/{task_id}")
 def find_task(task_id: str, access_token: str | None = Header(None)) -> TaskResponse:
     """タスクを取得"""
     valid_access_token(access_token)
@@ -30,7 +30,7 @@ def find_task(task_id: str, access_token: str | None = Header(None)) -> TaskResp
     return TaskResponse(data=TaskDto.from_model(task))
 
 
-@router.get("/inprogress/", response_model=TaskResponse)
+@router.get("/inprogress/")
 def get_inprogress(access_token: str | None = Header(None)) -> TaskResponse:
     """タスクを取得"""
     valid_access_token(access_token)
@@ -39,7 +39,7 @@ def get_inprogress(access_token: str | None = Header(None)) -> TaskResponse:
     return TaskResponse(data=TaskDto.from_model(task) if task is not None else None)
 
 
-@router.post("/{task_id}", response_model=TaskResponse)
+@router.post("/{task_id}")
 def upadate_task(task_id: str, request: UpdateTaskRequest, access_token: str | None = Header(None)) -> TaskResponse:
     """タスクを取得"""
     valid_access_token(access_token)
@@ -48,35 +48,35 @@ def upadate_task(task_id: str, request: UpdateTaskRequest, access_token: str | N
     return TaskResponse(data=TaskDto.from_model(task))
 
 
-@router.post("/{task_id}/complete/", response_model=TaskResponse)
+@router.post("/{task_id}/complete/")
 def complete_task(task_id: str, access_token: str | None = Header(None)) -> TaskResponse:
     try:
         valid_access_token(access_token)
         usecase = CompleteTaskUsecase(
             task_repository=task_repository,
         )
-        task = usecase.execute(page_id=PageId(value=task_id))
+        task = usecase.execute(page_id=PageId(task_id))
         return TaskResponse(data=TaskDto.from_model(task))
     except:
         ErrorReporter().execute()
         raise
 
 
-@router.post("/{task_id}/start/", response_model=TaskResponse)
+@router.post("/{task_id}/start/")
 def start_task(task_id: str, access_token: str | None = Header(None)) -> TaskResponse:
     try:
         valid_access_token(access_token)
         usecase = StartTaskUsecase(
             task_repository=task_repository,
         )
-        task = usecase.execute(page_id=PageId(value=task_id))
+        task = usecase.execute(page_id=PageId(task_id))
         return TaskResponse(data=TaskDto.from_model(task))
     except:
         ErrorReporter().execute()
         raise
 
 
-@router.post("/", response_model=BaseResponse)
+@router.post("/")
 def create_task(request: CreateNewTaskRequest, access_token: str | None = Header(None)) -> BaseResponse:
     try:
         valid_access_token(access_token)

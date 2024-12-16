@@ -1,7 +1,7 @@
 from unittest import TestCase
 from unittest.mock import Mock
 
-from notion_api.notion_client_wrapper.block.divider import Divider
+from lotion.block import Divider
 from notion_api.task.domain.routine_repository import RoutineRepository
 from notion_api.task.domain.routine_task import RoutineTask, RoutineType
 from notion_api.task.domain.task_repository import TaskRepository

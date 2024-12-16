@@ -1,4 +1,4 @@
-from notion_client_wrapper.properties.number import Number
+from lotion.properties import Number
 
 
 class Protein(Number):

@@ -1,6 +1,6 @@
 from datetime import date
 
-from notion_client_wrapper.properties.date import Date
+from lotion.properties import Date
 
 
 class DailyLogDate(Date):

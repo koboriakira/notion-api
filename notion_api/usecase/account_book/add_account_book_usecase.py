@@ -4,11 +4,11 @@ from account_book.domain.account_book import AccountBook
 from account_book.domain.category import Category, CategoryType
 from account_book.domain.repository import Repository
 from account_book.domain.tag import Tag, TagType, TagTypes
-from notion_client_wrapper.properties.checkbox import Checkbox
-from notion_client_wrapper.properties.date import Date
-from notion_client_wrapper.properties.number import Number
-from notion_client_wrapper.properties.properties import Properties
-from notion_client_wrapper.properties.title import Title
+from lotion.properties import Checkbox
+from lotion.properties import Date
+from lotion.properties import Number
+from lotion.properties import Properties
+from lotion.properties import Title
 
 
 class AddAccountBookUsecase:

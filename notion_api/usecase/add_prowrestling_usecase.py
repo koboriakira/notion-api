@@ -1,12 +1,13 @@
 from datetime import date as DateObject
 
+from lotion import Lotion
+from lotion.base_page import BasePage
+from lotion.block import Paragraph
+from lotion.block.rich_text import RichTextBuilder
+from lotion.properties import Cover, Date, Relation, Select, Title, Url
+
 from common.value.database_type import DatabaseType
 from custom_logger import get_logger
-from notion_client_wrapper.base_page import BasePage
-from notion_client_wrapper.block import Paragraph
-from notion_client_wrapper.block.rich_text.rich_text_builder import RichTextBuilder
-from notion_client_wrapper.client_wrapper import ClientWrapper
-from notion_client_wrapper.properties import Cover, Date, Relation, Select, Title, Url
 from usecase.service.tag_create_service import TagCreateService
 
 logger = get_logger(__name__)
@@ -22,7 +23,7 @@ def find_promotion(pages: list[BasePage], promotion_name: str) -> Select | None:
 
 class AddProwrestlingUsecase:
     def __init__(self):
-        self.client = ClientWrapper.get_instance()
+        self.client = Lotion.get_instance()
         self.tag_create_service = TagCreateService()
 
     def execute(
@@ -75,8 +76,8 @@ class AddProwrestlingUsecase:
             properties=properties,
         )
         page = {
-            "id": result["id"],
-            "url": result["url"],
+            page_id: result.page_id.value,
+            url: result.url,
         }
 
         # ページ本文を追加

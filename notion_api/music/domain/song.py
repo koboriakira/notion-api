@@ -7,10 +7,10 @@ from music.domain.artist import Artist
 from music.domain.release_date import ReleaseDate
 from music.domain.song_title import SongTitle
 from music.domain.spotify_url import SpotifyUrl
-from notion_client_wrapper.base_page import BasePage
-from notion_client_wrapper.block.block import Block
-from notion_client_wrapper.properties.cover import Cover
-from notion_client_wrapper.properties.properties import Properties
+from lotion.base_page import BasePage
+from lotion.block import Block
+from lotion.properties import Cover
+from lotion.properties import Properties
 
 
 @dataclass

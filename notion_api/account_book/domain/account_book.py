@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from notion_client_wrapper.base_page import BasePage
+from lotion.base_page import BasePage
 
 
 @dataclass

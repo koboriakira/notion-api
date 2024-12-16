@@ -2,7 +2,7 @@ from unittest import TestCase
 
 import pytest
 
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 from shopping.infrastructure.repository_impl import ShoppingRepositoryImpl
 
 
@@ -13,7 +13,7 @@ class TestShoppingRepositoryImpl(TestCase):
     @pytest.mark.use_genuine_api()
     def test_すべての買い物リストを取得できる(self):
         # Given
-        real_suite = ShoppingRepositoryImpl(client=ClientWrapper.get_instance())
+        real_suite = ShoppingRepositoryImpl(client=Lotion.get_instance())
 
         # When
         actual = real_suite.fetch_all()

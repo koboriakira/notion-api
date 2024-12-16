@@ -1,19 +1,20 @@
 from logging import Logger, getLogger
 
+from lotion import Lotion
+from lotion.base_page import BasePage
+from lotion.properties import Property
+
 from common.value.database_type import DatabaseType
 from goal.domain.goal import Goal
 from goal.domain.goal_repository import GoalRepository
 from goal.domain.vision_relation import VisionRelation
-from notion_client_wrapper.base_page import BasePage
-from notion_client_wrapper.client_wrapper import ClientWrapper
-from notion_client_wrapper.properties.property import Property
 
 
 class GoalRepositoryImpl(GoalRepository):
     DATABASE_ID = DatabaseType.GOAL.value
     BACKUP_DATABASE_ID = DatabaseType.GOAL_BK.value
 
-    def __init__(self, client: ClientWrapper, logger: Logger | None = None) -> None:
+    def __init__(self, client: Lotion, logger: Logger | None = None) -> None:
         self._client = client
         self._logger = logger or getLogger(__name__)
 
@@ -54,8 +55,8 @@ class GoalRepositoryImpl(GoalRepository):
             url=base_page.url,
             created_time=base_page.created_time,
             last_edited_time=base_page.last_edited_time,
-            created_by=base_page.created_by,
-            last_edited_by=base_page.last_edited_by,
+            _created_by=base_page._created_by,
+            _last_edited_by=base_page._last_edited_by,
             cover=base_page.cover,
             icon=base_page.icon,
             archived=base_page.archived,

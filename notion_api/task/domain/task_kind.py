@@ -1,6 +1,6 @@
 from enum import Enum
 
-from notion_client_wrapper.properties.select import Select
+from lotion.properties import Select
 
 kind_map = {
     "次にとるべき行動リスト": {"selected_id": "d73dbc77-702d-4b2e-88e1-22b54a17a333", "selected_color": "brown"},
@@ -87,10 +87,10 @@ if __name__ == "__main__":
     # 最新の情報を取得するときに使う
     # python -m notion_api.task.domain.task_kind
     from common.value.database_type import DatabaseType
-    from notion_client_wrapper.client_wrapper import ClientWrapper
+    from lotion import Lotion
 
     # python -m notion_api.task.domain.task_context
-    pages = ClientWrapper.get_instance().retrieve_database(
+    pages = Lotion.get_instance().retrieve_database(
         database_id=DatabaseType.TASK.value,
     )
 

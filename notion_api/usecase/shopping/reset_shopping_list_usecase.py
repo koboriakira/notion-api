@@ -20,10 +20,10 @@ class ResetShoppingListUseCase:
 
 if __name__ == "__main__":
     # python -m notion_api.usecase.shopping.reset_shopping_list_usecase
-    from notion_client_wrapper.client_wrapper import ClientWrapper
+    from lotion import Lotion
     from shopping.infrastructure.repository_impl import ShoppingRepositoryImpl
 
     usecase = ResetShoppingListUseCase(
-        ShoppingRepositoryImpl(ClientWrapper.get_instance()),
+        ShoppingRepositoryImpl(Lotion.get_instance()),
     )
     usecase.execute()

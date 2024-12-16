@@ -2,7 +2,7 @@ from abc import ABCMeta, abstractmethod
 from datetime import date
 
 from daily_log.domain.daily_log import DailyLog
-from notion_client_wrapper.page.page_id import PageId
+from lotion.page import PageId
 
 
 class ExistedDailyLogError(Exception):

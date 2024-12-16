@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
-from notion_client_wrapper.properties.multi_select import MultiSelect, MultiSelectElement
+from lotion.properties import MultiSelect
+from lotion.properties.multi_select import MultiSelectElement
 
 KIND_LIST = [
     {"name": "集中", "id": "69615ccf-b98e-4764-b4a7-8cc920e03d92"},
@@ -58,10 +59,11 @@ class TaskContext(MultiSelect):
 if __name__ == "__main__":
     # 最新の情報を取得するときに使う
     # python -m notion_api.task.domain.task_context
-    from common.value.database_type import DatabaseType
-    from notion_client_wrapper.client_wrapper import ClientWrapper
+    from lotion import Lotion
 
-    pages = ClientWrapper.get_instance().retrieve_database(
+    from common.value.database_type import DatabaseType
+
+    pages = Lotion.get_instance().retrieve_database(
         database_id=DatabaseType.TASK.value,
     )
 

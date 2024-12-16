@@ -1,12 +1,9 @@
 from dataclasses import dataclass
 
-from notion_client_wrapper.block.block import Block
-from notion_client_wrapper.block.bulleted_list_item import BulletedlistItem
-from notion_client_wrapper.block.heading import Heading
-from notion_client_wrapper.page.page_id import PageId
-from notion_client_wrapper.properties.cover import Cover
-from notion_client_wrapper.properties.properties import Properties
-from notion_client_wrapper.properties.property import Property
+from lotion.block import Block, BulletedListItem, Heading
+from lotion.page import PageId
+from lotion.properties import Cover, Properties, Property
+
 from recipe.domain.carbohydrate import Carbohydrate
 from recipe.domain.fat import Fat
 from recipe.domain.ingredient_relation import IngredientRelation
@@ -45,7 +42,6 @@ class RecipeBuilder:
 
     def add_meal_kind(self, meal_kind_types: MealKindTypes) -> "RecipeBuilder":
         meal_kind = MealKind(kind_types=meal_kind_types)
-        print(meal_kind)
         self.properties.append(meal_kind)
         return self
 
@@ -60,6 +56,6 @@ class RecipeBuilder:
     def add_bulletlist_block(self, heading: str, texts: list[str]) -> "RecipeBuilder":
         heading_block = Heading.from_plain_text(heading_size=2, text=heading)
         self.blocks.append(heading_block)
-        items = [BulletedlistItem.from_plain_text(text=text) for text in texts]
+        items = [BulletedListItem.from_plain_text(text=text) for text in texts]
         self.blocks.extend(items)
         return self

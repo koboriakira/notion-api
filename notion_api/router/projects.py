@@ -1,10 +1,10 @@
 from datetime import date
 
 from fastapi import APIRouter, Header
+from lotion import Lotion
+from lotion.page import PageId
 
 from interface import project
-from notion_client_wrapper.client_wrapper import ClientWrapper
-from notion_client_wrapper.page.page_id import PageId
 from project.infrastructure.project_repository_impl import ProjectRepositoryImpl
 from router.request.notion_automation_request import NotionAutomationRequest
 from router.response.base_response import BaseResponse
@@ -16,7 +16,7 @@ from util.access_token import valid_access_token
 
 router = APIRouter()
 
-client = ClientWrapper.get_instance()
+client = Lotion.get_instance()
 
 
 @router.get("")
@@ -44,7 +44,7 @@ def create_new_project(
     access_token: str | None = Header(None),
 ) -> BaseResponse:
     valid_access_token(access_token)
-    project_template_id = PageId(value=request.data.id)
+    project_template_id = PageId(request.data.id)
     usecase = CreateProjectFromTemplateUsecase(
         client=client,
         project_repository=ProjectRepositoryImpl(client=client),
@@ -66,5 +66,5 @@ def remove_project(
         task_repository=TaskRepositoryImpl(notion_client_wrapper=client),
         project_repository=ProjectRepositoryImpl(client=client),
     )
-    remove_project_service.execute(id_=PageId(value=project_id))
+    remove_project_service.execute(id_=PageId(project_id))
     return BaseResponse()

@@ -1,6 +1,7 @@
 import os
 from logging import Logger
 
+from lotion import Lotion
 from slack_sdk.web import WebClient
 
 from account_book.infrastructure.repository_impl import RepositoryImpl
@@ -11,7 +12,6 @@ from external_calendar.infrastructure.google_calendar_api import GoogleCalendarA
 from external_calendar.service.external_calendar_service import ExternalCalendarService
 from injector.page_creator_factory import PageCreatorFactory
 from music.infrastructure.song_repository_impl import SongRepositoryImpl
-from notion_client_wrapper.client_wrapper import ClientWrapper
 from recipe.infrastructure.recipe_repository_impl import RecipeRepositoryImpl
 from recipe.service.recipe_creator import RecipeCreator
 from slack_concierge.injector import SlackConciergeInjector
@@ -23,12 +23,12 @@ from usecase.create_page_use_case import CreatePageUseCase
 from usecase.create_routine_task_use_case import CreateRoutineTaskUseCase
 from usecase.recipe.add_recipe_use_case import AddRecipeUseCase
 from usecase.service.inbox_service import InboxService
-from usecase.service.tag_analyzer import TagAnalyzer
 from usecase.service.tag_create_service import TagCreateService
 from usecase.service.text_summarizer import TextSummarizer
 from usecase.task.sync_external_calendar_usecase import SyncExternalCalendarUsecase
 from usecase.zettlekasten.create_tag_to_zettlekasten_use_case import CreateTagToZettlekastenUseCase
 from util.openai_executer import OpenaiExecuter
+from util.tag_analyzer import TagAnalyzer
 from video.infrastructure.video_repository_impl import VideoRepositoryImpl
 from webclip.infrastructure.webclip_repository_impl import WebclipRepositoryImpl
 from zettlekasten.infrastructure.zettlekasten_repository_impl import ZettlekastenRepositoryImpl
@@ -36,14 +36,14 @@ from zettlekasten.infrastructure.zettlekasten_repository_impl import Zettlekaste
 logger = get_logger(__name__)
 
 
-client = ClientWrapper.get_instance()
+client = Lotion.get_instance()
 openai_executer = OpenaiExecuter(logger=logger)
 slack_bot_client = WebClient(token=os.environ["SLACK_BOT_TOKEN"])
 
 
 class Injector:
-    @classmethod
-    def get_create_tag_to_zettlekasten_use_case(cls: "Injector") -> CreateTagToZettlekastenUseCase:
+    @staticmethod
+    def get_create_tag_to_zettlekasten_use_case() -> CreateTagToZettlekastenUseCase:
         zettlekasten_repository = ZettlekastenRepositoryImpl(
             client=client,
             logger=logger,

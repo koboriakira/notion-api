@@ -1,6 +1,6 @@
 from enum import Enum
 
-from notion_client_wrapper.properties.select import Select
+from lotion.properties import Select
 
 kind_map = {
     "住居・水道光熱・通信費": {"selected_id": "f3a44bbf-234e-494c-8fdf-3269475da426", "selected_color": "blue"},
@@ -82,10 +82,10 @@ if __name__ == "__main__":
     # 最新の情報を取得するときに使う
     # python -m notion_api.account_book.domain.category
     from common.value.database_type import DatabaseType
-    from notion_client_wrapper.client_wrapper import ClientWrapper
+    from lotion import Lotion
 
     # python -m notion_api.task.domain.task_context
-    pages = ClientWrapper.get_instance().retrieve_database(
+    pages = Lotion.get_instance().retrieve_database(
         database_id=DatabaseType.ACCOUNT_BOOK.value,
     )
 

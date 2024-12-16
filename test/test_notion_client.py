@@ -37,7 +37,7 @@ class TestNotionClient(TestCase):
         """現在のタスクを取得してみる"""
         # pytest test/test_notion_client.py -k test_current_tasks
 
-        # test_client_wrapper.py::TestClientWrapper::test_現在のタスクを取得する と異なる結果が出たりするので注意。
+        # test_client_wrapper.py::TestLotion::test_現在のタスクを取得する と異なる結果が出たりするので注意。
         filter_param = {
             "and": [
                 {"property": "タスク種別", "select": {"does_not_equal": "ゴミ箱"}},

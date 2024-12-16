@@ -1,27 +1,27 @@
 from logging import Logger, getLogger
 
+from lotion import Lotion
+from lotion.base_page import BasePage
+from lotion.filter import Builder
+from lotion.filter.condition import Cond, Prop
+
 from common.value.database_type import DatabaseType
 from food.domain.food import Food
 from food.domain.food_repository import FoodRepository
-from notion_client_wrapper.base_page import BasePage
-from notion_client_wrapper.client_wrapper import ClientWrapper
-from notion_client_wrapper.filter.filter_builder import FilterBuilder
-from notion_client_wrapper.properties.title import Title
 
 
 class FoodRepositoryImpl(FoodRepository):
     DATABASE_ID = DatabaseType.FOOD.value
 
-    def __init__(self, client: ClientWrapper, logger: Logger | None = None) -> None:
+    def __init__(self, client: Lotion, logger: Logger | None = None) -> None:
         self._client = client
         self._logger = logger or getLogger(__name__)
 
     def find_by_title(self, title: str) -> Food | None:
-        title_property = Title.from_plain_text(text=title)
-        filter_param = FilterBuilder.build_simple_equal_condition(title_property)
+        builder = Builder.create().add(Prop.RICH_TEXT, "名前", Cond.EQUALS, title)
         searched_food = self._client.retrieve_database(
             database_id=self.DATABASE_ID,
-            filter_param=filter_param,
+            filter_param=builder.build(),
         )
         if len(searched_food) == 0:
             return None
@@ -36,8 +36,8 @@ class FoodRepositoryImpl(FoodRepository):
             properties=food.properties.values,
         )
         food.update_id_and_url(
-            page_id=result["id"],
-            url=result["url"],
+            page_id=result.page_id.value,
+            url=result.url,
         )
         return food
 
@@ -49,8 +49,8 @@ class FoodRepositoryImpl(FoodRepository):
             url=base_page.url,
             created_time=base_page.created_time,
             last_edited_time=base_page.last_edited_time,
-            created_by=base_page.created_by,
-            last_edited_by=base_page.last_edited_by,
+            _created_by=base_page._created_by,
+            _last_edited_by=base_page._last_edited_by,
             cover=base_page.cover,
             icon=base_page.icon,
             archived=base_page.archived,

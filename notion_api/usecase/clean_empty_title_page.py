@@ -1,11 +1,11 @@
 from logging import Logger
 
+from lotion import Lotion
+from lotion.filter import Builder
+from lotion.filter.condition import Cond, Prop
+
 from common.value.database_type import DatabaseType
 from custom_logger import get_logger
-from notion_client_wrapper.client_wrapper import ClientWrapper
-from notion_client_wrapper.filter.condition.empty_condition import EmptyCondition
-from notion_client_wrapper.filter.filter_builder import FilterBuilder
-from notion_client_wrapper.properties.title import Title
 
 logger = get_logger(__name__)
 
@@ -22,11 +22,11 @@ database_list = [
 
 
 class CleanEmptyTitlePageUsecase:
-    def __init__(self, client: ClientWrapper | None = None, logger: Logger | None = None) -> None:
-        self._client = client or ClientWrapper.get_instance()
+    def __init__(self, client: Lotion | None = None, logger: Logger | None = None) -> None:
+        self._client = client or Lotion.get_instance()
         self._logger = logger or get_logger(__name__)
 
-    def handle(self) -> dict:
+    def handle(self) -> None:
         for database in database_list:
             self._clean(database=database)
 
@@ -39,13 +39,12 @@ class CleanEmptyTitlePageUsecase:
         self._logger.info(f"length of page: {len(pages)}")
         for page in pages:
             if page.get_title_text() == "":
-                self._logger.info(f"Remove empty title page_id: {page.id}")
-                self._client.remove_page(page_id=page.id)
+                self._logger.info(f"Remove empty title page_id: {page.page_id.value}")
+                self._client.remove_page(page_id=page.page_id.value)
 
     def _create_filter_param(self) -> dict:
-        title = Title.from_plain_text(text="")
-        filter_builder = FilterBuilder().add_condition(EmptyCondition.true(prop_name=title.name, prop_type=title.type))
-        return filter_builder.build()
+        builder = Builder.create().add(Prop.RICH_TEXT, "名前", Cond.IS_EMPTY, True)
+        return builder.build()
 
 
 if __name__ == "__main__":

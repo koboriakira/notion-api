@@ -1,5 +1,12 @@
 from datetime import date, datetime
 
+from lotion import Lotion
+from lotion.base_page import BasePage
+from lotion.block import Embed, Heading, Paragraph
+from lotion.block.rich_text import RichTextBuilder
+from lotion.filter import Builder
+from lotion.filter.condition import Cond
+
 from common.infrastructure.twitter.lambda_twitter_api import LambdaTwitterApi
 from common.service.image.external_image_service import ExternalImageService
 from common.value.database_type import DatabaseType
@@ -7,14 +14,6 @@ from common.value.slack_channel_type import ChannelType
 from custom_logger import get_logger
 from daily_log.domain.daily_log_repository import DailyLogRepository
 from music.domain.song_repository import SongRepository
-from notion_client_wrapper import block
-from notion_client_wrapper.base_page import BasePage
-from notion_client_wrapper.block.embed import Embed
-from notion_client_wrapper.block.rich_text.rich_text_builder import RichTextBuilder
-from notion_client_wrapper.client_wrapper import ClientWrapper
-from notion_client_wrapper.filter.condition.date_condition import DateCondition
-from notion_client_wrapper.filter.filter_builder import FilterBuilder
-from notion_client_wrapper.properties.last_edited_time import LastEditedTime
 from task.domain.task_kind import TaskKindType
 from task.domain.task_repository import TaskRepository
 from task.domain.task_status import TaskStatusType
@@ -47,7 +46,7 @@ class CollectUpdatedPagesUsecase:
         video_repository: VideoRepository,
         is_debug: bool | None = None,
     ) -> None:
-        self.client = ClientWrapper.get_instance()
+        self.client = Lotion.get_instance()
         channel_type = ChannelType.DIARY if not is_debug else ChannelType.TEST
         self._slack_client = SlackClient.bot(channel_type=channel_type, thread_ts=None)
         self._task_repository = task_repository
@@ -80,24 +79,11 @@ tags: []
 """
 
         # デイリーログを取得
-        daily_log_id = self._proc_daily_log(target_date=target_date)
+        daily_log_id = "dummy" if self.is_debug else self._proc_daily_log(target_date=target_date)
 
-        # 今日完了したタスクを取得
-        done_tasks = self._task_repository.search(
-            status_list=[TaskStatusType.DONE],
-            kind_type_list=[
-                TaskKindType.DO_NOW,
-                TaskKindType.WAIT,
-                TaskKindType.NEXT_ACTION,
-                TaskKindType.SOMEDAY_MAYBE,
-                TaskKindType.SCHEDULE,
-            ],
-            start_datetime=date_range.start.value,
-            start_datetime_end=date_range.end.value,
-        )
-        markdown_text += "\n## 今日完了したタスク\n"
-        markdown_text += "\n".join([f"- {task.get_title_text()}" for task in done_tasks])
-        self._append_relation_to_daily_log(daily_log_id=daily_log_id, title="今日完了したタスク", pages=done_tasks)
+        # 今日完了したタスクを集める
+        markdown_text += "\n"
+        markdown_text += self._proc_tasks(date_range=date_range, daily_log_id=daily_log_id)
 
         # 各データベースの更新ページを取得
         for title, database_type in DATABASE_DICT.items():
@@ -144,6 +130,28 @@ tags: []
             new_thread=True,
         )
         return daily_log.id
+
+    def _proc_tasks(self, date_range: DateRange, daily_log_id: str) -> str:
+        done_tasks = self._task_repository.search(
+            status_list=[TaskStatusType.DONE],
+            kind_type_list=[
+                TaskKindType.DO_NOW,
+                TaskKindType.WAIT,
+                TaskKindType.NEXT_ACTION,
+                TaskKindType.SOMEDAY_MAYBE,
+                TaskKindType.SCHEDULE,
+            ],
+            start_datetime=date_range.start.value,
+            start_datetime_end=date_range.end.value,
+        )
+        if not self.is_debug:
+            self._append_heading(block_id=daily_log_id, title="今日完了したタスク")
+        markdown_text = "\n## 今日完了したタスク\n"
+        for done_task in done_tasks:
+            if not self.is_debug:
+                self._append_backlink(block_id=daily_log_id, page=done_task)
+            markdown_text += f"\n- {done_task.get_title_text()}"
+        return markdown_text
 
     def _proc_webclips(self, date_range: DateRange, daily_log_id: str) -> str:
         """WebClipを処理する"""
@@ -232,12 +240,12 @@ tags: []
 
     def _get_latest_items(self, date_range: DateRange, database_type: DatabaseType) -> list[BasePage]:
         """指定されたカテゴリの、最近更新されたページIDを取得する"""
-        last_edited_time_start = LastEditedTime.create(value=date_range.start.value)
-        last_edited_time_end = LastEditedTime.create(value=date_range.end.value)
-        filter_builder = FilterBuilder()
-        filter_builder = filter_builder.add_condition(DateCondition.on_or_after(last_edited_time_start))
-        filter_builder = filter_builder.add_condition(DateCondition.on_or_before(last_edited_time_end))
-        filter_param = filter_builder.build()
+        builder = (
+            Builder.create()
+            .add_last_edited_at(Cond.ON_OR_AFTER, date_range.start.value.isoformat())
+            .add_last_edited_at(Cond.ON_OR_BEFORE, date_range.end.value.isoformat())
+        )
+        filter_param = builder.build()
         return self.client.retrieve_database(database_id=database_type.value, filter_param=filter_param)
 
     def _append_relation_to_daily_log(self, daily_log_id: str, title: str, pages: list[BasePage]) -> None:
@@ -254,13 +262,13 @@ tags: []
             self._slack_client.chat_postMessage(text=page.title_for_slack())
 
     def _append_heading(self, block_id: str, title: str) -> None:
-        heading = block.Heading.from_plain_text(heading_size=2, text=title)
+        heading = Heading.from_plain_text(heading_size=2, text=title)
         if not self.is_debug:
             self.client.append_block(block_id=block_id, block=heading)
 
     def _append_backlink(self, block_id: str, page: BasePage) -> None:
-        rich_text = RichTextBuilder.get_instance().add_page_mention(page_id=page.id).build()
-        paragraph = block.Paragraph.from_rich_text(rich_text=rich_text)
+        rich_text = RichTextBuilder.get_instance().add_page_mention(page_id=page.page_id.value).build()
+        paragraph = Paragraph.from_rich_text(rich_text=rich_text)
         if not self.is_debug:
             self.client.append_block(
                 block_id=block_id,
@@ -277,7 +285,7 @@ if __name__ == "__main__":
     from video.infrastructure.video_repository_impl import VideoRepositoryImpl
     from webclip.infrastructure.webclip_repository_impl import WebclipRepositoryImpl
 
-    client = ClientWrapper.get_instance()
+    client = Lotion.get_instance()
     task_repository = TaskRepositoryImpl(notion_client_wrapper=client)
     song_repository = SongRepositoryImpl(client=client)
     daily_log_repository = DailyLogRepositoryImpl(client=client)
@@ -293,9 +301,11 @@ if __name__ == "__main__":
         video_repository=video_repository,
     )
     date_range = DateRange.from_datetime(
-        start=datetime(2024, 12, 2, 0, 0, 0, tzinfo=JST),
-        end=datetime(2024, 12, 4, 0, 0, 0, tzinfo=JST),
+        start=datetime(2024, 12, 14, 0, 0, 0, tzinfo=JST),
+        end=datetime(2024, 12, 16, 0, 0, 0, tzinfo=JST),
     )
+    print(usecase._proc_daily_log(target_date=date_range.end.value.date()))
     # print(usecase.execute(date_range=date_range))
-    print(usecase._proc_videos(date_range=date_range, daily_log_id="dummy"))
+    # print(usecase._proc_videos(date_range=date_range, daily_log_id="dummy"))
     # print(usecase._proc_images(date_range=date_range))
+    # print(usecase._proc_tasks(date_range=date_range, daily_log_id="dummy"))

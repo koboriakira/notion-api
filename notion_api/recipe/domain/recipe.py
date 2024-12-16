@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
-from notion_client_wrapper.base_page import BasePage
-from notion_client_wrapper.page.page_id import PageId
+from lotion.base_page import BasePage
+from lotion.page import PageId
 from recipe.domain.carbohydrate import Carbohydrate
 from recipe.domain.fat import Fat
 from recipe.domain.ingredient_relation import IngredientRelation

@@ -1,13 +1,14 @@
+from lotion import Lotion
+from lotion.base_page import BasePage
+
 from common.value.database_type import DatabaseType
-from notion_client_wrapper.base_page import BasePage
-from notion_client_wrapper.client_wrapper import ClientWrapper
 from task.domain.routine_repository import RoutineRepository
 from task.domain.routine_task import RoutineTask
 
 
 class RoutineRepositoryImpl(RoutineRepository):
-    def __init__(self, notion_client_wrapper: ClientWrapper | None = None) -> None:
-        self.client = notion_client_wrapper or ClientWrapper.get_instance()
+    def __init__(self, notion_client_wrapper: Lotion | None = None) -> None:
+        self.client = notion_client_wrapper or Lotion.get_instance()
 
     def fetch_all(self) -> list[RoutineTask]:
         base_pages = self.client.retrieve_database(
@@ -24,8 +25,8 @@ class RoutineRepositoryImpl(RoutineRepository):
             url=base_page.url,
             created_time=base_page.created_time,
             last_edited_time=base_page.last_edited_time,
-            created_by=base_page.created_by,
-            last_edited_by=base_page.last_edited_by,
+            _created_by=base_page._created_by,
+            _last_edited_by=base_page._last_edited_by,
             cover=base_page.cover,
             icon=base_page.icon,
             archived=base_page.archived,

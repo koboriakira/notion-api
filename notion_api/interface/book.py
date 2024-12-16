@@ -1,7 +1,7 @@
 from book.infrastructure.book_repository_impl import BookRepositoryImpl
 from custom_logger import get_logger
 from infrastructure.book.google_book_api import GoogleBookApi
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 from usecase.add_book_usecase import AddBookUsecase
 
 logger = get_logger(__name__)
@@ -16,7 +16,7 @@ def add_book_by_google_book_id(
 ) -> dict:
     book_api = GoogleBookApi()
     logger = get_logger(__name__)
-    client = ClientWrapper.get_instance()
+    client = Lotion.get_instance()
     book_repository = BookRepositoryImpl(
         client=client,
         logger=logger,

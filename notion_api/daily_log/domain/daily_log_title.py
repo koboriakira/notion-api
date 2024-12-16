@@ -1,6 +1,6 @@
 from datetime import date
 
-from notion_client_wrapper.properties.title import Title
+from lotion.properties import Title
 
 
 class DailyLogTitle(Title):

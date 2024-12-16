@@ -1,6 +1,6 @@
 from enum import Enum
 
-from notion_client_wrapper.properties.status import Status
+from lotion.properties import Status
 
 
 class ProjectStatusType(Enum):

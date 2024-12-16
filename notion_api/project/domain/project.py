@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 
 from common.domain.tag_relation import TagRelation
-from notion_client_wrapper.base_page import BasePage
-from notion_client_wrapper.block.block import Block
-from notion_client_wrapper.properties.cover import Cover
-from notion_client_wrapper.properties.properties import Properties
+from lotion.base_page import BasePage
+from lotion.block import Block
+from lotion.properties import Cover
+from lotion.properties import Properties
 from project.domain.action_plan import ActionPlan
 from project.domain.definition_of_done import DefinitionOfDone
 from project.domain.goal_relation import GoalRelation

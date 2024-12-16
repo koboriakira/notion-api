@@ -1,4 +1,4 @@
-from notion_client_wrapper.page.page_id import PageId
+from lotion.page import PageId
 from task.domain.task import ToDoTask
 from task.domain.task_repository import TaskRepository
 from task.domain.task_status import TaskStatusType

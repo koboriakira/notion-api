@@ -5,7 +5,7 @@ from unittest import TestCase
 from notion_api.daily_log.domain.daily_log_builder import DailyLogBuilder
 
 sys.path.append("notion_api")
-from notion_client_wrapper.page.page_id import PageId
+from lotion.page import PageId
 
 
 class TestDailyLogBuilder(TestCase):

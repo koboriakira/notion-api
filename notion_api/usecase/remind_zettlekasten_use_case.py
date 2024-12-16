@@ -39,7 +39,8 @@ class RemindZettlekastenUseCase:
             self._print_if_specified_date(zettlekasten)
 
     def _print_if_specified_date(self, zettlekasten: Zettlekasten) -> None:
-        created_date = zettlekasten.get_created_at().date()
+        print(zettlekasten)
+        created_date = zettlekasten.created_at.date()
         past_days = self._calculate_past_days(created_date)
         if past_days is None:
             return
@@ -63,10 +64,11 @@ if __name__ == "__main__":
     # python -m notion_api.usecase.remind_zettlekasten_use_case
     import os
 
-    from notion_client_wrapper.client_wrapper import ClientWrapper
+    from lotion import Lotion
+
     from zettlekasten.infrastructure.zettlekasten_repository_impl import ZettlekastenRepositoryImpl
 
-    repository = ZettlekastenRepositoryImpl(client=ClientWrapper.get_instance())
+    repository = ZettlekastenRepositoryImpl(client=Lotion.get_instance())
     use_case = RemindZettlekastenUseCase(
         zettlekasten_repository=repository,
         slack_client=WebClient(token=os.environ["SLACK_BOT_TOKEN"]),

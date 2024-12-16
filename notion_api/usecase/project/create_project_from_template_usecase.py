@@ -1,8 +1,9 @@
 from logging import Logger, getLogger
 
-from notion_client_wrapper.block.bulleted_list_item import BulletedlistItem
-from notion_client_wrapper.client_wrapper import ClientWrapper
-from notion_client_wrapper.page.page_id import PageId
+from lotion import Lotion
+from lotion.block import BulletedListItem
+from lotion.page import PageId
+
 from project.domain.project import Project
 from project.domain.project_repository import ProjectRepository
 from task.domain.task_repository import TaskRepository
@@ -12,7 +13,7 @@ from usecase.project.create_project_service import CreateProjectService
 class CreateProjectFromTemplateUsecase:
     def __init__(
         self,
-        client: ClientWrapper,
+        client: Lotion,
         project_repository: ProjectRepository,
         task_repository: TaskRepository,
         logger: Logger | None = None,
@@ -31,7 +32,7 @@ class CreateProjectFromTemplateUsecase:
         project_name = base_page.get_text(name="プロジェクト名").text
         task_list: list[str] = []
         for block in base_page.block_children:
-            if isinstance(block, BulletedlistItem):
+            if isinstance(block, BulletedListItem):
                 task_list.append(block.rich_text.to_plain_text())
 
         return self._create_project_service.execute(

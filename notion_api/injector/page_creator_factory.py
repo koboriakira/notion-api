@@ -4,7 +4,7 @@ from common.service.page_creator import PageCreator
 from common.value.site_kind import SiteKind
 from music.infrastructure.song_repository_impl import SongRepositoryImpl
 from music.service.music_creator import MusicCreator
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 from restaurant.infrastructure.restaurant_repository_impl import RestaurantRepositoryImpl
 from restaurant.service.restaurant_creator import RestaurantCreator
 from video.video_injector import VideoInjector
@@ -17,7 +17,7 @@ class PageCreatorFactory:
 
     @classmethod
     def generate_rule(cls: "PageCreatorFactory", logger: Logger) -> "PageCreatorFactory":
-        client = ClientWrapper.get_instance()
+        client = Lotion.get_instance()
         webclip_creator = WebclipInjector.create_webclip_creator()
         video_creator = VideoInjector.create_video_creator()
         restaurant_repository = RestaurantRepositoryImpl(client=client)

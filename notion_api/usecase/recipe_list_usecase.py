@@ -1,10 +1,10 @@
 from common.value.database_type import DatabaseType
-from notion_client_wrapper.client_wrapper import ClientWrapper
+from lotion import Lotion
 
 
 class RecipeListUsecase:
     def __init__(self):
-        self.client = ClientWrapper.get_instance()
+        self.client = Lotion.get_instance()
 
     def execute(
         self,

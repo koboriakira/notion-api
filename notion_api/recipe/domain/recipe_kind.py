@@ -1,6 +1,6 @@
 from enum import Enum
 
-from notion_client_wrapper.properties.select import Select
+from lotion.properties import Select
 
 kind_map = {
     "自動作成": {"selected_id": "pMjN", "selected_color": "gray"},

@@ -1,11 +1,8 @@
 from dataclasses import dataclass
 
-from notion_client_wrapper.base_page import BasePage
-from notion_client_wrapper.block.block import Block
-from notion_client_wrapper.properties.cover import Cover
-from notion_client_wrapper.properties.properties import Properties
-from notion_client_wrapper.properties.property import Property
-from notion_client_wrapper.properties.title import Title
+from lotion.base_page import BasePage
+from lotion.block import Block
+from lotion.properties import Cover, Properties, Property, Title
 
 
 @dataclass

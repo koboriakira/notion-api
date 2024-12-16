@@ -1,16 +1,16 @@
 from unittest import TestCase
 from unittest.mock import Mock
 
+from lotion import Lotion
+from lotion.base_page import BasePage
+from lotion.page import PageId
+from lotion.properties import Properties
 from notion_api.common.service.tag_creator.tag_creator import TagCreator
-from notion_api.notion_client_wrapper.base_page import BasePage
-from notion_api.notion_client_wrapper.client_wrapper import ClientWrapper
-from notion_api.notion_client_wrapper.page.page_id import PageId
-from notion_api.notion_client_wrapper.properties.properties import Properties
 
 
 class TestTagCreator(TestCase):
     def setUp(self) -> None:
-        self.mock_client = Mock(spec=ClientWrapper)
+        self.mock_client = Mock(spec=Lotion)
         self.suite = TagCreator(client=self.mock_client)
         return super().setUp()
 
@@ -24,8 +24,8 @@ class TestTagCreator(TestCase):
         tag_page_id_aaa = PageId.dummy().value
         tag_page_id_bbb = PageId.dummy().value
         self.mock_client.create_page_in_database.side_effect = [
-            {"id": tag_page_id_aaa},
-            {"id": tag_page_id_bbb},
+            BasePage(properties=Properties([]), id_=tag_page_id_aaa),
+            BasePage(properties=Properties([]), id_=tag_page_id_bbb),
         ]
 
         # When

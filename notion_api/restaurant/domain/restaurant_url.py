@@ -1,4 +1,4 @@
-from notion_client_wrapper.properties.url import Url
+from lotion.properties import Url
 
 
 class RestaurantUrl(Url):

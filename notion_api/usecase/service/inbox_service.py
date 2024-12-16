@@ -1,28 +1,28 @@
 import os
 
+from lotion import Lotion
+from lotion.base_page import BasePage
+from lotion.block import Bookmark, Embed
+from lotion.properties import Title
 from slack_sdk.web import WebClient
 
-from book.domain.book import Book
 from common.value.database_type import DatabaseType
 from music.domain.song import Song
-from task.domain.memo_genre import MemoGenreKind, MemoGenreType
-from notion_client_wrapper.base_page import BasePage
-from notion_client_wrapper.block.bookmark import Bookmark
-from notion_client_wrapper.block.embed import Embed
-from notion_client_wrapper.client_wrapper import ClientWrapper
-from notion_client_wrapper.properties import Title
 from restaurant.domain.restaurant import Restaurant
+from task.domain.memo_genre import MemoGenreKind, MemoGenreType
 from video.domain.video import Video
 from webclip.domain.webclip import Webclip
 
 
 class InboxService:
     def __init__(
-        self, slack_client: WebClient | None = None, client: ClientWrapper | None = None
+        self,
+        slack_client: WebClient | None = None,
+        client: Lotion | None = None,
     ) -> None:
-        self.client = client or ClientWrapper.get_instance()
+        self.client = client or Lotion.get_instance()
         self.slack_client = slack_client or WebClient(
-            token=os.environ["SLACK_BOT_TOKEN"]
+            token=os.environ["SLACK_BOT_TOKEN"],
         )
 
     def add_inbox_task_by_page_id(
@@ -58,7 +58,7 @@ class InboxService:
                 if isinstance(page, Song) or isinstance(page, Video)
                 else Bookmark.from_url(url=original_url)
             )
-            self.client.append_block(block_id=inbox_task_page["id"], block=block)
+            self.client.append_block(block_id=inbox_task_page.page_id.value, block=block)
 
         # Slackに通知
         if slack_channel is not None:

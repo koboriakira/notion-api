@@ -1,17 +1,17 @@
+from lotion import Lotion
+from lotion.page import PageId
+from lotion.properties import Title
 from typing_extensions import deprecated
 
 from common.value.database_type import DatabaseType
 from custom_logger import get_logger
-from notion_client_wrapper.client_wrapper import ClientWrapper
-from notion_client_wrapper.page.page_id import PageId
-from notion_client_wrapper.properties import Title
 
 logger = get_logger(__name__)
 
 
 class TagCreateService:
-    def __init__(self, client: ClientWrapper | None = None) -> None:
-        self.client = client or ClientWrapper.get_instance()
+    def __init__(self, client: Lotion | None = None) -> None:
+        self.client = client or Lotion.get_instance()
 
     @deprecated("use add_tag_page instead")
     def add_tag(self, name: str) -> str:
@@ -19,7 +19,7 @@ class TagCreateService:
         # すでに存在するか確認
         tags = self.client.retrieve_database(database_id=DatabaseType.TAG.value, title=name)
         if len(tags) > 0:
-            return tags[0].id
+            return tags[0].page_id.value
 
         # 作成
         result = self.client.create_page_in_database(
@@ -28,7 +28,7 @@ class TagCreateService:
                 Title.from_plain_text(name="名前", text=name),
             ],
         )
-        return result["id"]
+        return result.page_id.value
 
     def add_tag_page(self, name: str) -> PageId:
         """指定されたタグをタグデータベースに追加する。タグページのIDを返却する"""
