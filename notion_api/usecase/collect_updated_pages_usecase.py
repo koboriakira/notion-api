@@ -134,13 +134,6 @@ tags: []
     def _proc_tasks(self, date_range: DateRange, daily_log_id: str) -> str:
         done_tasks = self._task_repository.search(
             status_list=[TaskStatusType.DONE],
-            kind_type_list=[
-                TaskKindType.DO_NOW,
-                TaskKindType.WAIT,
-                TaskKindType.NEXT_ACTION,
-                TaskKindType.SOMEDAY_MAYBE,
-                TaskKindType.SCHEDULE,
-            ],
             start_datetime=date_range.start.value,
             start_datetime_end=date_range.end.value,
         )
