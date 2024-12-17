@@ -36,14 +36,13 @@ class DynamoDBClient:
         msg = "指定したキーのアイテムは存在しません"
         raise Exception(msg)
 
-    @classmethod
-    def get_attributes_client(cls) -> "DynamoDBClient":
-        return cls("NotionApiAttributes")
-
+    @staticmethod
+    def get_attributes_client() -> "DynamoDBClient":
+        return DynamoDBClient(table_name="NotionApiAttributes")
 
 
 if __name__ == "__main__":
     # python -m notion_api.util.dynamodb.dynamodb
     client = DynamoDBClient.get_attributes_client()
-    client.put({"key": "1", "name": "test"})
+    # client.put({"key": "1", "name": "test"})
     client.find("key", "1")

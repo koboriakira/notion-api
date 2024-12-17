@@ -1,4 +1,3 @@
-
 from external_calendar.infrastructure.google_calendar_api import GoogleCalendarApi
 from external_calendar.service.external_calendar_service import ExternalCalendarService
 from task.infrastructure.task_repository_impl import TaskRepositoryImpl
@@ -25,5 +24,5 @@ def handler(event: dict, context: dict) -> None:
 
 
 if __name__ == "__main__":
-    # python -m notion_api.every_day_batch
+    # python -m notion_api.sync_external_calendar
     handler({}, {})

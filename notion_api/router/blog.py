@@ -6,24 +6,23 @@ from fastapi import APIRouter
 from injector.injector import Injector
 from router.response import BaseResponse
 from util.date_range import DateRange
-from util.datetime import jst_now
-from util.dynamodb.dynamodb import DynamoDBClient
+from util.datetime import JST, jst_now
 
 router = APIRouter()
 
 KEY = "latest-datetime-getting-blog-template"
 
 
-@router.get("/template/", response_model=BaseResponse)
-def get_blog_template(last_execution_time: bool | None = None) -> BaseResponse:
+@router.get("/template/")
+def get_blog_template() -> BaseResponse:
     """
     ブログのテンプレート文章を返却する
     """
-    dynamodb_client = DynamoDBClient.get_attributes_client()
+    # dynamodb_client = DynamoDBClient.get_attributes_client()
     try:
-        start_str = dynamodb_client.find("key", KEY)["datetime"]
-        start = datetime.fromisoformat(start_str)
-        # start = datetime(2024, 11, 18, 1, 0, 0, 0, JST)
+        # start_str = dynamodb_client.find("key", KEY)["datetime"]
+        # start = datetime.fromisoformat(start_str)
+        start = datetime(2024, 12, 16, 0, 0, 0, 0, JST)
         now = jst_now()
 
         usecase = Injector.create_collect_updated_pages_usecase()
@@ -31,11 +30,16 @@ def get_blog_template(last_execution_time: bool | None = None) -> BaseResponse:
             date_range=DateRange.from_datetime(start=start, end=now),
         )
 
-        try:
-            dynamodb_client.put({"key": KEY, "datetime": now.isoformat()})
-        except Exception:  # noqa: BLE001
-            markdown_text += "\n\n※ テンプレート取得日時の更新に失敗しました。"
+        # try:
+        #     dynamodb_client.put({"key": KEY, "datetime": now.isoformat()})
+        # except Exception:
+        #     markdown_text += "\n\n※ テンプレート取得日時の更新に失敗しました。"
         return BaseResponse(message=markdown_text)
     except Exception as e:  # noqa: BLE001
         logging.error(e)
         return BaseResponse(message=f"エラーが発生しました: {e}")
+
+
+if __name__ == "__main__":
+    # python -m notion_api.router.blog
+    get_blog_template()
