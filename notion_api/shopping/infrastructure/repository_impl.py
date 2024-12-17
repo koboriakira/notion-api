@@ -2,7 +2,7 @@ from logging import Logger, getLogger
 
 from lotion import Lotion
 from lotion.base_page import BasePage
-from lotion.page import PageId
+from lotion.page.page_id import PageId
 
 from common.value.database_type import DatabaseType
 from shopping.domain.repository import ShoppingRepository

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Header
 from lotion import Lotion
-from lotion.page import PageId
+from lotion.page.page_id import PageId
 
 from router.request.task_request import CreateNewTaskRequest, UpdateTaskRequest
 from router.response import BaseResponse, TaskResponse

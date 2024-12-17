@@ -2,7 +2,7 @@ from logging import Logger, getLogger
 
 from lotion import Lotion
 from lotion.base_page import BasePage
-from lotion.page import PageId
+from lotion.page.page_id import PageId
 
 from account_book.domain.account_book import AccountBook
 from account_book.domain.repository import Repository

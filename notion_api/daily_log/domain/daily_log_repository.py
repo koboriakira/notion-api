@@ -2,7 +2,7 @@ from abc import ABCMeta, abstractmethod
 from datetime import date
 
 from daily_log.domain.daily_log import DailyLog
-from lotion.page import PageId
+from lotion.page.page_id import PageId
 
 
 class ExistedDailyLogError(Exception):

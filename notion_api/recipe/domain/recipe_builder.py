@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from lotion.block import Block, BulletedListItem, Heading
-from lotion.page import PageId
+from lotion.page.page_id import PageId
 from lotion.properties import Cover, Properties, Property
 
 from recipe.domain.carbohydrate import Carbohydrate

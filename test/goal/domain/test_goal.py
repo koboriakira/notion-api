@@ -1,7 +1,7 @@
 from datetime import date
 from unittest import TestCase
 
-from lotion.page import PageId
+from lotion.page.page_id import PageId
 from notion_api.goal.domain.goal import Goal
 from notion_api.goal.domain.goal_status import GoalStatusType
 
