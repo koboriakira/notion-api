@@ -2,7 +2,7 @@ from logging import Logger, getLogger
 
 from lotion import Lotion
 from lotion.block import BulletedListItem
-from lotion.page import PageId
+from lotion.page.page_id import PageId
 
 from project.domain.project import Project
 from project.domain.project_repository import ProjectRepository

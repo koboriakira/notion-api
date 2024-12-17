@@ -1,5 +1,5 @@
 from lotion import Lotion
-from lotion.page import PageId
+from lotion.page.page_id import PageId
 from lotion.properties import Title
 from typing_extensions import deprecated
 

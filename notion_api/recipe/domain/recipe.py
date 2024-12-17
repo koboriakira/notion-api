@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from lotion.base_page import BasePage
-from lotion.page import PageId
+from lotion.page.page_id import PageId
 from recipe.domain.carbohydrate import Carbohydrate
 from recipe.domain.fat import Fat
 from recipe.domain.ingredient_relation import IngredientRelation

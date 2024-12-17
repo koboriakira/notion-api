@@ -1,4 +1,4 @@
-from lotion.page import PageId
+from lotion.page.page_id import PageId
 from lotion.properties import Relation
 
 

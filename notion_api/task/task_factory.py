@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from typing import TYPE_CHECKING
 
-from lotion.page import PageId
+from lotion.page.page_id import PageId
 from lotion.properties import Properties, Text, Title
 
 from lotion.block import Block

@@ -8,7 +8,7 @@ from daily_log.domain.daily_retro_comment import DailyRetroComment
 from daily_log.domain.previous_relation import PreviousRelation
 from daily_log.domain.weekly_log_relation import WeeklyLogRelation
 from lotion.base_page import BasePage
-from lotion.page import PageId
+from lotion.page.page_id import PageId
 
 
 @dataclass

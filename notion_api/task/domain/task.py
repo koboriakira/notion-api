@@ -3,7 +3,7 @@ from datetime import date, datetime, timedelta
 from typing import override
 
 from lotion.base_page import BasePage
-from lotion.page import PageId
+from lotion.page.page_id import PageId
 
 from task.domain.completed_flag import CompletedFlag
 from task.domain.do_tomorrow_flag import DoTommorowFlag

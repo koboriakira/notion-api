@@ -2,7 +2,7 @@ from datetime import date
 
 from fastapi import APIRouter, Header
 from lotion import Lotion
-from lotion.page import PageId
+from lotion.page.page_id import PageId
 
 from interface import project
 from project.infrastructure.project_repository_impl import ProjectRepositoryImpl

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Header
 from lotion import Lotion
-from lotion.page import PageId
+from lotion.page.page_id import PageId
 
 from common.domain.external_image import ExternalImage
 from common.service.image.external_image_service import ExternalImageService

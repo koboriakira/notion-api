@@ -1,6 +1,7 @@
-from common.value.notion_page_id import NotionPageId
-from lotion.page import PageId
+from lotion.page.page_id import PageId
 from lotion.properties import Relation
+
+from common.value.notion_page_id import NotionPageId
 
 
 def convert_page_id(id_: str | NotionPageId | PageId) -> str:

@@ -3,7 +3,7 @@ from unittest.mock import Mock
 
 from lotion import Lotion
 from lotion.base_page import BasePage
-from lotion.page import PageId
+from lotion.page.page_id import PageId
 from lotion.properties import Properties
 from notion_api.common.service.tag_creator.tag_creator import TagCreator
 

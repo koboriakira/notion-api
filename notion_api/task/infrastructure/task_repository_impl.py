@@ -4,7 +4,7 @@ from lotion import Lotion
 from lotion.base_page import BasePage
 from lotion.filter import Builder
 from lotion.filter.condition import Cond, Prop
-from lotion.page import PageId
+from lotion.page.page_id import PageId
 from lotion.properties import Property
 
 from common.value.database_type import DatabaseType

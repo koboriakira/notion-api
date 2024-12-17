@@ -3,7 +3,7 @@ from logging import Logger, getLogger
 
 from lotion import Lotion
 from lotion.base_page import BasePage
-from lotion.page import PageId
+from lotion.page.page_id import PageId
 
 from common.value.database_type import DatabaseType
 from daily_log.domain.daily_log import DailyLog
@@ -51,7 +51,7 @@ class DailyLogRepositoryImpl(DailyLogRepository):
             DailyLogBuilder.of(date_=date_)
             .add_weekly_log_relation(weekly_log_page_id=weekly_log_id)
             .add_previous_relation(previous_page_id=yesterday_daily_log.page_id)
-            .add_random_cover()
+            # .add_random_cover()
             .build()
         )
         return self.save(daily_log)

@@ -1,7 +1,7 @@
 from lotion import Lotion
 from lotion.filter import Builder
 from lotion.filter.condition import Cond, Prop
-from lotion.page import PageId
+from lotion.page.page_id import PageId
 from lotion.properties import Title
 
 from common.value.database_type import DatabaseType
