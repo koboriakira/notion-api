@@ -113,3 +113,9 @@ class OpenaiExecuter:
         )
         response_message = response.choices[0].message
         return response_message.tool_calls
+
+
+if __name__ == "__main__":
+    # python -m notion_api.util.openai_executer
+    suite = OpenaiExecuter()
+    print(suite.simple_chat("hello"))
