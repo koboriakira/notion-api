@@ -31,9 +31,14 @@ class OpenaiExecuter:
         response = self.client.chat.completions.create(
             model=self.model,
             messages=messages,
+            temperature=1,
         )
         self.logger.debug(response.choices[0].message)
         content = response.choices[0].message.content
+        if response.usage:
+            completion_tokens = response.usage.completion_tokens
+            prompt_tokens = response.usage.prompt_tokens
+            print(f"prompt_tokens: {prompt_tokens}, completion_tokens: {completion_tokens}")
         return content or ""
 
     def simple_json_chat(self, system_prompt: str, user_content: str) -> dict:
