@@ -1,0 +1,41 @@
+# @format
+
+name: Deploy Manu
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Generate Lambda Layer
+        uses: koboriakira/gh-actions/aws/generate-lambda-layer@main
+        with:
+          python-version: "3.12"
+
+      - name: CDK Deploy
+        uses: koboriakira/gh-actions/aws/deploy_cdk@main
+        with:
+          workdir: cdk
+          aws-role: ${{ secrets.AWS_ROLE }}
+        env:
+          NOTION_SECRET: ${{ secrets.NOTION_SECRET }}
+          UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_USER_TOKEN: ${{ secrets.SLACK_USER_TOKEN }}
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          LAMBDA_SLACK_CONCIERGE_API_DOMAIN: ${{ secrets.LAMBDA_SLACK_CONCIERGE_API_DOMAIN }}
+          LAMBDA_TWITTER_API_DOMAIN: ${{ secrets.LAMBDA_TWITTER_API_DOMAIN }}
+          LAMBDA_GOOGLE_CALENDAR_API_DOMAIN: ${{ secrets.LAMBDA_GOOGLE_CALENDAR_API_DOMAIN }}
+          LAMBDA_GOOGLE_CALENDAR_API_ACCESS_TOKEN: ${{ secrets.LAMBDA_GOOGLE_CALENDAR_API_ACCESS_TOKEN }}

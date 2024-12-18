@@ -1,6 +1,6 @@
 # @format
 
-name: Deploy
+name: Deploy Main
 
 on:
   workflow_dispatch:
@@ -77,7 +77,7 @@ jobs:
       - name: Checkout branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.head_ref }}
+          ref: main
 
       - name: Generate Lambda Layer
         uses: koboriakira/gh-actions/aws/generate-lambda-layer@main

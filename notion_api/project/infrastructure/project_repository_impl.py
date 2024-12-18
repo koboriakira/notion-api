@@ -28,7 +28,7 @@ class ProjectRepositoryImpl(ProjectRepository):
 
         properties: list[Property] = [
             project.get_title(),
-            Date.from_start_date(name="完了日", start_date=project.last_edited_time.date),  # type: ignore
+            Date.from_start_date(name="完了日", start_date=project.last_edited_time),  # type: ignore
         ]  # type: ignore
         if project.get_relation(GoalRelation.NAME) is not None:
             properties.append(project.get_relation(GoalRelation.NAME))
