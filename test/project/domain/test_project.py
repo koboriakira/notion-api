@@ -15,7 +15,7 @@ class TestProject(TestCase):
             project_status=ProjectStatusType.IN_PROGRESS,
             importance=ImportanceType.THREE,
             definition_of_done="iDeCoの移管が完了している",
-            action_plan="iDeCoの移管をする",
+            weekly_goal="iDeCoの移管をする",
             goal_relation=["abc123", "def456"],
             schedule=Schedule.create(
                 start_date=date.fromisoformat("2024-02-13"),
@@ -29,7 +29,7 @@ class TestProject(TestCase):
         self.assertEqual(actual.project_status.value, "In progress")
         self.assertEqual(actual.importance.value, "⭐⭐⭐")
         self.assertEqual(actual.definition_of_done, "iDeCoの移管が完了している")
-        self.assertEqual(actual.action_plan, "iDeCoの移管をする")
+        self.assertEqual(actual.weekly_goal, "iDeCoの移管をする")
         actual_goal_list = actual.goal_relation
         self.assertCountEqual(actual_goal_list, ["abc123", "def456"])
         self.assertTrue("abc123" in actual_goal_list)
