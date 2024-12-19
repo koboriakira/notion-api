@@ -2,7 +2,7 @@ from lotion.properties import Title
 
 
 class BookTitle(Title):
-    NAME = "Title"
+    NAME = "名前"
 
     def __init__(self, text: str) -> None:
         super().__init__(
