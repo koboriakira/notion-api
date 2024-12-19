@@ -55,11 +55,11 @@ export const SCHEDULER_CONFIG = {
     weekDay: "*",
   }),
   // 9時から
-  ai_advice: events.Schedule.cron({
-    minute: "55",
-    hour: "0-13",
-    month: "*",
-    year: "*",
-    weekDay: "*",
-  }),
+  // ai_advice: events.Schedule.cron({
+  //   minute: "55",
+  //   hour: "0-13",
+  //   month: "*",
+  //   year: "*",
+  //   weekDay: "*",
+  // }),
 };
