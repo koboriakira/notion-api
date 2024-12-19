@@ -55,3 +55,11 @@ class AddBookUsecase:
         if title is not None:
             return self._book_api.find_by_title(title=title)
         raise ValueError("Can't find a book. Neither arg is None.")
+
+
+if __name__ == "__main__":
+    # python -m notion_api.usecase.add_book_usecase
+    from injector.injector import Injector
+
+    add_book_usecase = Injector.add_book_usecase()
+    add_book_usecase.execute(page_id="15e6567a3bbf8060a1dad5a08f48f0b6", isbn="9784048916592")
