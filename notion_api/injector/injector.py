@@ -5,11 +5,13 @@ from lotion import Lotion
 from slack_sdk.web import WebClient
 
 from account_book.infrastructure.repository_impl import RepositoryImpl
+from book.infrastructure.book_repository_impl import BookRepositoryImpl
 from common.service.tag_creator.tag_creator import TagCreator
 from custom_logger import get_logger
 from daily_log.infrastructure.daily_log_repository_impl import DailyLogRepositoryImpl
 from external_calendar.infrastructure.google_calendar_api import GoogleCalendarApi
 from external_calendar.service.external_calendar_service import ExternalCalendarService
+from infrastructure.book.google_book_api import GoogleBookApi
 from injector.page_creator_factory import PageCreatorFactory
 from music.infrastructure.song_repository_impl import SongRepositoryImpl
 from recipe.infrastructure.recipe_repository_impl import RecipeRepositoryImpl
@@ -18,6 +20,7 @@ from slack_concierge.injector import SlackConciergeInjector
 from task.infrastructure.routine_repository_impl import RoutineRepositoryImpl
 from task.infrastructure.task_repository_impl import TaskRepositoryImpl
 from usecase.account_book.add_account_book_usecase import AddAccountBookUsecase
+from usecase.add_book_usecase import AddBookUsecase
 from usecase.collect_updated_pages_usecase import CollectUpdatedPagesUsecase
 from usecase.create_page_use_case import CreatePageUseCase
 from usecase.create_routine_task_use_case import CreateRoutineTaskUseCase
@@ -39,6 +42,10 @@ logger = get_logger(__name__)
 client = Lotion.get_instance()
 openai_executer = OpenaiExecuter(logger=logger)
 slack_bot_client = WebClient(token=os.environ["SLACK_BOT_TOKEN"])
+book_repository = BookRepositoryImpl(
+    client=client,
+    logger=logger,
+)
 
 
 class Injector:
@@ -169,3 +176,8 @@ class Injector:
             task_repository=TaskRepositoryImpl(),
             external_calendar_service=external_calendar_service,
         )
+
+    @staticmethod
+    def add_book_usecase() -> AddBookUsecase:
+        book_api = GoogleBookApi()
+        return AddBookUsecase(book_api=book_api, book_repository=book_repository)
