@@ -14,6 +14,7 @@ from router import (
     healthcheck,
     image,
     music,
+    notion_webhook,
     page,
     projects,
     prowrestling,
@@ -63,6 +64,7 @@ app.include_router(blog.router, prefix="/blog", tags=["blog"])
 app.include_router(image.router, prefix="/image", tags=["image"])
 app.include_router(food.router, prefix="/food", tags=["food"])
 app.include_router(batch.router, prefix="/batch", tags=["batch"])
+app.include_router(notion_webhook.router, prefix="/notion_webhook", tags=["notion_webhook"])
 
 
 handler = Mangum(app, lifespan="off")
