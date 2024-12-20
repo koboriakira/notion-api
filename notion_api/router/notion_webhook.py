@@ -33,7 +33,7 @@ def post(request: NotionWebhookRequest) -> BaseResponse:
         print(request.data)
         print(json.dumps(request.data, ensure_ascii=False))
         base_page = BasePage.from_data(request.data)
-        print(base_page.page_id.value)
+        print(base_page.id)
         return BaseResponse()
     except Exception as e:
         print(e)

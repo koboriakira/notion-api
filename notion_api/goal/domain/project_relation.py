@@ -1,14 +1,13 @@
-from lotion.page.page_id import PageId
 from lotion.properties import Relation
 
 
 class ProjectRelation(Relation):
     NAME = "プロジェクト"
 
-    def __init__(self, id_list: list[PageId]) -> None:
+    def __init__(self, id_list: list[str]) -> None:
         super().__init__(
             name=self.NAME,
-            id_list=list(set([id_.value for id_ in id_list])),
+            id_list=id_list,
         )
 
     @staticmethod
@@ -16,9 +15,8 @@ class ProjectRelation(Relation):
         return ProjectRelation(id_list=[])
 
     @staticmethod
-    def from_id_list(id_list: list[PageId]) -> "ProjectRelation":
+    def from_id_list(id_list: list[str]) -> "ProjectRelation":
         return ProjectRelation(id_list=id_list)
 
-    def add(self, page_id: PageId) -> "ProjectRelation":
-        page_id_list = [PageId(id_) for id_ in self.id_list]
-        return ProjectRelation(id_list=[*page_id_list, page_id])
+    def add(self, page_id: str) -> "ProjectRelation":
+        return ProjectRelation(id_list=[*self.id_list, page_id])

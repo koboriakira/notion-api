@@ -1,7 +1,6 @@
 from lotion import Lotion
 from lotion.filter import Builder
 from lotion.filter.condition import Cond, Prop
-from lotion.page.page_id import PageId
 from lotion.properties import Title
 
 from common.value.database_type import DatabaseType
@@ -13,7 +12,7 @@ class TagCreator:
     def __init__(self, client: Lotion | None = None) -> None:
         self.client = client or Lotion.get_instance()
 
-    def execute(self, tag: list[str] | str | None) -> list[PageId]:
+    def execute(self, tag: list[str] | str | None) -> list[str]:
         """指定されたタグをタグデータベースに追加する。タグページのIDを返却する。"""
         if tag is None:
             return []
@@ -21,19 +20,19 @@ class TagCreator:
         tag_list = list(set(tag)) if isinstance(tag, list) else [tag]
         return [self.__create(t) for t in tag_list]
 
-    def __create(self, title: str) -> PageId:
+    def __create(self, title: str) -> str:
         # すでに存在するか確認
         builder = Builder.create().add(Prop.RICH_TEXT, "名前", Cond.EQUALS, title)
         tags = self.client.retrieve_database(database_id=self.DATABASE_ID, filter_param=builder.build())
         if len(tags) > 0:
-            return tags[0].page_id
+            return tags[0].id
 
         # 作成
         tag_page = self.client.create_page_in_database(
             database_id=self.DATABASE_ID,
             properties=[Title.from_plain_text(name="名前", text=title)],
         )
-        return tag_page.page_id
+        return tag_page.id
 
 
 if __name__ == "__main__":

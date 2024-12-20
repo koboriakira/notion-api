@@ -1,16 +1,15 @@
 from dataclasses import dataclass
 from datetime import date
 
+from lotion.base_page import BasePage
+from lotion.block import Block
+from lotion.properties import Cover, Properties
+
 from goal.domain.due_date import DueDate
 from goal.domain.goal_name import GoalName
 from goal.domain.goal_status import GoalStatus, GoalStatusType
 from goal.domain.project_relation import ProjectRelation
 from goal.domain.vision_relation import VisionRelation
-from lotion.base_page import BasePage
-from lotion.block import Block
-from lotion.page.page_id import PageId
-from lotion.properties import Cover
-from lotion.properties import Properties
 
 
 @dataclass
@@ -19,8 +18,8 @@ class Goal(BasePage):
     def create(  # noqa: PLR0913
         title: str | GoalName,
         goal_status: GoalStatusType | GoalStatus,
-        project_relation: list[PageId] | ProjectRelation | None = None,
-        vision_relation: list[PageId] | VisionRelation | None = None,
+        project_relation: list[str] | ProjectRelation | None = None,
+        vision_relation: list[str] | VisionRelation | None = None,
         due_date: DueDate | date | None = None,
         blocks: list[Block] | None = None,
         cover: str | Cover | None = None,

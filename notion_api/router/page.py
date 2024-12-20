@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Header
 from lotion import Lotion
-from lotion.page.page_id import PageId
 
 from common.domain.external_image import ExternalImage
 from common.service.image.external_image_service import ExternalImageService
@@ -58,7 +57,7 @@ def remove_page(page_id: str, access_token: str | None = Header(None)) -> BaseRe
     valid_access_token(access_token)
     page_remover = PageRemover()
     print(page_id)
-    page_remover.execute(page_id=PageId(page_id))
+    page_remover.execute(page_id=page_id)
     return BaseResponse(data={"page_id": page_id})
 
 
@@ -71,5 +70,5 @@ def append_image_block(
     valid_access_token(access_token)
     external_image = ExternalImage(url=request.image_url)
     external_image_service = ExternalImageService(client=Lotion.get_instance())
-    external_image_service.append_image(block_id=PageId(page_id).value, external_image=external_image)
+    external_image_service.append_image(block_id=page_id, external_image=external_image)
     return BaseResponse()

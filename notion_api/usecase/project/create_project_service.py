@@ -26,7 +26,7 @@ class CreateProjectService:
             task = TaskFactory.create_todo_task(
                 title=task_title,
                 task_kind_type=TaskKindType.NEXT_ACTION,
-                project_id=project.page_id,
+                project_id=project.id,
             )
             self._task_repository.save(task)
         return project

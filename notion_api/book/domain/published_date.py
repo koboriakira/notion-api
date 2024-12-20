@@ -12,6 +12,6 @@ class PublishedDate(Date):
             start=date_.isoformat(),
         )
 
-    @classmethod
-    def create(cls: "PublishedDate", date_: date) -> "PublishedDate":
-        return PublishedDate(name=cls.NAME, date_=date_)
+    @staticmethod
+    def create(date_: date) -> "PublishedDate":
+        return PublishedDate(name=PublishedDate.NAME, date_=date_)

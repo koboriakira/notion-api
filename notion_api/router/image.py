@@ -3,7 +3,6 @@ from pydantic import BaseModel
 
 from common.domain.external_image import ExternalImage
 from custom_logger import get_logger
-from lotion.page.page_id import PageId
 from router.response import BaseResponse
 from usecase.image.share_image_usecase import ShareImageRequest, ShareImageUsecase
 from util.access_token import valid_access_token
@@ -25,11 +24,11 @@ class ShareImagesRequest(BaseModel):
     def to_usecase_request(self) -> ShareImageRequest:
         return ShareImageRequest(
             images=[ExternalImage(url=i.file, thumbnail_url=i.thumbnail) for i in self.images],
-            additional_page_id=PageId(self.additional_page_id) if self.additional_page_id else None,
+            additional_page_id=self.additional_page_id,
         )
 
 
-@router.post("/", response_model=BaseResponse)
+@router.post("/")
 def share_images(
     request: ShareImagesRequest,
     access_token: str | None = Header(None),

@@ -2,12 +2,13 @@ from abc import ABCMeta, abstractmethod
 from logging import Logger, getLogger
 from typing import TYPE_CHECKING
 
+from lotion.block import Embed
+
 from common.domain.tag_relation import TagRelation
 from common.service.scrape_service import ScrapeService
 from common.service.tag_creator import TagCreator
 from common.service.tweet.tweet_fetcher import TweetFetcher
 from common.value.site_kind import SiteKind
-from lotion.block import Embed
 from util.split_paragraph import split_paragraph
 from util.tag_analyzer import TagAnalyzer
 from util.text_summarizer import TextSummarizer
@@ -27,7 +28,7 @@ class WebclipGenerator(metaclass=ABCMeta):
 class DefaultWebclipGenerator(WebclipGenerator):
     """通常のWebclipを生成するクラス"""
 
-    def __init__(  # noqa: PLR0913
+    def __init__(
         self,
         scrape_service: ScrapeService,
         tag_creator: TagCreator,

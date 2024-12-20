@@ -22,7 +22,7 @@ class BookBuilder:
 
     @staticmethod
     def of(title: str) -> "BookBuilder":
-        properties = [BookTitle(text=title)]
+        properties: list[Property] = [BookTitle(text=title)]
         return BookBuilder(properties=properties, blocks=[], cover=None)
 
     @staticmethod

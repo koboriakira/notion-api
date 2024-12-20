@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from datetime import date
 
 from lotion.block import Block
-from lotion.page.page_id import PageId
 from lotion.properties import Cover, Properties, Property
 
 from common.domain.tag_relation import TagRelation
@@ -50,15 +49,15 @@ class DailyLogBuilder:
         self.properties.append(daily_retro_comment)
         return self
 
-    def add_weekly_log_relation(self, weekly_log_page_id: PageId) -> "DailyLogBuilder":
+    def add_weekly_log_relation(self, weekly_log_page_id: str) -> "DailyLogBuilder":
         self.properties.append(WeeklyLogRelation.from_id_list(id_list=[weekly_log_page_id]))
         return self
 
-    def add_previous_relation(self, previous_page_id: PageId) -> "DailyLogBuilder":
+    def add_previous_relation(self, previous_page_id: str) -> "DailyLogBuilder":
         self.properties.append(PreviousRelation.from_id_list(id_list=[previous_page_id]))
         return self
 
-    def add_tag_relation(self, tag_relation: list[PageId] | TagRelation) -> "DailyLogBuilder":
+    def add_tag_relation(self, tag_relation: list[str] | TagRelation) -> "DailyLogBuilder":
         tag_relation = (
             tag_relation if isinstance(tag_relation, TagRelation) else TagRelation.from_id_list(id_list=tag_relation)
         )

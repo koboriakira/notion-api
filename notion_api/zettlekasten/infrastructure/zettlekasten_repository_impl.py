@@ -64,7 +64,7 @@ class ZettlekastenRepositoryImpl(ZettlekastenRepository):
             properties=zettlekasten.properties.values,
         )
         zettlekasten.update_id_and_url(
-            page_id=result.page_id.value,
+            page_id=result.id,
             url=result.url,
         )
         return zettlekasten
@@ -74,7 +74,7 @@ class ZettlekastenRepositoryImpl(ZettlekastenRepository):
             properties=base_page.properties,
             block_children=base_page.block_children,
             id_=base_page.id_,
-            url=base_page.url,
+            url_=base_page.url,
             created_time=base_page.created_time,
             last_edited_time=base_page.last_edited_time,
             _created_by=base_page._created_by,

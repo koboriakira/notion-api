@@ -267,7 +267,7 @@ tags: []
             self.client.append_block(block_id=block_id, block=heading)
 
     def _append_backlink(self, block_id: str, page: BasePage) -> None:
-        rich_text = RichTextBuilder.get_instance().add_page_mention(page_id=page.page_id.value).build()
+        rich_text = RichTextBuilder.get_instance().add_page_mention(page_id=page.id).build()
         paragraph = Paragraph.from_rich_text(rich_text=rich_text)
         if not self.is_debug:
             self.client.append_block(

@@ -52,7 +52,7 @@ class ProjectRepositoryImpl(ProjectRepository):
             properties=project.properties.values,
             blocks=project.block_children,
         )
-        return self.find_by_id(page_id=page.page_id.value)
+        return self.find_by_id(page_id=page.id)
 
     def find_by_id(self, page_id: str) -> Project:
         base_page = self._client.retrieve_page(page_id=page_id)
@@ -68,7 +68,7 @@ class ProjectRepositoryImpl(ProjectRepository):
             properties=base_page.properties,
             block_children=base_page.block_children,
             id_=base_page.id_,
-            url=base_page.url,
+            url_=base_page.url,
             created_time=base_page.created_time,
             last_edited_time=base_page.last_edited_time,
             _created_by=base_page._created_by,

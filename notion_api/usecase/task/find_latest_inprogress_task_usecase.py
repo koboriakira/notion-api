@@ -17,5 +17,5 @@ class FindLatestInprogressTaskUsecase:
         if len(tasks) == 0:
             return None
 
-        task_id = tasks[0].page_id
-        return self._task_repository.find_by_id(task_id.value)
+        task_id = tasks[0].id
+        return self._task_repository.find_by_id(task_id)

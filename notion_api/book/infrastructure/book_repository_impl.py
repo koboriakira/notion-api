@@ -23,7 +23,7 @@ class BookRepositoryImpl(BookRepository):
 
     def save(self, book: Book) -> Book:
         if book.is_created():
-            self._client.update_page(book.page_id.value, book.properties.values)
+            self._client.update_page(book.id, book.properties.values)
             return book
         result = self._client.create_page_in_database(
             database_id=DATABASE_ID,
@@ -32,7 +32,7 @@ class BookRepositoryImpl(BookRepository):
             cover=book.cover,
         )
         book.update_id_and_url(
-            page_id=result.page_id.value,
+            page_id=result.id,
             url=result.url,
         )
         return book
@@ -52,7 +52,7 @@ class BookRepositoryImpl(BookRepository):
             properties=base_page.properties,
             block_children=base_page.block_children,
             id_=base_page.id_,
-            url=base_page.url,
+            url_=base_page.url,
             created_time=base_page.created_time,
             last_edited_time=base_page.last_edited_time,
             _created_by=base_page._created_by,

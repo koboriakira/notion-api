@@ -17,7 +17,7 @@ class CreateDailyLogUsecase:
     def handle(self, isoweek: Isoweek) -> None:
         # ウィークリーログを作成
         weekly_log_entity = self._create_weekly_log_page(isoweek)
-        weekly_log_id = weekly_log_entity.page_id
+        weekly_log_id = weekly_log_entity.id
 
         # デイリーログを作成
         for date_ in isoweek.date_range():

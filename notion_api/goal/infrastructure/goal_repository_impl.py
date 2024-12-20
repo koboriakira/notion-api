@@ -1,13 +1,16 @@
 from logging import Logger, getLogger
+from typing import TYPE_CHECKING
 
 from lotion import Lotion
 from lotion.base_page import BasePage
-from lotion.properties import Property
 
 from common.value.database_type import DatabaseType
 from goal.domain.goal import Goal
 from goal.domain.goal_repository import GoalRepository
 from goal.domain.vision_relation import VisionRelation
+
+if TYPE_CHECKING:
+    from lotion.properties import Property
 
 
 class GoalRepositoryImpl(GoalRepository):
@@ -52,7 +55,7 @@ class GoalRepositoryImpl(GoalRepository):
             properties=base_page.properties,
             block_children=base_page.block_children,
             id_=base_page.id_,
-            url=base_page.url,
+            url_=base_page.url,
             created_time=base_page.created_time,
             last_edited_time=base_page.last_edited_time,
             _created_by=base_page._created_by,

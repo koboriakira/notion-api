@@ -40,6 +40,6 @@ class GoalStatus(Status):
     def __init__(self, status_type: GoalStatusType) -> None:
         super().__init__(self.NAME, status_type.value)
 
-    @classmethod
-    def from_status_type(cls: "GoalStatus", status_type: GoalStatusType) -> "GoalStatus":
-        return cls(status_type=status_type)
+    @staticmethod
+    def from_status_type(status_type: GoalStatusType) -> "GoalStatus":
+        return GoalStatus(status_type=status_type)

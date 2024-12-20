@@ -1,7 +1,6 @@
 from lotion import Lotion
 from lotion.filter import Builder
 from lotion.filter.condition import Cond
-from lotion.page.page_id import PageId
 from lotion.properties import Cover, Title, Url
 
 from common.domain.external_image import ExternalImage
@@ -15,19 +14,20 @@ class ExternalImageService:
     def __init__(self, client: Lotion | None = None) -> None:
         self._client = client or Lotion.get_instance()
 
-    def add_external_image(self, external_image: ExternalImage) -> PageId:
+    def add_external_image(self, external_image: ExternalImage) -> str:
         """指定された画像をGIF/JPEGデータベースに追加する。画像ページのIDを返却する。"""
         image = external_image.to_notion_image_block(use_thumbnail=True)
+        thumbnail_url = external_image.thumbnail_url
         page_dict = self._client.create_page_in_database(
             database_id=self.DATABASE_ID,
             properties=[
                 Title.from_plain_text(text=external_image.get_title()),
                 Url.from_url(url=external_image.url),
             ],
-            cover=Cover.from_external_url(external_url=external_image.thumbnail_url),
+            cover=Cover.from_external_url(external_url=thumbnail_url) if thumbnail_url else None,
             blocks=[image],
         )
-        return page_dict.page_id
+        return page_dict.id
 
     def append_image(self, block_id: str, external_image: ExternalImage) -> None:
         """指定された画像を指定されたブロックに追加する。"""

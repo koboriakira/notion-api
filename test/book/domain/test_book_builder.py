@@ -21,7 +21,7 @@ class TestBookBuilder(TestCase):
         )
         # タグページを作成するサービスは使用しないためモックにする
         tag_creator = Mock(spec=TagCreator)
-        author_page_id = PageId.dummy()
+        author_page_id = PageId.dummy().value
         tag_creator.execute.return_value = [author_page_id]
 
         # When
