@@ -2,14 +2,13 @@ from logging import Logger, getLogger
 
 from lotion import Lotion
 from lotion.base_page import BasePage
-from lotion.page.page_id import PageId
 
 from account_book.domain.account_book import AccountBook
-from account_book.domain.repository import Repository
+from account_book.domain.repository import AccountRepository
 from common.value.database_type import DatabaseType
 
 
-class RepositoryImpl(Repository):
+class RepositoryImpl(AccountRepository):
     DATABASE_ID = DatabaseType.ACCOUNT_BOOK.value
 
     def __init__(self, client: Lotion, logger: Logger | None = None) -> None:
@@ -26,10 +25,10 @@ class RepositoryImpl(Repository):
             properties=entity.properties.values,
             blocks=entity.block_children,
         )
-        return self._find_by_id(page.page_id)
+        return self._find_by_id(page.id)
 
-    def _find_by_id(self, page_id: PageId) -> AccountBook:
-        base_page = self._client.retrieve_page(page_id=page_id.value)
+    def _find_by_id(self, page_id: str) -> AccountBook:
+        base_page = self._client.retrieve_page(page_id=page_id)
         return self._cast(base_page)
 
     def _cast(self, base_page: BasePage) -> AccountBook:
