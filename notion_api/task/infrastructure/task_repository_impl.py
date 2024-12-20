@@ -3,8 +3,7 @@ from typing import TYPE_CHECKING
 
 from lotion import Lotion
 from lotion.base_page import BasePage
-from lotion.filter import Builder
-from lotion.filter.condition import Cond, Prop
+from lotion.filter import Builder, Cond, Prop
 
 from common.value.database_type import DatabaseType
 from task.domain.do_tomorrow_flag import DoTommorowFlag

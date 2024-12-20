@@ -1,8 +1,7 @@
 from logging import Logger
 
 from lotion import Lotion
-from lotion.filter import Builder
-from lotion.filter.condition import Cond, Prop
+from lotion.filter import Builder, Cond, Prop
 
 from common.value.database_type import DatabaseType
 from custom_logger import get_logger

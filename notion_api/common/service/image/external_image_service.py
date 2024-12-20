@@ -1,6 +1,5 @@
 from lotion import Lotion
-from lotion.filter import Builder
-from lotion.filter.condition import Cond
+from lotion.filter import Builder, Cond
 from lotion.properties import Cover, Title, Url
 
 from common.domain.external_image import ExternalImage

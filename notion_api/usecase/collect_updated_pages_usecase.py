@@ -4,8 +4,7 @@ from lotion import Lotion
 from lotion.base_page import BasePage
 from lotion.block import Embed, Heading, Paragraph
 from lotion.block.rich_text import RichTextBuilder
-from lotion.filter import Builder
-from lotion.filter.condition import Cond
+from lotion.filter import Builder, Cond
 
 from common.infrastructure.twitter.lambda_twitter_api import LambdaTwitterApi
 from common.service.image.external_image_service import ExternalImageService

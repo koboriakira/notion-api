@@ -2,8 +2,7 @@ from logging import Logger, getLogger
 
 from lotion import Lotion
 from lotion.base_page import BasePage
-from lotion.filter import Builder
-from lotion.filter.condition import Cond, Prop
+from lotion.filter import Builder, Cond, Prop
 
 from common.value.database_type import DatabaseType
 from music.domain.song import Song

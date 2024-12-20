@@ -1,6 +1,5 @@
 from lotion import Lotion
-from lotion.filter import Builder
-from lotion.filter.condition import Cond, Prop
+from lotion.filter import Builder, Cond, Prop
 from lotion.properties import Title
 
 from common.value.database_type import DatabaseType
