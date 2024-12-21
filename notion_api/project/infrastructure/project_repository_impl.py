@@ -44,7 +44,7 @@ class ProjectRepositoryImpl(ProjectRepository):
         self.remove(project)
 
     def save(self, project: Project) -> "Project":
-        if project.id is not None:
+        if project.is_created():
             _ = self._client.update_page(page_id=project.id, properties=project.properties.values)
             return project
         page = self._client.create_page_in_database(

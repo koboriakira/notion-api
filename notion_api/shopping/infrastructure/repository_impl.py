@@ -20,7 +20,7 @@ class ShoppingRepositoryImpl(ShoppingRepository):
         return [self._cast(base_page) for base_page in base_pages]
 
     def save(self, entity: Shopping) -> Shopping:
-        if entity.id is not None:
+        if entity.is_created():
             _ = self._client.update_page(page_id=entity.id, properties=entity.properties.values)
             return entity
         page = self._client.create_page_in_database(

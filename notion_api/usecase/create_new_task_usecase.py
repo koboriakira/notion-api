@@ -44,6 +44,4 @@ class CreateNewTaskUsecase:
         if mentioned_page_id is None:
             text = title if title is not None else ""
             return Title.from_plain_text(name="名前", text=text)
-        if mentioned_page_id is not None:
-            return Title.from_mentioned_page_id(name="名前", page_id=mentioned_page_id)
-        raise NotImplementedError
+        return Title.from_mentioned_page_id(name="名前", page_id=mentioned_page_id)
