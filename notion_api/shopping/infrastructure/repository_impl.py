@@ -2,7 +2,6 @@ from logging import Logger, getLogger
 
 from lotion import Lotion
 from lotion.base_page import BasePage
-from lotion.page.page_id import PageId
 
 from common.value.database_type import DatabaseType
 from shopping.domain.repository import ShoppingRepository
@@ -21,18 +20,18 @@ class ShoppingRepositoryImpl(ShoppingRepository):
         return [self._cast(base_page) for base_page in base_pages]
 
     def save(self, entity: Shopping) -> Shopping:
-        if entity.id is not None:
-            _ = self._client.update_page(page_id=entity.id, properties=entity.properties.values)
+        if entity.is_created():
+            self._client.update_page(page_id=entity.id, properties=entity.properties.values)
             return entity
         page = self._client.create_page_in_database(
             database_id=self.DATABASE_ID,
             properties=entity.properties.values,
             blocks=entity.block_children,
         )
-        return self._find_by_id(page.page_id)
+        return self._find_by_id(page.id)
 
-    def _find_by_id(self, shopping_page_id: PageId) -> "Shopping":
-        base_page = self._client.retrieve_page(page_id=shopping_page_id.value)
+    def _find_by_id(self, shopping_page_id: str) -> "Shopping":
+        base_page = self._client.retrieve_page(page_id=shopping_page_id)
         return self._cast(base_page)
 
     def _cast(self, base_page: BasePage) -> Shopping:
@@ -40,7 +39,7 @@ class ShoppingRepositoryImpl(ShoppingRepository):
             properties=base_page.properties,
             block_children=base_page.block_children,
             id_=base_page.id_,
-            url=base_page.url,
+            url_=base_page.url,
             created_time=base_page.created_time,
             last_edited_time=base_page.last_edited_time,
             _created_by=base_page._created_by,

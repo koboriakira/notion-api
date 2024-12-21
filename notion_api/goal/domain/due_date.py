@@ -12,10 +12,10 @@ class DueDate(Date):
             start=date_.isoformat() if date_ is not None else None,
         )
 
-    @classmethod
-    def create(cls: "DueDate", date_: date) -> "DueDate":
+    @staticmethod
+    def create(date_: date) -> "DueDate":
         return DueDate(date_=date_)
 
-    @classmethod
-    def empty(cls: "DueDate") -> "DueDate":
+    @staticmethod
+    def empty() -> "DueDate":
         return DueDate(date_=None)

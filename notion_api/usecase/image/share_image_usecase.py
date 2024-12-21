@@ -1,17 +1,17 @@
 from dataclasses import dataclass
 
+from lotion import Lotion
+
 from common.domain.external_image import ExternalImage
 from common.service.image.external_image_service import ExternalImageService
 from daily_log.infrastructure.daily_log_repository_impl import DailyLogRepositoryImpl
-from lotion import Lotion
-from lotion.page.page_id import PageId
 from util.datetime import jst_today
 
 
 @dataclass
 class ShareImageRequest:
     images: list[ExternalImage]
-    additional_page_id: PageId | None = None
+    additional_page_id: str | None = None
 
 
 class ShareImageUsecase:
@@ -34,18 +34,18 @@ class ShareImageUsecase:
 
         for image in request.images:
             # GIF_JPEGデータベースに追加
-            self._image_service.add_external_image(external_image=image)
+            _ = self._image_service.add_external_image(external_image=image)
 
             # デイリーログに追加
             self._client.append_block(
-                block_id=daily_log.page_id.value, # type: ignore
+                block_id=daily_log.page_id.value,  # type: ignore
                 block=image.to_notion_image_block(use_thumbnail=True),
             )
 
             # 追加で指定されたページに追加
             if request.additional_page_id:
                 self._client.append_block(
-                    block_id=request.additional_page_id.value,
+                    block_id=request.additional_page_id,
                     block=image.to_notion_image_block(use_thumbnail=True),
                 )
 

@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from datetime import date
 
 from lotion.base_page import BasePage
-from lotion.page.page_id import PageId
 
 from book.domain.authors import Authors
 from book.domain.book_url import BookUrl
@@ -13,7 +12,7 @@ from book.domain.publisher import Publisher
 @dataclass
 class Book(BasePage):
     @property
-    def author_page_id_list(self) -> list[PageId]:
+    def author_page_id_list(self) -> list[str]:
         author = self.get_relation(name=Authors.NAME)
         return author.page_id_list if author else []
 
@@ -41,7 +40,7 @@ class Book(BasePage):
             properties=base_page.properties,
             block_children=base_page.block_children,
             id_=base_page.id_,
-            url=base_page.url,
+            url_=base_page.url,
             created_time=base_page.created_time,
             last_edited_time=base_page.last_edited_time,
             _created_by=base_page._created_by,

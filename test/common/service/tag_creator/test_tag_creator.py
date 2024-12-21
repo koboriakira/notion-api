@@ -29,8 +29,7 @@ class TestTagCreator(TestCase):
         ]
 
         # When
-        page_id_list = self.suite.execute(name_list)
-        actual = [page_id.value for page_id in page_id_list]
+        actual = self.suite.execute(name_list)
 
         # Then
         self.assertEqual(2, len(actual))
@@ -52,4 +51,4 @@ class TestTagCreator(TestCase):
         # Then
         self.mock_client.create_page_in_database.assert_not_called()
         self.assertEqual(1, len(actual))
-        self.assertIn(page_id_value, actual[0].value)
+        self.assertIn(page_id_value, actual[0])

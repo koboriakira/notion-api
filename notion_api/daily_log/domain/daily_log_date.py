@@ -12,10 +12,10 @@ class DailyLogDate(Date):
             start=date_.isoformat() if date_ is not None else None,
         )
 
-    @classmethod
-    def create(cls: "DailyLogDate", date_: date) -> "DailyLogDate":
+    @staticmethod
+    def create(date_: date) -> "DailyLogDate":
         return DailyLogDate(date_=date_)
 
-    @classmethod
-    def empty(cls: "DailyLogDate") -> "DailyLogDate":
+    @staticmethod
+    def empty() -> "DailyLogDate":
         return DailyLogDate(date_=None)

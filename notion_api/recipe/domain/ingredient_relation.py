@@ -1,14 +1,13 @@
-from lotion.page.page_id import PageId
 from lotion.properties import Relation
 
 
 class IngredientRelation(Relation):
     NAME = "Ingredients"
 
-    def __init__(self, id_list: list[PageId]) -> None:
+    def __init__(self, id_list: list[str]) -> None:
         super().__init__(
             name=self.NAME,
-            id_list=list({id_.value for id_ in id_list}),
+            id_list=id_list,
         )
 
     @staticmethod
@@ -16,9 +15,8 @@ class IngredientRelation(Relation):
         return IngredientRelation(id_list=[])
 
     @staticmethod
-    def from_id_list(id_list: list[PageId]) -> "IngredientRelation":
+    def from_id_list(id_list: list[str]) -> "IngredientRelation":
         return IngredientRelation(id_list=id_list)
 
-    def add(self, page_id: PageId) -> "IngredientRelation":
-        page_id_list = [PageId(id_) for id_ in self.id_list]
-        return IngredientRelation(id_list=[*page_id_list, page_id])
+    def add(self, page_id: str) -> "IngredientRelation":
+        return IngredientRelation(id_list=[*self.id_list, page_id])

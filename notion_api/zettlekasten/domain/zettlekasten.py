@@ -1,11 +1,10 @@
 from dataclasses import dataclass
 
-from common.domain.tag_relation import TagRelation
-from common.value.notion_page_id_list import NotionPageIdList
 from lotion.base_page import BasePage
 from lotion.block import Block
-from lotion.properties import Cover
-from lotion.properties import Properties
+from lotion.properties import Cover, Properties
+
+from common.domain.tag_relation import TagRelation
 from zettlekasten.domain.reference_url import ReferenceUrl
 from zettlekasten.domain.zettlekasten_title import ZettlekastenName
 
@@ -49,6 +48,5 @@ class Zettlekasten(BasePage):
         return self.get_url(name=ReferenceUrl.NAME).url
 
     @property
-    def tag_relation(self) -> NotionPageIdList:
-        id_list = self.get_relation(TagRelation.NAME).id_list
-        return NotionPageIdList.from_str_list(id_list)
+    def tag_relation(self) -> list[str]:
+        return self.get_relation(TagRelation.NAME).id_list

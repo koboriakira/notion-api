@@ -61,6 +61,7 @@ class CreatePageUseCase:
         )
 
         # コンテキストにページIDを追加
+
         self._append_context_service.append_page_id(
             channel=request.slack_channel,
             event_ts=request.slack_thread_ts,

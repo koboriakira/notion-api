@@ -22,7 +22,7 @@ class RecipeRepositoryImpl(RecipeRepository):
             blocks=recipe.block_children,
         )
         recipe.update_id_and_url(
-            page_id=result.page_id.value,
+            page_id=result.id,
             url=result.url,
         )
         return recipe

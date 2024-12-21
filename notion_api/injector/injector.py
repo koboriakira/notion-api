@@ -26,7 +26,6 @@ from usecase.create_page_use_case import CreatePageUseCase
 from usecase.create_routine_task_use_case import CreateRoutineTaskUseCase
 from usecase.recipe.add_recipe_use_case import AddRecipeUseCase
 from usecase.service.inbox_service import InboxService
-from usecase.service.tag_create_service import TagCreateService
 from usecase.service.text_summarizer import TextSummarizer
 from usecase.task.sync_external_calendar_usecase import SyncExternalCalendarUsecase
 from usecase.zettlekasten.create_tag_to_zettlekasten_use_case import CreateTagToZettlekastenUseCase
@@ -69,18 +68,14 @@ class Injector:
             logger=logger,
         )
 
-    @classmethod
-    def create_inbox_service(cls: "Injector") -> InboxService:
+    @staticmethod
+    def create_inbox_service() -> InboxService:
         return InboxService(slack_client=slack_bot_client, client=client)
 
-    @classmethod
-    def create_tag_create_service(cls: "Injector") -> TagCreateService:
-        return TagCreateService()
-
-    @classmethod
-    def create_page_use_case(cls: "Injector") -> CreatePageUseCase:
+    @staticmethod
+    def create_page_use_case() -> CreatePageUseCase:
         page_creator_factory = PageCreatorFactory.generate_rule(logger=logger)
-        inbox_service = cls.create_inbox_service()
+        inbox_service = Injector.create_inbox_service()
         append_context_service = SlackConciergeInjector.create_append_context_service()
         return CreatePageUseCase(
             page_creator_factory=page_creator_factory,
@@ -89,9 +84,8 @@ class Injector:
             logger=logger,
         )
 
-    @classmethod
+    @staticmethod
     def create_tag_analyzer(
-        cls: "Injector",
         openai_executer: OpenaiExecuter,
         is_debug: bool | None = None,
     ) -> TagAnalyzer:
@@ -101,9 +95,8 @@ class Injector:
             is_debug=is_debug,
         )
 
-    @classmethod
+    @staticmethod
     def create_text_summarizer(
-        cls: "Injector",
         openai_executer: OpenaiExecuter,
         is_debug: bool | None = None,
     ) -> TextSummarizer:
@@ -113,9 +106,8 @@ class Injector:
             is_debug=is_debug,
         )
 
-    @classmethod
+    @staticmethod
     def create_collect_updated_pages_usecase(
-        cls,
         is_debug: bool | None = None,
     ) -> CollectUpdatedPagesUsecase:
         task_repository = TaskRepositoryImpl(notion_client_wrapper=client)
@@ -132,9 +124,8 @@ class Injector:
             is_debug=is_debug,
         )
 
-    @classmethod
+    @staticmethod
     def create_add_recipe_use_case(
-        cls: "Injector",
         logger: Logger | None = None,
     ) -> AddRecipeUseCase:
         logger = logger or get_logger(__name__)
@@ -147,19 +138,11 @@ class Injector:
             logger=logger,
         )
 
-    @classmethod
-    def create_add_account_book_use_case(cls, logger: Logger | None = None) -> AddAccountBookUsecase:
+    @staticmethod
+    def create_add_account_book_use_case(logger: Logger | None = None) -> AddAccountBookUsecase:
         logger = logger or get_logger(__name__)
         repository = RepositoryImpl(client=client, logger=logger)
         return AddAccountBookUsecase(account_book_repository=repository)
-
-    @classmethod
-    def __create_openai_executer(
-        cls: "Injector",
-        model: str | None = None,
-        logger: Logger | None = None,
-    ) -> TagAnalyzer:
-        return OpenaiExecuter(model=model, logger=logger)
 
     @staticmethod
     def create_routine_task_use_case() -> CreateRoutineTaskUseCase:

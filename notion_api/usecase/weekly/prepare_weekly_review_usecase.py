@@ -58,29 +58,26 @@ class PrepareWeeklyReviewUsecase:
         nongoal_projects = [p for p in projects if len(p.goal_relation) == 0]
         self._create_tasks_as_project_review(review_project, nongoal_projects)
 
-
     def _fetch_inprogress_projects(
         self,
     ) -> list[Project]:
         projects = self._project_repository.fetch_all()
         return [project for project in projects if project.status.is_in_progress()]
 
-    def _create_tasks_as_project_review(
-            self, review_project: Project, projects: list[Project]) -> None:
+    def _create_tasks_as_project_review(self, review_project: Project, projects: list[Project]) -> None:
         for project in projects:
             task = TaskFactory.create_todo_task(
                 title=Title.from_mentioned_page_id(page_id=project.id),  # type: ignore
-                project_id=review_project.page_id,
+                project_id=review_project.id,
                 task_kind_type=TaskKindType.NEXT_ACTION,
             )
             self._create_task(task)
 
-    def _create_tasks_as_goal_review(
-            self, review_project: Project, goal_page_id_list: list[str]) -> None:
+    def _create_tasks_as_goal_review(self, review_project: Project, goal_page_id_list: list[str]) -> None:
         for page_id in goal_page_id_list:
             task = TaskFactory.create_todo_task(
                 title=Title.from_mentioned_page_id(page_id=page_id),  # type: ignore
-                project_id=review_project.page_id,
+                project_id=review_project.id,
                 task_kind_type=TaskKindType.NEXT_ACTION,
             )
             self._create_task(task)
@@ -90,14 +87,13 @@ class PrepareWeeklyReviewUsecase:
         goals = self._goal_repository.fetch_all()
         projects_as_goal: dict[str, list[Project]] = {}
         for g in goals:
-            projects_as_goal[g.page_id.value] = []
+            projects_as_goal[g.id] = []
 
         for p in projects:
             for goal_page_id in p.goal_relation:
                 projects_as_goal[goal_page_id].append(p)
 
         return {g: projects for g, projects in projects_as_goal.items() if len(projects) > 0}
-
 
     def _create_mention_in_each_goal(
         self,
@@ -108,14 +104,9 @@ class PrepareWeeklyReviewUsecase:
             heading = Heading.from_plain_text(2, jst_today().isoformat())
             self._lotion.append_block(goal_page_id, heading)
             for p in projects:
-                rich_text = (
-                    RichTextBuilder.get_instance()
-                    .add_page_mention(p.page_id.value)
-                    .build()
-                )
+                rich_text = RichTextBuilder.get_instance().add_page_mention(p.id).build()
                 paragraph = BulletedListItem.from_rich_text(rich_text)
                 self._lotion.append_block(goal_page_id, paragraph)
-
 
     def _create_task(
         self,
@@ -132,9 +123,9 @@ if __name__ == "__main__":
     from task.infrastructure.task_repository_impl import TaskRepositoryImpl
 
     lotion = Lotion.get_instance()
-    project_repository=ProjectRepositoryImpl()
-    task_repository=TaskRepositoryImpl()
-    goal_repository=GoalRepositoryImpl(client=lotion)
+    project_repository = ProjectRepositoryImpl()
+    task_repository = TaskRepositoryImpl()
+    goal_repository = GoalRepositoryImpl(client=lotion)
     usecase = PrepareWeeklyReviewUsecase(
         project_repository=project_repository,
         task_repository=task_repository,

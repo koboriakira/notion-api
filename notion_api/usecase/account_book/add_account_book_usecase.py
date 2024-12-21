@@ -1,20 +1,17 @@
 from datetime import date
 
+from lotion.properties import Checkbox, Date, Number, Properties, Title
+
 from account_book.domain.account_book import AccountBook
 from account_book.domain.category import Category, CategoryType
-from account_book.domain.repository import Repository
+from account_book.domain.repository import AccountRepository
 from account_book.domain.tag import Tag, TagType, TagTypes
-from lotion.properties import Checkbox
-from lotion.properties import Date
-from lotion.properties import Number
-from lotion.properties import Properties
-from lotion.properties import Title
 
 
 class AddAccountBookUsecase:
     def __init__(
         self,
-        account_book_repository: Repository,
+        account_book_repository: AccountRepository,
     ) -> None:
         self._account_book_repository = account_book_repository
 

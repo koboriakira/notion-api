@@ -1,10 +1,9 @@
 from datetime import date, datetime
 from typing import TYPE_CHECKING
 
-from lotion.page.page_id import PageId
+from lotion.block import Block
 from lotion.properties import Properties, Text, Title
 
-from lotion.block import Block
 from task.domain.due_date import DueDate
 from task.domain.pomodoro_start_datetime import PomodoroStartDatetime
 from task.domain.project_relation import ProjectRelation
@@ -31,7 +30,7 @@ class TaskFactory:
         due_date: datetime | date | None = None,
         pomodoro_start_datetime: datetime | None = None,
         context_types: TaskContextTypes | None = None,
-        project_id: PageId | None = None,
+        project_id: str | None = None,
         status: TaskStatusType | None = None,
         blocks: list[Block] | None = None,
     ) -> ToDoTask:
@@ -51,7 +50,7 @@ class TaskFactory:
         if pomodoro_start_datetime is not None:
             properties.append(PomodoroStartDatetime(pomodoro_start_datetime))
         if project_id is not None:
-            properties.append(ProjectRelation.from_id(project_id.value))
+            properties.append(ProjectRelation.from_id(project_id))
         return ToDoTask(properties=Properties(values=properties), block_children=blocks)
 
     @classmethod

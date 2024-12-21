@@ -3,7 +3,6 @@ from datetime import date, datetime, timedelta
 from typing import override
 
 from lotion.base_page import BasePage
-from lotion.page.page_id import PageId
 
 from task.domain.completed_flag import CompletedFlag
 from task.domain.do_tomorrow_flag import DoTommorowFlag
@@ -152,11 +151,8 @@ class ToDoTask(BasePage):
         return pomodoro_counter.number or 0
 
     @property
-    def project_id_list(self) -> list[PageId]:
-        project_relation = self.get_relation(name=ProjectRelation.NAME)
-        if project_relation is None:
-            return []
-        return project_relation.page_id_list
+    def project_id_list(self) -> list[str]:
+        return self.get_relation(name=ProjectRelation.NAME).id_list
 
     @property
     def is_do_tomorrow(self) -> bool:

@@ -1,16 +1,15 @@
 from dataclasses import dataclass
 from datetime import date
 
+from lotion.base_page import BasePage
+from lotion.block import Block
+from lotion.properties import Cover, Properties
+
 from common.domain.tag_relation import TagRelation
-from common.value.notion_page_id_list import NotionPageIdList
 from music.domain.artist import Artist
 from music.domain.release_date import ReleaseDate
 from music.domain.song_title import SongTitle
 from music.domain.spotify_url import SpotifyUrl
-from lotion.base_page import BasePage
-from lotion.block import Block
-from lotion.properties import Cover
-from lotion.properties import Properties
 
 
 @dataclass
@@ -61,9 +60,8 @@ class Song(BasePage):
         return self.get_url(name=SpotifyUrl.NAME).url.split("?")[0]
 
     @property
-    def tag_relation(self) -> NotionPageIdList:
-        id_list = self.get_relation(TagRelation.NAME).id_list
-        return NotionPageIdList.from_str_list(id_list)
+    def tag_relation(self) -> list[str]:
+        return self.get_relation(TagRelation.NAME).id_list
 
     @property
     def artist(self) -> str:

@@ -42,7 +42,6 @@ class CreateNewTaskUsecase:
             msg = "title と mentioned_page_id のどちらかは必須です"
             raise ValueError(msg)
         if mentioned_page_id is None:
-            return Title.from_plain_text(name="名前", text=title)
-        if mentioned_page_id is not None:
-            return Title.from_mentioned_page_id(name="名前", page_id=mentioned_page_id)
-        raise NotImplementedError
+            text = title if title is not None else ""
+            return Title.from_plain_text(name="名前", text=text)
+        return Title.from_mentioned_page_id(name="名前", page_id=mentioned_page_id)

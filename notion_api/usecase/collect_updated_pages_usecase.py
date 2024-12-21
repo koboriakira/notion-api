@@ -4,8 +4,7 @@ from lotion import Lotion
 from lotion.base_page import BasePage
 from lotion.block import Embed, Heading, Paragraph
 from lotion.block.rich_text import RichTextBuilder
-from lotion.filter import Builder
-from lotion.filter.condition import Cond
+from lotion.filter import Builder, Cond
 
 from common.infrastructure.twitter.lambda_twitter_api import LambdaTwitterApi
 from common.service.image.external_image_service import ExternalImageService
@@ -267,7 +266,7 @@ tags: []
             self.client.append_block(block_id=block_id, block=heading)
 
     def _append_backlink(self, block_id: str, page: BasePage) -> None:
-        rich_text = RichTextBuilder.get_instance().add_page_mention(page_id=page.page_id.value).build()
+        rich_text = RichTextBuilder.get_instance().add_page_mention(page_id=page.id).build()
         paragraph = Paragraph.from_rich_text(rich_text=rich_text)
         if not self.is_debug:
             self.client.append_block(

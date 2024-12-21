@@ -1,9 +1,8 @@
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 from logging import Logger, getLogger
 
 from lotion import Lotion
 from lotion.base_page import BasePage
-from lotion.page.page_id import PageId
 
 from common.value.database_type import DatabaseType
 from daily_log.domain.daily_log import DailyLog
@@ -32,15 +31,12 @@ class DailyLogRepositoryImpl(DailyLogRepository):
             blocks=daily_log.block_children,
         )
         daily_log.update_id_and_url(
-            page_id=result.page_id.value,
+            page_id=result.id,
             url=result.url,
         )
         return daily_log
 
-    def create(self, date_: date, weekly_log_id: PageId) -> DailyLog:
-        assert not isinstance(date_, datetime)
-        assert isinstance(weekly_log_id, PageId)
-
+    def create(self, date_: date, weekly_log_id: str) -> DailyLog:
         if self._find_daily_log(date_) is not None:
             raise ExistedDailyLogError(date_)
 
@@ -50,7 +46,7 @@ class DailyLogRepositoryImpl(DailyLogRepository):
         daily_log = (
             DailyLogBuilder.of(date_=date_)
             .add_weekly_log_relation(weekly_log_page_id=weekly_log_id)
-            .add_previous_relation(previous_page_id=yesterday_daily_log.page_id)
+            .add_previous_relation(previous_page_id=yesterday_daily_log.id)
             # .add_random_cover()
             .build()
         )
@@ -70,7 +66,7 @@ class DailyLogRepositoryImpl(DailyLogRepository):
             properties=base_page.properties,
             block_children=base_page.block_children,
             id_=base_page.id_,
-            url=base_page.url,
+            url_=base_page.url,
             created_time=base_page.created_time,
             last_edited_time=base_page.last_edited_time,
             _created_by=base_page._created_by,

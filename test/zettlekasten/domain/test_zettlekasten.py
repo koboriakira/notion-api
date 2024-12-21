@@ -15,7 +15,6 @@ class TestZettlekasten(TestCase):
         # Then
         self.assertEqual(actual.zettlekasten_name, "Zettlekastenタイトル")
         self.assertEqual(actual.reference_url, "https://www.youtube.com/watch?v=Xj6YiZZagzc")
-        actual_tag_id_list = actual.tag_relation.to_str_list()
-        self.assertEqual(2, len(actual_tag_id_list))
-        self.assertIn("abc123", actual_tag_id_list)
-        self.assertIn("def456", actual_tag_id_list)
+        self.assertEqual(2, len(actual.tag_relation))
+        self.assertIn("abc123", actual.tag_relation)
+        self.assertIn("def456", actual.tag_relation)

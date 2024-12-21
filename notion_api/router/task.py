@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Header
 from lotion import Lotion
-from lotion.page.page_id import PageId
 
 from router.request.task_request import CreateNewTaskRequest, UpdateTaskRequest
 from router.response import BaseResponse, TaskResponse
@@ -55,7 +54,7 @@ def complete_task(task_id: str, access_token: str | None = Header(None)) -> Task
         usecase = CompleteTaskUsecase(
             task_repository=task_repository,
         )
-        task = usecase.execute(page_id=PageId(task_id))
+        task = usecase.execute(page_id=task_id)
         return TaskResponse(data=TaskDto.from_model(task))
     except:
         ErrorReporter().execute()
@@ -69,7 +68,7 @@ def start_task(task_id: str, access_token: str | None = Header(None)) -> TaskRes
         usecase = StartTaskUsecase(
             task_repository=task_repository,
         )
-        task = usecase.execute(page_id=PageId(task_id))
+        task = usecase.execute(page_id=task_id)
         return TaskResponse(data=TaskDto.from_model(task))
     except:
         ErrorReporter().execute()
