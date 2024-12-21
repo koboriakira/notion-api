@@ -13,11 +13,11 @@ class AppendFeelingUsecase:
         self,
         page_id: str,
         value: str,
-    ) -> dict:
+    ) -> None:
         logger.info("AppendFeelingUsecase start")
         page = self.client.retrieve_page(page_id=page_id)
         feeling = page.get_text(name="気持ち").append_text(text=value)
-        return self.client.update_page(
+        self.client.update_page(
             page_id=page_id,
             properties=[feeling],
         )

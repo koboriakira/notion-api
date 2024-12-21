@@ -18,7 +18,7 @@ class RepositoryImpl(AccountRepository):
     def save(self, entity: AccountBook) -> AccountBook:
         """Save a AccountBook item."""
         if entity.is_created():
-            _ = self._client.update_page(page_id=entity.id, properties=entity.properties.values)
+            self._client.update_page(page_id=entity.id, properties=entity.properties.values)
             return entity
         page = self._client.create_page_in_database(
             database_id=self.DATABASE_ID,

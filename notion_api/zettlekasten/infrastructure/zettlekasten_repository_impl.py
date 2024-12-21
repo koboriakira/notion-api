@@ -55,7 +55,7 @@ class ZettlekastenRepositoryImpl(ZettlekastenRepository):
 
     def save(self, zettlekasten: Zettlekasten) -> Zettlekasten:
         if zettlekasten.is_created():
-            _ = self._client.update_page(page_id=zettlekasten.id, properties=zettlekasten.properties.values)
+            self._client.update_page(page_id=zettlekasten.id, properties=zettlekasten.properties.values)
             return zettlekasten
         result = self._client.create_page_in_database(
             database_id=self.DATABASE_ID,

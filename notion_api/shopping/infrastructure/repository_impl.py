@@ -21,7 +21,7 @@ class ShoppingRepositoryImpl(ShoppingRepository):
 
     def save(self, entity: Shopping) -> Shopping:
         if entity.is_created():
-            _ = self._client.update_page(page_id=entity.id, properties=entity.properties.values)
+            self._client.update_page(page_id=entity.id, properties=entity.properties.values)
             return entity
         page = self._client.create_page_in_database(
             database_id=self.DATABASE_ID,

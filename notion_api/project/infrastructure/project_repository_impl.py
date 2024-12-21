@@ -45,7 +45,7 @@ class ProjectRepositoryImpl(ProjectRepository):
 
     def save(self, project: Project) -> "Project":
         if project.is_created():
-            _ = self._client.update_page(page_id=project.id, properties=project.properties.values)
+            self._client.update_page(page_id=project.id, properties=project.properties.values)
             return project
         page = self._client.create_page_in_database(
             database_id=self.DATABASE_ID,
