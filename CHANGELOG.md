@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.1.0](https://github.com/koboriakira/notion-api/compare/v2.0.0...v2.1.0) (2024-12-21)
+
+
+### Features
+
+* AIアドバイス機能を実装 ([#42](https://github.com/koboriakira/notion-api/issues/42)) ([bd7562c](https://github.com/koboriakira/notion-api/commit/bd7562cc2703d707bd41295feba96c84f2201cae))
+* NotionからのWebhookを受け付けるAPIを作成 ([2ff0233](https://github.com/koboriakira/notion-api/commit/2ff0233515f5b6a4eeee7f8f5c6d652c7f7fe2da))
+* NotionのWebhookを受け取るAPIを作成 ([#44](https://github.com/koboriakira/notion-api/issues/44)) ([68a863f](https://github.com/koboriakira/notion-api/commit/68a863fba27782c89b5e4580ae7ac7d4c023ae2a))
+* 目標のレビューも含める ([#37](https://github.com/koboriakira/notion-api/issues/37)) ([ea84fbe](https://github.com/koboriakira/notion-api/commit/ea84fbe74ffa7ae1a5dc711c64eaf86bfc707628))
+* 目標ページに進行中プロジェクトのメンションを載せる ([#33](https://github.com/koboriakira/notion-api/issues/33)) ([74a1985](https://github.com/koboriakira/notion-api/commit/74a198505d63fb7ea6e193be388a63639b5e3751))
+
+
+### Bug Fixes
+
+* 「アクションプラン」ではなく「今週の目標」に変更 ([02240ae](https://github.com/koboriakira/notion-api/commit/02240aea254d23047370b43e8788534fdc858730))
+* PageIdをimportしない ([#46](https://github.com/koboriakira/notion-api/issues/46)) ([d4f6642](https://github.com/koboriakira/notion-api/commit/d4f66422efd4e232d4225978c83628f8dd08cf11))
+* PageIdを利用しない ([#45](https://github.com/koboriakira/notion-api/issues/45)) ([2be46ea](https://github.com/koboriakira/notion-api/commit/2be46ea3fae719e49ce1aa1a29fe440c45928a62))
+
 ## [2.0.0](https://github.com/koboriakira/notion-api/compare/v1.9.0...v2.0.0) (2024-12-16)
 
 
