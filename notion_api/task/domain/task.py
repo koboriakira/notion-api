@@ -152,7 +152,7 @@ class ToDoTask(BasePage):
 
     @property
     def project_id_list(self) -> list[str]:
-        return self.get_relation(name=ProjectRelation.NAME).page_id_list
+        return self.get_relation(name=ProjectRelation.NAME).id_list
 
     @property
     def is_do_tomorrow(self) -> bool:
