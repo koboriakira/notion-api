@@ -58,7 +58,7 @@ class TaskRepositoryImpl(TaskRepository):
             builder = builder.add(Prop.DATE, TaskStartDate.NAME, Cond.ON_OR_BEFORE, start_datetime_end.isoformat())
 
         if project_id is not None:
-            builder = builder.add(Prop.RELATION, ProjectRelation.NAME, Cond.EQUALS, project_id)
+            builder = builder.add(Prop.RELATION, ProjectRelation.NAME, Cond.CONTAINS, project_id)
 
         if do_tomorrow_flag is not None:
             builder = builder.add(Prop.CHECKBOX, DoTommorowFlag.NAME, Cond.EQUALS, do_tomorrow_flag)
