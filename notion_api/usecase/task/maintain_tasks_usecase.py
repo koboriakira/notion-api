@@ -2,7 +2,6 @@ from datetime import datetime, timedelta
 from logging import Logger
 
 from custom_logger import get_logger
-from task.domain.task_kind import TaskKindType
 from task.domain.task_repository import TaskRepository
 from task.domain.task_status import TaskStatusType
 from task.task_factory import TaskFactory
@@ -21,9 +20,9 @@ class MaintainTasksUsecase:
             if task.is_do_tomorrow:
                 self._logger.info(f"「明日やる」タスクを処理: {task.title}")
                 self._task_repository.save(task=task.do_tomorrow())
-            if len(task.project_id_list) > 0 and task.kind is None:
-                self._logger.info(f"タスク種別のないプロジェクト関連タスクを処理: {task.title}")
-                self._task_repository.save(task=task.update_kind(TaskKindType.NEXT_ACTION))
+            # if len(task.project_id_list) > 0 and task.kind is None:
+            #     self._logger.info(f"タスク種別のないプロジェクト関連タスクを処理: {task.title}")
+            #     self._task_repository.save(task=task.update_kind(TaskKindType.NEXT_ACTION))
             if task.is_completed_flag:
                 self._logger.info(f"「_完了チェック」タスクを処理: {task.title}")
                 self._task_repository.save(task=task.complete())
