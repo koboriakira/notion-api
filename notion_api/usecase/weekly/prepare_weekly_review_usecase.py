@@ -51,7 +51,7 @@ class PrepareWeeklyReviewUsecase:
         # 目標をレビューするので、自然とプロジェクトレビューにもなるはず
         projects = self._fetch_inprogress_projects()
         projects_as_goal = self._generate_projects_as_goal(projects)
-        self._create_mention_in_each_goal(projects_as_goal)
+        self._create_mention_in_each_goal(projects_as_goal, review_project)
         self._create_tasks_as_goal_review(review_project, list(projects_as_goal.keys()))
 
         # 目標のひも付きがないやつは、別途タスクとしてつくる
@@ -98,15 +98,23 @@ class PrepareWeeklyReviewUsecase:
     def _create_mention_in_each_goal(
         self,
         projects_as_goal: dict[str, list[Project]],
+        review_project: Project,
     ) -> None:
         """目標ページにメンション追加"""
         for goal_page_id, projects in projects_as_goal.items():
-            heading = Heading.from_plain_text(2, jst_today().isoformat())
+            rich_text = RichTextBuilder.create().add_date_mention(start=jst_today()).build()
+            heading = Heading.from_rich_text(heading_size=2, rich_text=rich_text)
             self._lotion.append_block(goal_page_id, heading)
             for p in projects:
-                rich_text = RichTextBuilder.get_instance().add_page_mention(p.id).build()
+                rich_text = RichTextBuilder.create().add_page_mention(p.id).build()
                 paragraph = BulletedListItem.from_rich_text(rich_text)
                 self._lotion.append_block(goal_page_id, paragraph)
+            task = TaskFactory.create_todo_task(
+                title=Title.from_mentioned_page_id(page_id=goal_page_id),  # type: ignore
+                project_id=review_project.id,
+                task_kind_type=TaskKindType.NEXT_ACTION,
+            )
+            self._create_task(task)
 
     def _create_task(
         self,
