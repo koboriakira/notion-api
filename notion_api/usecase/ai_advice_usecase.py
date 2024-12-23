@@ -10,7 +10,8 @@ from custom_logger import get_logger
 from infrastructure.slack_bot_client import SlackBotClient
 from task.domain import Task
 from task.domain.task_repository import TaskRepository
-from util.datetime import JST
+from task.domain.task_status import TaskStatusType
+from util.datetime import jst_now
 from util.openai_executer import OpenaiExecuter
 
 logger = get_logger(__name__)
@@ -36,21 +37,68 @@ class AiAdviceUsecase:
         self,
         start_datetime: datetime,
     ) -> None:
+        text = ""
+
         tasks = self._task_repository.search(
             start_datetime=start_datetime,
             start_datetime_end=start_datetime + timedelta(hours=3),
         )
+        # 終日の予定になっているタスク
         allday_tasks = [t for t in tasks if t.start_datetime.time() == time().min]
-        allday_tasks_json = to_dict_list(allday_tasks)
+
+        # 3時間以内に開始するタスク
         current_tasks = [t for t in tasks if t.start_datetime.time() != time().min]
-        current_tasks_json = to_dict_list(current_tasks)
+
+        # 現時刻より前のタスク
         past_tasks = self._task_repository.search(
             start_datetime=start_datetime.date(),
             start_datetime_end=start_datetime,
         )
         past_tasks = [t for t in past_tasks if t.start_datetime.time() != time().min]
-        past_tasks_json = to_dict_list(past_tasks)
 
+        # 進行中のタスク
+        current_tasks = self._task_repository.search(status_list=[TaskStatusType.IN_PROGRESS])
+
+        current_tasks_description: list[str] = []
+        if not current_tasks:
+            current_tasks_description.append("進行中のタスクはありません。")
+        else:
+            # 開始してから30分以上経過した進行中タスク
+            behind_current_tasks = [
+                t
+                for t in current_tasks
+                if t.start_datetime is not None and (start_datetime - t.start_datetime).total_seconds() > 60 * 30
+            ]
+            for task in behind_current_tasks:
+                current_tasks_description.append(f"{task.title}は開始してから30分以上経過しています。")
+
+        if len(current_tasks_description) > 0:
+            text += "\n".join(current_tasks_description)
+
+        # result = self.make_advice(
+        #     start_datetime=start_datetime,
+        #     allday_tasks=allday_tasks,
+        #     current_tasks=current_tasks,
+        #     past_tasks=past_tasks,
+        # )
+        # print(result)
+
+        self._slack_client.send_message(
+            channel="C05F6AASERZ",
+            text=text,
+            is_enabled_mention=True,
+        )
+
+    def make_advice(
+        self,
+        start_datetime: datetime,
+        allday_tasks: list[Task],
+        current_tasks: list[Task],
+        past_tasks: list[Task],
+    ) -> str:
+        allday_tasks_json = to_dict_list(allday_tasks)
+        current_tasks_json = to_dict_list(current_tasks)
+        past_tasks_json = to_dict_list(past_tasks)
         json_str = json.dumps(
             {
                 "now": start_datetime.isoformat(),
@@ -61,7 +109,6 @@ class AiAdviceUsecase:
             ensure_ascii=False,
             # indent=2,
         )
-
         prompt = f"""
 あなたは私の最高の秘書です。
 下記の情報をもとに、なるべく端的に現状をまとめあげ、次の行動を検討して教えてください。
@@ -81,13 +128,7 @@ class AiAdviceUsecase:
 
 """
         print(prompt)
-        result = self._openai_executor.simple_chat(user_content=prompt)
-        print(result)
-        self._slack_client.send_message(
-            channel="C05F6AASERZ",
-            text=result,
-            is_enabled_mention=True,
-        )
+        return self._openai_executor.simple_chat(user_content=prompt)
 
 
 def to_dict_list(tasks: list[Task]) -> list[dict]:
@@ -110,5 +151,6 @@ if __name__ == "__main__":
     suite = AiAdviceUsecase(
         task_repository=task_repository,
     )
-    start_datetime = datetime(2024, 12, 18, 12, tzinfo=JST)
+    # start_datetime = datetime(2024, 12, 18, 12, tzinfo=JST)
+    start_datetime = jst_now()
     suite.execute(start_datetime=start_datetime)
