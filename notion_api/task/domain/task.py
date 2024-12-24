@@ -3,6 +3,7 @@ from datetime import date, datetime, timedelta
 from typing import override
 
 from lotion.base_page import BasePage
+from lotion.properties import Title
 
 from task.domain.completed_flag import CompletedFlag
 from task.domain.do_tomorrow_flag import DoTommorowFlag
@@ -103,10 +104,19 @@ class ToDoTask(BasePage):
         self.properties = self.properties.append_property(start_date)
         return self
 
+    def add_check_prefix(self) -> "ToDoTask":
+        title_prop = Title.from_plain_text(name="名前", text="✔️" + self.title)
+        self.properties = self.properties.append_property(title_prop)
+        return self
+
     @property
     def status(self) -> TaskStatusType:
         status_name = self.get_status(name=TaskStatus.NAME).status_name
         return TaskStatusType(status_name)
+
+    @property
+    def is_completed(self) -> bool:
+        return self.status.is_done()
 
     @property
     def start_datetime(self) -> datetime | None:

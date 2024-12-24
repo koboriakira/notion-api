@@ -211,6 +211,11 @@ export class NotionApi extends Stack {
       "LAMBDA_GOOGLE_CALENDAR_API_ACCESS_TOKEN",
       process.env.LAMBDA_GOOGLE_CALENDAR_API_ACCESS_TOKEN || ""
     );
+    fn.addEnvironment("GAS_GMAIL_URL", process.env.GAS_GMAIL_URL || "");
+    fn.addEnvironment("GAS_GMAIL_SECRET", process.env.GAS_GMAIL_SECRET || "");
+    fn.addEnvironment("LINE_CHANNEL_ACCESS_TOKEN", process.env.LINE_CHANNEL_ACCESS_TOKEN || "");
+    fn.addEnvironment("LINE_TALK_ID", process.env.LINE_TALK_ID || "");
+    
 
     if (function_url_enabled) {
       fn.addFunctionUrl({

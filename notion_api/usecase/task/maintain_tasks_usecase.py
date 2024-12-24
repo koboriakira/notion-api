@@ -41,6 +41,9 @@ class MaintainTasksUsecase:
                     blocks=task.block_children,
                 )
                 self._task_repository.save(task=new_task)
+            if task.is_completed and not task.title.startswith("✔️"):
+                self._logger.info(f"チェックマークをつける: {task.title}")
+                self._task_repository.save(task=task.add_check_prefix())
 
 
 if __name__ == "__main__":

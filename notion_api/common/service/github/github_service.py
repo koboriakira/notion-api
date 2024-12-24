@@ -1,7 +1,6 @@
+from github import Auth, Github
 from lotion.lotion import os
 
-
-from github import Github, Auth
 
 class GitHubService:
     def __init__(self, github_access_token: str | None = None) -> None:
@@ -9,11 +8,11 @@ class GitHubService:
         auth = Auth.Token(access_token)
         self._pygithub = Github(auth=auth)
 
-
     def get_repos(self):
         # Then play with your Github objects:
         for repo in self._pygithub.get_user().get_repos():
             print(repo.name)
+
 
 if __name__ == "__main__":
     service = GitHubService()
