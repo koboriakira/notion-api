@@ -13,8 +13,8 @@ from task.domain import Task
 from task.domain.task_repository import TaskRepository
 from task.domain.task_status import TaskStatusType
 from util.datetime import jst_now
-from util.openai_executer import OpenaiExecuter
 from util.line.line_client import LineClient
+from util.openai_executer import OpenaiExecuter
 
 logger = get_logger(__name__)
 
@@ -58,7 +58,7 @@ class AiAdviceUsecase:
             start_datetime=start_datetime.date(),
             start_datetime_end=start_datetime,
         )
-        past_tasks = [t for t in past_tasks if t.start_datetime.time() != time().min]
+        past_tasks = [t for t in past_tasks if t.start_datetime is not None and t.start_datetime.time() != time().min]
 
         # 進行中のタスク
         current_tasks = self._task_repository.search(status_list=[TaskStatusType.IN_PROGRESS])
@@ -75,8 +75,8 @@ class AiAdviceUsecase:
             ]
             for task in behind_current_tasks:
                 if task.start_datetime is not None:
-                    time_ = (start_datetime - task.start_datetime).total_seconds()
-                    current_tasks_description.append(f"「{task.title}」は開始してから{time_}秒経過しています")
+                    time_ = (start_datetime - task.start_datetime).total_seconds() / 60
+                    current_tasks_description.append(f"「{task.title}」は開始してから{int(time_)}秒経過しています")
 
         if len(current_tasks_description) > 0:
             text += "\n".join(current_tasks_description)
