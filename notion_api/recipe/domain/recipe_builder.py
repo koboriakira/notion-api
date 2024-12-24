@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 
 from lotion.block import Block, BulletedListItem, Heading
-from lotion.page import PageId
 from lotion.properties import Cover, Properties, Property
 
 from recipe.domain.carbohydrate import Carbohydrate
@@ -24,7 +23,7 @@ class RecipeBuilder:
     @staticmethod
     def of(title: str, blocks: list[Block] | None = None) -> "RecipeBuilder":
         blocks = blocks or []
-        properties = [RecipeTitle(text=title)]
+        properties: list[Property] = [RecipeTitle(text=title)]
         return RecipeBuilder(properties=properties, blocks=blocks, cover=None)
 
     def build(self) -> Recipe:
@@ -36,7 +35,7 @@ class RecipeBuilder:
         self.properties.append(Carbohydrate(number=carbohydrate))
         return self
 
-    def add_ingredients(self, ingredient_page_id_list: list[PageId]) -> "RecipeBuilder":
+    def add_ingredients(self, ingredient_page_id_list: list[str]) -> "RecipeBuilder":
         self.properties.append(IngredientRelation.from_id_list(id_list=ingredient_page_id_list))
         return self
 

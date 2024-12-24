@@ -1,7 +1,8 @@
+from lotion import Lotion
+
 from book.infrastructure.book_repository_impl import BookRepositoryImpl
 from custom_logger import get_logger
 from infrastructure.book.google_book_api import GoogleBookApi
-from lotion import Lotion
 from usecase.add_book_usecase import AddBookUsecase
 
 logger = get_logger(__name__)

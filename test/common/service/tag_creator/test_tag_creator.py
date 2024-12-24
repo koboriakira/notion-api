@@ -3,7 +3,7 @@ from unittest.mock import Mock
 
 from lotion import Lotion
 from lotion.base_page import BasePage
-from lotion.page import PageId
+from lotion.page.page_id import PageId
 from lotion.properties import Properties
 from notion_api.common.service.tag_creator.tag_creator import TagCreator
 
@@ -29,8 +29,7 @@ class TestTagCreator(TestCase):
         ]
 
         # When
-        page_id_list = self.suite.execute(name_list)
-        actual = [page_id.value for page_id in page_id_list]
+        actual = self.suite.execute(name_list)
 
         # Then
         self.assertEqual(2, len(actual))
@@ -52,4 +51,4 @@ class TestTagCreator(TestCase):
         # Then
         self.mock_client.create_page_in_database.assert_not_called()
         self.assertEqual(1, len(actual))
-        self.assertIn(page_id_value, actual[0].value)
+        self.assertIn(page_id_value, actual[0])

@@ -2,7 +2,7 @@ from datetime import date
 from unittest import TestCase
 from unittest.mock import Mock
 
-from lotion.page import PageId
+from lotion.page.page_id import PageId
 from notion_api.book.domain.book_api import BookApiResult
 from notion_api.book.domain.book_builder import BookBuilder
 from notion_api.common.service.tag_creator.tag_creator import TagCreator
@@ -21,7 +21,7 @@ class TestBookBuilder(TestCase):
         )
         # タグページを作成するサービスは使用しないためモックにする
         tag_creator = Mock(spec=TagCreator)
-        author_page_id = PageId.dummy()
+        author_page_id = PageId.dummy().value
         tag_creator.execute.return_value = [author_page_id]
 
         # When

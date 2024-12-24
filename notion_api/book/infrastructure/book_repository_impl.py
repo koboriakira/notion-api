@@ -4,7 +4,7 @@ from lotion import Lotion
 from lotion.base_page import BasePage
 
 from book.domain.book import Book
-from book.domain.book_repository import BookRepository, ExistedBookError, NotFoundBookError
+from book.domain.book_repository import BookRepository, NotFoundBookError
 from common.value.database_type import DatabaseType
 
 DATABASE_ID = DatabaseType.BOOK.value
@@ -22,8 +22,9 @@ class BookRepositoryImpl(BookRepository):
         return book
 
     def save(self, book: Book) -> Book:
-        if self.__find_by_title(book.title) is None:
-            raise ExistedBookError(book.title)
+        if book.is_created():
+            self._client.update_page(book.id, book.properties.values)
+            return book
         result = self._client.create_page_in_database(
             database_id=DATABASE_ID,
             properties=book.properties.values,
@@ -31,7 +32,7 @@ class BookRepositoryImpl(BookRepository):
             cover=book.cover,
         )
         book.update_id_and_url(
-            page_id=result.page_id.value,
+            page_id=result.id,
             url=result.url,
         )
         return book
@@ -51,7 +52,7 @@ class BookRepositoryImpl(BookRepository):
             properties=base_page.properties,
             block_children=base_page.block_children,
             id_=base_page.id_,
-            url=base_page.url,
+            url_=base_page.url,
             created_time=base_page.created_time,
             last_edited_time=base_page.last_edited_time,
             _created_by=base_page._created_by,

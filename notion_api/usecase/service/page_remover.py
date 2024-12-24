@@ -1,5 +1,4 @@
 from lotion import Lotion
-from lotion.page import PageId
 
 
 class PageRemover:
@@ -8,7 +7,7 @@ class PageRemover:
 
     def execute(
         self,
-        page_id: PageId,
+        page_id: str,
     ) -> None:
         """指定されたページを削除(アーカイブ)する"""
-        self._client.remove_page(page_id=page_id.value)
+        self._client.remove_page(page_id=page_id)

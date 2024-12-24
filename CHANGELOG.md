@@ -1,5 +1,30 @@
 # Changelog
 
+## [2.1.0](https://github.com/koboriakira/notion-api/compare/v2.0.0...v2.1.0) (2024-12-24)
+
+
+### Features
+
+* ai_advice機能のタスク取得ロジックを改善し、進行中タスクの通知を追加 ([4e48d57](https://github.com/koboriakira/notion-api/commit/4e48d5763c2daec9ede2ad62233c3ad04a4549d8))
+* AIアドバイス機能を実装 ([#42](https://github.com/koboriakira/notion-api/issues/42)) ([bd7562c](https://github.com/koboriakira/notion-api/commit/bd7562cc2703d707bd41295feba96c84f2201cae))
+* LINE通知機能を追加 ([#48](https://github.com/koboriakira/notion-api/issues/48)) ([49e77aa](https://github.com/koboriakira/notion-api/commit/49e77aab41facd7f041e98f37efa60eb6adeb493))
+* NotionからのWebhookを受け付けるAPIを作成 ([2ff0233](https://github.com/koboriakira/notion-api/commit/2ff0233515f5b6a4eeee7f8f5c6d652c7f7fe2da))
+* NotionのWebhookを受け取るAPIを作成 ([#44](https://github.com/koboriakira/notion-api/issues/44)) ([68a863f](https://github.com/koboriakira/notion-api/commit/68a863fba27782c89b5e4580ae7ac7d4c023ae2a))
+* プロジェクト関連タスクのタスク種別変更機能を無効化 ([fd7a1fa](https://github.com/koboriakira/notion-api/commit/fd7a1fae7bacacca2b7e9cab5c6e6f7df4dc217c))
+* 時間ごとに現状を知らせるバッチを作成 ([#49](https://github.com/koboriakira/notion-api/issues/49)) ([86cb94e](https://github.com/koboriakira/notion-api/commit/86cb94e1dba41a61209e0e73553849c19e809ed7))
+* 目標のレビューも含める ([#37](https://github.com/koboriakira/notion-api/issues/37)) ([ea84fbe](https://github.com/koboriakira/notion-api/commit/ea84fbe74ffa7ae1a5dc711c64eaf86bfc707628))
+* 目標ページに進行中プロジェクトのメンションを載せる ([#33](https://github.com/koboriakira/notion-api/issues/33)) ([74a1985](https://github.com/koboriakira/notion-api/commit/74a198505d63fb7ea6e193be388a63639b5e3751))
+* 見出しに日付を加える ([5d9f0a3](https://github.com/koboriakira/notion-api/commit/5d9f0a331e8a1bb48fd071ba5c800cc366b60019))
+
+
+### Bug Fixes
+
+* 「アクションプラン」ではなく「今週の目標」に変更 ([02240ae](https://github.com/koboriakira/notion-api/commit/02240aea254d23047370b43e8788534fdc858730))
+* import整理の忘れを対応 ([6b5ad12](https://github.com/koboriakira/notion-api/commit/6b5ad123ea52f0cce087ba7669f63a9e73b96a9a))
+* PageIdをimportしない ([#46](https://github.com/koboriakira/notion-api/issues/46)) ([d4f6642](https://github.com/koboriakira/notion-api/commit/d4f66422efd4e232d4225978c83628f8dd08cf11))
+* PageIdを利用しない ([#45](https://github.com/koboriakira/notion-api/issues/45)) ([2be46ea](https://github.com/koboriakira/notion-api/commit/2be46ea3fae719e49ce1aa1a29fe440c45928a62))
+* ただしい条件をつくる ([bc51625](https://github.com/koboriakira/notion-api/commit/bc51625168e8deed6c5b219010d1e1639c38c9af))
+
 ## [2.0.0](https://github.com/koboriakira/notion-api/compare/v1.9.0...v2.0.0) (2024-12-16)
 
 

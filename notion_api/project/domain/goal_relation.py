@@ -1,4 +1,3 @@
-from common.value.notion_page_id import NotionPageId
 from lotion.properties import Relation
 
 
@@ -16,11 +15,8 @@ class GoalRelation(Relation):
         return GoalRelation(id_list=[])
 
     @staticmethod
-    def from_id_list(id_list: list[str | NotionPageId]) -> "GoalRelation":
-        return GoalRelation(
-            id_list=[id_.value if isinstance(id_, NotionPageId) else id_ for id_ in id_list],
-        )
+    def from_id_list(id_list: list[str]) -> "GoalRelation":
+        return GoalRelation(id_list=id_list)
 
-    def add(self, notion_page_id: NotionPageId | str) -> "GoalRelation":
-        str_value = notion_page_id.value if isinstance(notion_page_id, NotionPageId) else notion_page_id
-        return GoalRelation(id_list=[*self.id_list, str_value])
+    def add(self, notion_page_id: str) -> "GoalRelation":
+        return GoalRelation(id_list=[*self.id_list, notion_page_id])

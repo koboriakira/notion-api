@@ -3,10 +3,12 @@ from enum import Enum
 
 from pydantic import BaseModel
 
+
 class Status(str, Enum):
     ToDo = "ToDo"
     InProgress = "InProgress"
     Done = "Done"
+
 
 class CreateNewTaskRequest(BaseModel):
     task_id: str | None = None
@@ -17,6 +19,7 @@ class CreateNewTaskRequest(BaseModel):
     status: Status | None = Status.ToDo
     url: str | None = None
     task_kind: str | None = None
+
 
 class UpdateTaskRequest(BaseModel):
     pomodoro_count: int

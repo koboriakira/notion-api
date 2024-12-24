@@ -15,7 +15,7 @@ class CreateNewTaskUsecase:
     def execute(  # noqa: PLR0913
         self,
         title: str | None,
-        mentioned_page_id: str | None,
+        mentioned_page_id: str | None = None,
         start_date: date | datetime | None = None,
         end_date: date | datetime | None = None,
         status: str | None = None,
@@ -42,7 +42,16 @@ class CreateNewTaskUsecase:
             msg = "title と mentioned_page_id のどちらかは必須です"
             raise ValueError(msg)
         if mentioned_page_id is None:
-            return Title.from_plain_text(name="名前", text=title)
-        if mentioned_page_id is not None:
-            return Title.from_mentioned_page_id(name="名前", page_id=mentioned_page_id)
-        raise NotImplementedError
+            text = title if title is not None else ""
+            return Title.from_plain_text(name="名前", text=text)
+        return Title.from_mentioned_page_id(name="名前", page_id=mentioned_page_id)
+
+
+if __name__ == "__main__":
+    # python -m notion_api.usecase.create_new_task_usecase
+    from task.infrastructure.task_repository_impl import TaskRepositoryImpl
+
+    task_repository = TaskRepositoryImpl()
+    usecase = CreateNewTaskUsecase(task_repository=task_repository)
+    result = usecase.execute(title="Inbox")
+    print(result)

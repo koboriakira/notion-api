@@ -5,15 +5,15 @@ from unittest import TestCase
 from notion_api.daily_log.domain.daily_log_builder import DailyLogBuilder
 
 sys.path.append("notion_api")
-from lotion.page import PageId
+from lotion.page.page_id import PageId
 
 
 class TestDailyLogBuilder(TestCase):
     def test_インスタンスの生成(self):
         # When
-        weekly_log_page_id = PageId.dummy()
-        previous_page_id = PageId.dummy()
-        tag_page_id = PageId.dummy()
+        weekly_log_page_id = PageId.dummy().value
+        previous_page_id = PageId.dummy().value
+        tag_page_id = PageId.dummy().value
         actual = (
             DailyLogBuilder.of(date_=date.fromisoformat("2024-02-13"))
             .add_daily_goal("目標")

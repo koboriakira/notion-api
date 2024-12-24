@@ -33,4 +33,5 @@ def handler(event: dict, context: dict) -> None:  # noqa: ARG001
 
 
 if __name__ == "__main__":
+    # python -m notion_api.move_completed_task_to_backup
     handler({}, {})

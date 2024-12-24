@@ -1,17 +1,17 @@
 from dataclasses import dataclass
 
-from common.domain.tag_relation import TagRelation
 from lotion.base_page import BasePage
 from lotion.block import Block
-from lotion.properties import Cover
-from lotion.properties import Properties
-from project.domain.action_plan import ActionPlan
+from lotion.properties import Cover, Properties
+
+from common.domain.tag_relation import TagRelation
 from project.domain.definition_of_done import DefinitionOfDone
 from project.domain.goal_relation import GoalRelation
 from project.domain.importance import Importance, ImportanceType
 from project.domain.project_name import ProjectName
 from project.domain.project_status import ProjectStatus, ProjectStatusType
 from project.domain.schedule import Schedule
+from project.domain.weekly_goal import WeeklyGoal
 
 
 @dataclass
@@ -22,7 +22,7 @@ class Project(BasePage):
         project_status: ProjectStatusType | ProjectStatus | None,
         importance: ImportanceType | Importance | None = None,
         definition_of_done: str | DefinitionOfDone | None = None,
-        action_plan: str | ActionPlan | None = None,
+        weekly_goal: str | WeeklyGoal | None = None,
         goal_relation: list[str] | GoalRelation | None = None,
         schedule: Schedule | None = None,
         tag_relation: list[str] | TagRelation | None = None,
@@ -49,11 +49,11 @@ class Project(BasePage):
                 else DefinitionOfDone.from_plain_text(text=definition_of_done)
             )
             properties.append(definition_of_done)
-        if action_plan is not None:
-            action_plan = (
-                action_plan if isinstance(action_plan, ActionPlan) else ActionPlan.from_plain_text(text=action_plan)
+        if weekly_goal is not None:
+            weekly_goal = (
+                weekly_goal if isinstance(weekly_goal, WeeklyGoal) else WeeklyGoal.from_plain_text(text=weekly_goal)
             )
-            properties.append(action_plan)
+            properties.append(weekly_goal)
         if goal_relation is not None:
             goal_relation = (
                 goal_relation
@@ -88,8 +88,8 @@ class Project(BasePage):
         return self.get_text(name=DefinitionOfDone.NAME).text
 
     @property
-    def action_plan(self) -> str:
-        return self.get_text(name=ActionPlan.NAME).text
+    def weekly_goal(self) -> str:
+        return self.get_text(name=WeeklyGoal.NAME).text
 
     @property
     def goal_relation(self) -> list[str]:

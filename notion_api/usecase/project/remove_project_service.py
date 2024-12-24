@@ -1,5 +1,4 @@
 from custom_logger import get_logger
-from lotion.page import PageId
 from project.domain.project_repository import ProjectRepository
 from task.domain.task_repository import TaskRepository
 
@@ -11,8 +10,8 @@ class RemoveProjectService:
         self._task_repository = task_repository
         self._project_repository = project_repository
 
-    def execute(self, id_: PageId) -> None:
-        project = self._project_repository.find_by_id(page_id=id_.value)
+    def execute(self, id_: str) -> None:
+        project = self._project_repository.find_by_id(page_id=id_)
 
         tasks = self._task_repository.search(project_id=id_)
         for task in tasks:

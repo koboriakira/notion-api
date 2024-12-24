@@ -1,8 +1,9 @@
+from lotion import Lotion
+
 from common.injector import CommonInjector
 from common.service.tag_creator import TagCreator
 from common.value.site_kind import SiteKind
 from custom_logger import get_logger
-from lotion import Lotion
 from util.openai_executer import OpenaiExecuter
 from util.tag_analyzer import TagAnalyzer
 from util.text_summarizer import TextSummarizer
@@ -24,27 +25,27 @@ tag_analyzer = TagAnalyzer(client=openai_executer, logger=logger)
 text_summarizer = TextSummarizer(client=openai_executer, logger=logger)
 tweet_fetcher = CommonInjector.get_tweet_fetcher()
 
+
 class WebclipInjector:
-    @classmethod
-    def create_webclip_creator(cls: "WebclipInjector") -> WebclipCreator:
+    @staticmethod
+    def create_webclip_creator() -> WebclipCreator:
         webclip_repository = WebclipRepositoryImpl(client=client, logger=logger)
-        webclip_generator_rule = cls._create_webclip_generator_rule()
+        webclip_generator_rule = WebclipInjector._create_webclip_generator_rule()
         return WebclipCreator(
             webclip_repository=webclip_repository,
             webclip_generator_rule=webclip_generator_rule,
             logger=logger,
         )
 
-    @classmethod
-    def _create_webclip_generator_rule(cls: "WebclipInjector") -> WebclipGeneratorRule:
+    @staticmethod
+    def _create_webclip_generator_rule() -> WebclipGeneratorRule:
         generator_dict = {}
         for site_kind in SiteKind:
-            generator_dict[site_kind] = cls.__create_webclip_generator(site_kind)
+            generator_dict[site_kind] = WebclipInjector.__create_webclip_generator(site_kind)
         return WebclipGeneratorRule(generator_dict=generator_dict)
 
-
-    @classmethod
-    def __create_webclip_generator(cls: "WebclipInjector", site_kind: SiteKind) -> WebclipGenerator:
+    @staticmethod
+    def __create_webclip_generator(site_kind: SiteKind) -> WebclipGenerator:
         match site_kind:
             # TwitterまたはX
             case SiteKind.TWITTER | SiteKind.X:

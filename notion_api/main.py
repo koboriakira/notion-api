@@ -14,9 +14,9 @@ from router import (
     healthcheck,
     image,
     music,
+    notion_webhook,
     page,
     projects,
-    prowrestling,
     recipes,
     task,
     tasks,
@@ -53,7 +53,6 @@ app.include_router(healthcheck.router, prefix="/healthcheck", tags=["healthcheck
 app.include_router(music.router, prefix="/music", tags=["music"])
 app.include_router(webclip.router, prefix="/webclip", tags=["webclip"])
 app.include_router(video.router, prefix="/video", tags=["video"])
-app.include_router(prowrestling.router, prefix="/prowrestling", tags=["prowrestling"])
 app.include_router(tasks.router, prefix="/tasks", tags=["tasks"])
 app.include_router(task.router, prefix="/task", tags=["tasks"])
 app.include_router(page.router, prefix="/page", tags=["page"])
@@ -63,6 +62,7 @@ app.include_router(blog.router, prefix="/blog", tags=["blog"])
 app.include_router(image.router, prefix="/image", tags=["image"])
 app.include_router(food.router, prefix="/food", tags=["food"])
 app.include_router(batch.router, prefix="/batch", tags=["batch"])
+app.include_router(notion_webhook.router, prefix="/notion_webhook", tags=["notion_webhook"])
 
 
 handler = Mangum(app, lifespan="off")

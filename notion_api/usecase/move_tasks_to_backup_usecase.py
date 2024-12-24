@@ -91,7 +91,7 @@ class MoveTasksToBackupUsecase:
         projects = self._project_repository.fetch_all()
         projects = [t for t in projects if t.project_status.is_trash()]
         for project in projects:
-            tasks = self._task_repository.search(project_id=project.page_id)
+            tasks = self._task_repository.search(project_id=project.id)
             for task in tasks:
                 self._task_repository.delete(task)
             self._project_repository.remove(project)

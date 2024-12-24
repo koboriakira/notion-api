@@ -1,4 +1,4 @@
-from logging import Logger
+from logging import Logger, getLogger
 
 from lotion import Lotion
 
@@ -17,12 +17,12 @@ class CreateTagToZettlekastenUseCase:
         zettlekasten_repository: ZettlekastenRepository,
         tag_analyzer: TagAnalyzer,
         tag_creator: TagCreator,
-        logger: Logger,
+        logger: Logger | None = None,
     ) -> None:
         self._zettlekasten_repository = zettlekasten_repository
         self._tag_analyzer = tag_analyzer
         self._tag_creator = tag_creator
-        self._logger = logger
+        self._logger = logger or getLogger(__name__)
 
     def execute(self) -> None:
         zettlekastens = self._zettlekasten_repository.search(is_tag_empty=True, include_children=True)

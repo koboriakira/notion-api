@@ -1,5 +1,4 @@
 from custom_logger import get_logger
-from lotion.page import PageId
 from task.domain.task import ToDoTask
 from task.domain.task_repository import TaskRepository
 
@@ -9,13 +8,13 @@ class StartTaskUsecase:
         self._task_repository = task_repository
         self._logger = get_logger(__name__)
 
-    def execute(self, page_id: PageId) -> ToDoTask:
+    def execute(self, page_id: str) -> ToDoTask:
         """
         Start the task.
         """
-        task = self._task_repository.find_by_id(task_id=page_id.value)
+        task = self._task_repository.find_by_id(task_id=page_id)
         if task is None:
-            msg = f"Task not found. page_id={page_id.value}"
+            msg = f"Task not found. page_id={page_id}"
             raise ValueError(msg)
         return self._task_repository.save(task.start())
 

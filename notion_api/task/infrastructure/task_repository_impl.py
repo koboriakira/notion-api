@@ -1,11 +1,9 @@
 from datetime import date, datetime, time, timedelta
+from typing import TYPE_CHECKING
 
 from lotion import Lotion
 from lotion.base_page import BasePage
-from lotion.filter import Builder
-from lotion.filter.condition import Cond, Prop
-from lotion.page import PageId
-from lotion.properties import Property
+from lotion.filter import Builder, Cond, Prop
 
 from common.value.database_type import DatabaseType
 from task.domain.do_tomorrow_flag import DoTommorowFlag
@@ -19,6 +17,9 @@ from task.domain.task_start_date import TaskStartDate
 from task.domain.task_status import TaskStatus, TaskStatusType
 from util.datetime import JST
 
+if TYPE_CHECKING:
+    from lotion.properties import Property
+
 
 class TaskRepositoryImpl(TaskRepository):
     def __init__(self, notion_client_wrapper: Lotion | None = None) -> None:
@@ -30,7 +31,7 @@ class TaskRepositoryImpl(TaskRepository):
         kind_type_list: list[TaskKindType] | None = None,
         start_datetime: date | datetime | None = None,
         start_datetime_end: date | datetime | None = None,
-        project_id: PageId | None = None,
+        project_id: str | None = None,
         do_tomorrow_flag: bool | None = None,
         is_started: bool | None = None,
         last_edited_at: datetime | None = None,
@@ -57,7 +58,7 @@ class TaskRepositoryImpl(TaskRepository):
             builder = builder.add(Prop.DATE, TaskStartDate.NAME, Cond.ON_OR_BEFORE, start_datetime_end.isoformat())
 
         if project_id is not None:
-            builder = builder.add(Prop.RELATION, ProjectRelation.NAME, Cond.EQUALS, project_id.value)
+            builder = builder.add(Prop.RELATION, ProjectRelation.NAME, Cond.CONTAINS, project_id)
 
         if do_tomorrow_flag is not None:
             builder = builder.add(Prop.CHECKBOX, DoTommorowFlag.NAME, Cond.EQUALS, do_tomorrow_flag)
@@ -69,7 +70,7 @@ class TaskRepositoryImpl(TaskRepository):
             builder = builder.add_last_edited_at(Cond.ON_OR_AFTER, last_edited_at.isoformat())
 
         if kind_type_list is not None and len(kind_type_list) == 0:
-            builder = builder.add(Prop.SELECT, TaskKind.NAME, Cond.IS_EMPTY, True)
+            builder = builder.add(Prop.SELECT, TaskKind.NAME, Cond.IS_EMPTY, True)  # noqa: FBT003
 
         # このあとor条件の追加をしていく
 
@@ -114,15 +115,15 @@ class TaskRepositoryImpl(TaskRepository):
         return tasks
 
     def save(self, task: Task) -> Task:
-        if task.id is not None:
-            _ = self.client.update_page(page_id=task.id, properties=task.properties.values)
+        if task.is_created():
+            self.client.update_page(page_id=task.id, properties=task.properties.values)
             return task
         page = self.client.create_page_in_database(
             database_id=DatabaseType.TASK.value,
             properties=task.properties.values,
             blocks=task.block_children,
         )
-        return self.find_by_id(task_id=page.page_id.value)
+        return self.find_by_id(task_id=page.id)
 
     def find_by_id(self, task_id: str) -> Task:
         base_page = self.client.retrieve_page(page_id=task_id)
@@ -154,10 +155,7 @@ class TaskRepositoryImpl(TaskRepository):
         self.client.remove_page(page_id=task.id)
 
     def delete(self, task: Task) -> None:
-        page_id = task.page_id
-        if page_id is None:
-            raise ValueError("page_id is None")
-        self.client.remove_page(page_id=page_id.value)
+        self.client.remove_page(page_id=task.id)
 
     def _cast(self, base_page: BasePage) -> Task:
         cls = ToDoTask
@@ -175,7 +173,7 @@ class TaskRepositoryImpl(TaskRepository):
             properties=base_page.properties,
             block_children=base_page.block_children,
             id_=base_page.id_,
-            url=base_page.url,
+            url_=base_page.url,
             created_time=base_page.created_time,
             last_edited_time=base_page.last_edited_time,
             _created_by=base_page._created_by,

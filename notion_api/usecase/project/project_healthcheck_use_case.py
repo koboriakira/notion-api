@@ -1,7 +1,8 @@
 from logging import Logger, getLogger
 
-from common.value.slack_channel_type import ChannelType
 from lotion import Lotion
+
+from common.value.slack_channel_type import ChannelType
 from project.domain import project_repository
 from project.domain.project import Project
 from project.domain.project_repository import ProjectRepository
@@ -60,8 +61,8 @@ class ProjectHealthcheckUseCase:
         # ゴール、アクションプランの未設定チェック
         if project.definition_of_done in [None, ""]:
             message_list.append("完了定義を記入してください")
-        if project.action_plan in [None, ""]:
-            message_list.append("アクションプランを記入してください")
+        if project.weekly_goal in [None, ""]:
+            message_list.append("今週の目標を記入してください")
 
         # 目標とのひもづきチェック
         if project.goal_relation is None or len(project.goal_relation) == 0:

@@ -2,7 +2,6 @@ from logging import Logger, getLogger
 
 from lotion import Lotion
 from lotion.block import BulletedListItem
-from lotion.page import PageId
 
 from project.domain.project import Project
 from project.domain.project_repository import ProjectRepository
@@ -27,8 +26,8 @@ class CreateProjectFromTemplateUsecase:
         )
         self._logger = logger or getLogger(__name__)
 
-    def execute(self, project_template_id: PageId) -> Project:
-        base_page = self._client.retrieve_page(page_id=project_template_id.value)
+    def execute(self, project_template_id: str) -> Project:
+        base_page = self._client.retrieve_page(page_id=project_template_id)
         project_name = base_page.get_text(name="プロジェクト名").text
         task_list: list[str] = []
         for block in base_page.block_children:

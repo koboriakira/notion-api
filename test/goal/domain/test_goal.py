@@ -1,7 +1,6 @@
 from datetime import date
 from unittest import TestCase
 
-from lotion.page import PageId
 from notion_api.goal.domain.goal import Goal
 from notion_api.goal.domain.goal_status import GoalStatusType
 
@@ -14,8 +13,8 @@ class TestGoal(TestCase):
         actual = Goal.create(
             title="日々の管理システムを構築する",
             goal_status=GoalStatusType.IN_PROGRESS,
-            project_relation=[PageId(DUMMY_PAGE_ID)],
-            vision_relation=[PageId(DUMMY_PAGE_ID)],
+            project_relation=[DUMMY_PAGE_ID],
+            vision_relation=[DUMMY_PAGE_ID],
             due_date=date.fromisoformat("2024-03-31"),
         )
 

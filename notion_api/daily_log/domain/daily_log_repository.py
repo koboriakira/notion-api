@@ -2,7 +2,6 @@ from abc import ABCMeta, abstractmethod
 from datetime import date
 
 from daily_log.domain.daily_log import DailyLog
-from lotion.page import PageId
 
 
 class ExistedDailyLogError(Exception):
@@ -46,7 +45,7 @@ class DailyLogRepository(metaclass=ABCMeta):
         """
 
     @abstractmethod
-    def create(self, date_: date, weekly_log_id: PageId) -> DailyLog:
+    def create(self, date_: date, weekly_log_id: str) -> DailyLog:
         """デイリーログを新規作成する
 
         Args:

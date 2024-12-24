@@ -16,4 +16,4 @@ class AppendBlockUsecase:
         value: str,
     ) -> dict:
         paragrah = Paragraph.from_plain_text(value)
-        self.client.append_block(block_id=page_id, block=paragrah)
+        return self.client.append_block(block_id=page_id, block=paragrah)

@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from lotion.base_page import BasePage
-from lotion.page import PageId
+
 from recipe.domain.carbohydrate import Carbohydrate
 from recipe.domain.fat import Fat
 from recipe.domain.ingredient_relation import IngredientRelation
@@ -29,7 +29,7 @@ class Recipe(BasePage):
         return fat.number if fat else None
 
     @property
-    def ingredients(self) -> list[PageId]:
+    def ingredients(self) -> list[str]:
         ingredients = self.get_relation(name=IngredientRelation.NAME)
         return ingredients.page_id_list if ingredients else []
 
@@ -37,7 +37,7 @@ class Recipe(BasePage):
     def meal_kind(self) -> MealKindTypes:
         meal_kind = self.get_multi_select(name=MealKind.NAME)
         if meal_kind is None:
-            return MealKindTypes()
+            return MealKindTypes(values=[])
         meal_kind_types = [MealKindType.from_text(el.name) for el in meal_kind.values]
         return MealKindTypes(values=meal_kind_types)
 

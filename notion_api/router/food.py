@@ -23,4 +23,4 @@ def add_track_page(request: AddFoodRequest, access_token: str | None = Header(No
     food_repository = FoodRepositoryImpl(client=Lotion.get_instance())
     usecase = AddFoodUsecase(food_repository=food_repository)
     food = usecase.execute(title=request.title)
-    return BaseResponse(data={"id": food.page_id.value, "url": food.url})
+    return BaseResponse(data={"id": food.id, "url": food.url})
