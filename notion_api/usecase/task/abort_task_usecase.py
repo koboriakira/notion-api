@@ -26,7 +26,7 @@ class AbortTaskUsecase:
         self._task_repository.save(copied_task)
 
         # 元のタスクは完了にする
-        task = task.update_status(TaskStatusType.DONE)
+        task = task.complete()
         self._task_repository.save(task)
 
 
