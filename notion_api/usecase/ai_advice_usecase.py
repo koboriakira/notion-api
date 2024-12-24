@@ -6,6 +6,7 @@ from lotion import Lotion
 from lotion.base_page import BasePage
 from lotion.properties import Select
 
+from common.service.gmail.gmail_service import GmailService
 from custom_logger import get_logger
 from infrastructure.slack_bot_client import SlackBotClient
 from task.domain import Task
@@ -13,6 +14,7 @@ from task.domain.task_repository import TaskRepository
 from task.domain.task_status import TaskStatusType
 from util.datetime import jst_now
 from util.openai_executer import OpenaiExecuter
+from util.line.line_client import LineClient
 
 logger = get_logger(__name__)
 
@@ -32,6 +34,8 @@ class AiAdviceUsecase:
         self._task_repository = task_repository
         self._openai_executor = OpenaiExecuter()
         self._slack_client = SlackBotClient()
+        self._gmail_service = GmailService()
+        self._line_client = LineClient.get_instance()
 
     def execute(
         self,
@@ -61,7 +65,7 @@ class AiAdviceUsecase:
 
         current_tasks_description: list[str] = []
         if not current_tasks:
-            current_tasks_description.append("進行中のタスクはありません。")
+            current_tasks_description.append("進行中のタスクが記録されていません")
         else:
             # 開始してから30分以上経過した進行中タスク
             behind_current_tasks = [
@@ -70,10 +74,18 @@ class AiAdviceUsecase:
                 if t.start_datetime is not None and (start_datetime - t.start_datetime).total_seconds() > 60 * 30
             ]
             for task in behind_current_tasks:
-                current_tasks_description.append(f"{task.title}は開始してから30分以上経過しています。")
+                if task.start_datetime is not None:
+                    time_ = (start_datetime - task.start_datetime).total_seconds()
+                    current_tasks_description.append(f"「{task.title}」は開始してから{time_}秒経過しています")
 
         if len(current_tasks_description) > 0:
             text += "\n".join(current_tasks_description)
+            text += "\n====================\n"
+
+        gmail_list = self._gmail_service.fetch_by_ai()
+        if gmail_list:
+            text += "\n読むべきメールがあります。\n"
+            text += "\n".join([f"- {gmail.subject}" for gmail in gmail_list])
 
         # result = self.make_advice(
         #     start_datetime=start_datetime,
@@ -83,11 +95,14 @@ class AiAdviceUsecase:
         # )
         # print(result)
 
-        self._slack_client.send_message(
-            channel="C05F6AASERZ",
-            text=text,
-            is_enabled_mention=True,
-        )
+        if text:
+            self._line_client.push_message(text)
+
+        # self._slack_client.send_message(
+        #     channel="C05F6AASERZ",
+        #     text=text,
+        #     is_enabled_mention=True,
+        # )
 
     def make_advice(
         self,
