@@ -27,6 +27,7 @@ from usecase.create_routine_task_use_case import CreateRoutineTaskUseCase
 from usecase.recipe.add_recipe_use_case import AddRecipeUseCase
 from usecase.service.inbox_service import InboxService
 from usecase.service.text_summarizer import TextSummarizer
+from usecase.task.abort_task_usecase import AbortTaskUsecase
 from usecase.task.sync_external_calendar_usecase import SyncExternalCalendarUsecase
 from usecase.zettlekasten.create_tag_to_zettlekasten_use_case import CreateTagToZettlekastenUseCase
 from util.openai_executer import OpenaiExecuter
@@ -164,3 +165,8 @@ class Injector:
     def add_book_usecase() -> AddBookUsecase:
         book_api = GoogleBookApi()
         return AddBookUsecase(book_api=book_api, book_repository=book_repository)
+
+    @staticmethod
+    def abort_task_usecase() -> AbortTaskUsecase:
+        task_repository = TaskRepositoryImpl()
+        return AbortTaskUsecase(task_repository=task_repository)
