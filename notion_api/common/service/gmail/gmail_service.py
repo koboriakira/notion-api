@@ -49,26 +49,35 @@ class GmailService:
         response_json: list[dict] = response.json()
         return [Gmail.from_dict(params) for params in response_json]
 
-    def fetch_by_ai(self) -> str:
+    def fetch_by_ai(self) -> list[Gmail]:
         gmail_list = self.fetch()
         json_dict = [{"id": m.id, "subject": m.subject} for m in gmail_list]
         json_str = json.dumps(json_dict, ensure_ascii=False)
         system_prompt = """下記のメールについて、件名をもとに「返信が必要」「必ず読むべき」「どれでもない」の3つのラベルのどれかをつけて出力してください。
-## 出力形式
-id: こちらが与えたユニークID
-label: 上述の3つのどれかを選択
+回答はJSON形式で、以下のフィールドを持ちます。
 
-## 入力形式
-id: メールのユニークID
-subject: メールの件名
+- results: 下記の形式のリスト
+    - id: こちらが与えたユニークID
+    - label: 上述の3つのどれかを選択
 """
-        response = self._openai_executor.simple_json_chat(system_prompt=system_prompt, user_content=json_str)
+        user_content = f"""
+## 入力形式
+- id: メールのユニークID
+- subject: メールの件名
+
+## 入力
+{json_str}
+"""
+        response = self._openai_executor.simple_json_chat(system_prompt=system_prompt, user_content=user_content)
         print(response)
-        return ""
+        results: list[str] = [r["id"] for r in response["results"] if r["label"] in ["返信が必要", "必ず読むべき"]]
+        return [m for m in gmail_list if m.id in results]
 
 
 if __name__ == "__main__":
     # python -m notion_api.common.service.gmail.gmail_service
 
     suite = GmailService()
-    print(suite.fetch_by_ai())
+    gmail_list = suite.fetch_by_ai()
+    for gmail in gmail_list:
+        print(gmail.subject)
