@@ -3,6 +3,7 @@ from datetime import date, datetime, timedelta
 from typing import override
 
 from lotion.base_page import BasePage
+from lotion.block.rich_text import RichTextBuilder
 from lotion.properties import Title
 
 from task.domain.completed_flag import CompletedFlag
@@ -105,7 +106,10 @@ class ToDoTask(BasePage):
         return self
 
     def add_check_prefix(self) -> "ToDoTask":
-        title_prop = Title.from_plain_text(name="名前", text="✔️" + self.title)
+        title = self.get_title()
+        original_rich_text = title.rich_text
+        rich_text = RichTextBuilder.create().add_text("✔️").add_rich_text(original_rich_text).build()
+        title_prop = Title.from_rich_text(name=title.name, rich_text=rich_text)
         self.properties = self.properties.append_property(title_prop)
         return self
 
