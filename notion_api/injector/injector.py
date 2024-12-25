@@ -14,6 +14,7 @@ from external_calendar.service.external_calendar_service import ExternalCalendar
 from infrastructure.book.google_book_api import GoogleBookApi
 from injector.page_creator_factory import PageCreatorFactory
 from music.infrastructure.song_repository_impl import SongRepositoryImpl
+from project.infrastructure.project_repository_impl import ProjectRepositoryImpl
 from recipe.infrastructure.recipe_repository_impl import RecipeRepositoryImpl
 from recipe.service.recipe_creator import RecipeCreator
 from slack_concierge.injector import SlackConciergeInjector
@@ -24,6 +25,8 @@ from usecase.add_book_usecase import AddBookUsecase
 from usecase.collect_updated_pages_usecase import CollectUpdatedPagesUsecase
 from usecase.create_page_use_case import CreatePageUseCase
 from usecase.create_routine_task_use_case import CreateRoutineTaskUseCase
+from usecase.project.convert_to_project_usecase import ConvertToProjectUsecase
+from usecase.project.create_project_service import CreateProjectService
 from usecase.recipe.add_recipe_use_case import AddRecipeUseCase
 from usecase.service.inbox_service import InboxService
 from usecase.service.text_summarizer import TextSummarizer
@@ -170,3 +173,20 @@ class Injector:
     def abort_task_usecase() -> AbortTaskUsecase:
         task_repository = TaskRepositoryImpl()
         return AbortTaskUsecase(task_repository=task_repository)
+
+    @staticmethod
+    def create_project_service() -> CreateProjectService:
+        project_repository = ProjectRepositoryImpl()
+        task_repository = TaskRepositoryImpl()
+        return CreateProjectService(
+            project_repository=project_repository,
+            task_repository=task_repository,
+        )
+
+    @staticmethod
+    def convert_to_project_usecase() -> ConvertToProjectUsecase:
+        project_repository = ProjectRepositoryImpl()
+        return ConvertToProjectUsecase(
+            lotion=Lotion.get_instance(),
+            project_repository=project_repository,
+        )

@@ -16,8 +16,8 @@ router = APIRouter()
 
 class NotionWebhookType(StrEnum):
     SYNC_BOOK_INFO = "sync_book_info"
-    # タスクを中断
-    ABORT_TASK = "abort_task"
+    ABORT_TASK = "abort_task"  # タスクを中断
+    CONVERT_TO_PROJECT = "convert_to_project"  # プロジェクトに変換
 
 
 class NotionWebhookRequest(BaseModel):
@@ -62,6 +62,10 @@ def post_path(path: str, request: NotionWebhookRequest) -> BaseResponse:
         if webhook_type == NotionWebhookType.ABORT_TASK:
             abort_task_usecase = Injector.abort_task_usecase()
             abort_task_usecase.execute(page_id=base_page.id)
+            return BaseResponse()
+        if webhook_type == NotionWebhookType.CONVERT_TO_PROJECT:
+            convert_to_project_usecase = Injector.convert_to_project_usecase()
+            convert_to_project_usecase.execute(page_id=base_page.id, title=base_page.get_title())
             return BaseResponse()
 
         msg = f"指定されたWebhookが見つかりませんでした。path: {path}"
