@@ -38,7 +38,6 @@ class InboxService:
         properties = []
         title = Title.from_mentioned_page(
             mentioned_page_id=page.id,
-            mentioned_page_title=page.title,
         )
         properties.append(title)
         memo_genre_kind = self.get_memo_genre_kind(page)

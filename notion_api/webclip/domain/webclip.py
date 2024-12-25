@@ -1,12 +1,10 @@
 from dataclasses import dataclass
 
-from common.domain.tag_relation import TagRelation
 from lotion.base_page import BasePage
 from lotion.block import Block
-from lotion.properties import Cover
-from lotion.properties import Properties
-from lotion.properties import Title
-from lotion.properties import Url
+from lotion.properties import Cover, Properties, Title, Url
+
+from common.domain.tag_relation import TagRelation
 from webclip.domain.summary import Summary
 
 COLUMN_NAME_TITLE = "名前"
