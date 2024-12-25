@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.2.0](https://github.com/koboriakira/notion-api/compare/v2.1.0...v2.2.0) (2024-12-25)
+
+
+### Features
+
+* 「あとで」をしたときに完了時刻を記録する ([f030490](https://github.com/koboriakira/notion-api/commit/f0304906a89360a9f95ef3dde2b1da160b85591a))
+* GitHubの情報を取得する ([#54](https://github.com/koboriakira/notion-api/issues/54)) ([db02d14](https://github.com/koboriakira/notion-api/commit/db02d149b8213e2f408c48a8251320e0c747806d))
+* あとまわしにしたタスク情報をきちんとコピーする ([#53](https://github.com/koboriakira/notion-api/issues/53)) ([9375a95](https://github.com/koboriakira/notion-api/commit/9375a951326ff35e98db59bb5c9cb2221cdb5aa8))
+* 完了タスクの先頭にチェックマークを付与する ([#36](https://github.com/koboriakira/notion-api/issues/36)) ([c268e13](https://github.com/koboriakira/notion-api/commit/c268e13d32108928b0bc9e7d53c1c5f7cf406269))
+
+
+### Bug Fixes
+
+* Gmailの送信元アドレスの処理パターンを追加 ([b537f3b](https://github.com/koboriakira/notion-api/commit/b537f3b24fe9446ae869a14b3c90162399d6e690))
+* 経過時間の表示を正す ([b60019c](https://github.com/koboriakira/notion-api/commit/b60019c8925f0e44129a70265399261875a60b05))
+
 ## [2.1.0](https://github.com/koboriakira/notion-api/compare/v2.0.0...v2.1.0) (2024-12-24)
 
 
