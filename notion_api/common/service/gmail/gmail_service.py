@@ -9,6 +9,16 @@ import requests
 from util.openai_executer import OpenaiExecuter
 
 
+def convert_mailaddress(from_param: str) -> str:
+    try:
+        return from_param.split(" ")[1].replace("<", "").replace(">", "")
+    except IndexError:
+        return from_param
+    except Exception as e:
+        print(f"Error: {e} mailaddress: {from_param}")
+        raise e
+
+
 @dataclass
 class Gmail:
     _id: str
@@ -20,8 +30,7 @@ class Gmail:
     @staticmethod
     def from_dict(params: dict) -> "Gmail":
         subject = params["subject"]
-        from_mailaddress: str = params["from"]
-        from_mailaddress = from_mailaddress.split(" ")[1].replace("<", "").replace(">", "")
+        from_mailaddress = convert_mailaddress(params["from"])
         datetime_: str = params["date"]
         recieved_at = datetime.fromisoformat(datetime_.replace("/", "-").replace(" ", "T").replace("0900", "09:00"))
         body = params["body"]
