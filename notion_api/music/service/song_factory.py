@@ -1,12 +1,12 @@
 from datetime import date
 
+from lotion.properties import Cover, Properties
+
 from music.domain.artist import Artist
 from music.domain.release_date import ReleaseDate
 from music.domain.song import Song
 from music.domain.song_title import SongTitle
 from music.domain.spotify_url import SpotifyUrl
-from lotion.properties import Cover
-from lotion.properties import Properties
 
 
 class SongFactory:
