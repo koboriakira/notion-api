@@ -16,30 +16,15 @@ router = APIRouter()
 
 class NotionWebhookType(StrEnum):
     SYNC_BOOK_INFO = "sync_book_info"
+    # タスク関連のWebhook
     ABORT_TASK = "abort_task"  # タスクを中断
+    START_TASK = "start_task"  # タスクを開始
     CONVERT_TO_PROJECT = "convert_to_project"  # プロジェクトに変換
 
 
 class NotionWebhookRequest(BaseModel):
     source: dict
     data: dict
-
-
-@router.post("/")
-def post(request: NotionWebhookRequest) -> BaseResponse:
-    try:
-        print("notion_webhook: post")
-        logging.debug("notion_webhook: post")
-        logging.info("notion_webhook: post")
-        print(request)
-        print(request.data)
-        print(json.dumps(request.data, ensure_ascii=False))
-        base_page = BasePage.from_data(request.data)
-        print(base_page.id)
-        return BaseResponse()
-    except Exception as e:
-        print(e)
-        return BaseResponse(message="Error", data=e)
 
 
 @router.post("/{path}/")
@@ -66,6 +51,10 @@ def post_path(path: str, request: NotionWebhookRequest) -> BaseResponse:
         if webhook_type == NotionWebhookType.CONVERT_TO_PROJECT:
             convert_to_project_usecase = Injector.convert_to_project_usecase()
             convert_to_project_usecase.execute(page_id=base_page.id, title=base_page.get_title())
+            return BaseResponse()
+        if webhook_type == NotionWebhookType.START_TASK:
+            task_util_service = Injector.task_util_serivce()
+            task_util_service.start(page_id=base_page.id)
             return BaseResponse()
 
         msg = f"指定されたWebhookが見つかりませんでした。path: {path}"

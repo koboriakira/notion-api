@@ -32,6 +32,7 @@ from usecase.service.inbox_service import InboxService
 from usecase.service.text_summarizer import TextSummarizer
 from usecase.task.abort_task_usecase import AbortTaskUsecase
 from usecase.task.sync_external_calendar_usecase import SyncExternalCalendarUsecase
+from usecase.task.task_util_service import TaskUtilService
 from usecase.zettlekasten.create_tag_to_zettlekasten_use_case import CreateTagToZettlekastenUseCase
 from util.openai_executer import OpenaiExecuter
 from util.tag_analyzer import TagAnalyzer
@@ -190,3 +191,9 @@ class Injector:
             lotion=Lotion.get_instance(),
             project_repository=project_repository,
         )
+
+    @staticmethod
+    def task_util_serivce() -> TaskUtilService:
+        task_repository = TaskRepositoryImpl()
+        return TaskUtilService(task_repository=task_repository)
+
