@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.3.0](https://github.com/koboriakira/notion-api/compare/v2.2.0...v2.3.0) (2024-12-26)
+
+
+### Features
+
+* PJ化のボタンを作成 ([#59](https://github.com/koboriakira/notion-api/issues/59)) ([43adba8](https://github.com/koboriakira/notion-api/commit/43adba825a60f5129e76b3ee7990cce06698264c))
+* スケジュールの自動開始に対応 ([4220e74](https://github.com/koboriakira/notion-api/commit/4220e74c33469b8e1d5b77e72f9db38a0d928679))
+* 開始ボタンのWebhook化 ([#61](https://github.com/koboriakira/notion-api/issues/61)) ([310d8fb](https://github.com/koboriakira/notion-api/commit/310d8fb24a065fc46d622f59d3d6421c3131e705))
+
+
+### Bug Fixes
+
+* Titleプロパティの扱いを改善 ([#56](https://github.com/koboriakira/notion-api/issues/56)) ([0f7de18](https://github.com/koboriakira/notion-api/commit/0f7de18fe9c08847962ae48f6660051d6f178c94))
+
 ## [2.2.0](https://github.com/koboriakira/notion-api/compare/v2.1.0...v2.2.0) (2024-12-25)
 
 
