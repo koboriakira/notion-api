@@ -6,17 +6,23 @@ from task.domain.task_repository import TaskRepository
 from task.domain.task_status import TaskStatusType
 from task.task_factory import TaskFactory
 from util.datetime import jst_now
+from util.line.line_client import LineClient
 
 
 class MaintainTasksUsecase:
     def __init__(self, task_repository: TaskRepository, logger: Logger | None = None) -> None:
         self._task_repository = task_repository
         self._logger = logger or get_logger(__name__)
+        self._line_client = LineClient.get_instance()
 
     def execute(self, last_edited_at: datetime) -> None:
         tasks = self._task_repository.search(last_edited_at=last_edited_at)
 
         for task in tasks:
+            if task.status.is_todo() and task.is_scheduled():
+                self._logger.info(f"「予定」タスクを処理: {task.title}")
+                self._task_repository.save(task=task.start())
+                self._line_client.push_message(f"タスク「{task.title}」を開始しました")
             if task.is_do_tomorrow:
                 self._logger.info(f"「明日やる」タスクを処理: {task.title}")
                 self._task_repository.save(task=task.do_tomorrow())

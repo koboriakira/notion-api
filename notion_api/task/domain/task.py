@@ -157,6 +157,9 @@ class ToDoTask(BasePage):
             return None
         return TaskKindType(kind_model.selected_name)
 
+    def is_scheduled(self) -> bool:
+        return self.kind == TaskKindType.SCHEDULE
+
     @property
     def pomodoro_count(self) -> int:
         pomodoro_counter = self.get_number(name=PomodoroCounter.NAME)
