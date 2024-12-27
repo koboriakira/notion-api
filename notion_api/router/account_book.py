@@ -9,7 +9,7 @@ from util.datetime import jst_today
 router = APIRouter()
 
 
-@router.post("/", response_model=BaseResponse)
+@router.post("/")
 def add(
     request: PostAccountBookRequest,
     access_token: str | None = Header(None),
@@ -24,4 +24,4 @@ def add(
         tag=request.tag,
         date_=jst_today(),
     )
-    return BaseResponse(data=account_book)
+    return BaseResponse(data=account_book.get_id_and_url())
