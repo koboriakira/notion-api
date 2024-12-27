@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "3e7a84c28a47e3fc0516550130b1f62f91d387ff52b245508e6d73a07845ebd7"
+            "sha256": "511f2ee56ec73c87c95c8c339726ab54ce1f7d1d982ecef827b92a71b26efe12"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -50,20 +50,20 @@
         },
         "boto3": {
             "hashes": [
-                "sha256:341c58602889078a4a25dc4331b832b5b600a33acd73471d2532c6f01b16fbb4",
-                "sha256:588ab05e2771c50fca5c242be14e7a25200ffd3dd95c45950ce40993473864c7"
+                "sha256:43c6a7a70bb226770a82a601870136e3bb3bf2808f4576ab5b9d7d140dbf1323",
+                "sha256:7bc9b27ad87607256470c70a86c8b8c319ddd6ecae89cc191687cbf8ccb7b6a6"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.8'",
-            "version": "==1.35.87"
+            "version": "==1.35.88"
         },
         "botocore": {
             "hashes": [
-                "sha256:3062d073ce4170a994099270f469864169dc1a1b8b3d4a21c14ce0ae995e0f89",
-                "sha256:81cf84f12030d9ab3829484b04765d5641697ec53c2ac2b3987a99eefe501692"
+                "sha256:58dcd9a464c354b8c6c25261d8de830d175d9739eae568bf0c52e57116fb03c6",
+                "sha256:e60cc3fbe8d7a10f70e7e852d76be2b29f23ead418a5899d366ea32b1eacb5a5"
             ],
             "markers": "python_version >= '3.8'",
-            "version": "==1.35.87"
+            "version": "==1.35.88"
         },
         "bs4": {
             "hashes": [
@@ -383,12 +383,12 @@
         },
         "lotion": {
             "hashes": [
-                "sha256:5d423aabd959edf9f45df1f3300e032c6902c23364d41180399a673d163540f7",
-                "sha256:89534273ea50d0213abd90fbbda08cd2aee6bdc291a4d1c056a224230f4e45d9"
+                "sha256:92f51e9b7f326022df50982cf9bef0e3432bf04e181d0419e5fa885cf50f52ad",
+                "sha256:cd69c07d5c9fe84fce5347f4d36fa39508f534ec3db5e2d841398abf74243430"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.11'",
-            "version": "==0.7.0"
+            "version": "==0.7.1"
         },
         "lxml": {
             "extras": [
