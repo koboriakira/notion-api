@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.0](https://github.com/koboriakira/notion-api/compare/v2.3.0...v2.4.0) (2024-12-27)
+
+
+### Features
+
+* Lotionのバージョンアップに合わせる ([#67](https://github.com/koboriakira/notion-api/issues/67)) ([f2574c3](https://github.com/koboriakira/notion-api/commit/f2574c3368e814717eae96ad1bbaca5dca1f382d))
+
 ## [2.3.0](https://github.com/koboriakira/notion-api/compare/v2.2.0...v2.3.0) (2024-12-26)
 
 
