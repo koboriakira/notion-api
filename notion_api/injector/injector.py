@@ -4,7 +4,6 @@ from logging import Logger
 from lotion import Lotion
 from slack_sdk.web import WebClient
 
-from account_book.infrastructure.repository_impl import RepositoryImpl
 from book.infrastructure.book_repository_impl import BookRepositoryImpl
 from common.service.tag_creator.tag_creator import TagCreator
 from custom_logger import get_logger
@@ -145,9 +144,7 @@ class Injector:
 
     @staticmethod
     def create_add_account_book_use_case(logger: Logger | None = None) -> AddAccountBookUsecase:
-        logger = logger or get_logger(__name__)
-        repository = RepositoryImpl(client=client, logger=logger)
-        return AddAccountBookUsecase(account_book_repository=repository)
+        return AddAccountBookUsecase(lotion=Lotion.get_instance())
 
     @staticmethod
     def create_routine_task_use_case() -> CreateRoutineTaskUseCase:
@@ -196,4 +193,3 @@ class Injector:
     def task_util_serivce() -> TaskUtilService:
         task_repository = TaskRepositoryImpl()
         return TaskUtilService(task_repository=task_repository)
-

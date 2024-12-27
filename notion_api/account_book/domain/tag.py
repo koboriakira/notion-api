@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 
-from lotion.properties import MultiSelect
 from lotion.properties.multi_select import MultiSelectElement
 
 KIND_LIST = [{"name": "music bar t", "id": "53bf9fc9-7e08-42d0-89fa-e67c224ba921"}]
@@ -40,38 +39,3 @@ class TagTypes:
 
     def to_multi_select_elements(self) -> list[MultiSelectElement]:
         return [MultiSelectElement(**kind.__dict__()) for kind in self.values]
-
-
-class Tag(MultiSelect):
-    NAME = "タグ"
-
-    def __init__(self, kind_types: TagTypes) -> None:
-        super().__init__(
-            name=self.NAME,
-            values=kind_types.to_multi_select_elements(),
-        )
-
-
-if __name__ == "__main__":
-    # 最新の情報を取得するときに使う
-    # python -m notion_api.account_book.domain.tag
-    from lotion import Lotion
-
-    from common.value.database_type import DatabaseType
-
-    pages = Lotion.get_instance().retrieve_database(
-        database_id=DatabaseType.ACCOUNT_BOOK.value,
-    )
-
-    result = []
-    for page in pages:
-        select_property = page.get_multi_select(name=Tag.NAME)
-        if select_property is None:
-            continue
-        values = select_property.values
-        result.extend([{"name": value.name, "id": value.id} for value in values])
-    # uniqueにする
-    result = list({value["name"]: value for value in result}.values())
-    import json
-
-    print(json.dumps(result, ensure_ascii=False))

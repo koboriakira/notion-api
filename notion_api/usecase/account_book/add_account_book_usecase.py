@@ -1,21 +1,21 @@
 from datetime import date
 
-from lotion.properties import Checkbox, Date, Number, Properties, Title
+from lotion import Lotion
+from lotion.properties import Properties
 
-from account_book.domain.account_book import AccountBook
-from account_book.domain.category import Category, CategoryType
-from account_book.domain.repository import AccountRepository
-from account_book.domain.tag import Tag, TagType, TagTypes
+from account_book.domain.account_book import AccountBook, AccountDate, AccountTitle, Category, IsFixedCost, Price, Tag
+from account_book.domain.category import CategoryType
+from account_book.domain.tag import TagType, TagTypes
 
 
 class AddAccountBookUsecase:
     def __init__(
         self,
-        account_book_repository: AccountRepository,
+        lotion: Lotion | None = None,
     ) -> None:
-        self._account_book_repository = account_book_repository
+        self._lotion = lotion or Lotion.get_instance()
 
-    def execute(
+    def execute(  # noqa: PLR0913
         self,
         title: str,
         price: int,
@@ -32,9 +32,17 @@ class AddAccountBookUsecase:
             tag=tag,
             date_=date_,
         )
-        return self._account_book_repository.save(account_book).get_id_and_url()
+        return self._save(account_book).get_id_and_url()
 
-    def _create_entity(
+    def _save(self, entity: AccountBook) -> AccountBook:
+        """Save a AccountBook item."""
+        # FIXME: `update`で自動的に作成or更新するようにしたい
+        if entity.is_created():
+            self._lotion.update_page(page_id=entity.id, properties=entity.properties.values)
+            return entity
+        return self._lotion.create_page(entity)
+
+    def _create_entity(  # noqa: PLR0913
         self,
         title: str,
         price: int,
@@ -45,26 +53,32 @@ class AddAccountBookUsecase:
     ) -> AccountBook:
         properties = []
 
-        _title = Title.from_plain_text(text=title)
-        properties.append(_title)
-        _price = Number.from_num(name="金額", value=price)
-        properties.append(_price)
+        properties.append(AccountTitle.from_plain_text(text=title))
+        properties.append(Price.from_num(value=price))
 
         if is_fixed_cost:
-            _is_fixed_cost = Checkbox.true(name="固定費")
-            properties.append(_is_fixed_cost)
+            properties.append(IsFixedCost.true())
 
         if category:
-            _category = Category(kind_type=CategoryType.from_text(category))
+            category_type = CategoryType.from_text(text=category)
+            _category = Category(
+                name=Category.PROP_NAME,
+                selected_name=category_type.selected_name,
+                selected_id=category_type.selected_id,
+                selected_color=category_type.selected_color,
+                id=None,
+            )
             properties.append(_category)
 
         if tag and len(tag) > 0:
-            tag_type_list = [TagType.from_text(text=value) for value in tag]
-            _tag = Tag(kind_types=TagTypes(values=tag_type_list))
+            tag_type_list = TagTypes([TagType.from_text(text=value) for value in tag])
+            _tag = Tag(
+                name=Tag.PROP_NAME,
+                values=tag_type_list.to_multi_select_elements(),
+            )
             properties.append(_tag)
 
         if date_:
-            _date = Date.from_start_date(start_date=date_)
-            properties.append(_date)
+            properties.append(AccountDate.from_start_date(start_date=date_))
 
         return AccountBook(properties=Properties(values=properties))
