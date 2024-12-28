@@ -3,12 +3,22 @@ from datetime import date
 from lotion import notion_database, notion_prop
 from lotion.base_page import BasePage
 from lotion.block import Block
-from lotion.properties import Cover, Date, Title
+from lotion.properties import Cover, Date, Text, Title
 
 from common.domain.tag_relation import TagRelation
 from common.value.database_type import DatabaseType
-from music.domain.artist import Artist
 from music.domain.spotify_url import SpotifyUrl
+
+
+@notion_prop("Artist")
+class Artist(Text):
+    @staticmethod
+    def from_str_list(str_list: list[str]) -> "Artist":
+        return Artist.from_plain_text(text=", ".join(str_list))
+
+    @staticmethod
+    def from_str(artists: str) -> "Artist":
+        return Artist.from_str_list(artists.split(","))
 
 
 @notion_prop("名前")
