@@ -1,16 +1,13 @@
-from dataclasses import dataclass
 from datetime import date, datetime, timedelta
 from typing import override
 
+from lotion import notion_database, notion_prop
 from lotion.base_page import BasePage
 from lotion.block.rich_text import RichTextBuilder
 from lotion.properties import Title
 
-from task.domain.completed_flag import CompletedFlag
-from task.domain.do_tomorrow_flag import DoTommorowFlag
+from common.value.database_type import DatabaseType
 from task.domain.due_date import DueDate
-from task.domain.is_started import IsStarted
-from task.domain.later_flag import LaterFlag
 from task.domain.pomodoro_counter import PomodoroCounter
 from task.domain.pomodoro_start_datetime import PomodoroStartDatetime
 from task.domain.project_relation import ProjectRelation
@@ -28,8 +25,15 @@ COLUMN_NAME_START_DATE = "実施日"
 COLUMN_NAME_KIND = "タスク種別"
 
 
-@dataclass
+@notion_prop("名前")
+class TaskName(Title):
+    pass
+
+
+@notion_database(DatabaseType.TASK.value)
 class ToDoTask(BasePage):
+    task_name: TaskName
+
     def update_status(self, status: str | TaskStatusType) -> "ToDoTask":
         if isinstance(status, str):
             status = TaskStatusType.from_text(status)
@@ -58,21 +62,7 @@ class ToDoTask(BasePage):
         self.properties = self.properties.append_property(pomodoro_counter).append_property(pomodoro_start_datetime)
         return self
 
-    def reset_is_started(self) -> "ToDoTask":
-        self.properties = self.properties.append_property(IsStarted.false())
-        return self
-
-    def reset_is_completed(self) -> "ToDoTask":
-        self.properties = self.properties.append_property(CompletedFlag.false())
-        return self
-
-    def reset_later_flag(self) -> "ToDoTask":
-        self.properties = self.properties.append_property(LaterFlag.false())
-        return self
-
     def do_tomorrow(self) -> "ToDoTask":
-        do_tomorrow_flag = DoTommorowFlag.false()
-        self.properties = self.properties.append_property(do_tomorrow_flag)
         if self.start_date is not None:
             date_ = self.start_date.date() if isinstance(self.start_date, datetime) else self.start_date
             start_date = TaskStartDate.create(date_ + timedelta(days=1))
@@ -88,12 +78,11 @@ class ToDoTask(BasePage):
         return (
             self.update_status(TaskStatusType.IN_PROGRESS)
             .update_pomodoro_count(number=self.pomodoro_count + 1)
-            .reset_is_started()
             .update_start_datetime(start, end)
         )
 
     def complete(self) -> "ToDoTask":
-        return self.update_status(TaskStatusType.DONE).reset_is_completed().update_start_end_datetime(end=jst_now())
+        return self.update_status(TaskStatusType.DONE).update_start_end_datetime(end=jst_now())
 
     def update_start_end_datetime(self, end: datetime) -> "ToDoTask":
         """タスクの終了日時を更新する"""
@@ -172,16 +161,8 @@ class ToDoTask(BasePage):
         return self.get_relation(name=ProjectRelation.NAME).id_list
 
     @property
-    def is_do_tomorrow(self) -> bool:
-        return self.get_checkbox(name=DoTommorowFlag.NAME).checked
-
-    @property
     def is_important(self) -> bool:
         return False
-
-    @property
-    def is_started(self) -> bool:
-        return self.get_checkbox(name=IsStarted.NAME).checked
 
     @property
     def context(self) -> list[TaskContextType]:
@@ -210,18 +191,6 @@ class ToDoTask(BasePage):
 
     def has_start_datetime(self) -> bool:
         return self.start_datetime is not None
-
-    @property
-    def is_completed_flag(self) -> bool:
-        return self.get_checkbox(name=CompletedFlag.NAME).checked
-
-    @property
-    def is_started_flag(self) -> bool:
-        return self.get_checkbox(name=IsStarted.NAME).checked
-
-    @property
-    def is_later_flag(self) -> bool:
-        return self.get_checkbox(name=LaterFlag.NAME).checked
 
 
 class ImportantToDoTask(ToDoTask):

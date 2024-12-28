@@ -6,9 +6,7 @@ from lotion.base_page import BasePage
 from lotion.filter import Builder, Cond, Prop
 
 from common.value.database_type import DatabaseType
-from task.domain.do_tomorrow_flag import DoTommorowFlag
 from task.domain.important_flag import ImportantFlag
-from task.domain.is_started import IsStarted
 from task.domain.project_relation import ProjectRelation
 from task.domain.task import ImportantToDoTask, RoutineToDoTask, ScheduledTask, Task, ToDoTask
 from task.domain.task_kind import TaskKind, TaskKindType
@@ -32,8 +30,6 @@ class TaskRepositoryImpl(TaskRepository):
         start_datetime: date | datetime | None = None,
         start_datetime_end: date | datetime | None = None,
         project_id: str | None = None,
-        do_tomorrow_flag: bool | None = None,
-        is_started: bool | None = None,
         last_edited_at: datetime | None = None,
     ) -> list[Task]:
         builder = Builder.create()
@@ -59,12 +55,6 @@ class TaskRepositoryImpl(TaskRepository):
 
         if project_id is not None:
             builder = builder.add(Prop.RELATION, ProjectRelation.NAME, Cond.CONTAINS, project_id)
-
-        if do_tomorrow_flag is not None:
-            builder = builder.add(Prop.CHECKBOX, DoTommorowFlag.NAME, Cond.EQUALS, do_tomorrow_flag)
-
-        if is_started is not None:
-            builder = builder.add(Prop.CHECKBOX, IsStarted.NAME, Cond.EQUALS, is_started)
 
         if last_edited_at is not None:
             builder = builder.add_last_edited_at(Cond.ON_OR_AFTER, last_edited_at.isoformat())

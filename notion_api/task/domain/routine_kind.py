@@ -1,8 +1,9 @@
 from datetime import date, timedelta
 from enum import Enum
 
-from common.value.database_type import DatabaseType
 from lotion.properties import Select
+
+from common.value.database_type import DatabaseType
 
 kind_map = {
     "月末": {"selected_id": "6e0a84e9-17d8-49ec-8d75-117935f3c4ee", "selected_color": "gray"},

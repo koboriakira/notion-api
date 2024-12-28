@@ -3,8 +3,6 @@ from logging import Logger
 
 from custom_logger import get_logger
 from task.domain.task_repository import TaskRepository
-from task.domain.task_status import TaskStatusType
-from task.task_factory import TaskFactory
 from util.datetime import jst_now
 from util.line.line_client import LineClient
 
@@ -23,30 +21,6 @@ class MaintainTasksUsecase:
                 self._logger.info(f"「予定」タスクを処理: {task.get_title_text()}")
                 self._task_repository.save(task=task.start())
                 self._line_client.push_message(f"タスク「{task.get_title_text()}」を開始しました")
-            if task.is_do_tomorrow:
-                self._logger.info(f"「明日やる」タスクを処理: {task.get_title_text()}")
-                self._task_repository.save(task=task.do_tomorrow())
-            # if len(task.project_id_list) > 0 and task.kind is None:
-            #     self._logger.info(f"タスク種別のないプロジェクト関連タスクを処理: {task.get_title_text()}")
-            #     self._task_repository.save(task=task.update_kind(TaskKindType.NEXT_ACTION))
-            if task.is_completed_flag:
-                self._logger.info(f"「_完了チェック」タスクを処理: {task.get_title_text()}")
-                self._task_repository.save(task=task.complete())
-            if task.is_started:
-                self._logger.info(f"「_開始チェック」タスクを処理: {task.get_title_text()}")
-                self._task_repository.save(task=task.start())
-            if task.is_later_flag and not task.status.is_done():
-                self._logger.info(f"「_あとでチェック」タスクを処理: {task.get_title_text()}")
-                # このタスクは完了にして、新規TODOタスクを作成
-                self._task_repository.save(task=task.complete())
-                new_task = TaskFactory.create_todo_task(
-                    title=task.get_title_text(),
-                    task_kind_type=task.kind,
-                    start_date=jst_now().date(),
-                    status=TaskStatusType.TODO,
-                    blocks=task.block_children,
-                )
-                self._task_repository.save(task=new_task)
             if task.is_completed and not task.get_title_text().startswith("✔️"):
                 self._logger.info(f"チェックマークをつける: {task.get_title_text()}")
                 self._task_repository.save(task=task.add_check_prefix())
