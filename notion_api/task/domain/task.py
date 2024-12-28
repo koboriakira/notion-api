@@ -6,8 +6,6 @@ from lotion.block.rich_text import RichTextBuilder
 from lotion.properties import Title
 
 from common.value.database_type import DatabaseType
-from task.domain.project_relation import ProjectRelation
-from task.domain.task_context import TaskContext, TaskContextType
 from task.domain.task_kind import TaskKind, TaskKindType
 from task.domain.task_start_date import TaskStartDate
 from task.domain.task_status import TaskStatus, TaskStatusType
@@ -129,32 +127,11 @@ class ToDoTask(BasePage):
         return self.kind == TaskKindType.SCHEDULE
 
     @property
-    def project_id_list(self) -> list[str]:
-        return self.get_relation(name=ProjectRelation.NAME).id_list
-
-    @property
-    def is_important(self) -> bool:
-        return False
-
-    @property
-    def context(self) -> list[TaskContextType]:
-        context = self.get_multi_select(name=TaskContext.NAME)
-        if context is None:
-            return []
-        return [TaskContextType.from_text(el.name) for el in context.values]
-
-    @property
     def order(self) -> int:
         return TaskOrderRule.calculate(
             start_datetime=self.start_datetime,
             kind=self.kind,
         ).value
-
-    def is_kind_trash(self) -> bool:
-        return self.kind == TaskKindType.TRASH
-
-    def has_start_datetime(self) -> bool:
-        return self.start_datetime is not None
 
 
 type Task = ToDoTask
