@@ -1,4 +1,3 @@
-import json
 import logging
 from enum import StrEnum
 
@@ -6,7 +5,6 @@ from fastapi import APIRouter
 from lotion import BasePage
 from pydantic import BaseModel
 
-from book.domain.book import Book
 from infrastructure.slack_bot_client import SlackBotClient
 from injector.injector import Injector
 from router.response import BaseResponse
@@ -17,8 +15,9 @@ router = APIRouter()
 class NotionWebhookType(StrEnum):
     SYNC_BOOK_INFO = "sync_book_info"
     # タスク関連のWebhook
-    ABORT_TASK = "abort_task"  # タスクを中断
+    ABORT_TASK = "abort_task"  # タスクを中断 (「あとで」)
     START_TASK = "start_task"  # タスクを開始
+    POSTPONE_TOMORROW = "postpone_tomorrow"  # タスクを翌日に延期
     CONVERT_TO_PROJECT = "convert_to_project"  # プロジェクトに変換
 
 
@@ -28,7 +27,7 @@ class NotionWebhookRequest(BaseModel):
 
 
 @router.post("/{path}/")
-def post_path(path: str, request: NotionWebhookRequest) -> BaseResponse:
+def post_path(path: str, request: NotionWebhookRequest) -> BaseResponse:  # noqa: C901
     try:
         print("notion_webhook: post_path")
         logging.debug("notion_webhook: post_path")
@@ -38,10 +37,10 @@ def post_path(path: str, request: NotionWebhookRequest) -> BaseResponse:
 
         if webhook_type == NotionWebhookType.SYNC_BOOK_INFO:
             add_book_usecase = Injector.add_book_usecase()
-            book = Book.cast(base_page=base_page)
+            isbn = base_page.get_text("ISBN").text
             _ = add_book_usecase.execute(
-                isbn=book.isbn,
-                page_id=book.id,
+                isbn=isbn,
+                page_id=base_page.id,
             )
             return BaseResponse()
         if webhook_type == NotionWebhookType.ABORT_TASK:
@@ -55,6 +54,10 @@ def post_path(path: str, request: NotionWebhookRequest) -> BaseResponse:
         if webhook_type == NotionWebhookType.START_TASK:
             task_util_service = Injector.task_util_serivce()
             task_util_service.start(page_id=base_page.id)
+            return BaseResponse()
+        if webhook_type == NotionWebhookType.POSTPONE_TOMORROW:
+            task_util_service = Injector.task_util_serivce()
+            task_util_service.postpone(page_id=base_page.id, days=1)
             return BaseResponse()
 
         msg = f"指定されたWebhookが見つかりませんでした。path: {path}"
