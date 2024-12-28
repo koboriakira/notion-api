@@ -1,7 +1,7 @@
 from pydantic import Field
 
-from account_book.domain.account_book import AccountBook as AccountBookEntity
 from custom_logger import get_logger
+from notion_databases.account_book import AccountBook as AccountBookEntity
 from router.response.base_notion_page_model import BaseNotionPageModel
 from router.response.base_response import BaseResponse
 from util.datetime import jst_now

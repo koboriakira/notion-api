@@ -1,6 +1,21 @@
+from enum import Enum
+
 from lotion import notion_database, notion_prop
 from lotion.base_page import BasePage
 from lotion.properties import Checkbox, Date, MultiSelect, Number, Select, Title
+
+
+class CategoryType(Enum):
+    RESIDENCE_UTILITIES_COMMUNICATIONS = "住居・水道光熱・通信費"
+    MISC = "雑費"
+    SPECIAL_EXPENSES_TJPW = "特別費(東京女子プロレス)"
+    HOBBY_SOCIAL_EXPENSES = "趣味・交際費"
+    CLOTHING_BEAUTY_EXPENSES = "被服・美容費"
+    FOOD_DAILY_LIVING_EXPENSES = "食費・日用品・生活費"
+
+
+class AccountTag(Enum):
+    MUSIC_BAR_T = "music bar t"
 
 
 @notion_prop("名前")

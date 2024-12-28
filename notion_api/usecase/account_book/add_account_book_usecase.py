@@ -3,7 +3,7 @@ from datetime import date
 from lotion import Lotion
 from lotion.properties import Properties
 
-from account_book.domain.account_book import AccountBook, AccountDate, AccountTitle, Category, IsFixedCost, Price, Tag
+from notion_databases.account_book import AccountBook, AccountDate, AccountTitle, Category, IsFixedCost, Price, Tag
 
 
 class AddAccountBookUsecase:
