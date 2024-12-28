@@ -8,10 +8,10 @@ from common.service.scrape_service import ScrapeService
 from common.service.tag_creator import TagCreator
 from common.service.tweet.tweet_fetcher import TweetFetcher
 from common.value.site_kind import SiteKind
+from notion_databases.webclip import Webclip
 from util.split_paragraph import split_paragraph
 from util.tag_analyzer import TagAnalyzer
 from util.text_summarizer import TextSummarizer
-from webclip.domain.webclip import Webclip
 from webclip.service import webclip_creator
 
 if TYPE_CHECKING:

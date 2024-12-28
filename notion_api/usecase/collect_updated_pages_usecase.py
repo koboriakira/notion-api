@@ -15,6 +15,7 @@ from custom_logger import get_logger
 from daily_log.domain.daily_log_repository import DailyLogRepository
 from music.domain.song import Song
 from notion_databases.book import Book
+from notion_databases.webclip import Webclip
 from notion_databases.zettlekasten import Zettlekasten
 from project.domain.project import Project
 from recipe.domain.recipe import Recipe
@@ -25,7 +26,6 @@ from util.date_range import DateRange
 from util.datetime import JST, jst_today
 from util.slack.slack_client import SlackClient
 from video.domain.video import Video
-from webclip.domain.webclip import Webclip
 
 logger = get_logger(__name__)
 

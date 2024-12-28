@@ -3,7 +3,7 @@ from logging import Logger, getLogger
 from lotion import Lotion
 
 from common.service.page_creator import PageCreator
-from webclip.domain.webclip import Webclip
+from notion_databases.webclip import Webclip
 from webclip.service.webclip_generator import WebclipGeneratorRule
 
 
