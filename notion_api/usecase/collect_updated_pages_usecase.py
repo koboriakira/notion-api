@@ -14,7 +14,6 @@ from common.value.slack_channel_type import ChannelType
 from custom_logger import get_logger
 from daily_log.domain.daily_log_repository import DailyLogRepository
 from music.domain.song import Song
-from music.domain.song_repository import SongRepository
 from project.domain.project import Project
 from task.domain.task_kind import TaskKindType
 from task.domain.task_repository import TaskRepository
@@ -44,7 +43,6 @@ class CollectUpdatedPagesUsecase:
     def __init__(
         self,
         task_repository: TaskRepository,
-        song_repository: SongRepository,
         daily_log_repository: DailyLogRepository,
         is_debug: bool | None = None,
     ) -> None:
@@ -52,7 +50,6 @@ class CollectUpdatedPagesUsecase:
         channel_type = ChannelType.DIARY if not is_debug else ChannelType.TEST
         self._slack_client = SlackClient.bot(channel_type=channel_type, thread_ts=None)
         self._task_repository = task_repository
-        self._song_repository = song_repository
         self._daily_log_repository = daily_log_repository
         self._twitter_api = LambdaTwitterApi()
         self.is_debug = is_debug
@@ -314,18 +311,15 @@ tags: []
 if __name__ == "__main__":
     # python -m notion_api.usecase.collect_updated_pages_usecase
     from daily_log.infrastructure.daily_log_repository_impl import DailyLogRepositoryImpl
-    from music.infrastructure.song_repository_impl import SongRepositoryImpl
     from task.infrastructure.task_repository_impl import TaskRepositoryImpl
 
     client = Lotion.get_instance()
     task_repository = TaskRepositoryImpl(notion_client_wrapper=client)
-    song_repository = SongRepositoryImpl(client=client)
     daily_log_repository = DailyLogRepositoryImpl(client=client)
 
     usecase = CollectUpdatedPagesUsecase(
         is_debug=True,
         task_repository=task_repository,
-        song_repository=song_repository,
         daily_log_repository=daily_log_repository,
     )
     date_range = DateRange.from_datetime(

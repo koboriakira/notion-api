@@ -12,7 +12,6 @@ from external_calendar.infrastructure.google_calendar_api import GoogleCalendarA
 from external_calendar.service.external_calendar_service import ExternalCalendarService
 from infrastructure.book.google_book_api import GoogleBookApi
 from injector.page_creator_factory import PageCreatorFactory
-from music.infrastructure.song_repository_impl import SongRepositoryImpl
 from project.infrastructure.project_repository_impl import ProjectRepositoryImpl
 from recipe.infrastructure.recipe_repository_impl import RecipeRepositoryImpl
 from recipe.service.recipe_creator import RecipeCreator
@@ -113,11 +112,9 @@ class Injector:
         is_debug: bool | None = None,
     ) -> CollectUpdatedPagesUsecase:
         task_repository = TaskRepositoryImpl(notion_client_wrapper=client)
-        song_repository = SongRepositoryImpl(client=client)
         daily_log_repository = DailyLogRepositoryImpl(client=client)
         return CollectUpdatedPagesUsecase(
             task_repository=task_repository,
-            song_repository=song_repository,
             daily_log_repository=daily_log_repository,
             is_debug=is_debug,
         )

@@ -4,7 +4,6 @@ from lotion import Lotion
 
 from common.service.page_creator import PageCreator
 from common.value.site_kind import SiteKind
-from music.infrastructure.song_repository_impl import SongRepositoryImpl
 from music.service.music_creator import MusicCreator
 from restaurant.infrastructure.restaurant_repository_impl import RestaurantRepositoryImpl
 from restaurant.service.restaurant_creator import RestaurantCreator
@@ -23,8 +22,7 @@ class PageCreatorFactory:
         video_creator = VideoInjector.create_video_creator()
         restaurant_repository = RestaurantRepositoryImpl(client=client)
         restaurant_creator = RestaurantCreator(restaurant_repository=restaurant_repository, logger=logger)
-        song_repository = SongRepositoryImpl(client=client)
-        music_creator = MusicCreator(song_repository=song_repository, logger=logger)
+        music_creator = MusicCreator(logger=logger)
 
         generator_dict = {}
         for site_kind in SiteKind:

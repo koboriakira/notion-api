@@ -2,10 +2,12 @@ from dataclasses import dataclass
 from datetime import date
 from logging import Logger, getLogger
 
+from lotion import Lotion
+from lotion.filter import Builder, Cond, Prop
+
 from common.service.page_creator import PageCreator
 from music.domain.song import Song
-from music.domain.song_repository import SongRepository
-from music.service.song_factory import SongFactory
+from music.domain.spotify_url import SpotifyUrl
 
 
 @dataclass
@@ -17,6 +19,8 @@ class _MusicRequestParam:
     def from_params(
         params: dict | None,
     ) -> "_MusicRequestParam":
+        if params is None:
+            return _MusicRequestParam(artists=[], release_date=None)
         artists = params.get("artists", [])
         release_date = params.get("release_date", None)
         return _MusicRequestParam(
@@ -30,11 +34,10 @@ class _MusicRequestParam:
 class MusicCreator(PageCreator):
     def __init__(
         self,
-        song_repository: SongRepository,
         logger: Logger | None = None,
     ) -> None:
-        self._song_repository = song_repository
         self._logger = logger or getLogger(__name__)
+        self._lotion = Lotion.get_instance()
 
     def execute(
         self,
@@ -50,21 +53,26 @@ class MusicCreator(PageCreator):
         info_message = f"{self.__class__} execute: url={url}, title={title}, cover={cover}"
         self._logger.info(info_message)
 
-        song = self._song_repository.find_by_url(url=url)
-        if song is not None:
+        builder = Builder.create().add(Prop.RICH_TEXT, SpotifyUrl.PROP_NAME, Cond.EQUALS, url)
+        searched_songs = self._lotion.retrieve_pages(
+            cls=Song,
+            filter_param=builder.build(),
+        )
+        if len(searched_songs) > 0:
+            song = searched_songs[0]
             info_message = f"The song is already registered: {song.get_title_text()}"
             self._logger.info(info_message)
-            return song
+            return searched_songs[0]
 
         info_message = "Create a Music"
         self._logger.info(info_message)
 
         request_params = _MusicRequestParam.from_params(params)
-        song = SongFactory.create_spotify_song(
+        song = Song.generate(
             title=title,
             spotify_url=url,
-            cover_url=cover,
-            artists=request_params.artists,
+            cover=cover,
+            artist=request_params.artists,
             release_date=request_params.release_date,
         )
-        return self._song_repository.save(song)
+        return self._lotion.update(song)
