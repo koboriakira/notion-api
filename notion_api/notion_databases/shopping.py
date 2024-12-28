@@ -1,12 +1,37 @@
 from datetime import timedelta
+from enum import Enum
 
 from lotion import notion_database, notion_prop
 from lotion.base_page import BasePage
 from lotion.properties import Checkbox, Date, MultiSelect, Number, Status, Title
 
 from common.value.database_type import DatabaseType
-from shopping.domain.buy_status import BuyStatusType
 from util.datetime import jst_today
+
+
+class BuyStatusType(Enum):
+    """タスクのステータス"""
+
+    UNDONE = "未購入"
+    DONE = "購入済"
+
+
+class TagType(Enum):
+    VEGETABLES_FRUITS = "野菜・くだもの"
+    CONDIMENT = "薬味"
+    DAILY_NECESSITIES = "日用品"
+    SEASONING = "調味料"
+    ESSENTIAL = "必須"
+    NEW = "あらた"
+    PASTE = "練り物"
+    BEANS = "豆"
+    DAIRY_PRODUCTS = "乳製品"
+    DRINKS = "飲み物"
+    GRAINS_WHEAT = "穀物類・小麦"
+    LONG_TERM = "長期"
+    MEAT_FISH = "肉・魚"
+    SWEETS = "おかし"
+    EGGS = "卵"
 
 
 @notion_prop("名前")

@@ -2,7 +2,7 @@ from logging import Logger, getLogger
 
 from lotion import Lotion
 
-from shopping.domain.shopping import Shopping
+from notion_databases.shopping import Shopping
 
 
 class ResetShoppingListUseCase:
