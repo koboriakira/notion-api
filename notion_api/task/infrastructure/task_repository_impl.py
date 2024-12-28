@@ -6,11 +6,10 @@ from lotion.base_page import BasePage
 from lotion.filter import Builder, Cond, Prop
 
 from common.value.database_type import DatabaseType
-from task.domain.project_relation import ProjectRelation
-from task.domain.task import Task, ToDoTask
+from goal.domain.goal import ProjectRelation
+from task.domain.task import Task, TaskStartDate, ToDoTask
 from task.domain.task_kind import TaskKind, TaskKindType
 from task.domain.task_repository import TaskRepository
-from task.domain.task_start_date import TaskStartDate
 from task.domain.task_status import TaskStatus, TaskStatusType
 from util.datetime import JST
 
@@ -39,7 +38,7 @@ class TaskRepositoryImpl(TaskRepository):
                 if isinstance(start_datetime, datetime)
                 else datetime.combine(start_datetime, time.min, tzinfo=JST)
             )
-            builder = builder.add(Prop.DATE, TaskStartDate.NAME, Cond.ON_OR_AFTER, start_datetime.isoformat())
+            builder = builder.add(Prop.DATE, TaskStartDate.PROP_NAME, Cond.ON_OR_AFTER, start_datetime.isoformat())
 
         if start_datetime_end is not None:
             start_datetime_end = (
@@ -47,13 +46,13 @@ class TaskRepositoryImpl(TaskRepository):
                 if isinstance(start_datetime_end, datetime)
                 else datetime.combine(start_datetime_end, time.max, tzinfo=JST)
             )
-            builder = builder.add(Prop.DATE, TaskStartDate.NAME, Cond.ON_OR_BEFORE, start_datetime_end.isoformat())
+            builder = builder.add(Prop.DATE, TaskStartDate.PROP_NAME, Cond.ON_OR_BEFORE, start_datetime_end.isoformat())
         elif start_datetime is not None:
             start_datetime_end = start_datetime + timedelta(days=1) - timedelta(seconds=1)
-            builder = builder.add(Prop.DATE, TaskStartDate.NAME, Cond.ON_OR_BEFORE, start_datetime_end.isoformat())
+            builder = builder.add(Prop.DATE, TaskStartDate.PROP_NAME, Cond.ON_OR_BEFORE, start_datetime_end.isoformat())
 
         if project_id is not None:
-            builder = builder.add(Prop.RELATION, ProjectRelation.NAME, Cond.CONTAINS, project_id)
+            builder = builder.add(Prop.RELATION, ProjectRelation.PROP_NAME, Cond.CONTAINS, project_id)
 
         if last_edited_at is not None:
             builder = builder.add_last_edited_at(Cond.ON_OR_AFTER, last_edited_at.isoformat())

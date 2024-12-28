@@ -5,11 +5,9 @@ from lotion import BasePage
 from lotion.block import Block
 from lotion.properties import Properties, Title
 
-from task.domain.project_relation import ProjectRelation
-from task.domain.task import ToDoTask
+from task.domain.task import ProjectRelation, TaskStartDate, ToDoTask
 from task.domain.task_context import TaskContext, TaskContextTypes
 from task.domain.task_kind import TaskKind, TaskKindType
-from task.domain.task_start_date import TaskStartDate
 from task.domain.task_status import TaskStatus, TaskStatusType
 
 if TYPE_CHECKING:
@@ -35,7 +33,10 @@ class TaskFactory:
         if task_kind_type is not None:
             properties.append(TaskKind.create(task_kind_type))
         if start_date is not None:
-            properties.append(TaskStartDate.create(start_date, end_date))
+            if end_date is None:
+                properties.append(TaskStartDate.from_start_date(start_date))
+            else:
+                properties.append(TaskStartDate.from_range(start_date, end_date))
         if context_types is not None:
             properties.append(TaskContext(context_types))
         if status is not None:
