@@ -6,7 +6,7 @@ from lotion.block.rich_text import RichTextBuilder
 from lotion.properties import Title
 
 from custom_logger import get_logger
-from goal.domain.goal import Goal
+from notion_databases.goal import Goal
 from project.domain.project import Project
 from project.domain.project_repository import ProjectRepository
 from project.domain.project_status import ProjectStatusType

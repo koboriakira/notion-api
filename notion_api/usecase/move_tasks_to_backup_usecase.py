@@ -5,7 +5,7 @@ from lotion.properties import Property
 
 from common.value.database_type import DatabaseType
 from custom_logger import get_logger
-from goal.domain.goal import Goal
+from notion_databases.goal import Goal
 from project.domain.project import Project
 from project.domain.project_repository import ProjectRepository
 from task.domain.task_repository import TaskRepository

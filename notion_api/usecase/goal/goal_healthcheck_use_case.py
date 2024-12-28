@@ -3,7 +3,7 @@ from logging import Logger, getLogger
 from lotion import Lotion
 
 from common.value.slack_channel_type import ChannelType
-from goal.domain.goal import Goal
+from notion_databases.goal import Goal
 from util.datetime import jst_today
 from util.slack.slack_client import SlackClient
 

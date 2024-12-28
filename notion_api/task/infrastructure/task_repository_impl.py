@@ -6,7 +6,7 @@ from lotion.base_page import BasePage
 from lotion.filter import Builder, Cond, Prop
 
 from common.value.database_type import DatabaseType
-from goal.domain.goal import ProjectRelation
+from notion_databases.goal import ProjectRelation
 from task.domain.task import Task, TaskStartDate, ToDoTask
 from task.domain.task_kind import TaskKind, TaskKindType
 from task.domain.task_repository import TaskRepository

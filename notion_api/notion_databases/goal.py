@@ -1,4 +1,5 @@
 from datetime import date
+from enum import Enum
 
 from lotion import notion_database, notion_prop
 from lotion.base_page import BasePage
@@ -6,7 +7,23 @@ from lotion.block import Block
 from lotion.properties import Cover, Date, Relation, Status, Title
 
 from common.value.database_type import DatabaseType
-from goal.domain.goal_status import GoalStatusType
+
+
+class GoalStatusType(Enum):
+    INBOX = "Inbox"
+    IN_PROGRESS = "In progress"
+    SUSPEND = "Suspend"
+    TRASH = "Trash"
+    DONE = "Done"
+
+    def is_inbox(self) -> bool:
+        return self == GoalStatusType.INBOX
+
+    def is_done(self) -> bool:
+        return self == GoalStatusType.DONE
+
+    def is_in_progress(self) -> bool:
+        return self == GoalStatusType.IN_PROGRESS
 
 
 @notion_prop("名前")

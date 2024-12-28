@@ -1,8 +1,7 @@
 from datetime import date
 from unittest import TestCase
 
-from notion_api.goal.domain.goal import Goal
-from notion_api.goal.domain.goal_status import GoalStatusType
+from notion_databases.goal import Goal, GoalStatusType
 
 DUMMY_PAGE_ID = "5c38fd30-714b-4ce2-bf2d-25407f3cfc16"
 
