@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
 from datetime import date
 
-from daily_log.domain.daily_log import DailyLog
+from notion_databases.daily_log import DailyLog
 
 
 class ExistedDailyLogError(Exception):

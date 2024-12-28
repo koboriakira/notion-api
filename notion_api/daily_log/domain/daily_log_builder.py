@@ -5,7 +5,7 @@ from lotion.block import Block
 from lotion.properties import Cover, Properties, Property
 
 from common.domain.tag_relation import TagRelation
-from daily_log.domain.daily_log import (
+from notion_databases.daily_log import (
     DailyGoal,
     DailyLog,
     DailyLogDate,
