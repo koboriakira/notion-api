@@ -28,8 +28,6 @@ from zettlekasten.domain.zettlekasten import Zettlekasten
 logger = get_logger(__name__)
 
 DATABASE_DICT = {
-    "今日更新したプロジェクト": DatabaseType.PROJECT,
-    "今日更新したZettlekasten": DatabaseType.ZETTLEKASTEN,
     "今日読んだ・登録した書籍": DatabaseType.BOOK,
     "今日観たプロレス": DatabaseType.PROWRESTLING,
     "今日更新・登録したレシピ": DatabaseType.RECIPE,

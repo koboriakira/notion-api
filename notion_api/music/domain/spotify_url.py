@@ -9,7 +9,7 @@ class SpotifyUrl(Url):
 
     def get_spotify_track_id(self) -> str:
         # https://open.spotify.com/intl-ja/track/0VfOZBCILsIrkJPzw3WdvA?si=731d95eb095543ac からクエリを除いた部分
-        return self.get_spotify_url().split("/")[-1].split("?")[0]
+        return self.trimmed_query_value().split("/")[-1].split("?")[0]
 
     def get_embed_html(self) -> str:
         spotify_track_id = self.get_spotify_track_id()

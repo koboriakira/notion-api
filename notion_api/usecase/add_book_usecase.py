@@ -1,6 +1,7 @@
+from lotion import Lotion
+
 from book.domain.book_api import BookApi, BookApiResult
 from book.domain.book_builder import BookBuilder
-from book.domain.book_repository import BookRepository
 from usecase.service.inbox_service import InboxService
 
 
@@ -8,11 +9,11 @@ class AddBookUsecase:
     def __init__(
         self,
         book_api: BookApi,
-        book_repository: BookRepository,
+        lotion: Lotion | None = None,
     ) -> None:
         self._book_api = book_api
-        self._book_repository = book_repository
         self._inbox_service = InboxService()
+        self._lotion = lotion or Lotion.get_instance()
 
     def execute(  # noqa: PLR0913
         self,
@@ -31,12 +32,12 @@ class AddBookUsecase:
 
         # ページが既にある場合があるので、入れられるようにしておく
         book.id_ = page_id
-        book = self._book_repository.save(book=book)
+        book = self._lotion.update(book)
 
         # Inboxにタスクを追加
         self._inbox_service.add_inbox_task_by_page_id(
             page=book,
-            original_url=book.book_url,
+            original_url=book.url.url,
             slack_channel=slack_channel,
             slack_thread_ts=slack_thread_ts,
         )

@@ -1,6 +1,5 @@
 from lotion import Lotion
 
-from book.infrastructure.book_repository_impl import BookRepositoryImpl
 from custom_logger import get_logger
 from infrastructure.book.google_book_api import GoogleBookApi
 from usecase.add_book_usecase import AddBookUsecase
@@ -18,11 +17,7 @@ def add_book_by_google_book_id(
     book_api = GoogleBookApi()
     logger = get_logger(__name__)
     client = Lotion.get_instance()
-    book_repository = BookRepositoryImpl(
-        client=client,
-        logger=logger,
-    )
-    usecase = AddBookUsecase(book_api=book_api, book_repository=book_repository)
+    usecase = AddBookUsecase(book_api=book_api, lotion=client)
     return usecase.execute(
         google_book_id=google_book_id,
         title=title,

@@ -4,7 +4,6 @@ from logging import Logger
 from lotion import Lotion
 from slack_sdk.web import WebClient
 
-from book.infrastructure.book_repository_impl import BookRepositoryImpl
 from common.service.tag_creator.tag_creator import TagCreator
 from custom_logger import get_logger
 from daily_log.infrastructure.daily_log_repository_impl import DailyLogRepositoryImpl
@@ -41,10 +40,6 @@ logger = get_logger(__name__)
 client = Lotion.get_instance()
 openai_executer = OpenaiExecuter(logger=logger)
 slack_bot_client = WebClient(token=os.environ["SLACK_BOT_TOKEN"])
-book_repository = BookRepositoryImpl(
-    client=client,
-    logger=logger,
-)
 
 
 class Injector:
@@ -150,7 +145,7 @@ class Injector:
     @staticmethod
     def add_book_usecase() -> AddBookUsecase:
         book_api = GoogleBookApi()
-        return AddBookUsecase(book_api=book_api, book_repository=book_repository)
+        return AddBookUsecase(book_api=book_api)
 
     @staticmethod
     def abort_task_usecase() -> AbortTaskUsecase:

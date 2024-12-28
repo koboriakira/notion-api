@@ -4,13 +4,8 @@ from datetime import date
 from lotion.block import Block
 from lotion.properties import Cover, Properties, Property
 
-from book.domain.authors import Authors
-from book.domain.book import Book
+from book.domain.book import Author, Book, BookTitle, BookUrl, PublishedDate, Publisher
 from book.domain.book_api import BookApiResult
-from book.domain.book_title import BookTitle
-from book.domain.book_url import BookUrl
-from book.domain.published_date import PublishedDate
-from book.domain.publisher import Publisher
 from common.service.tag_creator.tag_creator import TagCreator
 
 
@@ -22,7 +17,7 @@ class BookBuilder:
 
     @staticmethod
     def of(title: str) -> "BookBuilder":
-        properties: list[Property] = [BookTitle(text=title)]
+        properties: list[Property] = [BookTitle.from_plain_text(text=title)]
         return BookBuilder(properties=properties, blocks=[], cover=None)
 
     @staticmethod
@@ -48,19 +43,19 @@ class BookBuilder:
         # 事前に著者のタグページを作成
         tag_page_ids = tag_creator.execute(tag=authors)
 
-        self.properties.append(Authors.from_id_list(id_list=tag_page_ids))
+        self.properties.append(Author.from_id_list(id_list=tag_page_ids))
         return self
 
     def add_publishers(self, publisher: str) -> "BookBuilder":
-        self.properties.append(Publisher.create(text=publisher))
+        self.properties.append(Publisher.from_plain_text(publisher))
         return self
 
     def add_published_date(self, published_date: date) -> "BookBuilder":
-        self.properties.append(PublishedDate.create(published_date))
+        self.properties.append(PublishedDate.from_start_date(published_date))
         return self
 
     def add_book_url(self, url: str) -> "BookBuilder":
-        self.properties.append(BookUrl(url))
+        self.properties.append(BookUrl.from_url(url))
         return self
 
     def add_cover(self, image_url: str) -> "BookBuilder":

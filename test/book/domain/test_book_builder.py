@@ -29,7 +29,7 @@ class TestBookBuilder(TestCase):
 
         # Then
         self.assertEqual(book.get_title_text(), "Pythonの教科書")
-        self.assertEqual(book.publisher, "株式会社A")
-        self.assertEqual(book.published_date, date.fromisoformat("2022-01-01"))
-        self.assertEqual(book.book_url, "https://example.com")
+        self.assertEqual(book.publisher.text, "株式会社A")
+        self.assertEqual(book.published_date.date, date.fromisoformat("2022-01-01"))
+        self.assertEqual(book.url.url, "https://example.com")
         self.assertEqual(book.cover.external_url, "https://example.com/image")
