@@ -19,6 +19,7 @@ class NotionWebhookType(StrEnum):
     START_TASK = "start_task"  # タスクを開始
     POSTPONE_TOMORROW = "postpone_tomorrow"  # タスクを翌日に延期
     CONVERT_TO_PROJECT = "convert_to_project"  # プロジェクトに変換
+    COMPLETE_TASK = "complete_task"  # タスクを完了
 
 
 class NotionWebhookRequest(BaseModel):
@@ -58,6 +59,10 @@ def post_path(path: str, request: NotionWebhookRequest) -> BaseResponse:  # noqa
         if webhook_type == NotionWebhookType.POSTPONE_TOMORROW:
             task_util_service = Injector.task_util_serivce()
             task_util_service.postpone(page_id=base_page.id, days=1)
+            return BaseResponse()
+        if webhook_type == NotionWebhookType.COMPLETE_TASK:
+            task_util_service = Injector.task_util_serivce()
+            task_util_service.complete(page_id=base_page.id, days=1)
             return BaseResponse()
 
         msg = f"指定されたWebhookが見つかりませんでした。path: {path}"

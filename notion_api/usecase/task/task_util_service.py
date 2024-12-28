@@ -25,6 +25,13 @@ class TaskUtilService:
         task = self._find_task(page_id)
         self._task_repository.save(task.do_tomorrow())
 
+    def complete(self, page_id: str) -> None:
+        """
+        Complete the task.
+        """
+        task = self._find_task(page_id)
+        self._task_repository.save(task.complete())
+
     def _find_task(self, page_id: str) -> Task:
         task = self._task_repository.find_by_id(task_id=page_id)
         if task is None:
