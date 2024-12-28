@@ -1,5 +1,7 @@
 from logging import Logger, getLogger
 
+from lotion import Lotion
+
 from common.infrastructure.default_scraper import DefaultScraper
 from common.service.page_creator import PageCreator
 from common.service.scrape_service.scrape_service import ScrapeService

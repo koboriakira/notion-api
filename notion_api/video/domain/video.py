@@ -23,6 +23,7 @@ class VideoUrl(Url):
 class Video(BasePage):
     title: VideoName
     url: VideoUrl
+    tags: TagRelation
 
     @staticmethod
     def generate(

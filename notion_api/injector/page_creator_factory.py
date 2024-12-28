@@ -5,7 +5,6 @@ from lotion import Lotion
 from common.service.page_creator import PageCreator
 from common.value.site_kind import SiteKind
 from music.service.music_creator import MusicCreator
-from restaurant.infrastructure.restaurant_repository_impl import RestaurantRepositoryImpl
 from restaurant.service.restaurant_creator import RestaurantCreator
 from video.video_injector import VideoInjector
 from webclip.injector import WebclipInjector
@@ -20,8 +19,7 @@ class PageCreatorFactory:
         client = Lotion.get_instance()
         webclip_creator = WebclipInjector.create_webclip_creator()
         video_creator = VideoInjector.create_video_creator()
-        restaurant_repository = RestaurantRepositoryImpl(client=client)
-        restaurant_creator = RestaurantCreator(restaurant_repository=restaurant_repository, logger=logger)
+        restaurant_creator = RestaurantCreator(logger=logger)
         music_creator = MusicCreator(logger=logger)
 
         generator_dict = {}

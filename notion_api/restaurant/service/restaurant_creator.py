@@ -2,19 +2,17 @@ from logging import Logger, getLogger
 
 from common.injector import CommonInjector
 from common.service.page_creator import PageCreator
-from restaurant.domain.restaurant import Restaurant
-from restaurant.infrastructure.restaurant_repository_impl import RestaurantRepositoryImpl as RestaurantRepository
+from restaurant.domain.restaurant import Restaurant, RestaurantName
 
 
 class RestaurantCreator(PageCreator):
     def __init__(
         self,
-        restaurant_repository: RestaurantRepository,
         logger: Logger | None = None,
     ) -> None:
-        self._restaurant_repository = restaurant_repository
         self._logger = logger or getLogger(__name__)
         self._scraper = CommonInjector.get_scrape_service()
+        self._lotion = Lotion.get_instance()
 
     def execute(
         self,
@@ -30,9 +28,9 @@ class RestaurantCreator(PageCreator):
         info_message = f"{self.__class__} execute: url={url}, title={title}, cover={cover}"
         self._logger.info(info_message)
 
-        restaurant = self._restaurant_repository.find_by_title(title=title)
+        restaurant = self._lotion.find_page(Restaurant, RestaurantName.from_plain_text(title))
         if restaurant is not None:
-            info_message = f"Restaurant is already registered: {restaurant.restaurant_name}"
+            info_message = f"Restaurant is already registered: {restaurant.name.text}"
             self._logger.info(info_message)
             return restaurant
 
@@ -42,13 +40,13 @@ class RestaurantCreator(PageCreator):
         # Restaurantを生成
         if cover is None:
             cover = self._scraper.execute(url=url).get_image_url()
-        restaurant = Restaurant.create(
+        restaurant = Restaurant.generate(
             title=title,
             url=url,
             cover=cover,
         )
 
-        return self._restaurant_repository.save(restaurant)
+        return self._lotion.update(restaurant)
 
 
 if __name__ == "__main__":
@@ -56,9 +54,7 @@ if __name__ == "__main__":
     from lotion import Lotion
 
     client = Lotion.get_instance()
-    suite = RestaurantCreator(
-        restaurant_repository=RestaurantRepository(client=client),
-    )
+    suite = RestaurantCreator()
     suite.execute(
         url="https://tabelog.com/tokyo/A1316/A131604/13020181/",
         title="焼肉・光陽 (大崎/焼肉)",

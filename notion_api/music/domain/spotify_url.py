@@ -4,7 +4,7 @@ from lotion.properties import Url
 
 @notion_prop("Spotify")
 class SpotifyUrl(Url):
-    def get_spotify_url(self) -> str:
+    def trimmed_query_value(self) -> str:
         return self.url.split("?")[0]
 
     def get_spotify_track_id(self) -> str:

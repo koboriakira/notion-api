@@ -9,7 +9,7 @@ class TestTagRelation(TestCase):
         input = ["12345", "12345", "abcde"]
 
         # When
-        actual = TagRelation.from_id_list([])
+        actual = TagRelation.from_id_list(input)
 
         # Then
         self.assertEqual(2, len(actual.id_list))
