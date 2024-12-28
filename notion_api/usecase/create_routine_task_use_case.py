@@ -30,8 +30,9 @@ class CreateRoutineTaskUseCase:
                 continue
             start_date, end_date = routine_task.get_next_schedule(basis_date=date_)
             context_types = routine_task.get_contexts()
-            routine_todo_task = TaskFactory.create_routine_todo_task(
+            routine_todo_task = TaskFactory.create_todo_task(
                 title=title,
+                task_kind_type=TaskKindType.ROUTINE,
                 start_date=start_date,
                 end_date=end_date,
                 context_types=context_types,

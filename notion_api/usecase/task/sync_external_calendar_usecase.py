@@ -49,10 +49,11 @@ class SyncExternalCalendarUsecase:
 
         tasks: list[Task] = []
         for event in events.value:
-            title = f"【{event.category.value}】{event.get_title_text()}"
+            title = f"【{event.category.value}】{event.title}"
             task = self._task_repository.save(
-                TaskFactory.create_scheduled_task(
+                TaskFactory.create_todo_task(
                     title=title,
+                    task_kind_type=TaskKindType.SCHEDULE,
                     start_date=event.start,
                     end_date=event.end,
                 ),

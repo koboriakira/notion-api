@@ -6,9 +6,8 @@ from lotion.base_page import BasePage
 from lotion.filter import Builder, Cond, Prop
 
 from common.value.database_type import DatabaseType
-from task.domain.important_flag import ImportantFlag
 from task.domain.project_relation import ProjectRelation
-from task.domain.task import ImportantToDoTask, RoutineToDoTask, ScheduledTask, Task, ToDoTask
+from task.domain.task import Task, ToDoTask
 from task.domain.task_kind import TaskKind, TaskKindType
 from task.domain.task_repository import TaskRepository
 from task.domain.task_start_date import TaskStartDate
@@ -148,18 +147,7 @@ class TaskRepositoryImpl(TaskRepository):
         self.client.remove_page(page_id=task.id)
 
     def _cast(self, base_page: BasePage) -> Task:
-        cls = ToDoTask
-        important_flag = base_page.get_checkbox(ImportantFlag.NAME)
-        if important_flag is not None and important_flag.checked:
-            cls = ImportantToDoTask
-        kind_model = base_page.get_select(name=TaskKind.NAME)
-        if kind_model is not None and kind_model.selected_name != "":
-            task_type = TaskKindType(kind_model.selected_name)
-            if task_type == TaskKindType.SCHEDULE:
-                cls = ScheduledTask
-            if task_type == TaskKindType.ROUTINE:
-                cls = RoutineToDoTask
-        return cls(
+        return ToDoTask(
             properties=base_page.properties,
             block_children=base_page.block_children,
             id_=base_page.id_,

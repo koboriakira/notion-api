@@ -1,5 +1,4 @@
 from datetime import date, datetime, timedelta
-from typing import override
 
 from lotion import notion_database, notion_prop
 from lotion.base_page import BasePage
@@ -14,7 +13,6 @@ from task.domain.task_context import TaskContext, TaskContextType
 from task.domain.task_kind import TaskKind, TaskKindType
 from task.domain.task_start_date import TaskStartDate
 from task.domain.task_status import TaskStatus, TaskStatusType
-from task.valueobject.task_order import TaskOrder
 from task.valueobject.task_order_rule import TaskOrderRule
 from util.datetime import convert_to_date_or_datetime, jst_now
 
@@ -181,24 +179,4 @@ class ToDoTask(BasePage):
         return self.start_datetime is not None
 
 
-class ImportantToDoTask(ToDoTask):
-    @property
-    @override
-    def order(self) -> int:
-        return TaskOrder.most_important().value
-
-    @property
-    @override
-    def is_important(self) -> bool:
-        return True
-
-
-class ScheduledTask(ToDoTask):
-    """スケジュールされたタスク"""
-
-
-class RoutineToDoTask(ToDoTask):
-    """ルーティン系のタスク"""
-
-
-type Task = ToDoTask | ImportantToDoTask | ScheduledTask | RoutineToDoTask
+type Task = ToDoTask
