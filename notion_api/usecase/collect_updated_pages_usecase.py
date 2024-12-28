@@ -13,8 +13,8 @@ from common.value.database_type import DatabaseType
 from common.value.slack_channel_type import ChannelType
 from custom_logger import get_logger
 from daily_log.domain.daily_log_repository import DailyLogRepository
-from music.domain.song import Song
 from notion_databases.book import Book
+from notion_databases.song import Song
 from notion_databases.webclip import Webclip
 from notion_databases.zettlekasten import Zettlekasten
 from project.domain.project import Project

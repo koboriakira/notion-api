@@ -7,7 +7,7 @@ from lotion.properties import Cover, Date, Text, Title
 
 from common.domain.tag_relation import TagRelation
 from common.value.database_type import DatabaseType
-from music.domain.spotify_url import SpotifyUrl
+from notion_databases.song_prop.spotify_url import SpotifyUrl
 
 
 @notion_prop("Artist")

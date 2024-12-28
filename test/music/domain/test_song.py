@@ -1,7 +1,7 @@
 from datetime import date
 from unittest import TestCase
 
-from notion_api.music.domain.song import Song
+from notion_databases.song import Song
 
 
 class TestSong(TestCase):

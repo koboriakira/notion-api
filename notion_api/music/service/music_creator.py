@@ -6,8 +6,8 @@ from lotion import Lotion
 from lotion.filter import Builder, Cond, Prop
 
 from common.service.page_creator import PageCreator
-from music.domain.song import Song
-from music.domain.spotify_url import SpotifyUrl
+from notion_databases.song import Song
+from notion_databases.song_prop.spotify_url import SpotifyUrl
 
 
 @dataclass

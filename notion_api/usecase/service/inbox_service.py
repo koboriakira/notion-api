@@ -7,7 +7,7 @@ from lotion.properties import Title
 from slack_sdk.web import WebClient
 
 from common.value.database_type import DatabaseType
-from music.domain.song import Song
+from notion_databases.song import Song
 from notion_databases.webclip import Webclip
 from restaurant.domain.restaurant import Restaurant
 from task.domain.memo_genre import MemoGenreKind, MemoGenreType
