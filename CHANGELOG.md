@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.1](https://github.com/koboriakira/notion-api/compare/v2.5.0...v2.5.1) (2024-12-28)
+
+
+### Bug Fixes
+
+* Remove unnecessary days parameter from complete task function ([bf7d9ce](https://github.com/koboriakira/notion-api/commit/bf7d9ce44c0977513ac83359de41dc5ce5afcb66))
+
 ## [2.5.0](https://github.com/koboriakira/notion-api/compare/v2.4.0...v2.5.0) (2024-12-28)
 
 
