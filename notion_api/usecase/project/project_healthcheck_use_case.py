@@ -6,7 +6,6 @@ from common.value.slack_channel_type import ChannelType
 from project.domain import project_repository
 from project.domain.project import Project
 from project.domain.project_repository import ProjectRepository
-from project.domain.project_status import ProjectStatusType
 from task.domain.task import ToDoTask
 from task.domain.task_kind import TaskKindType
 from task.domain.task_repository import TaskRepository
@@ -33,16 +32,14 @@ class ProjectHealthcheckUseCase:
         self._slack_client.chat_postMessage("プロジェクトのヘルスチェックを開始します")
 
         # Inboxステータスは一覧だけ通知する
-        inbox_projects = [project for project in projects if project.project_status == ProjectStatusType.INBOX]
+        inbox_projects = [project for project in projects if project.is_inbox()]
         self._execute_inbox_project(inbox_projects)
 
         # 進行中のプロジェクトのみを分析対象とする
-        inprogress_projects = [
-            project for project in projects if project.project_status == ProjectStatusType.IN_PROGRESS
-        ]
+        inprogress_projects = [project for project in projects if project.is_inprogress()]
         for project in inprogress_projects:
             undone_tasks = self._task_repository.search(
-                project_id=project.page_id,
+                project_id=project.id,
                 status_list=[TaskStatusType.TODO, TaskStatusType.IN_PROGRESS],
             )
             self._execute_project(project, undone_tasks)
@@ -65,7 +62,7 @@ class ProjectHealthcheckUseCase:
             message_list.append("今週の目標を記入してください")
 
         # 目標とのひもづきチェック
-        if project.goal_relation is None or len(project.goal_relation) == 0:
+        if project.goal.id_list is None or len(project.goal.id_list) == 0:
             message_list.append("目標とのひもづきを設定してください")
 
         # タスクのチェック

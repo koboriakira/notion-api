@@ -6,7 +6,7 @@ from notion_api.video.domain.video import Video
 class TestVideo(TestCase):
     def test_インスタンスの生成(self):
         # When
-        actual = Video.create(
+        actual = Video.generate(
             title="動画名",
             url="https://www.youtube.com/watch?v=Xj6YiZZagzc",
             tag_relation=["abc123", "def456"],

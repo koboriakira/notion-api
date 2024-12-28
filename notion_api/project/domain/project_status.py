@@ -1,5 +1,6 @@
 from enum import Enum
 
+from lotion import notion_prop
 from lotion.properties import Status
 
 
@@ -33,13 +34,15 @@ class ProjectStatusType(Enum):
     def is_trash(self) -> bool:
         return self == ProjectStatusType.TRASH
 
+    def is_inbox(self) -> bool:
+        return self == ProjectStatusType.INBOX
 
+    def is_suspend(self) -> bool:
+        return self == ProjectStatusType.SUSPEND
+
+
+@notion_prop("ステータス")
 class ProjectStatus(Status):
-    NAME = "ステータス"
-
-    def __init__(self, status_type: ProjectStatusType) -> None:
-        super().__init__(self.NAME, status_type.value)
-
-    @classmethod
-    def from_status_type(cls: "ProjectStatus", status_type: ProjectStatusType) -> "ProjectStatus":
-        return cls(status_type=status_type)
+    @staticmethod
+    def from_status_type(status_type: ProjectStatusType) -> "ProjectStatus":
+        return ProjectStatus.from_status_name(status_type.value)

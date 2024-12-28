@@ -53,7 +53,7 @@ class MoveTasksToBackupUsecase:
         projects = self._project_repository.fetch_all()
 
         # Doneステータスのみに絞る
-        projects = [t for t in projects if t.project_status.is_done()]
+        projects = [t for t in projects if t.is_done()]
 
         # 直近更新されたものは無視するようにする
         projects = [
@@ -89,7 +89,7 @@ class MoveTasksToBackupUsecase:
     def _trash_projects(self) -> None:
         """Trashステータスのプロジェクトを削除する"""
         projects = self._project_repository.fetch_all()
-        projects = [t for t in projects if t.project_status.is_trash()]
+        projects = [t for t in projects if t.is_trash()]
         for project in projects:
             tasks = self._task_repository.search(project_id=project.id)
             for task in tasks:

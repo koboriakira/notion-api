@@ -15,6 +15,7 @@ from custom_logger import get_logger
 from daily_log.domain.daily_log_repository import DailyLogRepository
 from music.domain.song import Song
 from music.domain.song_repository import SongRepository
+from project.domain.project import Project
 from task.domain.task_kind import TaskKindType
 from task.domain.task_repository import TaskRepository
 from task.domain.task_status import TaskStatusType
@@ -91,6 +92,10 @@ tags: []
             markdown_text += f"\n## {title}\n"
             markdown_text += "\n".join([f"- {page.get_title_text()}" for page in pages])
 
+        # プロジェクトを集める
+        markdown_text += "\n"
+        markdown_text += self._proc_projects(date_range=date_range, daily_log_id=daily_log_id)
+
         # Webクリップを集める
         markdown_text += "\n"
         markdown_text += self._proc_webclips(date_range=date_range, daily_log_id=daily_log_id)
@@ -150,6 +155,22 @@ tags: []
             if not self.is_debug:
                 self._append_backlink(block_id=daily_log_id, page=done_task)
             markdown_text += f"\n- {done_task.get_title_text()}"
+        return markdown_text
+
+    def _proc_projects(self, date_range: DateRange, daily_log_id: str) -> str:
+        """Projectを処理する"""
+        projects = self._search(date_range, Project)
+
+        if len(projects) == 0:
+            return ""
+
+        if not self.is_debug:
+            self._append_heading(block_id=daily_log_id, title="今日のプロジェクト")
+        markdown_text = "## 今日のプロジェクト\n"
+        for project in projects:
+            if not self.is_debug:
+                self._append_backlink(block_id=daily_log_id, page=project)
+            markdown_text += f"\n{project.get_title_text()}\n"
         return markdown_text
 
     def _proc_webclips(self, date_range: DateRange, daily_log_id: str) -> str:
@@ -313,6 +334,7 @@ if __name__ == "__main__":
     )
     # print(usecase.execute(date_range=date_range))
     # print(usecase._proc_daily_log(target_date=date_range.end.value.date()))
-    print(usecase._proc_videos(date_range=date_range, daily_log_id="dummy"))
+    # print(usecase._proc_videos(date_range=date_range, daily_log_id="dummy"))
     # print(usecase._proc_images(date_range=date_range))
+    print(usecase._proc_projects(date_range=date_range, daily_log_id="dummy"))
     # print(usecase._proc_tasks(date_range=date_range, daily_log_id="dummy"))

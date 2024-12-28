@@ -16,7 +16,7 @@ class CreateProjectService:
 
     def execute(self, project_name: str, tasks_request: list[dict]) -> Project:
         project = self._project_repository.save(
-            Project.create(
+            Project.generate(
                 title=project_name,
                 project_status=ProjectStatusType.IN_PROGRESS,
             ),

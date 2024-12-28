@@ -41,7 +41,7 @@ class PrepareWeeklyReviewUsecase:
         # 週次レビュー用のプロジェクトをひとつ作成
         _, isoweeknum, _ = jst_today().isocalendar()
         review_project = self._project_repository.save(
-            Project.create(
+            Project.generate(
                 title="週次レビュー Week" + str(isoweeknum),
                 project_status=ProjectStatusType.IN_PROGRESS,
             ),
@@ -55,14 +55,14 @@ class PrepareWeeklyReviewUsecase:
         self._create_tasks_as_goal_review(review_project, list(projects_as_goal.keys()))
 
         # 目標のひも付きがないやつは、別途タスクとしてつくる
-        nongoal_projects = [p for p in projects if len(p.goal_relation) == 0]
+        nongoal_projects = [p for p in projects if len(p.goal.id_list) == 0]
         self._create_tasks_as_project_review(review_project, nongoal_projects)
 
     def _fetch_inprogress_projects(
         self,
     ) -> list[Project]:
         projects = self._project_repository.fetch_all()
-        return [project for project in projects if project.status.is_in_progress()]
+        return [project for project in projects if project.is_inprogress()]
 
     def _create_tasks_as_project_review(self, review_project: Project, projects: list[Project]) -> None:
         for project in projects:
@@ -90,7 +90,7 @@ class PrepareWeeklyReviewUsecase:
             projects_as_goal[g.id] = []
 
         for p in projects:
-            for goal_page_id in p.goal_relation:
+            for goal_page_id in p.goal.id_list:
                 projects_as_goal[goal_page_id].append(p)
 
         return {g: projects for g, projects in projects_as_goal.items() if len(projects) > 0}
