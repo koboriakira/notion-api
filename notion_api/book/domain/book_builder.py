@@ -4,9 +4,9 @@ from datetime import date
 from lotion.block import Block
 from lotion.properties import Cover, Properties, Property
 
-from book.domain.book import Author, Book, BookTitle, BookUrl, PublishedDate, Publisher
 from book.domain.book_api import BookApiResult
 from common.service.tag_creator.tag_creator import TagCreator
+from notion_databases.book import Author, Book, BookTitle, BookUrl, PublishedDate, Publisher
 
 
 @dataclass

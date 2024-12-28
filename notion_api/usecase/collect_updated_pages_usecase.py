@@ -7,7 +7,6 @@ from lotion.block import Embed, Heading, Paragraph
 from lotion.block.rich_text import RichTextBuilder
 from lotion.filter import Builder, Cond
 
-from book.domain.book import Book
 from common.infrastructure.twitter.lambda_twitter_api import LambdaTwitterApi
 from common.service.image.external_image_service import ExternalImageService
 from common.value.database_type import DatabaseType
@@ -15,6 +14,8 @@ from common.value.slack_channel_type import ChannelType
 from custom_logger import get_logger
 from daily_log.domain.daily_log_repository import DailyLogRepository
 from music.domain.song import Song
+from notion_databases.book import Book
+from notion_databases.zettlekasten import Zettlekasten
 from project.domain.project import Project
 from recipe.domain.recipe import Recipe
 from task.domain.task_kind import TaskKindType
@@ -25,7 +26,6 @@ from util.datetime import JST, jst_today
 from util.slack.slack_client import SlackClient
 from video.domain.video import Video
 from webclip.domain.webclip import Webclip
-from notion_databases.zettlekasten import Zettlekasten
 
 logger = get_logger(__name__)
 
