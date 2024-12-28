@@ -15,7 +15,7 @@ class RoutineType(Enum):
     DAYS_AFTER_20 = "20日後"
     MONTHLY_END = "月末"
 
-    def next_date(self, basis_date: date) -> date:  # noqa: C901, PLR0911
+    def next_date(self, basis_date: date) -> date:  # noqa: C901, PLR0911, PLR0912
         """タスクの次回予定日を返す"""
         weekday = basis_date.weekday()
         match self:
