@@ -1,6 +1,5 @@
 import logging
 
-from task.infrastructure.routine_repository_impl import RoutineRepositoryImpl
 from task.infrastructure.task_repository_impl import TaskRepositoryImpl
 from usecase.create_routine_task_use_case import CreateRoutineTaskUseCase
 from util.datetime import jst_today
@@ -8,8 +7,7 @@ from util.environment import Environment
 from util.error_reporter import ErrorReporter
 
 task_repository = TaskRepositoryImpl()
-routine_repository = RoutineRepositoryImpl()
-usecase = CreateRoutineTaskUseCase(task_repository=task_repository, routine_repository=routine_repository)
+usecase = CreateRoutineTaskUseCase(task_repository=task_repository)
 
 # ログ
 logging.basicConfig(level=logging.INFO)

@@ -82,30 +82,3 @@ class TaskKind(Select):
     @classmethod
     def scheduled(cls) -> "TaskKind":
         return cls.create(kind_type=TaskKindType.SCHEDULE)
-
-if __name__ == "__main__":
-    # 最新の情報を取得するときに使う
-    # python -m notion_api.task.domain.task_kind
-    from common.value.database_type import DatabaseType
-    from lotion import Lotion
-
-    # python -m notion_api.task.domain.task_context
-    pages = Lotion.get_instance().retrieve_database(
-        database_id=DatabaseType.TASK.value,
-    )
-
-    result = {}
-    for page in pages:
-        select_property = page.get_select(name=TaskKind.NAME)
-        if select_property is None:
-            continue
-        if select_property.selected_id in result:
-            continue
-        result[select_property.selected_name] = {
-            "selected_id": select_property.selected_id,
-            "selected_color": select_property.selected_color,
-        }
-    # uniqueにする
-    import json
-
-    print(json.dumps(result, ensure_ascii=False))

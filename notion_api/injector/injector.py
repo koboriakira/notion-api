@@ -14,7 +14,6 @@ from injector.page_creator_factory import PageCreatorFactory
 from project.infrastructure.project_repository_impl import ProjectRepositoryImpl
 from recipe.service.recipe_creator import RecipeCreator
 from slack_concierge.injector import SlackConciergeInjector
-from task.infrastructure.routine_repository_impl import RoutineRepositoryImpl
 from task.infrastructure.task_repository_impl import TaskRepositoryImpl
 from usecase.account_book.add_account_book_usecase import AddAccountBookUsecase
 from usecase.add_book_usecase import AddBookUsecase
@@ -126,8 +125,7 @@ class Injector:
     @staticmethod
     def create_routine_task_use_case() -> CreateRoutineTaskUseCase:
         task_repository = TaskRepositoryImpl()
-        routine_repository = RoutineRepositoryImpl()
-        return CreateRoutineTaskUseCase(task_repository=task_repository, routine_repository=routine_repository)
+        return CreateRoutineTaskUseCase(task_repository=task_repository)
 
     @staticmethod
     def sync_external_calendar_usecase() -> SyncExternalCalendarUsecase:

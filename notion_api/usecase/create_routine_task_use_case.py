@@ -1,6 +1,8 @@
 from datetime import date, timedelta
 
-from task.domain.routine_repository import RoutineRepository
+from lotion import Lotion
+
+from task.domain.routine_task import RoutineTask
 from task.domain.task_kind import TaskKindType
 from task.domain.task_repository import TaskRepository
 from task.domain.task_status import TaskStatusType
@@ -9,12 +11,12 @@ from util.datetime import jst_tommorow
 
 
 class CreateRoutineTaskUseCase:
-    def __init__(self, task_repository: TaskRepository, routine_repository: RoutineRepository) -> None:
+    def __init__(self, task_repository: TaskRepository, lotion: Lotion | None = None) -> None:
         self.task_repository = task_repository
-        self.routine_repository = routine_repository
+        self._lotion = lotion or Lotion.get_instance()
 
     def execute(self, date_: date) -> None:
-        routine_tasks = self.routine_repository.fetch_all()
+        routine_tasks = self._lotion.retrieve_pages(RoutineTask)
         next_tasks = self.task_repository.search(
             status_list=[TaskStatusType.TODO, TaskStatusType.IN_PROGRESS],
             kind_type_list=[TaskKindType.ROUTINE],
@@ -44,10 +46,8 @@ class CreateRoutineTaskUseCase:
 
 if __name__ == "__main__":
     # python -m notion_api.usecase.create_routine_task_use_case
-    from task.infrastructure.routine_repository_impl import RoutineRepositoryImpl
     from task.infrastructure.task_repository_impl import TaskRepositoryImpl
 
     task_repository = TaskRepositoryImpl()
-    routine_repository = RoutineRepositoryImpl()
-    usecase = CreateRoutineTaskUseCase(task_repository=task_repository, routine_repository=routine_repository)
+    usecase = CreateRoutineTaskUseCase(task_repository=task_repository)
     usecase.execute(date_=jst_tommorow().date())
