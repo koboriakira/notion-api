@@ -17,6 +17,16 @@ class TestDatetime(TestCase):
         print(expected)
         self.assertEqual(expected, actual)
 
+    def test_日時を日付に変換できる(self):
+        # Given, When
+        actual = convert_to_date_or_datetime("2021-01-01 01:23:45+09:00", cls=date)
+        print(actual)
+
+        # Then
+        expected = date.fromisoformat("2021-01-01")
+        print(expected)
+        self.assertEqual(expected, actual)
+
     def test_0時0分の場合は日付として返却する(self):
         # Given, When
         actual = convert_to_date_or_datetime("2021-01-01 00:00:00+09:00")

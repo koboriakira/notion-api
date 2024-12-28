@@ -52,31 +52,37 @@ def jst_tommorow() -> datetime:
     return jst_today_datetime() + timedelta(days=1)
 
 
-def convert_to_date_or_datetime(value: str | None, cls: type[D]) -> date | datetime | None:
+def convert_to_date_or_datetime(value: str | None, cls: type[D] | None = None) -> date | datetime | None:
     if value is None:
         return None
     date_type = DateType.get_datetype(value)
     match date_type:
         case DateType.DATE:
-            return convert_date(value, cls)
+            return _convert_date(value, cls)
         case DateType.DATETIME:
-            return convert_datetime(value, cls)
+            return _convert_datetime(value, cls)
         case DateType.NONE:
             return None
 
 
-def convert_date(value: str, cls: type[D]) -> date | datetime:
+def _convert_date(value: str, cls: type[D] | None) -> date | datetime:
     _date = date.fromisoformat(value)
-    if not isinstance(cls, datetime):
+    if cls is None:
+        return _date
+    if cls.__name__ != "datetime":
         return _date
     return datetime(_date.year, _date.month, _date.day, tzinfo=JST)
 
 
-def convert_datetime(value: str, cls: type[D]) -> date | datetime:
+def _convert_datetime(value: str, cls: type[D] | None) -> date | datetime:
     _datetime = datetime.fromisoformat(value)
-    if cls.__name__ == "datetime" and __is_datatime(_datetime):
+    if cls is None:
+        if not __is_datatime(_datetime):
+            return _datetime.date()
         return _datetime
-    return _datetime.date()
+    if cls.__name__ == "date" or not __is_datatime(_datetime):
+        return _datetime.date()
+    return _datetime
 
 
 def __is_datatime(value: datetime) -> bool:
