@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING
 
 from lotion.block import Embed
 
-from common.domain.tag_relation import TagRelation
 from common.service.scrape_service import ScrapeService
 from common.service.tag_creator import TagCreator
 from common.service.tweet.tweet_fetcher import TweetFetcher
@@ -59,19 +58,18 @@ class DefaultWebclipGenerator(WebclipGenerator):
         # 要約からタグを抽出して、タグを作成
         tags = self._tag_analyzer.handle(text=summary)
         tag_page_id_list = self._tag_creator.execute(tag=tags)
-        tag_relation = TagRelation.from_page_id_list(tag_page_id_list)
 
         # ページ本文
         blocks = split_paragraph(page_text)
 
         # あたらしくWebclipを作成
-        return Webclip.create(
+        return Webclip.generate(
             title=title,
             url=url,
-            tag_relation=tag_relation,
+            tag_relation=tag_page_id_list,
             cover=cover,
             summary=summary,
-            blocks=blocks,
+            blocks=blocks,  # type: ignore
         )
 
 
@@ -104,7 +102,6 @@ class TwitterWebclipGenerator(WebclipGenerator):
         # 投稿者もタグに含める
         tags.append(tweet.user_name)
         tag_page_id_list = self._tag_creator.execute(tag=tags)
-        tag_relation = TagRelation.from_page_id_list(tag_page_id_list)
 
         # カバー画像が指定されてなければ取得を試みる
         if not cover:
@@ -119,10 +116,10 @@ class TwitterWebclipGenerator(WebclipGenerator):
             blocks.append(embed)
 
         # あたらしくWebclipを作成
-        return Webclip.create(
+        return Webclip.generate(
             title=tweet.text[:50],  # タイトルは本文(title)の50文字まで,
             url=tweet.url,
-            tag_relation=tag_relation,
+            tag_relation=tag_page_id_list,
             cover=cover,
             summary=tweet.text,
             blocks=blocks,

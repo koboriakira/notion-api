@@ -1,21 +1,21 @@
 from logging import Logger, getLogger
 
+from lotion import Lotion
+
 from common.service.page_creator import PageCreator
 from webclip.domain.webclip import Webclip
-from webclip.infrastructure.webclip_repository_impl import WebclipRepositoryImpl
 from webclip.service.webclip_generator import WebclipGeneratorRule
 
 
 class WebclipCreator(PageCreator):
     def __init__(
         self,
-        webclip_repository: WebclipRepositoryImpl,
         webclip_generator_rule: WebclipGeneratorRule,
         logger: Logger | None = None,
     ) -> None:
-        self._webclip_repository = webclip_repository
         self._webclip_generator_rule = webclip_generator_rule
         self._logger = logger or getLogger(__name__)
+        self._lotion = Lotion.get_instance()
 
     def execute(
         self,
@@ -38,11 +38,15 @@ class WebclipCreator(PageCreator):
             title=title,
             cover=cover,
         )
-
-        return self._webclip_repository.save(webclip=webclip)
+        return self._lotion.update(webclip)
 
     def _find_webclip(self, title: str) -> Webclip | None:
-        webclip = self._webclip_repository.find_by_title(title=title)
+        webclip = self._lotion.find_page_by_title(
+            database_id=Webclip.DATABASE_ID,
+            title=title,
+            title_key_name="名前",
+            cls=Webclip,
+        )
         if webclip is not None:
             info_message = f"Webclip is already registered: {webclip.get_title_text()}"
             self._logger.info(info_message)

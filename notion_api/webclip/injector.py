@@ -7,7 +7,6 @@ from custom_logger import get_logger
 from util.openai_executer import OpenaiExecuter
 from util.tag_analyzer import TagAnalyzer
 from util.text_summarizer import TextSummarizer
-from webclip.infrastructure.webclip_repository_impl import WebclipRepositoryImpl
 from webclip.service.webclip_creator import WebclipCreator
 from webclip.service.webclip_generator import (
     DefaultWebclipGenerator,
@@ -29,10 +28,8 @@ tweet_fetcher = CommonInjector.get_tweet_fetcher()
 class WebclipInjector:
     @staticmethod
     def create_webclip_creator() -> WebclipCreator:
-        webclip_repository = WebclipRepositoryImpl(client=client, logger=logger)
         webclip_generator_rule = WebclipInjector._create_webclip_generator_rule()
         return WebclipCreator(
-            webclip_repository=webclip_repository,
             webclip_generator_rule=webclip_generator_rule,
             logger=logger,
         )

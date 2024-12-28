@@ -1,10 +1,11 @@
 from logging import Logger
 
+from lotion import Lotion
+
 from common.service.page_creator import PageCreator
 from common.value.site_kind import SiteKind
 from music.infrastructure.song_repository_impl import SongRepositoryImpl
 from music.service.music_creator import MusicCreator
-from lotion import Lotion
 from restaurant.infrastructure.restaurant_repository_impl import RestaurantRepositoryImpl
 from restaurant.service.restaurant_creator import RestaurantCreator
 from video.video_injector import VideoInjector
@@ -15,8 +16,8 @@ class PageCreatorFactory:
     def __init__(self, generator_dict: dict[SiteKind, PageCreator]) -> None:
         self.generator_dict = generator_dict
 
-    @classmethod
-    def generate_rule(cls: "PageCreatorFactory", logger: Logger) -> "PageCreatorFactory":
+    @staticmethod
+    def generate_rule(logger: Logger) -> "PageCreatorFactory":
         client = Lotion.get_instance()
         webclip_creator = WebclipInjector.create_webclip_creator()
         video_creator = VideoInjector.create_video_creator()
