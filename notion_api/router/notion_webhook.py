@@ -63,7 +63,7 @@ def post_path(path: str, request: NotionWebhookRequest) -> BaseResponse:  # noqa
             return BaseResponse()
         if webhook_type == NotionWebhookType.COMPLETE_TASK:
             task_util_service = Injector.task_util_serivce()
-            task_util_service.complete(page_id=base_page.id, days=1)
+            task_util_service.complete(page_id=base_page.id)
             return BaseResponse()
 
         msg = f"指定されたWebhookが見つかりませんでした。path: {path}"
