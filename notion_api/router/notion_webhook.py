@@ -8,6 +8,7 @@ from pydantic import BaseModel
 from infrastructure.slack_bot_client import SlackBotClient
 from injector.injector import Injector
 from router.response import BaseResponse
+from util.error_reporter import ErrorReporter
 
 router = APIRouter()
 
@@ -68,7 +69,7 @@ def post_path(path: str, request: NotionWebhookRequest) -> BaseResponse:  # noqa
         msg = f"指定されたWebhookが見つかりませんでした。path: {path}"
         raise ValueError(msg)
     except Exception as e:
-        print(e)
+        ErrorReporter().execute("notion_webhook: post_path", error=e)
         return BaseResponse(message="Error", data=e)
 
 
