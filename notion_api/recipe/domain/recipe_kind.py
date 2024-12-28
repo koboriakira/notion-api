@@ -1,7 +1,5 @@
 from enum import Enum
 
-from lotion.properties import Select
-
 kind_map = {
     "自動作成": {"selected_id": "pMjN", "selected_color": "gray"},
     "まだつくってない": {"selected_id": "426fbc68-2502-48ab-a64c-782149f10b03", "selected_color": "default"},
@@ -37,16 +35,3 @@ class RecipeKindType(Enum):
     @property
     def selected_color(self) -> str:
         return kind_map[self.value]["selected_color"]
-
-
-class RecipeKind(Select):
-    NAME = "状態"
-
-    def __init__(self, kind_type: RecipeKindType) -> None:
-        super().__init__(
-            name=self.NAME,
-            selected_name=kind_type.selected_name,
-            selected_id=kind_type.selected_id,
-            selected_color=kind_type.selected_color,
-            id=None,
-        )

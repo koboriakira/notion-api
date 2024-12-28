@@ -12,7 +12,6 @@ from external_calendar.service.external_calendar_service import ExternalCalendar
 from infrastructure.book.google_book_api import GoogleBookApi
 from injector.page_creator_factory import PageCreatorFactory
 from project.infrastructure.project_repository_impl import ProjectRepositoryImpl
-from recipe.infrastructure.recipe_repository_impl import RecipeRepositoryImpl
 from recipe.service.recipe_creator import RecipeCreator
 from slack_concierge.injector import SlackConciergeInjector
 from task.infrastructure.routine_repository_impl import RoutineRepositoryImpl
@@ -114,10 +113,8 @@ class Injector:
     ) -> AddRecipeUseCase:
         logger = logger or get_logger(__name__)
         recipe_creator = RecipeCreator(openai_executer=openai_executer, logger=logger)
-        recipe_repository = RecipeRepositoryImpl(client=client, logger=logger)
         return AddRecipeUseCase(
             recipe_creator=recipe_creator,
-            recipe_repository=recipe_repository,
             slack_client=slack_bot_client,
             logger=logger,
         )

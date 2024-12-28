@@ -3,15 +3,17 @@ from dataclasses import dataclass
 from lotion.block import Block, BulletedListItem, Heading
 from lotion.properties import Cover, Properties, Property
 
-from recipe.domain.carbohydrate import Carbohydrate
-from recipe.domain.fat import Fat
-from recipe.domain.ingredient_relation import IngredientRelation
-from recipe.domain.meal_kind import MealKind, MealKindTypes
-from recipe.domain.protein import Protein
-from recipe.domain.recipe import Recipe
-from recipe.domain.recipe_kind import RecipeKind, RecipeKindType
-from recipe.domain.recipe_title import RecipeTitle
-from recipe.domain.reference_url import ReferenceUrl
+from recipe.domain.recipe import (
+    Carbohydrate,
+    Fat,
+    IngredientRelation,
+    MealKind,
+    Protein,
+    Recipe,
+    RecipeKind,
+    RecipeTitle,
+    ReferenceUrl,
+)
 
 
 @dataclass
@@ -23,33 +25,32 @@ class RecipeBuilder:
     @staticmethod
     def of(title: str, blocks: list[Block] | None = None) -> "RecipeBuilder":
         blocks = blocks or []
-        properties: list[Property] = [RecipeTitle(text=title)]
+        properties: list[Property] = [RecipeTitle.from_plain_text(title)]
         return RecipeBuilder(properties=properties, blocks=blocks, cover=None)
 
     def build(self) -> Recipe:
         return Recipe(properties=Properties(self.properties), block_children=self.blocks, cover=self.cover)
 
     def add_pfc(self, protein: int, fat: int, carbohydrate: int) -> "RecipeBuilder":
-        self.properties.append(Protein(number=protein))
-        self.properties.append(Fat(number=fat))
-        self.properties.append(Carbohydrate(number=carbohydrate))
+        self.properties.append(Protein.from_num(protein))
+        self.properties.append(Fat.from_num(fat))
+        self.properties.append(Carbohydrate.from_num(carbohydrate))
         return self
 
     def add_ingredients(self, ingredient_page_id_list: list[str]) -> "RecipeBuilder":
-        self.properties.append(IngredientRelation.from_id_list(id_list=ingredient_page_id_list))
+        self.properties.append(IngredientRelation.from_id_list(ingredient_page_id_list))
         return self
 
-    def add_meal_kind(self, meal_kind_types: MealKindTypes) -> "RecipeBuilder":
-        meal_kind = MealKind(kind_types=meal_kind_types)
+    def add_meal_kind(self, meal_kind: MealKind) -> "RecipeBuilder":
         self.properties.append(meal_kind)
         return self
 
-    def add_recipe_kind(self, recipe_kind_type: RecipeKindType) -> "RecipeBuilder":
-        self.properties.append(RecipeKind(kind_type=recipe_kind_type))
+    def add_recipe_kind(self, recipe_kind: RecipeKind) -> "RecipeBuilder":
+        self.properties.append(recipe_kind)
         return self
 
     def add_reference_url(self, url: str) -> "RecipeBuilder":
-        self.properties.append(ReferenceUrl(url=url))
+        self.properties.append(ReferenceUrl.from_url(url))
         return self
 
     def add_bulletlist_block(self, heading: str, texts: list[str]) -> "RecipeBuilder":

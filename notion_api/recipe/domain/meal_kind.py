@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
 
-from lotion.properties import MultiSelect
 from lotion.properties.multi_select import MultiSelectElement
 
 KIND_LIST = [
@@ -69,13 +68,3 @@ class MealKindTypes:
 
     def to_multi_select_elements(self) -> list[MultiSelectElement]:
         return [MultiSelectElement(**kind.__dict__()) for kind in self.values]
-
-
-class MealKind(MultiSelect):
-    NAME = "種類"
-
-    def __init__(self, kind_types: MealKindTypes) -> None:
-        super().__init__(
-            name=self.NAME,
-            values=kind_types.to_multi_select_elements(),
-        )

@@ -1,52 +1,57 @@
-from dataclasses import dataclass
-
+from lotion import notion_database, notion_prop
 from lotion.base_page import BasePage
+from lotion.properties import MultiSelect, Number, Relation, Select, Title, Url
 
-from recipe.domain.carbohydrate import Carbohydrate
-from recipe.domain.fat import Fat
-from recipe.domain.ingredient_relation import IngredientRelation
-from recipe.domain.meal_kind import MealKind, MealKindType, MealKindTypes
-from recipe.domain.protein import Protein
-from recipe.domain.recipe_kind import RecipeKind, RecipeKindType
-from recipe.domain.reference_url import ReferenceUrl
+from common.value.database_type import DatabaseType
 
 
-@dataclass
+@notion_prop("名前")
+class RecipeTitle(Title):
+    pass
+
+
+@notion_prop("状態")
+class RecipeKind(Select):
+    pass
+
+
+@notion_prop("種類")
+class MealKind(MultiSelect):
+    pass
+
+
+@notion_prop("Ingredients")
+class IngredientRelation(Relation):
+    pass
+
+
+@notion_prop("Reference")
+class ReferenceUrl(Url):
+    pass
+
+
+@notion_prop("P:タンパク質")
+class Protein(Number):
+    pass
+
+
+@notion_prop("F:脂質")
+class Fat(Number):
+    pass
+
+
+@notion_prop("C:炭水化物")
+class Carbohydrate(Number):
+    pass
+
+
+@notion_database(DatabaseType.RECIPE.value)
 class Recipe(BasePage):
-    @property
-    def carbohydrates(self) -> int | None:
-        carbohydrates = self.get_number(name=Carbohydrate.NAME)
-        return carbohydrates.number if carbohydrates else None
-
-    @property
-    def protein(self) -> int | None:
-        protein = self.get_number(name=Protein.NAME)
-        return protein.number if protein else None
-
-    @property
-    def fat(self) -> int | None:
-        fat = self.get_number(name=Fat.NAME)
-        return fat.number if fat else None
-
-    @property
-    def ingredients(self) -> list[str]:
-        ingredients = self.get_relation(name=IngredientRelation.NAME)
-        return ingredients.page_id_list if ingredients else []
-
-    @property
-    def meal_kind(self) -> MealKindTypes:
-        meal_kind = self.get_multi_select(name=MealKind.NAME)
-        if meal_kind is None:
-            return MealKindTypes(values=[])
-        meal_kind_types = [MealKindType.from_text(el.name) for el in meal_kind.values]
-        return MealKindTypes(values=meal_kind_types)
-
-    @property
-    def recipe_kind(self) -> RecipeKindType | None:
-        recipe_kind = self.get_select(name=RecipeKind.NAME)
-        return RecipeKindType.from_text(recipe_kind.selected_name) if recipe_kind else None
-
-    @property
-    def reference_url(self) -> str | None:
-        url = self.get_url(name=ReferenceUrl.NAME)
-        return url.url if url else None
+    title: RecipeTitle
+    recipe_kind: RecipeKind
+    meal_kind: MealKind
+    ingredients: IngredientRelation
+    reference_url: ReferenceUrl
+    protein: Protein
+    fat: Fat
+    carbohydrates: Carbohydrate

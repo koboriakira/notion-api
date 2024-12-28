@@ -1,13 +1,12 @@
-from logging import Logger
+from logging import Logger, getLogger
 
+from lotion import Lotion
 from slack_sdk import WebClient
 
 from common.value.slack_channel_type import ChannelType
-from lotion import Lotion
-from recipe.domain.recipe import Recipe
+from recipe.domain.recipe import MealKind, Recipe, RecipeKind
 from recipe.domain.recipe_builder import RecipeBuilder
 from recipe.domain.recipe_kind import RecipeKindType
-from recipe.domain.recipe_repository import RecipeRepository
 from recipe.service.recipe_creator import AnalyzeResult, MockRecipeCreator, RecipeCreator
 from util.openai_executer import OpenaiExecuter
 
@@ -16,14 +15,14 @@ class AddRecipeUseCase:
     def __init__(
         self,
         recipe_creator: RecipeCreator,
-        recipe_repository: RecipeRepository,
         slack_client: WebClient,
         logger: Logger | None = None,
+        lotion: Lotion | None = None,
     ) -> None:
         self._recipe_creator = recipe_creator
-        self._recipe_repository = recipe_repository
         self._slack_client = slack_client
-        self._logger = logger
+        self._logger = logger or getLogger(__name__)
+        self._lotion = lotion or Lotion.get_instance()
 
     def execute(
         self,
@@ -42,7 +41,7 @@ class AddRecipeUseCase:
 
         # ページインスタンスを生成、保存
         recipe = self._generate_recipe(analyze_result=analyze_result, reference_url=reference_url, pfc_dict=pfc_dict)
-        recipe = self._recipe_repository.save(recipe)
+        recipe = self._lotion.update(recipe)
 
         # Slackに通知
         self._slack_client.chat_postMessage(
@@ -54,10 +53,16 @@ class AddRecipeUseCase:
         return recipe
 
     def _generate_recipe(self, analyze_result: AnalyzeResult, reference_url: str | None, pfc_dict: dict) -> Recipe:
+        recipe_kind = self._lotion.fetch_select(Recipe, RecipeKind, value=RecipeKindType.AUTO.value)
+        meal_kind = self._lotion.fetch_multi_select(
+            Recipe,
+            MealKind,
+            value=[k.value for k in analyze_result.kind.values],
+        )
         builder = (
             RecipeBuilder.of(title=analyze_result.title)
-            .add_recipe_kind(RecipeKindType.AUTO)
-            .add_meal_kind(analyze_result.kind)
+            .add_recipe_kind(recipe_kind)
+            .add_meal_kind(meal_kind)
             .add_bulletlist_block(heading="材料", texts=analyze_result.ingredients)
             .add_bulletlist_block(heading="工程", texts=analyze_result.process)
         )
@@ -86,7 +91,6 @@ if __name__ == "__main__":
 
     from slack_sdk import WebClient
 
-    from recipe.infrastructure.recipe_repository_impl import RecipeRepositoryImpl
     from recipe.service.recipe_creator import RecipeCreator
 
     logging.basicConfig(level=logging.INFO)
@@ -94,11 +98,9 @@ if __name__ == "__main__":
 
     openai_executer = OpenaiExecuter(logger=logger)
     # recipe_creator = RecipeCreator(openai_executer=openai_executer, logger=logger)
-    recipe_repository = RecipeRepositoryImpl(client=Lotion.get_instance(), logger=logger)
     slack_client = WebClient(token=os.environ["SLACK_BOT_TOKEN"])
     usecase = AddRecipeUseCase(
         recipe_creator=MockRecipeCreator(),
-        recipe_repository=recipe_repository,
         slack_client=slack_client,
         logger=logger,
     )

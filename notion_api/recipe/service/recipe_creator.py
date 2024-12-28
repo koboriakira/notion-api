@@ -2,6 +2,7 @@ import json
 import re
 from dataclasses import dataclass
 from logging import Logger, getLogger
+from typing import Any
 
 from recipe.domain.meal_kind import MealKindType, MealKindTypes
 from util.openai_executer import OpenaiExecuter
@@ -28,18 +29,18 @@ class AnalyzeResult:
 
     @staticmethod
     def func(args: dict) -> "AnalyzeResult":
-        params: dict = json.loads(args)
+        params: dict[str, Any] = json.loads(args)
 
-        title: str = params.get("title")
+        title = params.get("title")
         if title is None:
             raise RecipeCreateError.required(field="title")
-        kind: str = params.get("kind")
+        kind = params.get("kind")
         if kind is None:
             raise RecipeCreateError.required(field="kind")
-        ingredients: str = params.get("ingredients")
+        ingredients = params.get("ingredients")
         if ingredients is None:
             raise RecipeCreateError.required(field="ingredients")
-        process: str = params.get("process")
+        process = params.get("process")
         if process is None:
             raise RecipeCreateError.required(field="process")
         return AnalyzeResult(

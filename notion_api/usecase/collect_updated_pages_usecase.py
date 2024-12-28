@@ -7,6 +7,7 @@ from lotion.block import Embed, Heading, Paragraph
 from lotion.block.rich_text import RichTextBuilder
 from lotion.filter import Builder, Cond
 
+from book.domain.book import Book
 from common.infrastructure.twitter.lambda_twitter_api import LambdaTwitterApi
 from common.service.image.external_image_service import ExternalImageService
 from common.value.database_type import DatabaseType
@@ -15,6 +16,7 @@ from custom_logger import get_logger
 from daily_log.domain.daily_log_repository import DailyLogRepository
 from music.domain.song import Song
 from project.domain.project import Project
+from recipe.domain.recipe import Recipe
 from task.domain.task_kind import TaskKindType
 from task.domain.task_repository import TaskRepository
 from task.domain.task_status import TaskStatusType
@@ -27,11 +29,6 @@ from zettlekasten.domain.zettlekasten import Zettlekasten
 
 logger = get_logger(__name__)
 
-DATABASE_DICT = {
-    "今日読んだ・登録した書籍": DatabaseType.BOOK,
-    "今日観たプロレス": DatabaseType.PROWRESTLING,
-    "今日更新・登録したレシピ": DatabaseType.RECIPE,
-}
 
 LOG_FORMAT_APPEND_PAGE = "ページを追加しました: %s"
 
@@ -81,20 +78,21 @@ tags: []
         markdown_text += "\n"
         markdown_text += self._proc_tasks(date_range=date_range, daily_log_id=daily_log_id)
 
-        # 各データベースの更新ページを取得
-        for title, database_type in DATABASE_DICT.items():
-            pages = self._get_latest_items(date_range=date_range, database_type=database_type)
-            self._append_relation_to_daily_log(daily_log_id=daily_log_id, title=title, pages=pages)
-            markdown_text += f"\n## {title}\n"
-            markdown_text += "\n".join([f"- {page.get_title_text()}" for page in pages])
-
         # Zettlekastenを集める
         markdown_text += "\n"
         markdown_text += self._proc_zettlekastens(date_range=date_range, daily_log_id=daily_log_id)
 
+        # レシピを集める
+        markdown_text += "\n"
+        markdown_text += self._proc_recipes(date_range=date_range, daily_log_id=daily_log_id)
+
         # プロジェクトを集める
         markdown_text += "\n"
         markdown_text += self._proc_projects(date_range=date_range, daily_log_id=daily_log_id)
+
+        # 書籍を集める
+        markdown_text += "\n"
+        markdown_text += self._proc_books(date_range=date_range, daily_log_id=daily_log_id)
 
         # Webクリップを集める
         markdown_text += "\n"
@@ -157,6 +155,22 @@ tags: []
             markdown_text += f"\n- {done_task.get_title_text()}"
         return markdown_text
 
+    def _proc_books(self, date_range: DateRange, daily_log_id: str) -> str:
+        """書籍を処理する"""
+        books = self._search(date_range, Book)
+
+        if len(books) == 0:
+            return ""
+
+        if not self.is_debug:
+            self._append_heading(block_id=daily_log_id, title="今日の書籍")
+        markdown_text = "## 今日の書籍\n"
+        for book in books:
+            if not self.is_debug:
+                self._append_backlink(block_id=daily_log_id, page=book)
+            markdown_text += f"\n{book.get_title_text()}\n"
+        return markdown_text
+
     def _proc_zettlekastens(self, date_range: DateRange, daily_log_id: str) -> str:
         """Zettlekastenを処理する"""
         zettlekastens = self._search(date_range, Zettlekasten)
@@ -171,6 +185,22 @@ tags: []
             if not self.is_debug:
                 self._append_backlink(block_id=daily_log_id, page=zettlekasten)
             markdown_text += f"\n{zettlekasten.get_title_text()}\n"
+        return markdown_text
+
+    def _proc_recipes(self, date_range: DateRange, daily_log_id: str) -> str:
+        """レシピを処理する"""
+        recipes = self._search(date_range, Recipe)
+
+        if len(recipes) == 0:
+            return ""
+
+        if not self.is_debug:
+            self._append_heading(block_id=daily_log_id, title="今日のレシピ")
+        markdown_text = "## 今日のレシピ\n"
+        for recipe in recipes:
+            if not self.is_debug:
+                self._append_backlink(block_id=daily_log_id, page=recipe)
+            markdown_text += f"\n{recipe.get_title_text()}\n"
         return markdown_text
 
     def _proc_projects(self, date_range: DateRange, daily_log_id: str) -> str:
@@ -350,5 +380,6 @@ if __name__ == "__main__":
     # print(usecase._proc_videos(date_range=date_range, daily_log_id="dummy"))
     # print(usecase._proc_images(date_range=date_range))
     # print(usecase._proc_projects(date_range=date_range, daily_log_id="dummy"))
-    print(usecase._proc_zettlekastens(date_range=date_range, daily_log_id="dummy"))
+    # print(usecase._proc_zettlekastens(date_range=date_range, daily_log_id="dummy"))
+    print(usecase._proc_books(date_range=date_range, daily_log_id="dummy"))
     # print(usecase._proc_tasks(date_range=date_range, daily_log_id="dummy"))
