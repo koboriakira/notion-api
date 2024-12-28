@@ -52,15 +52,15 @@ def jst_tommorow() -> datetime:
     return jst_today_datetime() + timedelta(days=1)
 
 
-def convert_to_date_or_datetime(value: str | None, cls: type[D] | None = None) -> date | datetime | None:
+def convert_to_date_or_datetime(value: str | None, cls: type[D] | None = None) -> D | None:
     if value is None:
         return None
     date_type = DateType.get_datetype(value)
     match date_type:
         case DateType.DATE:
-            return _convert_date(value, cls)
+            return _convert_date(value, cls)  # type: ignore
         case DateType.DATETIME:
-            return _convert_datetime(value, cls)
+            return _convert_datetime(value, cls)  # type: ignore
         case DateType.NONE:
             return None
 
