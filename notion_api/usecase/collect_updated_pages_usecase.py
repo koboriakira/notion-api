@@ -1,4 +1,5 @@
 from datetime import date, datetime
+from typing import TypeVar
 
 from lotion import Lotion
 from lotion.base_page import BasePage
@@ -12,6 +13,7 @@ from common.value.database_type import DatabaseType
 from common.value.slack_channel_type import ChannelType
 from custom_logger import get_logger
 from daily_log.domain.daily_log_repository import DailyLogRepository
+from music.domain.song import Song
 from music.domain.song_repository import SongRepository
 from task.domain.task_kind import TaskKindType
 from task.domain.task_repository import TaskRepository
@@ -19,8 +21,9 @@ from task.domain.task_status import TaskStatusType
 from util.date_range import DateRange
 from util.datetime import JST, jst_today
 from util.slack.slack_client import SlackClient
+from video.domain.video import Video
 from video.domain.video_repository import VideoRepository
-from webclip.domain.webclip_repository import WebclipRepository
+from webclip.domain.webclip import Webclip
 
 logger = get_logger(__name__)
 
@@ -34,6 +37,8 @@ DATABASE_DICT = {
 
 LOG_FORMAT_APPEND_PAGE = "ページを追加しました: %s"
 
+T = TypeVar("T", bound=BasePage)
+
 
 class CollectUpdatedPagesUsecase:
     def __init__(
@@ -41,7 +46,6 @@ class CollectUpdatedPagesUsecase:
         task_repository: TaskRepository,
         song_repository: SongRepository,
         daily_log_repository: DailyLogRepository,
-        webclip_repository: WebclipRepository,
         video_repository: VideoRepository,
         is_debug: bool | None = None,
     ) -> None:
@@ -51,7 +55,6 @@ class CollectUpdatedPagesUsecase:
         self._task_repository = task_repository
         self._song_repository = song_repository
         self._daily_log_repository = daily_log_repository
-        self._webclip_repository = webclip_repository
         self._video_repository = video_repository
         self._twitter_api = LambdaTwitterApi()
         self.is_debug = is_debug
@@ -154,7 +157,7 @@ tags: []
 
     def _proc_webclips(self, date_range: DateRange, daily_log_id: str) -> str:
         """WebClipを処理する"""
-        webclips = self._webclip_repository.search(date_range)
+        webclips = self._search(date_range, Webclip)
 
         if len(webclips) == 0:
             return ""
@@ -169,7 +172,7 @@ tags: []
         return markdown_text
 
     def _proc_songs(self, date_range: DateRange, daily_log_id: str) -> str:
-        songs = self._song_repository.search(date_range)
+        songs = self._search(date_range, Song)
         if len(songs) == 0:
             return ""
 
@@ -184,7 +187,7 @@ tags: []
         return markdown_text
 
     def _proc_videos(self, date_range: DateRange, daily_log_id: str) -> str:
-        videos = self._video_repository.search(date_range)
+        videos = self._search(date_range, Video)
         if len(videos) == 0:
             return ""
 
@@ -275,6 +278,20 @@ tags: []
             )
         logger.info(LOG_FORMAT_APPEND_PAGE, page.get_title().text)
 
+    def _search(self, date_range: DateRange, cls: type[T]) -> list[T]:
+        builder = (
+            Builder.create()
+            .add_last_edited_at(Cond.ON_OR_AFTER, date_range.start.value.isoformat())
+            .add_last_edited_at(
+                Cond.ON_OR_BEFORE,
+                date_range.end.value.isoformat(),
+            )
+        )
+        return self.client.retrieve_pages(
+            cls=cls,
+            filter_param=builder.build(),
+        )
+
 
 if __name__ == "__main__":
     # python -m notion_api.usecase.collect_updated_pages_usecase
@@ -282,13 +299,11 @@ if __name__ == "__main__":
     from music.infrastructure.song_repository_impl import SongRepositoryImpl
     from task.infrastructure.task_repository_impl import TaskRepositoryImpl
     from video.infrastructure.video_repository_impl import VideoRepositoryImpl
-    from webclip.infrastructure.webclip_repository_impl import WebclipRepositoryImpl
 
     client = Lotion.get_instance()
     task_repository = TaskRepositoryImpl(notion_client_wrapper=client)
     song_repository = SongRepositoryImpl(client=client)
     daily_log_repository = DailyLogRepositoryImpl(client=client)
-    webclip_repository = WebclipRepositoryImpl(client=client)
     video_repository = VideoRepositoryImpl(client=client)
 
     usecase = CollectUpdatedPagesUsecase(
@@ -296,7 +311,6 @@ if __name__ == "__main__":
         task_repository=task_repository,
         song_repository=song_repository,
         daily_log_repository=daily_log_repository,
-        webclip_repository=webclip_repository,
         video_repository=video_repository,
     )
     date_range = DateRange.from_datetime(

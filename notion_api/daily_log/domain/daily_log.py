@@ -1,42 +1,50 @@
-from dataclasses import dataclass
 from datetime import date
 
+from lotion import notion_database, notion_prop
 from lotion.base_page import BasePage
+from lotion.properties import Date, Relation, Text, Title
 
 from common.domain.tag_relation import TagRelation
-from daily_log.domain.daily_goal import DailyGoal
-from daily_log.domain.daily_log_date import DailyLogDate
-from daily_log.domain.daily_retro_comment import DailyRetroComment
-from daily_log.domain.previous_relation import PreviousRelation
-from daily_log.domain.weekly_log_relation import WeeklyLogRelation
 
 
-@dataclass
+@notion_prop("名前")
+class DailyLogTitle(Title):
+    @staticmethod
+    def from_date(date_: date) -> "DailyLogTitle":
+        return DailyLogTitle.from_plain_text(text=date_.isoformat())
+
+
+@notion_prop("目標")
+class DailyGoal(Text):
+    pass
+
+
+@notion_prop("日付")
+class DailyLogDate(Date):
+    pass
+
+
+@notion_prop("ふりかえり")
+class DailyRetroComment(Text):
+    pass
+
+
+@notion_prop("前日")
+class PreviousRelation(Relation):
+    pass
+
+
+@notion_prop("💭 ウィークリーログ")
+class WeeklyLogRelation(Relation):
+    pass
+
+
+@notion_database("Daily Log")
 class DailyLog(BasePage):
-    @property
-    def weekly_log_relation(self) -> list[str]:
-        return self.get_relation(name=WeeklyLogRelation.NAME).id_list
-
-    @property
-    def previous_relation(self) -> list[str]:
-        return self.get_relation(name=PreviousRelation.NAME).id_list
-
-    @property
-    def tag_relation(self) -> list[str]:
-        return self.get_relation(name=TagRelation.NAME).id_list
-
-    @property
-    def date(self) -> date | None:
-        daily_log_date = self.get_date(name=DailyLogDate.NAME)
-        if daily_log_date is None:
-            msg = f"Date not found. page: {self.get_title_text()}"
-            raise Exception(msg)
-        return daily_log_date.start_date if daily_log_date is not None else None
-
-    @property
-    def goal(self) -> str:
-        return self.get_text(name=DailyGoal.NAME).text
-
-    @property
-    def retro_comment(self) -> str:
-        return self.get_text(name=DailyRetroComment.NAME).text
+    title: DailyLogTitle
+    date: DailyLogDate
+    retro_comment: DailyRetroComment
+    tags: TagRelation
+    previous_day: PreviousRelation
+    goal: DailyGoal
+    weekly_log: WeeklyLogRelation

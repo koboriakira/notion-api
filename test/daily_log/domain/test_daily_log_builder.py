@@ -26,11 +26,12 @@ class TestDailyLogBuilder(TestCase):
         )
 
         # Then
-        self.assertEqual(actual.date, date.fromisoformat("2024-02-13"))
-        self.assertEqual(actual.goal, "目標")
-        self.assertEqual(actual.retro_comment, "ふりかえり")
-        self.assertEqual(actual.weekly_log_relation, [weekly_log_page_id])
-        self.assertEqual(actual.previous_relation, [previous_page_id])
-        self.assertEqual(actual.tag_relation, [tag_page_id])
-        self.assertEqual(actual.cover.external_url, "https://example.com/cover.jpg")
+        self.assertEqual(actual.date.date, date.fromisoformat("2024-02-13"))
+        self.assertEqual(actual.goal.text, "目標")
+        self.assertEqual(actual.retro_comment.text, "ふりかえり")
+        self.assertEqual(actual.weekly_log.id_list, [weekly_log_page_id])
+        self.assertEqual(actual.previous_day.id_list, [previous_page_id])
+        self.assertEqual(actual.tags.id_list, [tag_page_id])
+        actual_external_url = actual.cover.external_url if actual.cover else None
+        self.assertEqual(actual_external_url, "https://example.com/cover.jpg")
         self.assertEqual(actual.block_children, [])

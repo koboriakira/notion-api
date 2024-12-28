@@ -5,13 +5,15 @@ from lotion.block import Block
 from lotion.properties import Cover, Properties, Property
 
 from common.domain.tag_relation import TagRelation
-from daily_log.domain.daily_goal import DailyGoal
-from daily_log.domain.daily_log import DailyLog
-from daily_log.domain.daily_log_date import DailyLogDate
-from daily_log.domain.daily_log_title import DailyLogTitle
-from daily_log.domain.daily_retro_comment import DailyRetroComment
-from daily_log.domain.previous_relation import PreviousRelation
-from daily_log.domain.weekly_log_relation import WeeklyLogRelation
+from daily_log.domain.daily_log import (
+    DailyGoal,
+    DailyLog,
+    DailyLogDate,
+    DailyLogTitle,
+    DailyRetroComment,
+    PreviousRelation,
+    WeeklyLogRelation,
+)
 
 
 @dataclass
@@ -28,25 +30,19 @@ class DailyLogBuilder:
         blocks = blocks or []
         properties = [
             DailyLogTitle.from_date(date_=date_),
-            DailyLogDate.create(date_=date_),
+            DailyLogDate.from_start_date(date_),
         ]
         return DailyLogBuilder(properties=properties, blocks=blocks, cover=None)
 
     def build(self) -> DailyLog:
         return DailyLog(properties=Properties(self.properties), block_children=self.blocks, cover=self.cover)
 
-    def add_daily_goal(self, daily_goal: str | DailyGoal) -> "DailyLogBuilder":
-        daily_goal = daily_goal if isinstance(daily_goal, DailyGoal) else DailyGoal.from_plain_text(text=daily_goal)
-        self.properties.append(daily_goal)
+    def add_daily_goal(self, daily_goal: str) -> "DailyLogBuilder":
+        self.properties.append(DailyGoal.from_plain_text(daily_goal))
         return self
 
-    def add_daily_retro_comment(self, daily_retro_comment: str | DailyRetroComment) -> "DailyLogBuilder":
-        daily_retro_comment = (
-            daily_retro_comment
-            if isinstance(daily_retro_comment, DailyRetroComment)
-            else DailyRetroComment.from_plain_text(text=daily_retro_comment)
-        )
-        self.properties.append(daily_retro_comment)
+    def add_daily_retro_comment(self, daily_retro_comment: str) -> "DailyLogBuilder":
+        self.properties.append(DailyRetroComment.from_plain_text(text=daily_retro_comment))
         return self
 
     def add_weekly_log_relation(self, weekly_log_page_id: str) -> "DailyLogBuilder":
@@ -57,11 +53,8 @@ class DailyLogBuilder:
         self.properties.append(PreviousRelation.from_id_list(id_list=[previous_page_id]))
         return self
 
-    def add_tag_relation(self, tag_relation: list[str] | TagRelation) -> "DailyLogBuilder":
-        tag_relation = (
-            tag_relation if isinstance(tag_relation, TagRelation) else TagRelation.from_id_list(id_list=tag_relation)
-        )
-        self.properties.append(tag_relation)
+    def add_tag_relation(self, tag_relation: list[str]) -> "DailyLogBuilder":
+        self.properties.append(TagRelation.from_id_list(tag_relation))
         return self
 
     # def add_random_cover(self) -> "DailyLogBuilder":
