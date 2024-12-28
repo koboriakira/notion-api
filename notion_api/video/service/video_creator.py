@@ -1,30 +1,26 @@
 from logging import Logger, getLogger
 
-from common.domain.tag_relation import TagRelation
 from common.infrastructure.default_scraper import DefaultScraper
 from common.service.page_creator import PageCreator
 from common.service.scrape_service.scrape_service import ScrapeService
 from common.service.tag_creator import TagCreator
 from util.tag_analyzer import TagAnalyzer
-from video.domain.video import Video
-from video.domain.video_repository import VideoRepository
-from video.infrastructure.video_repository_impl import VideoRepositoryImpl
+from video.domain.video import Video, VideoName
 
 
 class VideoCreator(PageCreator):
     def __init__(
         self,
-        video_repository: VideoRepository,
         scrape_service: ScrapeService,
         tag_creator: TagCreator,
         tag_analyzer: TagAnalyzer,
         logger: Logger | None = None,
     ) -> None:
-        self._video_repository = video_repository
         self._scrape_service = scrape_service
         self._tag_creator = tag_creator
         self._tag_analyzer = tag_analyzer
         self._logger = logger or getLogger(__name__)
+        self._lotion = Lotion.get_instance()
 
     def execute(
         self,
@@ -40,9 +36,10 @@ class VideoCreator(PageCreator):
         info_message = f"{self.__class__} execute: url={url}, title={title}, cover={cover}"
         self._logger.info(info_message)
 
-        video = self._video_repository.find_by_title(title=title)
+        video_title = VideoName.from_plain_text(title)
+        video = self._lotion.find_page(Video, video_title)
         if video is not None:
-            info_message = f"Video is already registered: {video.video_name}"
+            info_message = f"Video is already registered: {video.title.text}"
             self._logger.info(info_message)
             return video
 
@@ -56,17 +53,16 @@ class VideoCreator(PageCreator):
         # タグを解析
         tags = self._tag_analyzer.handle(text=title)
         tag_page_id_list = self._tag_creator.execute(tag=tags)
-        tag_relation = TagRelation.from_id_list(tag_page_id_list)
 
         # Videoを生成
-        video = Video.create(
+        video = Video.generate(
             title=title,
             url=url,
             cover=cover,
-            tag_relation=tag_relation,
+            tag_relation=tag_page_id_list,
         )
 
-        return self._video_repository.save(video)
+        return self._lotion.update(video)
 
 
 if __name__ == "__main__":
@@ -77,7 +73,6 @@ if __name__ == "__main__":
     default_scraper = DefaultScraper()
     scrape_service = ScrapeService(scraper=default_scraper)
     suite = VideoCreator(
-        video_repository=VideoRepositoryImpl(client=client),
         scrape_service=scrape_service,
         tag_creator=TagCreator(),
         tag_analyzer=TagAnalyzer(),

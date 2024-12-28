@@ -35,7 +35,6 @@ from usecase.task.task_util_service import TaskUtilService
 from usecase.zettlekasten.create_tag_to_zettlekasten_use_case import CreateTagToZettlekastenUseCase
 from util.openai_executer import OpenaiExecuter
 from util.tag_analyzer import TagAnalyzer
-from video.infrastructure.video_repository_impl import VideoRepositoryImpl
 from zettlekasten.infrastructure.zettlekasten_repository_impl import ZettlekastenRepositoryImpl
 
 logger = get_logger(__name__)
@@ -116,12 +115,10 @@ class Injector:
         task_repository = TaskRepositoryImpl(notion_client_wrapper=client)
         song_repository = SongRepositoryImpl(client=client)
         daily_log_repository = DailyLogRepositoryImpl(client=client)
-        video_repository = VideoRepositoryImpl(client=client)
         return CollectUpdatedPagesUsecase(
             task_repository=task_repository,
             song_repository=song_repository,
             daily_log_repository=daily_log_repository,
-            video_repository=video_repository,
             is_debug=is_debug,
         )
 

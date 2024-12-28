@@ -22,7 +22,6 @@ from util.date_range import DateRange
 from util.datetime import JST, jst_today
 from util.slack.slack_client import SlackClient
 from video.domain.video import Video
-from video.domain.video_repository import VideoRepository
 from webclip.domain.webclip import Webclip
 
 logger = get_logger(__name__)
@@ -46,7 +45,6 @@ class CollectUpdatedPagesUsecase:
         task_repository: TaskRepository,
         song_repository: SongRepository,
         daily_log_repository: DailyLogRepository,
-        video_repository: VideoRepository,
         is_debug: bool | None = None,
     ) -> None:
         self.client = Lotion.get_instance()
@@ -55,7 +53,6 @@ class CollectUpdatedPagesUsecase:
         self._task_repository = task_repository
         self._song_repository = song_repository
         self._daily_log_repository = daily_log_repository
-        self._video_repository = video_repository
         self._twitter_api = LambdaTwitterApi()
         self.is_debug = is_debug
 
@@ -197,7 +194,7 @@ tags: []
         for video in videos:
             if not self.is_debug:
                 self._append_backlink(block_id=daily_log_id, page=video)
-            markdown_text += f"\n[{video.get_title_text()}]({video.video_url})\n"
+            markdown_text += f"\n[{video.get_title_text()}]({video.url.url})\n"
             markdown_text += f"\n{video.embed_youtube_url}\n"
         return markdown_text
 
@@ -298,27 +295,24 @@ if __name__ == "__main__":
     from daily_log.infrastructure.daily_log_repository_impl import DailyLogRepositoryImpl
     from music.infrastructure.song_repository_impl import SongRepositoryImpl
     from task.infrastructure.task_repository_impl import TaskRepositoryImpl
-    from video.infrastructure.video_repository_impl import VideoRepositoryImpl
 
     client = Lotion.get_instance()
     task_repository = TaskRepositoryImpl(notion_client_wrapper=client)
     song_repository = SongRepositoryImpl(client=client)
     daily_log_repository = DailyLogRepositoryImpl(client=client)
-    video_repository = VideoRepositoryImpl(client=client)
 
     usecase = CollectUpdatedPagesUsecase(
         is_debug=True,
         task_repository=task_repository,
         song_repository=song_repository,
         daily_log_repository=daily_log_repository,
-        video_repository=video_repository,
     )
     date_range = DateRange.from_datetime(
         start=datetime(2024, 12, 14, 0, 0, 0, tzinfo=JST),
         end=datetime(2024, 12, 16, 0, 0, 0, tzinfo=JST),
     )
-    print(usecase._proc_daily_log(target_date=date_range.end.value.date()))
     # print(usecase.execute(date_range=date_range))
-    # print(usecase._proc_videos(date_range=date_range, daily_log_id="dummy"))
+    # print(usecase._proc_daily_log(target_date=date_range.end.value.date()))
+    print(usecase._proc_videos(date_range=date_range, daily_log_id="dummy"))
     # print(usecase._proc_images(date_range=date_range))
     # print(usecase._proc_tasks(date_range=date_range, daily_log_id="dummy"))
