@@ -6,7 +6,7 @@ from food.domain.food import Food, FoodName
 class AddFoodUsecase:
     def __init__(
         self,
-        lotion: Lotion,
+        lotion: Lotion | None = None,
     ) -> None:
         self._lotion = lotion or Lotion.get_instance()
 
