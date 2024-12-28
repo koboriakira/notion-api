@@ -34,7 +34,6 @@ from usecase.task.task_util_service import TaskUtilService
 from usecase.zettlekasten.create_tag_to_zettlekasten_use_case import CreateTagToZettlekastenUseCase
 from util.openai_executer import OpenaiExecuter
 from util.tag_analyzer import TagAnalyzer
-from zettlekasten.infrastructure.zettlekasten_repository_impl import ZettlekastenRepositoryImpl
 
 logger = get_logger(__name__)
 
@@ -51,10 +50,6 @@ book_repository = BookRepositoryImpl(
 class Injector:
     @staticmethod
     def get_create_tag_to_zettlekasten_use_case() -> CreateTagToZettlekastenUseCase:
-        zettlekasten_repository = ZettlekastenRepositoryImpl(
-            client=client,
-            logger=logger,
-        )
         tag_analyzer = TagAnalyzer(
             client=openai_executer,
             logger=logger,
@@ -63,7 +58,6 @@ class Injector:
             client=client,
         )
         return CreateTagToZettlekastenUseCase(
-            zettlekasten_repository=zettlekasten_repository,
             tag_analyzer=tag_analyzer,
             tag_creator=tag_creator,
             logger=logger,

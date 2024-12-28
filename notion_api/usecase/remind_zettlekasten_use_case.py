@@ -1,11 +1,11 @@
 from datetime import date, timedelta
 from enum import Enum
 
+from lotion import Lotion
 from slack_sdk import WebClient
 
 from util.datetime import jst_today
 from zettlekasten.domain.zettlekasten import Zettlekasten
-from zettlekasten.domain.zettlekasten_repository import ZettlekastenRepository
 
 
 class PastDays(Enum):
@@ -28,12 +28,12 @@ class RemindZettlekastenUseCase:
     BEFORE_7_DAYS = jst_today() - timedelta(days=7)
     BEFORE_30_DAYS = jst_today() - timedelta(days=30)
 
-    def __init__(self, zettlekasten_repository: ZettlekastenRepository, slack_client: WebClient) -> None:
-        self._zettlekasten_repository = zettlekasten_repository
+    def __init__(self, slack_client: WebClient, lotion: Lotion | None = None) -> None:
         self._slack_client = slack_client
+        self._lotion = lotion or Lotion.get_instance()
 
     def execute(self) -> None:
-        zettlekastens = self._zettlekasten_repository.fetch_all()
+        zettlekastens = self._lotion.retrieve_pages(Zettlekasten)
 
         for zettlekasten in zettlekastens:
             self._print_if_specified_date(zettlekasten)
@@ -64,13 +64,7 @@ if __name__ == "__main__":
     # python -m notion_api.usecase.remind_zettlekasten_use_case
     import os
 
-    from lotion import Lotion
-
-    from zettlekasten.infrastructure.zettlekasten_repository_impl import ZettlekastenRepositoryImpl
-
-    repository = ZettlekastenRepositoryImpl(client=Lotion.get_instance())
     use_case = RemindZettlekastenUseCase(
-        zettlekasten_repository=repository,
         slack_client=WebClient(token=os.environ["SLACK_BOT_TOKEN"]),
     )
     use_case.execute()
