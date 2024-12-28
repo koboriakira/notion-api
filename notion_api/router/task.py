@@ -43,7 +43,7 @@ def upadate_task(task_id: str, request: UpdateTaskRequest, access_token: str | N
     """タスクを取得"""
     valid_access_token(access_token)
     usecase = UpdateTaskUsecase(task_repository=task_repository)
-    task = usecase.execute(task_id=task_id, status=request.status, pomodoro_count=request.pomodoro_count)
+    task = usecase.execute(task_id=task_id, status=request.status)
     return TaskResponse(data=TaskDto.from_model(task))
 
 

@@ -5,7 +5,6 @@ from lotion import BasePage
 from lotion.block import Block
 from lotion.properties import Properties, Title
 
-from task.domain.pomodoro_start_datetime import PomodoroStartDatetime
 from task.domain.project_relation import ProjectRelation
 from task.domain.task import ToDoTask
 from task.domain.task_context import TaskContext, TaskContextTypes
@@ -25,7 +24,6 @@ class TaskFactory:
         task_kind_type: TaskKindType | None = None,
         start_date: datetime | date | None = None,
         end_date: datetime | date | None = None,
-        pomodoro_start_datetime: datetime | None = None,
         context_types: TaskContextTypes | None = None,
         project_id: str | None = None,
         status: TaskStatusType | None = None,
@@ -42,8 +40,6 @@ class TaskFactory:
             properties.append(TaskContext(context_types))
         if status is not None:
             properties.append(TaskStatus.from_status_type(status))
-        if pomodoro_start_datetime is not None:
-            properties.append(PomodoroStartDatetime(pomodoro_start_datetime))
         if project_id is not None:
             properties.append(ProjectRelation.from_id(project_id))
         return ToDoTask(properties=Properties(values=properties), block_children=blocks)

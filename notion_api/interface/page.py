@@ -1,5 +1,4 @@
 from custom_logger import get_logger
-from usecase.add_pomodoro_count_usecase import AddPomodoroCountUsecase
 from usecase.append_block import AppendBlockUsecase
 from usecase.append_feeling_usecase import AppendFeelingUsecase
 from usecase.update_status_usecase import UpdateStatusUsecase
@@ -13,11 +12,6 @@ def append_feeling(
 ) -> None:
     usecase = AppendFeelingUsecase()
     usecase.execute(page_id=page_id, value=value)
-
-
-def add_pomodoro_count(page_id: str) -> None:
-    usecase = AddPomodoroCountUsecase()
-    usecase.execute(page_id=page_id)
 
 
 def update_status(

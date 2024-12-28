@@ -5,7 +5,7 @@ from common.domain.external_image import ExternalImage
 from common.service.image.external_image_service import ExternalImageService
 from custom_logger import get_logger
 from interface import page
-from router.request import AddFeelingRequest, AddPomodoroCountRequest, AppendTextBlockRequest, UpdateStatusRequest
+from router.request import AddFeelingRequest, AppendTextBlockRequest, UpdateStatusRequest
 from router.request.page_request import AppendImageBlockRequest
 from router.response import BaseResponse
 from usecase.service.page_remover import PageRemover
@@ -24,15 +24,6 @@ def append_feeling(
     valid_access_token(access_token)
     logger.debug(request)
     page.append_feeling(page_id=request.page_id, value=request.value)
-    return BaseResponse()
-
-
-@router.post("/pomodoro-count")
-def add_pomodoro_count(request: AddPomodoroCountRequest, access_token: str | None = Header(None)) -> BaseResponse:
-    valid_access_token(access_token)
-    logger.debug(request)
-    # 一応requestにカウントを入れているが、現状はただ+1するだけとする
-    page.add_pomodoro_count(page_id=request.page_id)
     return BaseResponse()
 
 

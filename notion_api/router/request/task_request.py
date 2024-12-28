@@ -22,5 +22,5 @@ class CreateNewTaskRequest(BaseModel):
 
 
 class UpdateTaskRequest(BaseModel):
-    pomodoro_count: int
+    pomodoro_count: int  # FIXME: 消す
     status: str | None = None

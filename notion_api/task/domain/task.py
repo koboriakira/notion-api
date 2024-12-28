@@ -6,8 +6,6 @@ from lotion.block.rich_text import RichTextBuilder
 from lotion.properties import Title
 
 from common.value.database_type import DatabaseType
-from task.domain.pomodoro_counter import PomodoroCounter
-from task.domain.pomodoro_start_datetime import PomodoroStartDatetime
 from task.domain.project_relation import ProjectRelation
 from task.domain.task_context import TaskContext, TaskContextType
 from task.domain.task_kind import TaskKind, TaskKindType
@@ -27,6 +25,10 @@ class TaskName(Title):
     pass
 
 
+@notion_prop("ステータス")
+@notion_prop("タスク種別")
+@notion_prop("プロジェクト")
+@notion_prop("実施日")
 @notion_database(DatabaseType.TASK.value)
 class ToDoTask(BasePage):
     task_name: TaskName
@@ -53,12 +55,6 @@ class ToDoTask(BasePage):
         self.properties = properties
         return self
 
-    def update_pomodoro_count(self, number: int) -> "ToDoTask":
-        pomodoro_counter = PomodoroCounter(number=number)
-        pomodoro_start_datetime = PomodoroStartDatetime(jst_now())
-        self.properties = self.properties.append_property(pomodoro_counter).append_property(pomodoro_start_datetime)
-        return self
-
     def do_tomorrow(self) -> "ToDoTask":
         if self.start_date is not None:
             date_ = self.start_date.date() if isinstance(self.start_date, datetime) else self.start_date
@@ -69,11 +65,7 @@ class ToDoTask(BasePage):
     def start(self) -> "ToDoTask":
         start = jst_now()
         end = start + timedelta(minutes=30)
-        return (
-            self.update_status(TaskStatusType.IN_PROGRESS)
-            .update_pomodoro_count(number=self.pomodoro_count + 1)
-            .update_start_datetime(start, end)
-        )
+        return self.update_status(TaskStatusType.IN_PROGRESS).update_start_datetime(start, end)
 
     def complete(self) -> "ToDoTask":
         return self.update_status(TaskStatusType.DONE).update_start_end_datetime(end=jst_now())
@@ -137,13 +129,6 @@ class ToDoTask(BasePage):
         return self.kind == TaskKindType.SCHEDULE
 
     @property
-    def pomodoro_count(self) -> int:
-        pomodoro_counter = self.get_number(name=PomodoroCounter.NAME)
-        if pomodoro_counter is None:
-            return 0
-        return pomodoro_counter.number or 0
-
-    @property
     def project_id_list(self) -> list[str]:
         return self.get_relation(name=ProjectRelation.NAME).id_list
 
@@ -164,13 +149,6 @@ class ToDoTask(BasePage):
             start_datetime=self.start_datetime,
             kind=self.kind,
         ).value
-
-    @property
-    def pomodoro_start_datetime(self) -> datetime | None:
-        pomodoro_start_datetime = self.get_date(name=PomodoroStartDatetime.NAME)
-        if pomodoro_start_datetime is None or pomodoro_start_datetime.start is None:
-            return None
-        return convert_to_date_or_datetime(value=pomodoro_start_datetime.start, cls=datetime)
 
     def is_kind_trash(self) -> bool:
         return self.kind == TaskKindType.TRASH
