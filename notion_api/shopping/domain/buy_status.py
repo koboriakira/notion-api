@@ -1,7 +1,5 @@
 from enum import Enum
 
-from lotion.properties import Status
-
 
 class BuyStatusType(Enum):
     """
@@ -30,18 +28,3 @@ class BuyStatusType(Enum):
 
     def is_undone(self) -> bool:
         return self == BuyStatusType.UNDONE
-
-
-class BuyStatus(Status):
-    NAME = "購入済"
-
-    def __init__(self, status_type: BuyStatusType) -> None:
-        super().__init__(self.NAME, status_type.value)
-
-    @classmethod
-    def from_status_type(cls, status_type: BuyStatusType) -> "BuyStatus":
-        return cls(status_type=status_type)
-
-    @classmethod
-    def undone(cls) -> "BuyStatus":
-        return cls(status_type=BuyStatusType.UNDONE)

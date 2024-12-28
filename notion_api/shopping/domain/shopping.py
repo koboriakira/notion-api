@@ -1,55 +1,64 @@
-from dataclasses import dataclass
-from datetime import date, timedelta
+from datetime import timedelta
 
+from lotion import notion_database, notion_prop
 from lotion.base_page import BasePage
-from shopping.domain.buy_status import BuyStatus, BuyStatusType
-from shopping.domain.last_purchase_date import LastPurchaseDate
-from shopping.domain.purchase_interval import PurchaseInterval
-from shopping.domain.shopping_tag import ShoppingTagType, ShoppingTagTypes
-from shopping.domain.to_buy_flag import ToBuyFlag
-from util.datetime import convert_to_date_or_datetime, jst_today
+from lotion.properties import Checkbox, Date, MultiSelect, Number, Status, Title
+
+from common.value.database_type import DatabaseType
+from shopping.domain.buy_status import BuyStatusType
+from util.datetime import jst_today
 
 
-@dataclass
+@notion_prop("名前")
+class ItemName(Title):
+    pass
+
+
+@notion_prop("購入済")
+class BuyStatus(Status):
+    @staticmethod
+    def from_status_type(status_type: BuyStatusType) -> "BuyStatus":
+        return BuyStatus.from_status_name(status_type.name)
+
+
+@notion_prop("最終購入日")
+class LastPurchaseDate(Date):
+    pass
+
+
+@notion_prop("購入間隔")
+class PurchaseInterval(Number):
+    pass
+
+
+@notion_prop("タグ")
+class ShoppingTag(MultiSelect):
+    pass
+
+
+@notion_prop("買う")
+class ToBuyFlag(Checkbox):
+    pass
+
+
+@notion_database(DatabaseType.SHOPPING.value)
 class Shopping(BasePage):
+    name: ItemName
+    status: BuyStatus
+    last_purchase_date: LastPurchaseDate
+    purchase_interval: PurchaseInterval
+    tags: ShoppingTag
+    to_buy: ToBuyFlag
+
+    def is_bought(self) -> bool:
+        return self._get_buy_status() == BuyStatusType.DONE
+
+    def _get_buy_status(self) -> BuyStatusType:
+        return BuyStatusType(self.status.status_name)
+
     def reset_buy_status_type(self) -> "Shopping":
-        self.properties = self.properties.append_property(BuyStatus.undone())
+        self.properties = self.properties.append_property(BuyStatus.from_status_type(BuyStatusType.UNDONE))
         self.properties = self.properties.append_property(ToBuyFlag.false())
         yesterday = jst_today() - timedelta(days=1)
-        self.properties = self.properties.append_property(LastPurchaseDate.create(yesterday))
+        self.properties = self.properties.append_property(LastPurchaseDate.from_start_date(yesterday))
         return self
-
-    @property
-    def name(self) -> str:
-        return self.get_title_text()
-
-    @property
-    def buy_status(self) -> BuyStatusType:
-        status_name = self.get_status(name=BuyStatus.NAME).status_name
-        return BuyStatusType.from_text(status_name)
-
-    @property
-    def purchase_interval(self) -> int:
-        purchase_interval = self.get_number(name=PurchaseInterval.NAME)
-        if purchase_interval is None:
-            return 0
-        return purchase_interval.number or 0
-
-    @property
-    def tag(self) -> ShoppingTagTypes:
-        values = self.get_multi_select(name="タグ").values
-        if not values or len(values) == 0:
-            return ShoppingTagTypes(values=[])
-        tag_list = [ShoppingTagType.from_text(text=value.name) for value in values]
-        return ShoppingTagTypes(values=tag_list)
-
-    @property
-    def to_buy_flag(self) -> bool:
-        return self.get_checkbox(name=ToBuyFlag.NAME).checked
-
-    @property
-    def last_purchase_date(self) -> date | None:
-        last_purchase_date = self.get_date(name=LastPurchaseDate.NAME)
-        if last_purchase_date is None:
-            return None
-        return convert_to_date_or_datetime(last_purchase_date.start)

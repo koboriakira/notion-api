@@ -58,14 +58,6 @@ class ShoppingTagTypes:
         return [MultiSelectElement(**kind.__dict__()) for kind in self.values]
 
 
-class ShoppingTag(MultiSelect):
-    NAME = "タグ"
-
-    def __init__(self, kind_types: ShoppingTagTypes) -> None:
-        super().__init__(
-            name=self.NAME,
-            values=kind_types.to_multi_select_elements(),
-        )
 
 
 if __name__ == "__main__":

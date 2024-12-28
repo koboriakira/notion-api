@@ -4,7 +4,6 @@ from datetime import timedelta
 from lotion import Lotion
 
 from custom_logger import get_logger
-from shopping.infrastructure.repository_impl import ShoppingRepositoryImpl
 from task.infrastructure.task_repository_impl import TaskRepositoryImpl
 from usecase.clean_empty_title_page import CleanEmptyTitlePageUsecase
 from usecase.shopping.reset_shopping_list_usecase import ResetShoppingListUseCase
@@ -19,8 +18,7 @@ client = Lotion.get_instance(logger=logger)
 clean_empty_title_page_usecase = CleanEmptyTitlePageUsecase(client=client, logger=logger)
 task_repository = TaskRepositoryImpl(notion_client_wrapper=client)
 maintain_tasks_usecase = MaintainTasksUsecase(task_repository=task_repository)
-shopping_repository = ShoppingRepositoryImpl(client)
-reset_shopping_list_usecase = ResetShoppingListUseCase(shopping_repository)
+reset_shopping_list_usecase = ResetShoppingListUseCase()
 start_task_usecase = StartTaskUsecase(task_repository=task_repository)
 
 # ログ

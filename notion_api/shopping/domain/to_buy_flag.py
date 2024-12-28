@@ -1,8 +1,7 @@
 from lotion.properties import Checkbox
 
 
-class ToBuyFlag(Checkbox):
-    NAME = "買う"
+
 
     def __init__(self, _checked: bool | None = None) -> None:
         super().__init__(
