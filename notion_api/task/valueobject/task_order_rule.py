@@ -10,7 +10,6 @@ class TaskOrderRule:
     def calculate(
         cls,
         start_datetime: datetime | date | None,
-        due_datetime: datetime | date | None,
         kind: TaskKindType | None,
     ) -> TaskOrder:
         """
@@ -23,12 +22,12 @@ class TaskOrderRule:
         num = 1
 
         # 開始時刻もしくは締め切り時刻が現時刻を過ぎている場合は重要とする
-        if _is_run_over(start_datetime) or _is_run_over(due_datetime):
+        if _is_run_over(start_datetime):
             return TaskOrder.important(num)
         num += 1
 
         # 開始時刻もしくは締め切り時刻が現時刻から30分以内の場合は重要とする
-        if _within_minutes(start_datetime, 30) or _within_minutes(due_datetime, 30):
+        if _within_minutes(start_datetime, 30):
             return TaskOrder.important(num)
 
         # ルーティンは重要度最低とする

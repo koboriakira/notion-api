@@ -7,7 +7,6 @@ from lotion.block.rich_text import RichTextBuilder
 from lotion.properties import Title
 
 from common.value.database_type import DatabaseType
-from task.domain.due_date import DueDate
 from task.domain.pomodoro_counter import PomodoroCounter
 from task.domain.pomodoro_start_datetime import PomodoroStartDatetime
 from task.domain.project_relation import ProjectRelation
@@ -67,9 +66,6 @@ class ToDoTask(BasePage):
             date_ = self.start_date.date() if isinstance(self.start_date, datetime) else self.start_date
             start_date = TaskStartDate.create(date_ + timedelta(days=1))
             self.properties = self.properties.append_property(start_date)
-        if self.due_date is not None:
-            due_date = DueDate.create(self.due_date + timedelta(days=1))
-            self.properties = self.properties.append_property(due_date)
         return self
 
     def start(self) -> "ToDoTask":
@@ -133,13 +129,6 @@ class ToDoTask(BasePage):
         return convert_to_date_or_datetime(value=start_date_model.end, cls=datetime)
 
     @property
-    def due_date(self) -> date | datetime | None:
-        due_date_model = self.get_date(name=DueDate.NAME)
-        if due_date_model is None or due_date_model.start is None:
-            return None
-        return convert_to_date_or_datetime(value=due_date_model.start)
-
-    @property
     def kind(self) -> TaskKindType | None:
         kind_model = self.get_select(name=TaskKind.NAME)
         if kind_model.selected_name == "":
@@ -175,7 +164,6 @@ class ToDoTask(BasePage):
     def order(self) -> int:
         return TaskOrderRule.calculate(
             start_datetime=self.start_datetime,
-            due_datetime=self.due_date,
             kind=self.kind,
         ).value
 

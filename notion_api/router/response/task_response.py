@@ -25,9 +25,7 @@ class Task(BaseNotionPageModel):
     task_kind: str | None  # FIXME: TaskKindTypeにする
     start_date: datetime | date | None
     pomodoro_count: int
-    pomodoro_start_datetime: datetime | None
     end_date: datetime | date | None  # FIXME: 消す
-    due_date: datetime | date | None
     order: int
     feeling: str | None  # FIXME: 消す
 
@@ -37,15 +35,13 @@ class Task(BaseNotionPageModel):
             id=model.id,
             url=model.url,
             title=model.get_title_text(),
-            created_at=model.created_time,
-            updated_at=model.last_edited_time,
+            created_at=model.created_time,  # type: ignore
+            updated_at=model.last_edited_time,  # type: ignore
             status=model.status,
             pomodoro_count=model.pomodoro_count,
-            pomodoro_start_datetime=model.pomodoro_start_datetime,
             task_kind=model.kind.value if model.kind is not None else None,
             start_date=convert_to_date_if_zero_time(model.start_date),
             end_date=None,
-            due_date=convert_to_date_if_zero_time(model.due_date),
             order=model.order,
             feeling="",
             text=model.get_slack_text_in_block_children(),

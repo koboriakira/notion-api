@@ -5,7 +5,6 @@ from lotion import BasePage
 from lotion.block import Block
 from lotion.properties import Properties, Text, Title
 
-from task.domain.due_date import DueDate
 from task.domain.important_flag import ImportantFlag
 from task.domain.pomodoro_start_datetime import PomodoroStartDatetime
 from task.domain.project_relation import ProjectRelation
@@ -29,7 +28,6 @@ class TaskFactory:
         task_kind_type: TaskKindType | None = None,
         start_date: datetime | date | None = None,
         end_date: datetime | date | None = None,
-        due_date: datetime | date | None = None,
         pomodoro_start_datetime: datetime | None = None,
         context_types: TaskContextTypes | None = None,
         project_id: str | None = None,
@@ -43,8 +41,6 @@ class TaskFactory:
             properties.append(TaskKind.create(task_kind_type))
         if start_date is not None:
             properties.append(TaskStartDate.create(start_date, end_date))
-        if due_date is not None:
-            properties.append(DueDate.create(due_date))
         if context_types is not None:
             properties.append(TaskContext(context_types))
         if status is not None:
