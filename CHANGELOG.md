@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.2](https://github.com/koboriakira/notion-api/compare/v2.5.1...v2.5.2) (2024-12-28)
+
+
+### Bug Fixes
+
+* Rename date conversion functions for clarity and improve type handling ([a9e35a9](https://github.com/koboriakira/notion-api/commit/a9e35a9719dfab80648b9171b7a68aa3eeb82c63))
+
 ## [2.5.1](https://github.com/koboriakira/notion-api/compare/v2.5.0...v2.5.1) (2024-12-28)
 
 
