@@ -1,6 +1,6 @@
 from lotion import Lotion
 
-from food.domain.food import Food, FoodName
+from notion_databases.food import Food, FoodName
 
 
 class AddFoodUsecase:
