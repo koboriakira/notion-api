@@ -1,9 +1,12 @@
 from datetime import datetime, timedelta
 
 from lotion import Lotion
+from lotion.properties import Property
 
+from common.value.database_type import DatabaseType
 from custom_logger import get_logger
-from goal.domain.goal_repository import GoalRepository
+from goal.domain.goal import Goal
+from project.domain.project import Project
 from project.domain.project_repository import ProjectRepository
 from task.domain.task_repository import TaskRepository
 from task.domain.task_status import TaskStatusType
@@ -19,11 +22,11 @@ class MoveTasksToBackupUsecase:
         self,
         task_repository: TaskRepository,
         project_repository: ProjectRepository,
-        goal_repository: GoalRepository,
+        lotion: Lotion | None = None,
     ) -> None:
         self._task_repository = task_repository
         self._project_repository = project_repository
-        self._goal_repository = goal_repository
+        self._lotion = lotion or Lotion.get_instance()
 
     def execute(self) -> None:
         target_datetime = jst_now() - timedelta(days=14)
@@ -69,10 +72,10 @@ class MoveTasksToBackupUsecase:
 
     def _proc_goals(self, target_datetime: datetime) -> None:
         # まず全てのゴールを集める
-        goals = self._goal_repository.fetch_all()
+        goals = self._lotion.retrieve_pages(Goal)
 
         # Doneステータスのみに絞る
-        goals = [t for t in goals if t.goal_status.is_done()]
+        goals = [t for t in goals if t.is_done()]
 
         # 直近更新されたものは無視するようにする
         goals = [
@@ -83,19 +86,34 @@ class MoveTasksToBackupUsecase:
 
         # バックアップ用のデータベースに移動
         for goal in goals:
-            self._goal_repository.archive(goal)
-            print(goal.get_title().text + "をバックアップに移動しました。")
+            self._archive_goal(goal)
+            print(goal.title.text + "をバックアップに移動しました。")
 
     def _trash_projects(self) -> None:
         """Trashステータスのプロジェクトを削除する"""
-        projects = self._project_repository.fetch_all()
+        projects = self._lotion.retrieve_pages(Project)
         projects = [t for t in projects if t.is_trash()]
         for project in projects:
             tasks = self._task_repository.search(project_id=project.id)
             for task in tasks:
                 self._task_repository.delete(task)
             self._project_repository.remove(project)
-            print(project.get_title().text + "を削除しました。")
+            print(project.title.text + "を削除しました。")
+
+    def _archive_goal(self, goal: Goal) -> None:
+        properties: list[Property] = []
+        properties.append(goal.title)
+        properties.append(goal.vision_relation)
+
+        blocks = self._lotion.retrieve_page(page_id=goal.id, cls=Goal).block_children
+
+        self._lotion.create_page_in_database(
+            database_id=DatabaseType.GOAL_BK.value,
+            properties=properties,
+            blocks=blocks,
+        )
+
+        self._lotion.remove_page(goal.id)
 
 
 def _is_between(target: datetime, start: datetime, end: datetime) -> bool:
@@ -104,7 +122,6 @@ def _is_between(target: datetime, start: datetime, end: datetime) -> bool:
 
 if __name__ == "__main__":
     # python -m notion_api.usecase.move_tasks_to_backup_usecase
-    from goal.infrastructure.goal_repository_impl import GoalRepositoryImpl
     from project.infrastructure.project_repository_impl import ProjectRepositoryImpl
     from task.infrastructure.task_repository_impl import TaskRepositoryImpl
 
@@ -112,7 +129,6 @@ if __name__ == "__main__":
     usecase = MoveTasksToBackupUsecase(
         task_repository=TaskRepositoryImpl(),
         project_repository=ProjectRepositoryImpl(client=client),
-        goal_repository=GoalRepositoryImpl(client=client),
     )
     usecase.execute()
     # usecase._proc_goals(target_datetime=jst_now() - timedelta(days=14))

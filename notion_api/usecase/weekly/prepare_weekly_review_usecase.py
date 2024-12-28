@@ -6,7 +6,7 @@ from lotion.block.rich_text import RichTextBuilder
 from lotion.properties import Title
 
 from custom_logger import get_logger
-from goal.domain.goal_repository import GoalRepository
+from goal.domain.goal import Goal
 from project.domain.project import Project
 from project.domain.project_repository import ProjectRepository
 from project.domain.project_status import ProjectStatusType
@@ -22,12 +22,10 @@ class PrepareWeeklyReviewUsecase:
         self,
         project_repository: ProjectRepository,
         task_repository: TaskRepository,
-        goal_repository: GoalRepository,
         logger: Logger | None = None,
     ) -> None:
         self._project_repository = project_repository
         self._task_repository = task_repository
-        self._goal_repository = goal_repository
         self._lotion = Lotion.get_instance()
 
         self._logger = logger or get_logger(__name__)
@@ -84,7 +82,7 @@ class PrepareWeeklyReviewUsecase:
 
     def _generate_projects_as_goal(self, projects: list[Project]) -> dict[str, list[Project]]:
         """目標ごとのプロジェクトを整理する"""
-        goals = self._goal_repository.fetch_all()
+        goals = self._lotion.retrieve_pages(Goal)
         projects_as_goal: dict[str, list[Project]] = {}
         for g in goals:
             projects_as_goal[g.id] = []
@@ -126,17 +124,14 @@ class PrepareWeeklyReviewUsecase:
 
 if __name__ == "__main__":
     # python -m notion_api.usecase.weekly.prepare_weekly_review_usecase
-    from goal.infrastructure.goal_repository_impl import GoalRepositoryImpl
     from project.infrastructure.project_repository_impl import ProjectRepositoryImpl
     from task.infrastructure.task_repository_impl import TaskRepositoryImpl
 
     lotion = Lotion.get_instance()
     project_repository = ProjectRepositoryImpl()
     task_repository = TaskRepositoryImpl()
-    goal_repository = GoalRepositoryImpl(client=lotion)
     usecase = PrepareWeeklyReviewUsecase(
         project_repository=project_repository,
         task_repository=task_repository,
-        goal_repository=goal_repository,
     )
     usecase.execute()

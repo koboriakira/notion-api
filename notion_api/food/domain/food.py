@@ -1,21 +1,26 @@
-from dataclasses import dataclass
-
+from lotion import notion_database, notion_prop
 from lotion.base_page import BasePage
 from lotion.block import Block
-from lotion.properties import Cover, Properties, Property, Title
+from lotion.properties import Cover, Property, Title
+
+from common.value.database_type import DatabaseType
 
 
-@dataclass
+@notion_prop("名前")
+class FoodName(Title):
+    pass
+
+
+@notion_database(DatabaseType.FOOD.value)
 class Food(BasePage):
+    name: FoodName
+
     @staticmethod
-    def create(title: str, blocks: list[Block] | None = None, cover: str | Cover | None = None) -> "Food":
+    def generate(title: str, blocks: list[Block] | None = None, cover: str | None = None) -> "Food":
         blocks = blocks or []
-        properties: list[Property] = [
-            Title.from_plain_text(text=title),
-        ]
-        properties_ = Properties(properties)
-        return Food(properties=properties_, block_children=blocks)
-        # if cover is None:
-        #     return Food(properties=Properties(values=properties), block_children=blocks)
-        # cover = cover if isinstance(cover, Cover) else Cover.from_external_url(cover)
-        # return Food(properties=Properties(values=properties), block_children=blocks, cover=cover)
+        properties: list[Property] = []
+        properties.append(FoodName.from_plain_text(title))
+
+        if cover is None:
+            return Food.create(properties, blocks)
+        return Food.create(properties, blocks, cover=Cover.from_external_url(cover))

@@ -1,9 +1,9 @@
 from logging import Logger, getLogger
 
+from lotion import Lotion
+
 from common.value.slack_channel_type import ChannelType
 from goal.domain.goal import Goal
-from goal.domain.goal_repository import GoalRepository
-from lotion import Lotion
 from util.datetime import jst_today
 from util.slack.slack_client import SlackClient
 
@@ -11,23 +11,23 @@ from util.slack.slack_client import SlackClient
 class GoalHealthcheckUseCase:
     def __init__(
         self,
-        goal_repository: GoalRepository,
         slack_client: SlackClient,
         logger: Logger | None = None,
+        lotion: Lotion | None = None,
     ) -> None:
-        self._goal_repository = goal_repository
         self._slack_client = slack_client
         self._logger = logger or getLogger(__name__)
+        self._lotion = lotion or Lotion.get_instance()
 
     def execute(self) -> None:
-        goals = self._goal_repository.fetch_all()
+        goals = self._lotion.retrieve_pages(Goal)
         self._slack_client.chat_postMessage("目標のヘルスチェックを開始します")
 
         # Inboxステータスは一覧だけ通知する
-        inbox_goals = [goal for goal in goals if goal.goal_status.is_inbox()]
+        inbox_goals = [goal for goal in goals if goal.is_inbox()]
         self._execute_inbox_goal(inbox_goals)
 
-        inprogress_goals = [goal for goal in goals if goal.goal_status.is_in_progress()]
+        inprogress_goals = [goal for goal in goals if goal.is_in_progress()]
         for goal in inprogress_goals:
             self._execute_goal(goal)
 
@@ -38,7 +38,7 @@ class GoalHealthcheckUseCase:
         # スケジュールのチェック
         if goal is None or goal.due_date is None:
             message_list.append("期限を設定してください")
-        elif goal.due_date <= jst_today():
+        elif goal.due_date.date <= jst_today():
             message_list.append("期限を過ぎているため、期限を再設定するか、目標の達成度合いを振り返ってください")
         self._slack_client.chat_postMessage("\n".join(message_list))
 
@@ -54,17 +54,10 @@ if __name__ == "__main__":
     # python -m notion_api.usecase.goal.goal_healthcheck_use_case
     import logging
 
-    from goal.infrastructure.goal_repository_impl import GoalRepositoryImpl
-
     logging.basicConfig(level=logging.INFO)
-    goal_repository = GoalRepositoryImpl(
-        client=Lotion.get_instance(),
-        logger=logging.getLogger(__name__),
-    )
     # slack_client = MockSlackClient()
     slack_client = SlackClient.bot(ChannelType.TEST, thread_ts=None)
     use_case = GoalHealthcheckUseCase(
-        goal_repository=goal_repository,
         slack_client=slack_client,
         logger=logging.getLogger(__name__),
     )

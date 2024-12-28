@@ -1,23 +1,24 @@
-from food.domain.food import Food
-from food.domain.food_repository import FoodRepository
+from lotion import Lotion
+
+from food.domain.food import Food, FoodName
 
 
 class AddFoodUsecase:
     def __init__(
         self,
-        food_repository: FoodRepository,
+        lotion: Lotion,
     ) -> None:
-        self._food_repository = food_repository
+        self._lotion = lotion or Lotion.get_instance()
 
     def execute(
         self,
         title: str,
     ) -> Food:
         # 情報を取得
-        food = self._food_repository.find_by_title(title=title)
+        food = self._lotion.find_page(Food, FoodName.from_plain_text(title))
         if food is not None:
             return food
 
         # ページを生成、保存
-        food = Food.create(title=title)
-        return self._food_repository.save(food=food)
+        food = Food.generate(title=title)
+        return self._lotion.update(food)

@@ -1,7 +1,5 @@
 from enum import Enum
 
-from lotion.properties import Status
-
 
 class GoalStatusType(Enum):
     INBOX = "Inbox"
@@ -32,14 +30,3 @@ class GoalStatusType(Enum):
 
     def is_in_progress(self) -> bool:
         return self == GoalStatusType.IN_PROGRESS
-
-
-class GoalStatus(Status):
-    NAME = "ステータス"
-
-    def __init__(self, status_type: GoalStatusType) -> None:
-        super().__init__(self.NAME, status_type.value)
-
-    @staticmethod
-    def from_status_type(status_type: GoalStatusType) -> "GoalStatus":
-        return GoalStatus(status_type=status_type)
