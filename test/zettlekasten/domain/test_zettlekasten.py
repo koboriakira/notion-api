@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from notion_api.zettlekasten.domain.zettlekasten import Zettlekasten
+from notion_databases.zettlekasten import Zettlekasten
 
 
 class TestZettlekasten(TestCase):

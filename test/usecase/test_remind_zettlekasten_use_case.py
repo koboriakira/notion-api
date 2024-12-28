@@ -4,7 +4,7 @@ from unittest.mock import Mock
 
 from lotion import Lotion
 from notion_api.usecase.remind_zettlekasten_use_case import RemindZettlekastenUseCase
-from notion_api.zettlekasten.domain.zettlekasten import Zettlekasten
+from notion_databases.zettlekasten import Zettlekasten
 from slack_sdk import WebClient
 
 

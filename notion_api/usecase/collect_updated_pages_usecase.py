@@ -25,7 +25,7 @@ from util.datetime import JST, jst_today
 from util.slack.slack_client import SlackClient
 from video.domain.video import Video
 from webclip.domain.webclip import Webclip
-from zettlekasten.domain.zettlekasten import Zettlekasten
+from notion_databases.zettlekasten import Zettlekasten
 
 logger = get_logger(__name__)
 

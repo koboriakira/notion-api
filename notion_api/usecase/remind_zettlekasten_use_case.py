@@ -5,7 +5,7 @@ from lotion import Lotion
 from slack_sdk import WebClient
 
 from util.datetime import jst_today
-from zettlekasten.domain.zettlekasten import Zettlekasten
+from notion_databases.zettlekasten import Zettlekasten
 
 
 class PastDays(Enum):
