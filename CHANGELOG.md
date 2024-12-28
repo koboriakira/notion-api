@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.5.0](https://github.com/koboriakira/notion-api/compare/v2.4.0...v2.5.0) (2024-12-28)
+
+
+### Features
+
+* Add complete task functionality to webhook handling ([71e43d5](https://github.com/koboriakira/notion-api/commit/71e43d524d16126f4deee7fc289288388ff60cba))
+* Add postpone task functionality and refactor webhook handling ([708d1ca](https://github.com/koboriakira/notion-api/commit/708d1ca78105715fe9da4f723cfdaf77e2a16245))
+
+
+### Bug Fixes
+
+* 削除したメソッドを利用しない ([d717504](https://github.com/koboriakira/notion-api/commit/d717504d24b375256ad5a200512e530e8401aad6))
+* 削除漏れを対応 ([5567093](https://github.com/koboriakira/notion-api/commit/55670932235e52bb6dbd0cdc36030077fe1893c2))
+
 ## [2.4.0](https://github.com/koboriakira/notion-api/compare/v2.3.0...v2.4.0) (2024-12-27)
 
 
