@@ -38,7 +38,7 @@ class SyncExternalCalendarUsecase:
             if not task.start_datetime:
                 continue
             if task.start_datetime.date() == date_:
-                print(f"Remove scheduled task: {task.title}")
+                print(f"Remove scheduled task: {task.get_title_text()}")
                 self._task_repository.delete(task)
 
     def _sub_execute(self, date_: date) -> list[Task]:
@@ -49,7 +49,7 @@ class SyncExternalCalendarUsecase:
 
         tasks: list[Task] = []
         for event in events.value:
-            title = f"【{event.category.value}】{event.title}"
+            title = f"【{event.category.value}】{event.get_title_text()}"
             task = self._task_repository.save(
                 TaskFactory.create_scheduled_task(
                     title=title,
@@ -57,7 +57,7 @@ class SyncExternalCalendarUsecase:
                     end_date=event.end,
                 ),
             )
-            print(f"Create scheduled task: {task.title}")
+            print(f"Create scheduled task: {task.get_title_text()}")
             tasks.append(task)
         return tasks
 

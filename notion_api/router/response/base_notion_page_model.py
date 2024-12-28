@@ -9,4 +9,4 @@ class BaseNotionPageModel(BaseModel):
     title: str
     created_at: DateTime
     updated_at: DateTime
-    text: str | None
+    text: str | None = None

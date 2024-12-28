@@ -76,7 +76,9 @@ class AiAdviceUsecase:
             for task in behind_current_tasks:
                 if task.start_datetime is not None:
                     time_ = (start_datetime - task.start_datetime).total_seconds() / 60
-                    current_tasks_description.append(f"「{task.title}」は開始してから{int(time_)}秒経過しています")
+                    current_tasks_description.append(
+                        f"「{task.get_title_text()}」は開始してから{int(time_)}秒経過しています"
+                    )
 
         if len(current_tasks_description) > 0:
             text += "\n".join(current_tasks_description)
@@ -149,7 +151,7 @@ class AiAdviceUsecase:
 def to_dict_list(tasks: list[Task]) -> list[dict]:
     return [
         {
-            "title": t.title,
+            "title": t.get_title_text(),
             "start": t.start_datetime.isoformat() if t.start_datetime is not None else "",
             "end": t.end_datetime.isoformat() if t.end_datetime is not None else "",
             "status": t.status.value,

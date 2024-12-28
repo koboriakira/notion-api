@@ -25,7 +25,7 @@ class TestRecipeBuilder(TestCase):
         )
 
         # Then
-        self.assertEqual(recipe.title, "ブロッコリーチーズガレット")
+        self.assertEqual(recipe.get_title_text(), "ブロッコリーチーズガレット")
         self.assertEqual(recipe.reference_url, "https://twitter.com/dietmenuplan/status/1690241946542030848")
         self.assertEqual(recipe.recipe_kind, recipe_kind)
         self.assertEqual(recipe.meal_kind, meal_kinds)

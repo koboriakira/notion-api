@@ -27,14 +27,14 @@ class AccountBook(BaseNotionPageModel):
         return AccountBook(
             id=entity.id,
             url=entity.url,
-            title=entity.title,
-            created_at=entity.created_time.start_datetime if entity.created_time else jst_now(),
-            updated_at=entity.last_edited_time.start_datetime if entity.last_edited_time else jst_now(),
+            title=entity.get_title_text(),
+            created_at=entity.created_time if entity.created_time else jst_now(),
+            updated_at=entity.last_edited_time if entity.last_edited_time else jst_now(),
         )
 
 
 class AccountBookResponse(BaseResponse):
-    data: AccountBook | None
+    data: AccountBook | None = None
 
 
 class AccountBooksResponse(BaseResponse):
