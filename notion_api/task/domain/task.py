@@ -118,7 +118,8 @@ class ToDoTask(BasePage):
     def start_datetime(self) -> datetime | None:
         if self.task_date.start is None:
             return None
-        return convert_to_date_or_datetime(value=self.task_date.start, cls=datetime)
+        result = convert_to_date_or_datetime(value=self.task_date.start, cls=datetime)
+        return result
 
     @property
     def start_date(self) -> date | datetime | None:

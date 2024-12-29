@@ -80,7 +80,7 @@ def _convert_datetime(value: str, cls: type[D] | None) -> date | datetime:
         if not __is_datatime(_datetime):
             return _datetime.date()
         return _datetime
-    if cls.__name__ == "date" or not __is_datatime(_datetime):
+    if cls.__name__ == "date":
         return _datetime.date()
     return _datetime
 

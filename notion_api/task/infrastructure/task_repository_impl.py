@@ -32,13 +32,19 @@ class TaskRepositoryImpl(TaskRepository):
     ) -> list[Task]:
         builder = Builder.create()
         builder = builder.add(Prop.SELECT, TaskKind.NAME, Cond.DOES_NOT_EQUAL, TaskKindType.TRASH.value)
+        start_datetime_start = None
         if start_datetime is not None:
-            start_datetime = (
+            start_datetime_start = (
                 start_datetime
                 if isinstance(start_datetime, datetime)
                 else datetime.combine(start_datetime, time.min, tzinfo=JST)
             )
-            builder = builder.add(Prop.DATE, TaskStartDate.PROP_NAME, Cond.ON_OR_AFTER, start_datetime.isoformat())
+            builder = builder.add(
+                Prop.DATE,
+                TaskStartDate.PROP_NAME,
+                Cond.ON_OR_AFTER,
+                start_datetime_start.isoformat(),
+            )
 
         if start_datetime_end is not None:
             start_datetime_end = (
@@ -47,8 +53,8 @@ class TaskRepositoryImpl(TaskRepository):
                 else datetime.combine(start_datetime_end, time.max, tzinfo=JST)
             )
             builder = builder.add(Prop.DATE, TaskStartDate.PROP_NAME, Cond.ON_OR_BEFORE, start_datetime_end.isoformat())
-        elif start_datetime is not None:
-            start_datetime_end = start_datetime + timedelta(days=1) - timedelta(seconds=1)
+        elif start_datetime_start is not None:
+            start_datetime_end = start_datetime_start + timedelta(days=1) - timedelta(seconds=1)
             builder = builder.add(Prop.DATE, TaskStartDate.PROP_NAME, Cond.ON_OR_BEFORE, start_datetime_end.isoformat())
 
         if project_id is not None:

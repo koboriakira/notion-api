@@ -48,10 +48,10 @@ class AiAdviceUsecase:
             start_datetime_end=start_datetime + timedelta(hours=3),
         )
         # 終日の予定になっているタスク
-        allday_tasks = [t for t in tasks if t.start_datetime.time() == time().min]
+        allday_tasks = [t for t in tasks if t.start_datetime is not None and t.start_datetime.time() == time().min]
 
         # 3時間以内に開始するタスク
-        current_tasks = [t for t in tasks if t.start_datetime.time() != time().min]
+        current_tasks = [t for t in tasks if t.start_datetime is not None and t.start_datetime.time() != time().min]
 
         # 現時刻より前のタスク
         past_tasks = self._task_repository.search(
@@ -77,7 +77,7 @@ class AiAdviceUsecase:
                 if task.start_datetime is not None:
                     time_ = (start_datetime - task.start_datetime).total_seconds() / 60
                     current_tasks_description.append(
-                        f"「{task.get_title_text()}」は開始してから{int(time_)}秒経過しています"
+                        f"「{task.get_title_text()}」は開始してから{int(time_)}秒経過しています",
                     )
 
         if len(current_tasks_description) > 0:
