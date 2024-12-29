@@ -5,7 +5,7 @@ from pydantic import Field
 from custom_logger import get_logger
 from router.response.base_notion_page_model import BaseNotionPageModel
 from router.response.base_response import BaseResponse
-from task.domain.task import ToDoTask as TaskModel
+from task.domain.task import Task as TaskModel
 from task.domain.task_status import TaskStatusType
 
 logger = get_logger(__name__)

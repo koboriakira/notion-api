@@ -5,7 +5,7 @@ from lotion import BasePage
 from lotion.block import Block
 from lotion.properties import Properties, Title
 
-from task.domain.task import ProjectRelation, TaskStartDate, ToDoTask
+from task.domain.task import ProjectRelation, Task, TaskStartDate
 from task.domain.task_context import TaskContext, TaskContextTypes
 from task.domain.task_kind import TaskKind, TaskKindType
 from task.domain.task_status import TaskStatus, TaskStatusType
@@ -26,7 +26,7 @@ class TaskFactory:
         project_id: str | None = None,
         status: TaskStatusType | None = None,
         blocks: list[Block] | None = None,
-    ) -> ToDoTask:
+    ) -> Task:
         blocks = blocks or []
         properties: list[Property] = []
         properties.append(title if isinstance(title, Title) else Title.from_plain_text(text=title))
@@ -43,11 +43,11 @@ class TaskFactory:
             properties.append(TaskStatus.from_status_type(status))
         if project_id is not None:
             properties.append(ProjectRelation.from_id(project_id))
-        return ToDoTask(properties=Properties(values=properties), block_children=blocks)
+        return Task(properties=Properties(values=properties), block_children=blocks)
 
     @staticmethod
-    def cast(base_page: BasePage) -> ToDoTask:
-        return ToDoTask(
+    def cast(base_page: BasePage) -> Task:
+        return Task(
             properties=base_page.properties,
             block_children=base_page.block_children,
             id_=base_page.id_,

@@ -7,7 +7,7 @@ from lotion.filter import Builder, Cond, Prop
 
 from common.value.database_type import DatabaseType
 from notion_databases.goal import ProjectRelation
-from task.domain.task import Task, TaskStartDate, ToDoTask
+from task.domain.task import Task, TaskStartDate
 from task.domain.task_kind import TaskKind, TaskKindType
 from task.domain.task_repository import TaskRepository
 from task.domain.task_status import TaskStatus, TaskStatusType
@@ -152,7 +152,7 @@ class TaskRepositoryImpl(TaskRepository):
         self.client.remove_page(page_id=task.id)
 
     def _cast(self, base_page: BasePage) -> Task:
-        return ToDoTask(
+        return Task(
             properties=base_page.properties,
             block_children=base_page.block_children,
             id_=base_page.id_,

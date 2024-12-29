@@ -44,13 +44,13 @@ class TaskStartDate(Date):
 
 
 @notion_database(DatabaseType.TASK.value)
-class ToDoTask(BasePage):
+class Task(BasePage):
     task_name: TaskName
     important_flag: ImportantFlag
     project_relation: ProjectRelation
     task_date: TaskStartDate
 
-    def update_status(self, status: str | TaskStatusType) -> "ToDoTask":
+    def update_status(self, status: str | TaskStatusType) -> "Task":
         if isinstance(status, str):
             status = TaskStatusType.from_text(status)
         task_status = TaskStatus.from_status_type(status)
@@ -58,7 +58,7 @@ class ToDoTask(BasePage):
         self.properties = properties
         return self
 
-    def update_kind(self, kind: TaskKindType) -> "ToDoTask":
+    def update_kind(self, kind: TaskKindType) -> "Task":
         self.properties = self.properties.append_property(TaskKind.create(kind))
         return self
 
@@ -66,28 +66,28 @@ class ToDoTask(BasePage):
         self,
         start_datetime: datetime | date | None = None,
         end_datetime: datetime | date | None = None,
-    ) -> "ToDoTask":
+    ) -> "Task":
         start_date = TaskStartDate.from_range(start_datetime, end_datetime)  # type: ignore
         properties = self.properties.append_property(start_date)
         self.properties = properties
         return self
 
-    def do_tomorrow(self) -> "ToDoTask":
+    def do_tomorrow(self) -> "Task":
         if self.start_date is not None:
             date_ = self.start_date.date() if isinstance(self.start_date, datetime) else self.start_date
             start_date = TaskStartDate.from_start_date(date_ + timedelta(days=1))
             self.properties = self.properties.append_property(start_date)
         return self
 
-    def start(self) -> "ToDoTask":
+    def start(self) -> "Task":
         start = jst_now()
         end = start + timedelta(minutes=30)
         return self.update_status(TaskStatusType.IN_PROGRESS).update_start_datetime(start, end)
 
-    def complete(self) -> "ToDoTask":
+    def complete(self) -> "Task":
         return self.update_status(TaskStatusType.DONE).update_start_end_datetime(end=jst_now())
 
-    def update_start_end_datetime(self, end: datetime) -> "ToDoTask":
+    def update_start_end_datetime(self, end: datetime) -> "Task":
         """タスクの終了日時を更新する"""
         start = self.start_datetime
         if start is None:
@@ -97,7 +97,7 @@ class ToDoTask(BasePage):
         self.properties = self.properties.append_property(start_date)
         return self
 
-    def add_check_prefix(self) -> "ToDoTask":
+    def add_check_prefix(self) -> "Task":
         title = self.get_title()
         original_rich_text = title.rich_text
         rich_text = RichTextBuilder.create().add_text("✔️").add_rich_text(original_rich_text).build()
@@ -149,6 +149,3 @@ class ToDoTask(BasePage):
             start_datetime=self.start_datetime,
             kind=self.kind,
         ).value
-
-
-type Task = ToDoTask

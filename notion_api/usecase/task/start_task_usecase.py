@@ -1,5 +1,5 @@
 from custom_logger import get_logger
-from task.domain.task import ToDoTask
+from task.domain.task import Task
 from task.domain.task_repository import TaskRepository
 
 
@@ -8,7 +8,7 @@ class StartTaskUsecase:
         self._task_repository = task_repository
         self._logger = get_logger(__name__)
 
-    def execute(self, page_id: str) -> ToDoTask:
+    def execute(self, page_id: str) -> Task:
         """
         Start the task.
         """
