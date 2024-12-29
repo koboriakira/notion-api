@@ -1,7 +1,5 @@
 # Task
 
-tags: current
-
 ## Create a inbox task
 
 * Create a task with name "Inbox"

@@ -105,15 +105,7 @@ class TaskRepositoryImpl(TaskRepository):
         return tasks
 
     def save(self, task: Task) -> Task:
-        if task.is_created():
-            self.client.update_page(page_id=task.id, properties=task.properties.values)
-            return task
-        page = self.client.create_page_in_database(
-            database_id=DatabaseType.TASK.value,
-            properties=task.properties.values,
-            blocks=task.block_children,
-        )
-        return self.find_by_id(task_id=page.id)
+        return self.client.update(task)
 
     def find_by_id(self, task_id: str) -> Task:
         return self.client.retrieve_page(task_id, Task)

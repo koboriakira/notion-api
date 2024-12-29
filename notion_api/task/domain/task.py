@@ -62,9 +62,6 @@ class TaskKind(Select):
         return TaskKindType(self.selected_name)
 
 
-# @notion_prop("プロジェクト")
-
-
 @notion_database(DatabaseType.TASK.value)
 class Task(BasePage):
     task_name: TaskName
@@ -138,7 +135,8 @@ class Task(BasePage):
 
     @property
     def order(self) -> int:
+        kind = self.kind
         return TaskOrderRule.calculate(
             start_datetime=self.start_datetime,
-            kind=self.kind.to_enum(),
+            kind=kind.to_enum() if not kind.is_empty() else None,
         ).value
