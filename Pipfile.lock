@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "6e0150b40b15f1d5b37c8624283b3ee0a9e2afa6dc46dacb2a5e9e84ef4aeff3"
+            "sha256": "c99cd2b6fd3be79f632036ec3f7deac9e08fbc8ca291f734ab0fd5b333850038"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -383,12 +383,12 @@
         },
         "lotion": {
             "hashes": [
-                "sha256:50807875b580350d03a2cc0b561d675bea541774b9186d49c44150e350005410",
-                "sha256:7008dc4d832b43e441e4b830fa0e67a0a8f66b6616513af8e83581807af720d1"
+                "sha256:83b721ede77250df9efe1e9860be26e6afe5109745006b195abcbdddd538b801",
+                "sha256:d57c9f78a1b660224d3e9dc2cab516c1fa968b4cb4dfb10a9925446345b908d6"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.11'",
-            "version": "==0.8.7a1"
+            "version": "==0.8.8"
         },
         "lxml": {
             "extras": [
