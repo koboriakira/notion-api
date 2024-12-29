@@ -5,10 +5,10 @@ from lotion import BasePage
 from lotion.block import Block
 from lotion.properties import Properties, Title
 
-from task.domain.task import ProjectRelation, TaskStartDate, ToDoTask
+from task.domain.task import ProjectRelation, Task, TaskKind, TaskStartDate, TaskStatus
 from task.domain.task_context import TaskContext, TaskContextTypes
-from task.domain.task_kind import TaskKind, TaskKindType
-from task.domain.task_status import TaskStatus, TaskStatusType
+from task.domain.task_kind import TaskKindType
+from task.domain.task_status import TaskStatusType
 
 if TYPE_CHECKING:
     from lotion.properties import Property
@@ -26,28 +26,28 @@ class TaskFactory:
         project_id: str | None = None,
         status: TaskStatusType | None = None,
         blocks: list[Block] | None = None,
-    ) -> ToDoTask:
+    ) -> Task:
         blocks = blocks or []
         properties: list[Property] = []
         properties.append(title if isinstance(title, Title) else Title.from_plain_text(text=title))
         if task_kind_type is not None:
-            properties.append(TaskKind.create(task_kind_type))
+            properties.append(TaskKind.from_name(task_kind_type.value))
         if start_date is not None:
             if end_date is None:
                 properties.append(TaskStartDate.from_start_date(start_date))
             else:
                 properties.append(TaskStartDate.from_range(start_date, end_date))
         if context_types is not None:
-            properties.append(TaskContext(context_types))
+            properties.append(TaskContext.from_name(context_types.to_str_list()))
         if status is not None:
             properties.append(TaskStatus.from_status_type(status))
         if project_id is not None:
             properties.append(ProjectRelation.from_id(project_id))
-        return ToDoTask(properties=Properties(values=properties), block_children=blocks)
+        return Task(properties=Properties(values=properties), block_children=blocks)
 
     @staticmethod
-    def cast(base_page: BasePage) -> ToDoTask:
-        return ToDoTask(
+    def cast(base_page: BasePage) -> Task:
+        return Task(
             properties=base_page.properties,
             block_children=base_page.block_children,
             id_=base_page.id_,

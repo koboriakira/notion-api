@@ -6,7 +6,7 @@ from common.value.slack_channel_type import ChannelType
 from project.domain import project_repository
 from project.domain.project import Project
 from project.domain.project_repository import ProjectRepository
-from task.domain.task import ToDoTask
+from task.domain.task import Task
 from task.domain.task_kind import TaskKindType
 from task.domain.task_repository import TaskRepository
 from task.domain.task_status import TaskStatusType
@@ -44,7 +44,7 @@ class ProjectHealthcheckUseCase:
             )
             self._execute_project(project, undone_tasks)
 
-    def _execute_project(self, project: Project, tasks: list[ToDoTask]) -> None:  # noqa: C901
+    def _execute_project(self, project: Project, tasks: list[Task]) -> None:  # noqa: C901
         project_title_link = project.title_for_slack()
         message_list = []
 
@@ -67,7 +67,7 @@ class ProjectHealthcheckUseCase:
 
         # タスクのチェック
         # 未了の「次にとるべき行動リスト」があるかどうか
-        next_action_tasks = [task for task in tasks if task.kind == TaskKindType.NEXT_ACTION]
+        next_action_tasks = [task for task in tasks if task.is_next_action()]
         if len(next_action_tasks) == 0:
             message_list.append("次にとるべき行動をひとつ決めましょう")
         elif len(next_action_tasks) > 3:

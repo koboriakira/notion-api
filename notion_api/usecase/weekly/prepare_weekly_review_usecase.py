@@ -10,7 +10,7 @@ from notion_databases.goal import Goal
 from project.domain.project import Project
 from project.domain.project_repository import ProjectRepository
 from project.domain.project_status import ProjectStatusType
-from task.domain.task import ToDoTask
+from task.domain.task import Task
 from task.domain.task_kind import TaskKindType
 from task.domain.task_repository import TaskRepository
 from task.task_factory import TaskFactory
@@ -116,7 +116,7 @@ class PrepareWeeklyReviewUsecase:
 
     def _create_task(
         self,
-        task: ToDoTask,
+        task: Task,
     ) -> None:
         """タスクを保存する"""
         self._task_repository.save(task)

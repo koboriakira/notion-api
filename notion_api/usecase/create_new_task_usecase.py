@@ -22,8 +22,8 @@ class CreateNewTaskUsecase:
         task_kind: str | None = None,
     ) -> dict:
         title_property = self._generate_title(title=title, mentioned_page_id=mentioned_page_id)
-        task_kind_type = TaskKindType.from_text(task_kind) if task_kind is not None else None
-        task_status_type = TaskStatusType.from_text(status) if status is not None else None
+        task_kind_type = TaskKindType(task_kind) if task_kind is not None else None
+        task_status_type = TaskStatusType(status) if status is not None else None
         task = TaskFactory.create_todo_task(
             title=title_property,
             task_kind_type=task_kind_type,

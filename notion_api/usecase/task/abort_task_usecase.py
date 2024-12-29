@@ -20,7 +20,7 @@ class AbortTaskUsecase:
         # 開始日は終日にする
         copied_task = (
             TaskFactory.cast(BasePage.create(properties=task.properties.values, blocks=task.block_children))
-            .update_start_datetime(start_datetime=jst_now().date())
+            .update_start_datetime(start=jst_now().date())
             .update_status(TaskStatusType.TODO)
         )
         self._task_repository.save(copied_task)

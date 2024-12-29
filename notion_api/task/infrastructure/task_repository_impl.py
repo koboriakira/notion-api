@@ -2,15 +2,14 @@ from datetime import date, datetime, time, timedelta
 from typing import TYPE_CHECKING
 
 from lotion import Lotion
-from lotion.base_page import BasePage
 from lotion.filter import Builder, Cond, Prop
 
 from common.value.database_type import DatabaseType
 from notion_databases.goal import ProjectRelation
-from task.domain.task import Task, TaskStartDate, ToDoTask
-from task.domain.task_kind import TaskKind, TaskKindType
+from task.domain.task import Task, TaskKind, TaskStartDate, TaskStatus
+from task.domain.task_kind import TaskKindType
 from task.domain.task_repository import TaskRepository
-from task.domain.task_status import TaskStatus, TaskStatusType
+from task.domain.task_status import TaskStatusType
 from util.datetime import JST
 
 if TYPE_CHECKING:
@@ -31,7 +30,7 @@ class TaskRepositoryImpl(TaskRepository):
         last_edited_at: datetime | None = None,
     ) -> list[Task]:
         builder = Builder.create()
-        builder = builder.add(Prop.SELECT, TaskKind.NAME, Cond.DOES_NOT_EQUAL, TaskKindType.TRASH.value)
+        builder = builder.add(Prop.SELECT, TaskKind.PROP_NAME, Cond.DOES_NOT_EQUAL, TaskKindType.TRASH.value)
         start_datetime_start = None
         if start_datetime is not None:
             start_datetime_start = (
@@ -64,7 +63,7 @@ class TaskRepositoryImpl(TaskRepository):
             builder = builder.add_last_edited_at(Cond.ON_OR_AFTER, last_edited_at.isoformat())
 
         if kind_type_list is not None and len(kind_type_list) == 0:
-            builder = builder.add(Prop.SELECT, TaskKind.NAME, Cond.IS_EMPTY, True)  # noqa: FBT003
+            builder = builder.add(Prop.SELECT, TaskKind.PROP_NAME, Cond.IS_EMPTY, True)  # noqa: FBT003
 
         # このあとor条件の追加をしていく
 
@@ -75,7 +74,8 @@ class TaskRepositoryImpl(TaskRepository):
                     *builder.conditions,
                     {
                         "or": [
-                            Builder.create().add(Prop.SELECT, TaskKind.NAME, Cond.EQUALS, v).build() for v in values
+                            Builder.create().add(Prop.SELECT, TaskKind.PROP_NAME, Cond.EQUALS, v).build()
+                            for v in values
                         ],
                     },
                 ],
@@ -88,7 +88,7 @@ class TaskRepositoryImpl(TaskRepository):
                     *builder.conditions,
                     {
                         "or": [
-                            Builder.create().add(Prop.STATUS, TaskStatus.NAME, Cond.EQUALS, v).build()
+                            Builder.create().add(Prop.STATUS, TaskStatus.PROP_NAME, Cond.EQUALS, v).build()
                             for v in status_type_list
                         ],
                     },
@@ -96,32 +96,19 @@ class TaskRepositoryImpl(TaskRepository):
             )
 
         # print(json.dumps(builder.build(), ensure_ascii=False, indent=4))
-        base_pages = self.client.retrieve_database(
-            database_id=DatabaseType.TASK.value,
+        tasks = self.client.retrieve_pages(
+            Task,
             filter_param=builder.build(),
         )
-        tasks: list[Task] = []
-        for base_page in base_pages:
-            task = self._cast(base_page)
-            tasks.append(task)
         # order昇順で並び替え
         tasks.sort(key=lambda x: x.order)
         return tasks
 
     def save(self, task: Task) -> Task:
-        if task.is_created():
-            self.client.update_page(page_id=task.id, properties=task.properties.values)
-            return task
-        page = self.client.create_page_in_database(
-            database_id=DatabaseType.TASK.value,
-            properties=task.properties.values,
-            blocks=task.block_children,
-        )
-        return self.find_by_id(task_id=page.id)
+        return self.client.update(task)
 
     def find_by_id(self, task_id: str) -> Task:
-        base_page = self.client.retrieve_page(page_id=task_id)
-        return self._cast(base_page)
+        return self.client.retrieve_page(task_id, Task)
 
     def move_to_backup(self, task: Task) -> None:
         # バックアップ用のデータベースにレコードを作成
@@ -150,19 +137,3 @@ class TaskRepositoryImpl(TaskRepository):
 
     def delete(self, task: Task) -> None:
         self.client.remove_page(page_id=task.id)
-
-    def _cast(self, base_page: BasePage) -> Task:
-        return ToDoTask(
-            properties=base_page.properties,
-            block_children=base_page.block_children,
-            id_=base_page.id_,
-            url_=base_page.url,
-            created_time=base_page.created_time,
-            last_edited_time=base_page.last_edited_time,
-            _created_by=base_page._created_by,
-            _last_edited_by=base_page._last_edited_by,
-            cover=base_page.cover,
-            icon=base_page.icon,
-            archived=base_page.archived,
-            parent=base_page.parent,
-        )
