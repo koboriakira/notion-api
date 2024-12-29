@@ -135,8 +135,7 @@ class Task(BasePage):
 
     @property
     def order(self) -> int:
-        kind = self.kind
         return TaskOrderRule.calculate(
             start_datetime=self.start_datetime,
-            kind=kind.to_enum() if not kind.is_empty() else None,
+            kind=self.kind.to_enum(),
         ).value

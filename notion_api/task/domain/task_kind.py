@@ -1,7 +1,5 @@
 from enum import Enum
 
-from lotion.properties import Select
-
 kind_map = {
     "次にとるべき行動リスト": {"selected_id": "d73dbc77-702d-4b2e-88e1-22b54a17a333", "selected_color": "brown"},
     "スケジュール": {"selected_id": "a6e6329d-f547-44d4-b418-ac239dd88632", "selected_color": "blue"},
@@ -21,6 +19,7 @@ class TaskKindType(Enum):
     SOMEDAY_MAYBE = "いつかやる・たぶんやる"
     SCHEDULE = "スケジュール"
     ROUTINE = "ルーティン"
+    NONE = ""
 
     @property
     def priority(self) -> int:
@@ -32,6 +31,5 @@ class TaskKindType(Enum):
             TaskKindType.SCHEDULE: 4,
             TaskKindType.NEXT_ACTION: 5,
             TaskKindType.DO_NOW: 6,
+            TaskKindType.NONE: 7,
         }[self]
-
-
