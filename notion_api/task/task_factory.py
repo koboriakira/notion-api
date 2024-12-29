@@ -1,14 +1,14 @@
 from datetime import date, datetime
 from typing import TYPE_CHECKING
 
-from lotion import BasePage
+from lotion import BasePage, Lotion
 from lotion.block import Block
 from lotion.properties import Properties, Title
 
-from task.domain.task import ProjectRelation, Task, TaskStartDate
+from task.domain.task import ProjectRelation, Task, TaskKind, TaskStartDate, TaskStatus
 from task.domain.task_context import TaskContext, TaskContextTypes
-from task.domain.task_kind import TaskKind, TaskKindType
-from task.domain.task_status import TaskStatus, TaskStatusType
+from task.domain.task_kind import TaskKindType
+from task.domain.task_status import TaskStatusType
 
 if TYPE_CHECKING:
     from lotion.properties import Property
@@ -31,14 +31,20 @@ class TaskFactory:
         properties: list[Property] = []
         properties.append(title if isinstance(title, Title) else Title.from_plain_text(text=title))
         if task_kind_type is not None:
-            properties.append(TaskKind.create(task_kind_type))
+            task_kind = Lotion.get_instance().fetch_select(Task, TaskKind, task_kind_type.value)
+            properties.append(task_kind)
         if start_date is not None:
             if end_date is None:
                 properties.append(TaskStartDate.from_start_date(start_date))
             else:
                 properties.append(TaskStartDate.from_range(start_date, end_date))
         if context_types is not None:
-            properties.append(TaskContext(context_types))
+            context = Lotion.get_instance().fetch_multi_select(
+                Task,
+                TaskContext,
+                context_types.to_str_list(),
+            )
+            properties.append(context)
         if status is not None:
             properties.append(TaskStatus.from_status_type(status))
         if project_id is not None:

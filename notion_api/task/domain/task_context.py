@@ -45,6 +45,9 @@ class TaskContextTypes:
     def to_multi_select_elements(self) -> list[MultiSelectElement]:
         return [MultiSelectElement(**kind.__dict__()) for kind in self.values]
 
+    def to_str_list(self) -> list[str]:
+        return [kind.name for kind in self.values]
+
 
 class TaskContext(MultiSelect):
     NAME = "コンテクスト"

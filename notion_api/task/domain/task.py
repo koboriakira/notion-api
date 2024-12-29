@@ -3,11 +3,11 @@ from datetime import date, datetime, timedelta
 from lotion import notion_database, notion_prop
 from lotion.base_page import BasePage
 from lotion.block.rich_text import RichTextBuilder
-from lotion.properties import Checkbox, Date, Relation, Title
+from lotion.properties import Checkbox, Date, Relation, Select, Status, Title
 
 from common.value.database_type import DatabaseType
-from task.domain.task_kind import TaskKind, TaskKindType
-from task.domain.task_status import TaskStatus, TaskStatusType
+from task.domain.task_kind import TaskKindType
+from task.domain.task_status import TaskStatusType
 from task.valueobject.task_order_rule import TaskOrderRule
 from util.datetime import convert_to_date_or_datetime, jst_now
 
@@ -37,10 +37,32 @@ class TaskStartDate(Date):
     pass
 
 
-# @notion_prop("ステータス")
-# @notion_prop("タスク種別")
+@notion_prop("ステータス")
+class TaskStatus(Status):
+    @staticmethod
+    def from_status_type(status_type: TaskStatusType) -> "TaskStatus":
+        return TaskStatus.from_status_name(status_type.value)
+
+    def to_enum(self) -> TaskStatusType:
+        return TaskStatusType(self.status_name)
+
+    def is_done(self) -> bool:
+        return self.to_enum().is_done()
+
+    def is_in_progress(self) -> bool:
+        return self.to_enum().is_in_progress()
+
+    def is_todo(self) -> bool:
+        return self.to_enum().is_todo()
+
+
+@notion_prop("タスク種別")
+class TaskKind(Select):
+    def to_enum(self) -> TaskKindType:
+        return TaskKindType(self.selected_name)
+
+
 # @notion_prop("プロジェクト")
-# @notion_prop("実施日")
 
 
 @notion_database(DatabaseType.TASK.value)
@@ -49,17 +71,11 @@ class Task(BasePage):
     important_flag: ImportantFlag
     project_relation: ProjectRelation
     task_date: TaskStartDate
+    status: TaskStatus
+    kind: TaskKind
 
-    def update_status(self, status: str | TaskStatusType) -> "Task":
-        if isinstance(status, str):
-            status = TaskStatusType.from_text(status)
-        task_status = TaskStatus.from_status_type(status)
-        properties = self.properties.append_property(task_status)
-        self.properties = properties
-        return self
-
-    def update_kind(self, kind: TaskKindType) -> "Task":
-        self.properties = self.properties.append_property(TaskKind.create(kind))
+    def update_status(self, status: TaskStatusType) -> "Task":
+        self.set_prop(TaskStatus.from_status_type(status))
         return self
 
     def update_start_datetime(
@@ -98,17 +114,9 @@ class Task(BasePage):
         return self
 
     def add_check_prefix(self) -> "Task":
-        title = self.get_title()
-        original_rich_text = title.rich_text
-        rich_text = RichTextBuilder.create().add_text("✔️").add_rich_text(original_rich_text).build()
-        title_prop = Title.from_rich_text(name=title.name, rich_text=rich_text)
-        self.properties = self.properties.append_property(title_prop)
+        rich_text = RichTextBuilder.create().add_text("✔️").add_rich_text(self.task_name.rich_text).build()
+        self.set_prop(TaskName.from_rich_text(rich_text))
         return self
-
-    @property
-    def status(self) -> TaskStatusType:
-        status_name = self.get_status(name=TaskStatus.NAME).status_name
-        return TaskStatusType(status_name)
 
     @property
     def is_completed(self) -> bool:
@@ -133,12 +141,8 @@ class Task(BasePage):
             return None
         return convert_to_date_or_datetime(value=self.task_date.end, cls=datetime)
 
-    @property
-    def kind(self) -> TaskKindType | None:
-        kind_model = self.get_select(name=TaskKind.NAME)
-        if kind_model.selected_name == "":
-            return None
-        return TaskKindType(kind_model.selected_name)
+    def is_next_action(self) -> bool:
+        return self.kind.to_enum() == TaskKindType.NEXT_ACTION
 
     def is_scheduled(self) -> bool:
         return self.kind == TaskKindType.SCHEDULE
@@ -147,5 +151,5 @@ class Task(BasePage):
     def order(self) -> int:
         return TaskOrderRule.calculate(
             start_datetime=self.start_datetime,
-            kind=self.kind,
+            kind=self.kind.to_enum(),
         ).value

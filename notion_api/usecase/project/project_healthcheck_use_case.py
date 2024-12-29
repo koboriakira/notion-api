@@ -67,7 +67,7 @@ class ProjectHealthcheckUseCase:
 
         # タスクのチェック
         # 未了の「次にとるべき行動リスト」があるかどうか
-        next_action_tasks = [task for task in tasks if task.kind == TaskKindType.NEXT_ACTION]
+        next_action_tasks = [task for task in tasks if task.is_next_action()]
         if len(next_action_tasks) == 0:
             message_list.append("次にとるべき行動をひとつ決めましょう")
         elif len(next_action_tasks) > 3:

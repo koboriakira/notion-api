@@ -36,8 +36,8 @@ class Task(BaseNotionPageModel):
             title=model.get_title_text(),
             created_at=model.created_time,  # type: ignore
             updated_at=model.last_edited_time,  # type: ignore
-            status=model.status,
-            task_kind=model.kind.value if model.kind is not None else None,
+            status=model.status.to_enum(),
+            task_kind=model.kind.selected_name if model.kind is not None else None,
             start_date=convert_to_date_if_zero_time(model.start_date),
             end_date=None,
             order=model.order,

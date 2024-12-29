@@ -22,14 +22,6 @@ class TaskKindType(Enum):
     SCHEDULE = "スケジュール"
     ROUTINE = "ルーティン"
 
-    @staticmethod
-    def from_text(text: str) -> "TaskKindType":
-        for kind_type in TaskKindType:
-            if kind_type.value == text:
-                return kind_type
-        msg = f"TaskKindType に存在しない値です: {text}"
-        raise ValueError(msg)
-
     @property
     def priority(self) -> int:
         return {
@@ -42,43 +34,4 @@ class TaskKindType(Enum):
             TaskKindType.DO_NOW: 6,
         }[self]
 
-    @property
-    def selected_name(self) -> str:
-        return self.value
 
-    @property
-    def selected_id(self) -> str:
-        return kind_map[self.value]["selected_id"]
-
-    @property
-    def selected_color(self) -> str:
-        return kind_map[self.value]["selected_color"]
-
-
-class TaskKind(Select):
-    NAME = "タスク種別"
-
-    def __init__(self, kind_type: TaskKindType) -> None:
-        super().__init__(
-            name=self.NAME,
-            selected_name=kind_type.selected_name,
-            selected_id=kind_type.selected_id,
-            selected_color=kind_type.selected_color,
-            id=None,
-        )
-
-    @classmethod
-    def create(cls, kind_type: TaskKindType) -> "TaskKind":
-        return cls(kind_type=kind_type)
-
-    @classmethod
-    def trash(cls) -> "TaskKind":
-        return cls.create(kind_type=TaskKindType.TRASH)
-
-    @classmethod
-    def routine(cls) -> "TaskKind":
-        return cls.create(kind_type=TaskKindType.ROUTINE)
-
-    @classmethod
-    def scheduled(cls) -> "TaskKind":
-        return cls.create(kind_type=TaskKindType.SCHEDULE)

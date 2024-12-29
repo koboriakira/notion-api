@@ -22,6 +22,6 @@ class TestTaskFactory(TestCase):
 
         # Then
         self.assertEqual(title, actual.get_title().text)
-        self.assertEqual(task_kind_type.value, actual.kind.value)
+        self.assertEqual(task_kind_type.value, actual.kind.to_enum().value)
         self.assertEqual(start_date, actual.start_date)
-        self.assertEqual(status.value, actual.status.value)
+        self.assertEqual(status.value, actual.status.to_enum().value)
