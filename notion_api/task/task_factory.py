@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from typing import TYPE_CHECKING
 
-from lotion import BasePage, Lotion
+from lotion import BasePage
 from lotion.block import Block
 from lotion.properties import Properties, Title
 
@@ -31,20 +31,14 @@ class TaskFactory:
         properties: list[Property] = []
         properties.append(title if isinstance(title, Title) else Title.from_plain_text(text=title))
         if task_kind_type is not None:
-            task_kind = Lotion.get_instance().fetch_select(Task, TaskKind, task_kind_type.value)
-            properties.append(task_kind)
+            properties.append(TaskKind.from_name(task_kind_type.value))
         if start_date is not None:
             if end_date is None:
                 properties.append(TaskStartDate.from_start_date(start_date))
             else:
                 properties.append(TaskStartDate.from_range(start_date, end_date))
         if context_types is not None:
-            context = Lotion.get_instance().fetch_multi_select(
-                Task,
-                TaskContext,
-                context_types.to_str_list(),
-            )
-            properties.append(context)
+            properties.append(TaskContext.from_name(context_types.to_str_list()))
         if status is not None:
             properties.append(TaskStatus.from_status_type(status))
         if project_id is not None:
