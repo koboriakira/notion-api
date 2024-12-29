@@ -9,7 +9,7 @@ from common.value.database_type import DatabaseType
 from task.domain.task_kind import TaskKindType
 from task.domain.task_status import TaskStatusType
 from task.valueobject.task_order_rule import TaskOrderRule
-from util.datetime import convert_to_date_or_datetime, jst_now
+from util.datetime import jst_now
 
 COLUMN_NAME_TITLE = "名前"
 COLUMN_NAME_STATUS = "ステータス"
@@ -80,19 +80,16 @@ class Task(BasePage):
 
     def update_start_datetime(
         self,
-        start_datetime: datetime | date | None = None,
-        end_datetime: datetime | date | None = None,
+        start: datetime | date | None = None,
+        end: datetime | date | None = None,
     ) -> "Task":
-        start_date = TaskStartDate.from_range(start_datetime, end_datetime)  # type: ignore
-        properties = self.properties.append_property(start_date)
-        self.properties = properties
+        self.set_prop(TaskStartDate.from_range(start, end))
         return self
 
     def do_tomorrow(self) -> "Task":
-        if self.start_date is not None:
-            date_ = self.start_date.date() if isinstance(self.start_date, datetime) else self.start_date
-            start_date = TaskStartDate.from_start_date(date_ + timedelta(days=1))
-            self.properties = self.properties.append_property(start_date)
+        start_date = self.task_date.start_date
+        if start_date is not None:
+            self.set_prop(TaskStartDate.from_start_date(start_date + timedelta(days=1)))
         return self
 
     def start(self) -> "Task":
@@ -101,16 +98,15 @@ class Task(BasePage):
         return self.update_status(TaskStatusType.IN_PROGRESS).update_start_datetime(start, end)
 
     def complete(self) -> "Task":
-        return self.update_status(TaskStatusType.DONE).update_start_end_datetime(end=jst_now())
+        return self.update_status(TaskStatusType.DONE).update_end_datetime(end=jst_now())
 
-    def update_start_end_datetime(self, end: datetime) -> "Task":
+    def update_end_datetime(self, end: datetime) -> "Task":
         """タスクの終了日時を更新する"""
-        start = self.start_datetime
+        start = self.task_date.start_time
         if start is None:
             # 開始時刻がない場合はなにもしない
             return self
-        start_date = TaskStartDate.from_range(start, end)
-        self.properties = self.properties.append_property(start_date)
+        self.set_prop(TaskStartDate.from_range(start, end))
         return self
 
     def add_check_prefix(self) -> "Task":
@@ -124,22 +120,15 @@ class Task(BasePage):
 
     @property
     def start_datetime(self) -> datetime | None:
-        if self.task_date.start is None:
-            return None
-        result = convert_to_date_or_datetime(value=self.task_date.start, cls=datetime)
-        return result
+        return self.task_date.start_datetime
 
     @property
     def start_date(self) -> date | datetime | None:
-        if self.task_date.start is None:
-            return None
-        return convert_to_date_or_datetime(value=self.task_date.start)
+        return self.task_date.start_time
 
     @property
     def end_datetime(self) -> datetime | None:
-        if self.task_date.start is None:
-            return None
-        return convert_to_date_or_datetime(value=self.task_date.end, cls=datetime)
+        return self.task_date.end_datetime
 
     def is_next_action(self) -> bool:
         return self.kind.to_enum() == TaskKindType.NEXT_ACTION
