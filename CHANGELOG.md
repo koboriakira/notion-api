@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.3](https://github.com/koboriakira/notion-api/compare/v2.5.2...v2.5.3) (2024-12-29)
+
+
+### Bug Fixes
+
+* Simplify datetime conversion logic in _convert_datetime function ([966638d](https://github.com/koboriakira/notion-api/commit/966638d4da401e68af7e0c7efeeda09a7d9282fc))
+
 ## [2.5.2](https://github.com/koboriakira/notion-api/compare/v2.5.1...v2.5.2) (2024-12-28)
 
 
