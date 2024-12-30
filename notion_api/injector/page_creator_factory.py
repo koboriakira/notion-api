@@ -4,7 +4,7 @@ from lotion import Lotion
 
 from common.service.page_creator import PageCreator
 from common.value.site_kind import SiteKind
-from music.service.music_creator import MusicCreator
+from music.music_creator import MusicCreator
 from restaurant.service.restaurant_creator import RestaurantCreator
 from video.video_injector import VideoInjector
 from webclip.injector import WebclipInjector
