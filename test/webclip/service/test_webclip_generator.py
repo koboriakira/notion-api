@@ -5,8 +5,9 @@ from unittest.mock import Mock
 from notion_api.common.service.tag_creator.tag_creator import TagCreator
 from notion_api.common.service.tweet.tweet_fetcher import TweetFetcher
 from notion_api.util.tag_analyzer import TagAnalyzer
-from notion_api.webclip.service.webclip_generator import TwitterWebclipGenerator
 from parameterized import parameterized
+
+from webclip.webclip_generator import TwitterWebclipGenerator
 
 
 class TestTwitterWebclipGenerator(TestCase):
@@ -22,10 +23,11 @@ class TestTwitterWebclipGenerator(TestCase):
             logger=logger,
         )
 
-
-    @parameterized.expand([
-        ("https://twitter.com/harajuku_tjpw/status/1772269440396333105", "1772269440396333105"),
-        ("https://twitter.com/harajuku_tjpw/status/1772269440396333105/photo/1", "1772269440396333105"),
-    ])
+    @parameterized.expand(
+        [
+            ("https://twitter.com/harajuku_tjpw/status/1772269440396333105", "1772269440396333105"),
+            ("https://twitter.com/harajuku_tjpw/status/1772269440396333105/photo/1", "1772269440396333105"),
+        ]
+    )
     def test_extract_twitter_id(self, input, expected):
         self.assertEqual(self.client._extract_tweet_id(input), expected)

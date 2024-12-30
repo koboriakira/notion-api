@@ -4,7 +4,7 @@ from lotion import Lotion
 
 from common.service.page_creator import PageCreator
 from notion_databases.webclip import Webclip
-from webclip.service.webclip_generator import WebclipGeneratorRule
+from webclip.webclip_generator import WebclipGeneratorRule
 
 
 class WebclipCreator(PageCreator):

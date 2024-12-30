@@ -7,8 +7,8 @@ from custom_logger import get_logger
 from util.openai_executer import OpenaiExecuter
 from util.tag_analyzer import TagAnalyzer
 from util.text_summarizer import TextSummarizer
-from webclip.service.webclip_creator import WebclipCreator
-from webclip.service.webclip_generator import (
+from webclip.webclip_creator import WebclipCreator
+from webclip.webclip_generator import (
     DefaultWebclipGenerator,
     TwitterWebclipGenerator,
     WebclipGenerator,

@@ -12,7 +12,7 @@ from notion_databases.webclip import Webclip
 from util.split_paragraph import split_paragraph
 from util.tag_analyzer import TagAnalyzer
 from util.text_summarizer import TextSummarizer
-from webclip.service import webclip_creator
+from webclip import webclip_creator
 
 if TYPE_CHECKING:
     from lotion.block import Block
