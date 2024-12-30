@@ -1,9 +1,9 @@
 from datetime import datetime, timedelta
 
 from custom_logger import get_logger
-from task.domain.task import Task
+from notion_databases.task import Task
+from notion_databases.task_prop.task_status import TaskStatusType
 from task.domain.task_repository import TaskRepository
-from task.domain.task_status import TaskStatusType
 from util.datetime import jst_today
 
 logger = get_logger(__name__)

@@ -1,5 +1,5 @@
 from custom_logger import get_logger
-from task.domain.task import Task
+from notion_databases.task import Task
 from task.domain.task_repository import TaskRepository
 
 logger = get_logger(__name__)

@@ -1,9 +1,9 @@
 from abc import ABCMeta, abstractmethod
 from datetime import date, datetime
 
-from task.domain.task import Task
-from task.domain.task_kind import TaskKindType
-from task.domain.task_status import TaskStatusType
+from notion_databases.task import Task
+from notion_databases.task_prop.task_kind import TaskKindType
+from notion_databases.task_prop.task_status import TaskStatusType
 
 
 class TaskRepository(metaclass=ABCMeta):

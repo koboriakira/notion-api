@@ -7,11 +7,11 @@ from lotion.properties import Title
 
 from custom_logger import get_logger
 from notion_databases.goal import Goal
+from notion_databases.task import Task
+from notion_databases.task_prop.task_kind import TaskKindType
 from project.domain.project import Project
 from project.domain.project_repository import ProjectRepository
 from project.domain.project_status import ProjectStatusType
-from task.domain.task import Task
-from task.domain.task_kind import TaskKindType
 from task.domain.task_repository import TaskRepository
 from task.task_factory import TaskFactory
 from util.datetime import jst_now, jst_today

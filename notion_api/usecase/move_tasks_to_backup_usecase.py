@@ -6,10 +6,10 @@ from lotion.properties import Property
 from common.value.database_type import DatabaseType
 from custom_logger import get_logger
 from notion_databases.goal import Goal
+from notion_databases.task_prop.task_status import TaskStatusType
 from project.domain.project import Project
 from project.domain.project_repository import ProjectRepository
 from task.domain.task_repository import TaskRepository
-from task.domain.task_status import TaskStatusType
 from util.datetime import JST, jst_now
 
 logger = get_logger(__name__)

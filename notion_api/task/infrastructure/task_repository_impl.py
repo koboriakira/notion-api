@@ -6,10 +6,10 @@ from lotion.filter import Builder, Cond, Prop
 
 from common.value.database_type import DatabaseType
 from notion_databases.goal import ProjectRelation
-from task.domain.task import Task, TaskKind, TaskStartDate, TaskStatus
-from task.domain.task_kind import TaskKindType
+from notion_databases.task import Task, TaskKind, TaskStartDate, TaskStatus
+from notion_databases.task_prop.task_kind import TaskKindType
+from notion_databases.task_prop.task_status import TaskStatusType
 from task.domain.task_repository import TaskRepository
-from task.domain.task_status import TaskStatusType
 from util.datetime import JST
 
 if TYPE_CHECKING:

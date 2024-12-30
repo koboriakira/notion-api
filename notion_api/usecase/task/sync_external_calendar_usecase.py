@@ -2,10 +2,10 @@ from datetime import date, timedelta
 
 from external_calendar.infrastructure.google_calendar_api import GoogleCalendarApi
 from external_calendar.service.external_calendar_service import ExternalCalendarService
-from task.domain.task import Task
-from task.domain.task_kind import TaskKindType
+from notion_databases.task import Task
+from notion_databases.task_prop.task_kind import TaskKindType
+from notion_databases.task_prop.task_status import TaskStatusType
 from task.domain.task_repository import TaskRepository
-from task.domain.task_status import TaskStatusType
 from task.infrastructure.task_repository_impl import TaskRepositoryImpl
 from task.task_factory import TaskFactory
 from util.datetime import jst_tommorow

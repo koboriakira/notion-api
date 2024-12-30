@@ -1,7 +1,7 @@
 from datetime import date
 
 from custom_logger import get_logger
-from task.domain.task import Task
+from notion_databases.task import Task
 from task.infrastructure.task_repository_impl import TaskRepositoryImpl
 from usecase.fetch_tasks_usecase import FetchTasksUsecase
 

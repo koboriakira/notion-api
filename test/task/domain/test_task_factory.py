@@ -1,8 +1,8 @@
 from datetime import date
 from unittest import TestCase
 
-from notion_api.task.domain.task_kind import TaskKindType
-from notion_api.task.domain.task_status import TaskStatusType
+from notion_databases.task_prop.task_kind import TaskKindType
+from notion_databases.task_prop.task_status import TaskStatusType
 
 from task.task_factory import TaskFactory
 

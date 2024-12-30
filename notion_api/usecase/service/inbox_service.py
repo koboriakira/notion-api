@@ -8,10 +8,10 @@ from slack_sdk.web import WebClient
 
 from common.value.database_type import DatabaseType
 from notion_databases.song import Song
+from notion_databases.task import MemoGenre
+from notion_databases.task_prop.memo_genre import MemoGenreType
 from notion_databases.webclip import Webclip
 from restaurant.domain.restaurant import Restaurant
-from task.domain.memo_genre import MemoGenreType
-from task.domain.task import MemoGenre
 from video.domain.video import Video
 
 

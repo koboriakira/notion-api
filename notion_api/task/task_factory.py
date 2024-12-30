@@ -5,10 +5,10 @@ from lotion import BasePage
 from lotion.block import Block
 from lotion.properties import Properties, Title
 
-from task.domain.task import ProjectRelation, Task, TaskContext, TaskKind, TaskStartDate, TaskStatus
-from task.domain.task_context import TaskContextTypes
-from task.domain.task_kind import TaskKindType
-from task.domain.task_status import TaskStatusType
+from notion_databases.task import ProjectRelation, Task, TaskContext, TaskKind, TaskStartDate, TaskStatus
+from notion_databases.task_prop.task_context import TaskContextTypes
+from notion_databases.task_prop.task_kind import TaskKindType
+from notion_databases.task_prop.task_status import TaskStatusType
 
 if TYPE_CHECKING:
     from lotion.properties import Property

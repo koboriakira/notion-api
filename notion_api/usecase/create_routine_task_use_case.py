@@ -2,10 +2,10 @@ from datetime import date, timedelta
 
 from lotion import Lotion
 
+from notion_databases.task_prop.task_kind import TaskKindType
+from notion_databases.task_prop.task_status import TaskStatusType
 from task.domain.routine_task import RoutineTask
-from task.domain.task_kind import TaskKindType
 from task.domain.task_repository import TaskRepository
-from task.domain.task_status import TaskStatusType
 from task.task_factory import TaskFactory
 from util.datetime import jst_tommorow
 

@@ -3,13 +3,12 @@ from logging import Logger, getLogger
 from lotion import Lotion
 
 from common.value.slack_channel_type import ChannelType
+from notion_databases.task import Task
+from notion_databases.task_prop.task_status import TaskStatusType
 from project.domain import project_repository
 from project.domain.project import Project
 from project.domain.project_repository import ProjectRepository
-from task.domain.task import Task
-from task.domain.task_kind import TaskKindType
 from task.domain.task_repository import TaskRepository
-from task.domain.task_status import TaskStatusType
 from util.datetime import jst_today
 from util.slack.slack_client import SlackClient
 

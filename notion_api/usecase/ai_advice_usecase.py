@@ -7,9 +7,9 @@ from lotion import Lotion
 from common.service.gmail.gmail_service import GmailService
 from custom_logger import get_logger
 from infrastructure.slack_bot_client import SlackBotClient
+from notion_databases.task_prop.task_status import TaskStatusType
 from task.domain import Task
 from task.domain.task_repository import TaskRepository
-from task.domain.task_status import TaskStatusType
 from util.datetime import jst_now
 from util.line.line_client import LineClient
 from util.openai_executer import OpenaiExecuter

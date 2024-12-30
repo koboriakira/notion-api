@@ -6,9 +6,9 @@ from lotion.block.rich_text import RichTextBuilder
 from lotion.properties import Checkbox, Date, MultiSelect, Relation, Select, Status, Title
 
 from common.value.database_type import DatabaseType
-from task.domain.memo_genre import MemoGenreType
-from task.domain.task_kind import TaskKindType
-from task.domain.task_status import TaskStatusType
+from notion_databases.task_prop.memo_genre import MemoGenreType
+from notion_databases.task_prop.task_kind import TaskKindType
+from notion_databases.task_prop.task_status import TaskStatusType
 from task.valueobject.task_order_rule import TaskOrderRule
 from util.datetime import jst_now
 
