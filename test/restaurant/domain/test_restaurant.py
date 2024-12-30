@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from notion_api.restaurant.domain.restaurant import Restaurant
+from notion_databases.restaurant import Restaurant
 
 
 class TestRestaurant(TestCase):

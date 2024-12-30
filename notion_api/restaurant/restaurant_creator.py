@@ -2,7 +2,7 @@ from logging import Logger, getLogger
 
 from common.injector import CommonInjector
 from common.service.page_creator import PageCreator
-from restaurant.domain.restaurant import Restaurant, RestaurantName
+from notion_databases.restaurant import Restaurant, RestaurantName
 
 
 class RestaurantCreator(PageCreator):

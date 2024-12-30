@@ -12,7 +12,7 @@ from notion_databases.task import MemoGenre
 from notion_databases.task_prop.memo_genre import MemoGenreType
 from notion_databases.video import Video
 from notion_databases.webclip import Webclip
-from restaurant.domain.restaurant import Restaurant
+from notion_databases.restaurant import Restaurant
 
 
 class InboxService:
