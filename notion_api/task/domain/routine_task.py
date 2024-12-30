@@ -27,7 +27,8 @@ class RoutineTime(Text):
 
 @notion_prop("周期")
 class RoutineKind(Select):
-    pass
+    def to_enum(self) -> RoutineType:
+        return RoutineType.from_text(self.selected_name)
 
 
 @notion_database(DatabaseType.TASK_ROUTINE.value)
@@ -38,7 +39,7 @@ class RoutineTask(BasePage):
     kind: RoutineKind
 
     def get_routine_type(self) -> RoutineType:
-        return RoutineType.from_text(self.kind.selected_name)
+        return self.kind.to_enum()
 
     def get_next_date(self, basis_date: date | None = None) -> date:
         basis_date = jst_today() if basis_date is None else basis_date

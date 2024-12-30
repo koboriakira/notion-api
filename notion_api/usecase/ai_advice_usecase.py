@@ -3,8 +3,6 @@ from datetime import datetime, time, timedelta
 from logging import Logger, getLogger
 
 from lotion import Lotion
-from lotion.base_page import BasePage
-from lotion.properties import Select
 
 from common.service.gmail.gmail_service import GmailService
 from custom_logger import get_logger
@@ -17,14 +15,6 @@ from util.line.line_client import LineClient
 from util.openai_executer import OpenaiExecuter
 
 logger = get_logger(__name__)
-
-
-def find_promotion(pages: list[BasePage], promotion_name: str) -> Select | None:
-    for page in pages:
-        status = page.get_select(name="団体")
-        if status.selected_name == promotion_name:
-            return status
-    return None
 
 
 class AiAdviceUsecase:

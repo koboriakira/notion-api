@@ -7,7 +7,3 @@ class MemoGenreType(Enum):
     RESTAURANT = "飲食店"
     VIDEO = "動画"
     UNSPECIFIED = "未指定"
-
-    @property
-    def selected_name(self) -> str:
-        return self.value
