@@ -71,29 +71,19 @@ class TaskRepositoryImpl(TaskRepository):
         # このあとor条件の追加をしていく
 
         if kind_type_list is not None and len(kind_type_list) > 0:
-            values = [kind_type.value for kind_type in kind_type_list]
-            builder = Builder(
-                conditions=[
-                    *builder.conditions,
-                    {
-                        "or": [Builder.create().add(TaskKind.from_name(v), Cond.EQUALS).build() for v in values],
-                    },
-                ],
-            )
+            or_builder = Builder.create()
+            for kind_type in kind_type_list:
+                or_builder = or_builder.add(TaskKind.from_name(kind_type.value), Cond.EQUALS)
+                additional_conditions = or_builder.build("or")
+            builder = builder.add_filter_param(additional_conditions)
 
         if status_list is not None and len(status_list) > 0:
             status_type_list = [s.value if isinstance(s, TaskStatusType) else s for s in status_list]
-            builder = Builder(
-                conditions=[
-                    *builder.conditions,
-                    {
-                        "or": [
-                            Builder.create().add(TaskStatus.from_status_name(v), Cond.EQUALS).build()
-                            for v in status_type_list
-                        ],
-                    },
-                ],
-            )
+            or_builder = Builder.create()
+            for status_type in status_type_list:
+                or_builder = or_builder.add(TaskStatus.from_status_name(status_type), Cond.EQUALS)
+                additional_conditions = or_builder.build("or")
+            builder = builder.add_filter_param(additional_conditions)
 
         # print(json.dumps(builder.build(), ensure_ascii=False, indent=4))
         tasks = self.client.retrieve_pages(
