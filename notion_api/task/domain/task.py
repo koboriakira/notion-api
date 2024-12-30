@@ -3,7 +3,7 @@ from datetime import date, datetime, timedelta
 from lotion import notion_database, notion_prop
 from lotion.base_page import BasePage
 from lotion.block.rich_text import RichTextBuilder
-from lotion.properties import Checkbox, Date, Relation, Select, Status, Title
+from lotion.properties import Checkbox, Date, MultiSelect, Relation, Select, Status, Title
 
 from common.value.database_type import DatabaseType
 from task.domain.task_kind import TaskKindType
@@ -60,6 +60,11 @@ class TaskStatus(Status):
 class TaskKind(Select):
     def to_enum(self) -> TaskKindType:
         return TaskKindType(self.selected_name)
+
+
+@notion_prop("コンテクスト")
+class TaskContext(MultiSelect):
+    pass
 
 
 @notion_database(DatabaseType.TASK.value)

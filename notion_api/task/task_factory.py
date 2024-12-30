@@ -5,8 +5,8 @@ from lotion import BasePage
 from lotion.block import Block
 from lotion.properties import Properties, Title
 
-from task.domain.task import ProjectRelation, Task, TaskKind, TaskStartDate, TaskStatus
-from task.domain.task_context import TaskContext, TaskContextTypes
+from task.domain.task import ProjectRelation, Task, TaskContext, TaskKind, TaskStartDate, TaskStatus
+from task.domain.task_context import TaskContextTypes
 from task.domain.task_kind import TaskKindType
 from task.domain.task_status import TaskStatusType
 
