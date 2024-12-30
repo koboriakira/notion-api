@@ -3,8 +3,8 @@ from unittest import TestCase
 from unittest.mock import Mock
 
 from lotion.page.page_id import PageId
-from notion_api.book.domain.book_api import BookApiResult
-from notion_api.book.domain.book_builder import BookBuilder
+from book.book_api import BookApiResult
+from book.book_builder import BookBuilder
 from notion_api.common.service.tag_creator.tag_creator import TagCreator
 
 

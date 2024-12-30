@@ -1,7 +1,7 @@
 from lotion import Lotion
 
-from book.domain.book_api import BookApi, BookApiResult
-from book.domain.book_builder import BookBuilder
+from book.book_api import BookApi, BookApiResult
+from book.book_builder import BookBuilder
 from usecase.service.inbox_service import InboxService
 
 

@@ -4,7 +4,7 @@ import pytest
 from notion_api.infrastructure.book.google_book_api import GoogleBookApi
 from requests import HTTPError
 
-from book.domain.book_api import NotFoundApiError
+from book.book_api import NotFoundApiError
 
 
 class TestGoogleBookApi(TestCase):

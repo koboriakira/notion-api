@@ -2,7 +2,7 @@ from logging import Logger, getLogger
 
 import requests
 
-from book.domain.book_api import BookApi, BookApiResult, BookApiResultConverter, NotFoundApiError
+from book.book_api import BookApi, BookApiResult, BookApiResultConverter, NotFoundApiError
 
 
 class GoogleBookApi(BookApi):
