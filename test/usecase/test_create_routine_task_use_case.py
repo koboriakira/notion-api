@@ -4,7 +4,7 @@ from unittest.mock import Mock
 from lotion import Lotion
 from lotion.block import Divider
 from notion_databases.routine_task import RoutineTask
-from notion_api.task.domain.task_repository import TaskRepository
+from task.task_repository import TaskRepository
 from notion_api.usecase.create_routine_task_use_case import CreateRoutineTaskUseCase
 
 

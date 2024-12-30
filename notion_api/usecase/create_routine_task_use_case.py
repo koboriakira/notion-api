@@ -5,7 +5,7 @@ from lotion import Lotion
 from notion_databases.routine_task import RoutineTask
 from notion_databases.task_prop.task_kind import TaskKindType
 from notion_databases.task_prop.task_status import TaskStatusType
-from task.domain.task_repository import TaskRepository
+from task.task_repository import TaskRepository
 from task.task_factory import TaskFactory
 from util.datetime import jst_tommorow
 
@@ -46,7 +46,7 @@ class CreateRoutineTaskUseCase:
 
 if __name__ == "__main__":
     # python -m notion_api.usecase.create_routine_task_use_case
-    from task.infrastructure.task_repository_impl import TaskRepositoryImpl
+    from task.task_repository_impl import TaskRepositoryImpl
 
     task_repository = TaskRepositoryImpl()
     usecase = CreateRoutineTaskUseCase(task_repository=task_repository)

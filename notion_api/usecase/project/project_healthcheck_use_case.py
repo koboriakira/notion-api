@@ -8,7 +8,7 @@ from notion_databases.task_prop.task_status import TaskStatusType
 from project.domain import project_repository
 from project.domain.project import Project
 from project.domain.project_repository import ProjectRepository
-from task.domain.task_repository import TaskRepository
+from task.task_repository import TaskRepository
 from util.datetime import jst_today
 from util.slack.slack_client import SlackClient
 
@@ -88,7 +88,7 @@ if __name__ == "__main__":
     import logging
 
     from project.infrastructure.project_repository_impl import ProjectRepositoryImpl
-    from task.infrastructure.task_repository_impl import TaskRepositoryImpl
+    from task.task_repository_impl import TaskRepositoryImpl
 
     logging.basicConfig(level=logging.INFO)
     project_repository = ProjectRepositoryImpl(

@@ -4,7 +4,7 @@ from lotion import Lotion
 from router.request.task_request import CreateNewTaskRequest, UpdateTaskRequest
 from router.response import BaseResponse, TaskResponse
 from router.response import Task as TaskDto
-from task.infrastructure.task_repository_impl import TaskRepositoryImpl
+from task.task_repository_impl import TaskRepositoryImpl
 from usecase.create_new_task_usecase import CreateNewTaskUsecase
 from usecase.find_task_usecase import FindTaskUsecase
 from usecase.task.complete_task_usecase import CompleteTaskUsecase

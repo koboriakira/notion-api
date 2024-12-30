@@ -9,7 +9,7 @@ from common.value.database_type import DatabaseType
 from notion_databases.task_prop.memo_genre import MemoGenreType
 from notion_databases.task_prop.task_kind import TaskKindType
 from notion_databases.task_prop.task_status import TaskStatusType
-from task.valueobject.task_order_rule import TaskOrderRule
+from task.task_order_rule import TaskOrderRule
 from util.datetime import jst_now
 
 COLUMN_NAME_TITLE = "名前"

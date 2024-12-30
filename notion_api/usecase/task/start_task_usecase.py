@@ -1,6 +1,6 @@
 from custom_logger import get_logger
 from notion_databases.task import Task
-from task.domain.task_repository import TaskRepository
+from task.task_repository import TaskRepository
 
 
 class StartTaskUsecase:
@@ -21,7 +21,7 @@ class StartTaskUsecase:
 
 if __name__ == "__main__":
     # python -m notion_api.usecase.task.start_task_usecase
-    from task.infrastructure.task_repository_impl import TaskRepositoryImpl
+    from task.task_repository_impl import TaskRepositoryImpl
 
     task_repository = TaskRepositoryImpl()
     usecase = StartTaskUsecase(task_repository=task_repository)

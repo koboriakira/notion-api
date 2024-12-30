@@ -4,7 +4,7 @@ from datetime import timedelta
 from lotion import Lotion
 
 from custom_logger import get_logger
-from task.infrastructure.task_repository_impl import TaskRepositoryImpl
+from task.task_repository_impl import TaskRepositoryImpl
 from usecase.clean_empty_title_page import CleanEmptyTitlePageUsecase
 from usecase.shopping.reset_shopping_list_usecase import ResetShoppingListUseCase
 from usecase.task.maintain_tasks_usecase import MaintainTasksUsecase

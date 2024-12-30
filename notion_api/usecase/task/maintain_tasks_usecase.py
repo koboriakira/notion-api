@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from logging import Logger
 
 from custom_logger import get_logger
-from task.domain.task_repository import TaskRepository
+from task.task_repository import TaskRepository
 from util.datetime import jst_now
 from util.line.line_client import LineClient
 
@@ -28,7 +28,7 @@ class MaintainTasksUsecase:
 
 if __name__ == "__main__":
     # python -m notion_api.usecase.task.maintain_tasks_usecase
-    from task.infrastructure.task_repository_impl import TaskRepositoryImpl
+    from task.task_repository_impl import TaskRepositoryImpl
 
     task_repository = TaskRepositoryImpl()
     usecase = MaintainTasksUsecase(task_repository=task_repository)

@@ -9,7 +9,7 @@ from notion_databases.goal import Goal
 from notion_databases.task_prop.task_status import TaskStatusType
 from project.domain.project import Project
 from project.domain.project_repository import ProjectRepository
-from task.domain.task_repository import TaskRepository
+from task.task_repository import TaskRepository
 from util.datetime import JST, jst_now
 
 logger = get_logger(__name__)
@@ -123,7 +123,7 @@ def _is_between(target: datetime, start: datetime, end: datetime) -> bool:
 if __name__ == "__main__":
     # python -m notion_api.usecase.move_tasks_to_backup_usecase
     from project.infrastructure.project_repository_impl import ProjectRepositoryImpl
-    from task.infrastructure.task_repository_impl import TaskRepositoryImpl
+    from task.task_repository_impl import TaskRepositoryImpl
 
     client = Lotion.get_instance()
     usecase = MoveTasksToBackupUsecase(

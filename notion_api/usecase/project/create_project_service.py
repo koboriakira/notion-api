@@ -3,7 +3,7 @@ from notion_databases.task_prop.task_kind import TaskKindType
 from project.domain.project import Project
 from project.domain.project_repository import ProjectRepository
 from project.domain.project_status import ProjectStatusType
-from task.domain.task_repository import TaskRepository
+from task.task_repository import TaskRepository
 from task.task_factory import TaskFactory
 
 logger = get_logger(__name__)

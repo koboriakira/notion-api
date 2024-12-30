@@ -9,7 +9,7 @@ from notion_databases.goal import ProjectRelation
 from notion_databases.task import Task, TaskKind, TaskStartDate, TaskStatus
 from notion_databases.task_prop.task_kind import TaskKindType
 from notion_databases.task_prop.task_status import TaskStatusType
-from task.domain.task_repository import TaskRepository
+from task.task_repository import TaskRepository
 from util.datetime import JST
 
 if TYPE_CHECKING:

@@ -4,7 +4,7 @@ from lotion.properties import Title
 
 from notion_databases.task_prop.task_kind import TaskKindType
 from notion_databases.task_prop.task_status import TaskStatusType
-from task.domain.task_repository import TaskRepository
+from task.task_repository import TaskRepository
 from task.task_factory import TaskFactory
 
 
@@ -49,7 +49,7 @@ class CreateNewTaskUsecase:
 
 if __name__ == "__main__":
     # python -m notion_api.usecase.create_new_task_usecase
-    from task.infrastructure.task_repository_impl import TaskRepositoryImpl
+    from task.task_repository_impl import TaskRepositoryImpl
 
     task_repository = TaskRepositoryImpl()
     usecase = CreateNewTaskUsecase(task_repository=task_repository)

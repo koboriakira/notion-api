@@ -9,7 +9,7 @@ from custom_logger import get_logger
 from infrastructure.slack_bot_client import SlackBotClient
 from notion_databases.task_prop.task_status import TaskStatusType
 from task.domain import Task
-from task.domain.task_repository import TaskRepository
+from task.task_repository import TaskRepository
 from util.datetime import jst_now
 from util.line.line_client import LineClient
 from util.openai_executer import OpenaiExecuter
@@ -152,7 +152,7 @@ def to_dict_list(tasks: list[Task]) -> list[dict]:
 
 if __name__ == "__main__":
     # python -m notion_api.usecase.ai_advice_usecase
-    from notion_api.task.infrastructure.task_repository_impl import TaskRepositoryImpl
+    from task.task_repository_impl import TaskRepositoryImpl
 
     task_repository = TaskRepositoryImpl()
     suite = AiAdviceUsecase(

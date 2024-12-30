@@ -1,6 +1,6 @@
 from external_calendar.infrastructure.google_calendar_api import GoogleCalendarApi
 from external_calendar.service.external_calendar_service import ExternalCalendarService
-from task.infrastructure.task_repository_impl import TaskRepositoryImpl
+from task.task_repository_impl import TaskRepositoryImpl
 from usecase.task.sync_external_calendar_usecase import SyncExternalCalendarUsecase
 from util.datetime import jst_now
 from util.error_reporter import ErrorReporter

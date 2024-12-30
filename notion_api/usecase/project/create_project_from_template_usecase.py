@@ -5,7 +5,7 @@ from lotion.block import BulletedListItem
 
 from project.domain.project import Project
 from project.domain.project_repository import ProjectRepository
-from task.domain.task_repository import TaskRepository
+from task.task_repository import TaskRepository
 from usecase.project.create_project_service import CreateProjectService
 
 

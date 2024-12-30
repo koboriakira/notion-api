@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from custom_logger import get_logger
 from notion_databases.task import Task
 from notion_databases.task_prop.task_status import TaskStatusType
-from task.domain.task_repository import TaskRepository
+from task.task_repository import TaskRepository
 from util.datetime import jst_today
 
 logger = get_logger(__name__)
@@ -31,7 +31,7 @@ class PostponeTaskToNextDayUsecase:
 
 if __name__ == "__main__":
     # python -m notion_api.usecase.postpone_task_to_next_day_usecase
-    from task.infrastructure.task_repository_impl import TaskRepositoryImpl
+    from task.task_repository_impl import TaskRepositoryImpl
 
     usecase = PostponeTaskToNextDayUsecase(task_repository=TaskRepositoryImpl())
     print(usecase.execute())

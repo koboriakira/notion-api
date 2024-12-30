@@ -2,7 +2,7 @@ from unittest import TestCase
 from unittest.mock import Mock
 
 import pytest
-from notion_api.task.domain.task_repository import TaskRepository
+from task.task_repository import TaskRepository
 from notion_api.usecase.fetch_tasks_usecase import FetchTasksUsecase
 
 

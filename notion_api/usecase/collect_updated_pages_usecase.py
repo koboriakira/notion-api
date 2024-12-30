@@ -21,7 +21,7 @@ from notion_databases.webclip import Webclip
 from notion_databases.zettlekasten import Zettlekasten
 from project.domain.project import Project
 from recipe.domain.recipe import Recipe
-from task.domain.task_repository import TaskRepository
+from task.task_repository import TaskRepository
 from util.date_range import DateRange
 from util.datetime import JST, jst_today
 from util.slack.slack_client import SlackClient
@@ -360,7 +360,7 @@ tags: []
 if __name__ == "__main__":
     # python -m notion_api.usecase.collect_updated_pages_usecase
     from daily_log.infrastructure.daily_log_repository_impl import DailyLogRepositoryImpl
-    from task.infrastructure.task_repository_impl import TaskRepositoryImpl
+    from task.task_repository_impl import TaskRepositoryImpl
 
     client = Lotion.get_instance()
     task_repository = TaskRepositoryImpl(notion_client_wrapper=client)

@@ -12,7 +12,7 @@ from notion_databases.task_prop.task_kind import TaskKindType
 from project.domain.project import Project
 from project.domain.project_repository import ProjectRepository
 from project.domain.project_status import ProjectStatusType
-from task.domain.task_repository import TaskRepository
+from task.task_repository import TaskRepository
 from task.task_factory import TaskFactory
 from util.datetime import jst_now, jst_today
 
@@ -125,7 +125,7 @@ class PrepareWeeklyReviewUsecase:
 if __name__ == "__main__":
     # python -m notion_api.usecase.weekly.prepare_weekly_review_usecase
     from project.infrastructure.project_repository_impl import ProjectRepositoryImpl
-    from task.infrastructure.task_repository_impl import TaskRepositoryImpl
+    from task.task_repository_impl import TaskRepositoryImpl
 
     lotion = Lotion.get_instance()
     project_repository = ProjectRepositoryImpl()

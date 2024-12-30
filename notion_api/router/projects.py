@@ -8,7 +8,7 @@ from project.infrastructure.project_repository_impl import ProjectRepositoryImpl
 from router.request.notion_automation_request import NotionAutomationRequest
 from router.response.base_response import BaseResponse
 from router.response.projects_response import Project, ProjectResponse, ProjectsResponse
-from task.infrastructure.task_repository_impl import TaskRepositoryImpl
+from task.task_repository_impl import TaskRepositoryImpl
 from usecase.project.create_project_from_template_usecase import CreateProjectFromTemplateUsecase
 from usecase.project.remove_project_service import RemoveProjectService
 from util.access_token import valid_access_token

@@ -1,7 +1,7 @@
 from datetime import date, datetime, timedelta
 
 from notion_databases.task_prop.task_kind import TaskKindType
-from task.valueobject.task_order import TaskOrder
+from task.task_order import TaskOrder
 from util.datetime import jst_now
 
 

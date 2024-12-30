@@ -5,8 +5,8 @@ from external_calendar.service.external_calendar_service import ExternalCalendar
 from notion_databases.task import Task
 from notion_databases.task_prop.task_kind import TaskKindType
 from notion_databases.task_prop.task_status import TaskStatusType
-from task.domain.task_repository import TaskRepository
-from task.infrastructure.task_repository_impl import TaskRepositoryImpl
+from task.task_repository import TaskRepository
+from task.task_repository_impl import TaskRepositoryImpl
 from task.task_factory import TaskFactory
 from util.datetime import jst_tommorow
 

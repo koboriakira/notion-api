@@ -1,6 +1,6 @@
 import logging
 
-from task.infrastructure.task_repository_impl import TaskRepositoryImpl
+from task.task_repository_impl import TaskRepositoryImpl
 from usecase.create_routine_task_use_case import CreateRoutineTaskUseCase
 from util.datetime import jst_today
 from util.environment import Environment
