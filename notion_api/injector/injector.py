@@ -12,7 +12,7 @@ from external_calendar.service.external_calendar_service import ExternalCalendar
 from infrastructure.book.google_book_api import GoogleBookApi
 from injector.page_creator_factory import PageCreatorFactory
 from project.project_repository_impl import ProjectRepositoryImpl
-from recipe.service.recipe_creator import RecipeCreator
+from recipe.recipe_creator import RecipeCreator
 from slack_concierge.injector import SlackConciergeInjector
 from task.task_repository_impl import TaskRepositoryImpl
 from usecase.account_book.add_account_book_usecase import AddAccountBookUsecase

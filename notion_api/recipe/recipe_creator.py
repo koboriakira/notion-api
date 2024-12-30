@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from logging import Logger, getLogger
 from typing import Any
 
-from recipe.domain.meal_kind import MealKindType, MealKindTypes
+from notion_databases.recipe_prop.meal_kind import MealKindType, MealKindTypes
 from util.openai_executer import OpenaiExecuter
 
 

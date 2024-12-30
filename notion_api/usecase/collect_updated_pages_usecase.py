@@ -15,13 +15,13 @@ from custom_logger import get_logger
 from daily_log.daily_log_repository import DailyLogRepository
 from notion_databases.book import Book
 from notion_databases.project import Project
+from notion_databases.recipe import Recipe
 from notion_databases.song import Song
 from notion_databases.task_prop.task_kind import TaskKindType
 from notion_databases.task_prop.task_status import TaskStatusType
 from notion_databases.video import Video
 from notion_databases.webclip import Webclip
 from notion_databases.zettlekasten import Zettlekasten
-from recipe.domain.recipe import Recipe
 from task.task_repository import TaskRepository
 from util.date_range import DateRange
 from util.datetime import JST, jst_today

@@ -1,7 +1,7 @@
 from pydantic import Field
 
 from custom_logger import get_logger
-from recipe.domain.recipe import Recipe as RecipeEntity
+from notion_databases.recipe import Recipe as RecipeEntity
 from router.response.base_notion_page_model import BaseNotionPageModel
 from router.response.base_response import BaseResponse
 from util.datetime import jst_now

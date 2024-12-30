@@ -5,8 +5,8 @@ from unittest.mock import Mock
 
 import pytest
 
-from recipe.domain.meal_kind import MealKindType, MealKindTypes
-from recipe.service.recipe_creator import AnalyzeResult, RecipeCreator
+from notion_databases.recipe_prop.meal_kind import MealKindType, MealKindTypes
+from recipe.recipe_creator import AnalyzeResult, RecipeCreator
 from util.openai_executer import OpenaiExecuter
 
 

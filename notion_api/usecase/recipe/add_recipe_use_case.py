@@ -4,10 +4,10 @@ from lotion import Lotion
 from slack_sdk import WebClient
 
 from common.value.slack_channel_type import ChannelType
-from recipe.domain.recipe import MealKind, Recipe, RecipeKind
-from recipe.domain.recipe_builder import RecipeBuilder
-from recipe.domain.recipe_kind import RecipeKindType
-from recipe.service.recipe_creator import AnalyzeResult, MockRecipeCreator, RecipeCreator
+from notion_databases.recipe import MealKind, Recipe, RecipeKind
+from notion_databases.recipe_prop.recipe_kind import RecipeKindType
+from recipe.recipe_builder import RecipeBuilder
+from recipe.recipe_creator import AnalyzeResult, MockRecipeCreator, RecipeCreator
 from util.openai_executer import OpenaiExecuter
 
 
@@ -91,7 +91,7 @@ if __name__ == "__main__":
 
     from slack_sdk import WebClient
 
-    from recipe.service.recipe_creator import RecipeCreator
+    from recipe.recipe_creator import RecipeCreator
 
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger(__name__)

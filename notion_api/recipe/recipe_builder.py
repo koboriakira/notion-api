@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from lotion.block import Block, BulletedListItem, Heading
 from lotion.properties import Cover, Properties, Property
 
-from recipe.domain.recipe import (
+from notion_databases.recipe import (
     Carbohydrate,
     Fat,
     IngredientRelation,
