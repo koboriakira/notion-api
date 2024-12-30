@@ -10,7 +10,8 @@ from common.value.database_type import DatabaseType
 from notion_databases.song import Song
 from notion_databases.webclip import Webclip
 from restaurant.domain.restaurant import Restaurant
-from task.domain.memo_genre import MemoGenreKind, MemoGenreType
+from task.domain.memo_genre import MemoGenreType
+from task.domain.task import MemoGenre
 from video.domain.video import Video
 
 
@@ -36,12 +37,9 @@ class InboxService:
 
         # タイトルとメモジャンルを取得
         properties = []
-        title = Title.from_mentioned_page(
-            mentioned_page_id=page.id,
-        )
-        properties.append(title)
-        memo_genre_kind = self.get_memo_genre_kind(page)
-        if memo_genre_kind is not None:
+        properties.append(Title.from_mentioned_page(mentioned_page_id=page.id))
+
+        if memo_genre_kind := self.get_memo_genre_kind(page):
             properties.append(memo_genre_kind)
 
         # タスクを作成
@@ -54,7 +52,7 @@ class InboxService:
         if original_url:
             block = (
                 Embed.from_url_and_caption(url=original_url)
-                if isinstance(page, Song) or isinstance(page, Video)
+                if isinstance(page, Song | Video)
                 else Bookmark.from_url(url=original_url)
             )
             self.client.append_block(block_id=inbox_task_page.id, block=block)
@@ -67,14 +65,14 @@ class InboxService:
                 thread_ts=slack_thread_ts,
             )
 
-    def get_memo_genre_kind(self, page: BasePage) -> MemoGenreKind | None:
+    def get_memo_genre_kind(self, page: BasePage) -> MemoGenre | None:
         """ページの種類を取得する"""
         if isinstance(page, Song):
-            return MemoGenreKind(MemoGenreType.MUSIC)
+            return MemoGenre.create(MemoGenreType.MUSIC)
         if isinstance(page, Video):
-            return MemoGenreKind(MemoGenreType.VIDEO)
+            return MemoGenre.create(MemoGenreType.VIDEO)
         if isinstance(page, Webclip):
-            return MemoGenreKind(MemoGenreType.WEBCLIP)
+            return MemoGenre.create(MemoGenreType.WEBCLIP)
         if isinstance(page, Restaurant):
-            return MemoGenreKind(MemoGenreType.RESTAURANT)
+            return MemoGenre.create(MemoGenreType.RESTAURANT)
         return None

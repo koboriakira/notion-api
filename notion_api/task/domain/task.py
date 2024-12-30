@@ -6,6 +6,7 @@ from lotion.block.rich_text import RichTextBuilder
 from lotion.properties import Checkbox, Date, MultiSelect, Relation, Select, Status, Title
 
 from common.value.database_type import DatabaseType
+from task.domain.memo_genre import MemoGenreType
 from task.domain.task_kind import TaskKindType
 from task.domain.task_status import TaskStatusType
 from task.valueobject.task_order_rule import TaskOrderRule
@@ -67,6 +68,13 @@ class TaskContext(MultiSelect):
     pass
 
 
+@notion_prop("メモジャンル")
+class MemoGenre(Select):
+    @staticmethod
+    def create(typ: MemoGenreType) -> "MemoGenre":
+        return MemoGenre.from_name(typ.value)
+
+
 @notion_database(DatabaseType.TASK.value)
 class Task(BasePage):
     task_name: TaskName
@@ -75,6 +83,7 @@ class Task(BasePage):
     task_date: TaskStartDate
     status: TaskStatus
     kind: TaskKind
+    memo_genre: MemoGenre
 
     def update_status(self, status: TaskStatusType) -> "Task":
         self.set_prop(TaskStatus.from_status_type(status))
@@ -136,7 +145,7 @@ class Task(BasePage):
         return self.kind.to_enum() == TaskKindType.NEXT_ACTION
 
     def is_scheduled(self) -> bool:
-        return self.kind == TaskKindType.SCHEDULE
+        return self.kind.to_enum() == TaskKindType.SCHEDULE
 
     @property
     def order(self) -> int:
