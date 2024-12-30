@@ -11,7 +11,7 @@ from external_calendar.infrastructure.google_calendar_api import GoogleCalendarA
 from external_calendar.service.external_calendar_service import ExternalCalendarService
 from infrastructure.book.google_book_api import GoogleBookApi
 from injector.page_creator_factory import PageCreatorFactory
-from project.infrastructure.project_repository_impl import ProjectRepositoryImpl
+from project.project_repository_impl import ProjectRepositoryImpl
 from recipe.service.recipe_creator import RecipeCreator
 from slack_concierge.injector import SlackConciergeInjector
 from task.task_repository_impl import TaskRepositoryImpl

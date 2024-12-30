@@ -1,9 +1,9 @@
 from datetime import date
 from unittest import TestCase
 
-from notion_api.project.domain.importance import ImportanceType
-from notion_api.project.domain.project import Importance, Project
-from notion_api.project.domain.project_status import ProjectStatusType
+from notion_databases.project import Importance, Project
+from notion_databases.project_prop.importance import ImportanceType
+from notion_databases.project_prop.project_status import ProjectStatusType
 
 
 class TestProject(TestCase):

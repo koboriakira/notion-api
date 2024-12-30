@@ -1,5 +1,5 @@
 from custom_logger import get_logger
-from project.domain.project_repository import ProjectRepository
+from project.project_repository import ProjectRepository
 from task.task_repository import TaskRepository
 
 logger = get_logger(__name__)

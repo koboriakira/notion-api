@@ -11,20 +11,6 @@ class ProjectStatusType(Enum):
     TRASH = "Trash"
     DONE = "Done"
 
-    @staticmethod
-    def from_text(text: str) -> "ProjectStatusType":
-        for status_type in ProjectStatusType:
-            if status_type.value.lower() == text.lower():
-                return status_type
-        msg = f"ProjectStatusType に存在しない値です: {text}"
-        raise ValueError(msg)
-
-    @staticmethod
-    def get_status_list(status_list: list[str] | None) -> list["ProjectStatusType"]:
-        if status_list is None:
-            return []
-        return [ProjectStatusType.from_text(status) for status in status_list]
-
     def is_done(self) -> bool:
         return self == ProjectStatusType.DONE
 

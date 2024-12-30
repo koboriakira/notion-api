@@ -4,8 +4,8 @@ from lotion import Lotion
 from lotion.properties import Date, Property
 
 from common.value.database_type import DatabaseType
-from project.domain.project import Project
-from project.domain.project_repository import ProjectRepository
+from notion_databases.project import Project
+from project.project_repository import ProjectRepository
 
 
 class ProjectRepositoryImpl(ProjectRepository):

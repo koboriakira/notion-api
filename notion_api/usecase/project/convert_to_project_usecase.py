@@ -2,8 +2,8 @@ from lotion import Lotion
 from lotion.properties import Properties, Title
 
 from custom_logger import get_logger
-from project.domain.project import Project
-from project.domain.project_repository import ProjectRepository
+from notion_databases.project import Project
+from project.project_repository import ProjectRepository
 
 logger = get_logger(__name__)
 

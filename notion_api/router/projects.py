@@ -4,7 +4,7 @@ from fastapi import APIRouter, Header
 from lotion import Lotion
 
 from interface import project
-from project.infrastructure.project_repository_impl import ProjectRepositoryImpl
+from project.project_repository_impl import ProjectRepositoryImpl
 from router.request.notion_automation_request import NotionAutomationRequest
 from router.response.base_response import BaseResponse
 from router.response.projects_response import Project, ProjectResponse, ProjectsResponse

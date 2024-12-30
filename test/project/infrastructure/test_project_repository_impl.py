@@ -4,7 +4,8 @@ from unittest.mock import Mock
 
 import pytest
 from lotion import Lotion
-from notion_api.project.infrastructure.project_repository_impl import ProjectRepositoryImpl
+
+from project.project_repository_impl import ProjectRepositoryImpl
 
 
 class TestProjectRepositoryImpl(TestCase):

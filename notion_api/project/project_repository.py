@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 
-from project.domain.project import Project
+from notion_databases.project import Project
 
 
 class ProjectRepository(metaclass=ABCMeta):

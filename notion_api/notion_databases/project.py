@@ -7,7 +7,7 @@ from lotion.properties import Cover, Date, Property, Relation, Select, Text, Tit
 
 from common.domain.tag_relation import TagRelation
 from common.value.database_type import DatabaseType
-from project.domain.project_status import ProjectStatus, ProjectStatusType
+from notion_databases.project_prop.project_status import ProjectStatus, ProjectStatusType
 
 
 @notion_prop("名前")
@@ -65,7 +65,7 @@ class Project(BasePage):
         return self._get_status_type().is_inbox()
 
     def _get_status_type(self) -> ProjectStatusType:
-        return ProjectStatusType.from_text(text=self.status.status_name)
+        return ProjectStatusType(self.status.status_name)
 
     @staticmethod
     def generate(  # noqa: C901, PLR0913

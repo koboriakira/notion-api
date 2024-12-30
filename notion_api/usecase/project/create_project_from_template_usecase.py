@@ -3,8 +3,8 @@ from logging import Logger, getLogger
 from lotion import Lotion
 from lotion.block import BulletedListItem
 
-from project.domain.project import Project
-from project.domain.project_repository import ProjectRepository
+from notion_databases.project import Project
+from project.project_repository import ProjectRepository
 from task.task_repository import TaskRepository
 from usecase.project.create_project_service import CreateProjectService
 

@@ -7,13 +7,13 @@ from lotion.properties import Title
 
 from custom_logger import get_logger
 from notion_databases.goal import Goal
+from notion_databases.project import Project
+from notion_databases.project_prop.project_status import ProjectStatusType
 from notion_databases.task import Task
 from notion_databases.task_prop.task_kind import TaskKindType
-from project.domain.project import Project
-from project.domain.project_repository import ProjectRepository
-from project.domain.project_status import ProjectStatusType
-from task.task_repository import TaskRepository
+from project.project_repository import ProjectRepository
 from task.task_factory import TaskFactory
+from task.task_repository import TaskRepository
 from util.datetime import jst_now, jst_today
 
 
@@ -124,7 +124,7 @@ class PrepareWeeklyReviewUsecase:
 
 if __name__ == "__main__":
     # python -m notion_api.usecase.weekly.prepare_weekly_review_usecase
-    from project.infrastructure.project_repository_impl import ProjectRepositoryImpl
+    from project.project_repository_impl import ProjectRepositoryImpl
     from task.task_repository_impl import TaskRepositoryImpl
 
     lotion = Lotion.get_instance()
