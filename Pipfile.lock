@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "9a7fd379b91c5aa868c622b92da9ed74fb904f9ef72b57e60c5b655f9078ef15"
+            "sha256": "5fe32939025d9d057cd0c9438489ab343948eb3fb0ec57fe0497bd546c42c174"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -335,11 +335,11 @@
         },
         "htmldate": {
             "hashes": [
-                "sha256:89553fb6e0942a18951a623e28ce3ce4a2e8543b3908e951eea356ec0346cbe4",
-                "sha256:a63240e0107f6389e0d80007b838ca1b15aa4ea8486783e40027eecdc5ba58d0"
+                "sha256:3fadc422cf3c10a5cdb5e1b914daf37ec7270400a80a1b37e2673ff84faaaff8",
+                "sha256:ac0caf4628c3ded4042011e2d60dc68dfb314c77b106587dd307a80d77e708e9"
             ],
             "markers": "python_version >= '3.8'",
-            "version": "==1.9.2"
+            "version": "==1.9.3"
         },
         "httpcore": {
             "hashes": [
@@ -383,12 +383,12 @@
         },
         "lotion": {
             "hashes": [
-                "sha256:3525fd574c04af29fd9d3f0f6c3a317a5419fe81b3cf88202e74eea94c97235d",
-                "sha256:86374c16c81b0762181f7d5bb2f403649010c9d0242b4f8dea1305e6fabf0a29"
+                "sha256:1e79cdba28d998102987a3036fa71281038866f858db04b608e53104926af304",
+                "sha256:f0742137a63f2ade36f3f0c8ad2ff3897369c19d639a81f869eed82c5a4fc89b"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.11'",
-            "version": "==0.8.10"
+            "version": "==0.9.0"
         },
         "lxml": {
             "extras": [
