@@ -1,7 +1,7 @@
 from datetime import date
 
 import pytest
-from notion_api.task.domain.routine_task import RoutineType
+from notion_databases.routine_task import RoutineType
 
 # 2024年3月20日(水)
 BASIS_DATE_WED = date(2024, 3, 20)

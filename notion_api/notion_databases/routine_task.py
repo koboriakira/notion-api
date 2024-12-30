@@ -5,7 +5,7 @@ from lotion.base_page import BasePage
 from lotion.properties import Property, Select, Text, Title
 
 from common.value.database_type import DatabaseType
-from task.domain.routine_type import RoutineType
+from notion_databases.routine_prop.routine_type import RoutineType
 from notion_databases.task_prop.task_context import TaskContextType, TaskContextTypes
 from util.datetime import JST, jst_today
 

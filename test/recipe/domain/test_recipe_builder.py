@@ -1,9 +1,7 @@
 from unittest import TestCase
 
-from lotion import Lotion
-
 from recipe.domain.meal_kind import MealKindType, MealKindTypes
-from recipe.domain.recipe import MealKind, Recipe, RecipeKind
+from recipe.domain.recipe import MealKind, RecipeKind
 from recipe.domain.recipe_builder import RecipeBuilder
 from recipe.domain.recipe_kind import RecipeKindType
 
@@ -16,14 +14,8 @@ class TestRecipeBuilder(TestCase):
         # Given
         meal_kind_types = MealKindTypes(values=[MealKindType.SIDE_DISH])
         recipe_kind_type = RecipeKindType.YET
-
-        lotion = Lotion.get_instance()
-        meal_kind = lotion.fetch_multi_select(
-            Recipe,
-            MealKind,
-            value=[k.value for k in meal_kind_types.values],
-        )
-        recipe_kind = lotion.fetch_select(Recipe, RecipeKind, value=recipe_kind_type.value)
+        meal_kind = MealKind.from_name(meal_kind_types.to_str_list())
+        recipe_kind = RecipeKind.from_name(recipe_kind_type.value)
 
         # When
         recipe = (

@@ -1,7 +1,6 @@
 from datetime import date
 from unittest import TestCase
 
-from lotion import Lotion
 from notion_api.project.domain.importance import ImportanceType
 from notion_api.project.domain.project import Importance, Project
 from notion_api.project.domain.project_status import ProjectStatusType
@@ -11,10 +10,9 @@ class TestProject(TestCase):
     def test_インスタンスの生成(self):
         # Given
         importance_type = ImportanceType.THREE
+        importance = Importance.from_name(importance_type.value)
 
         # When
-        importance = Lotion.get_instance().fetch_select(Project, Importance, importance_type.value)
-
         actual = Project.generate(
             title="iDeCoの移管をする",
             project_status=ProjectStatusType.IN_PROGRESS,

@@ -36,3 +36,6 @@ class MealKindTypes:
             if not isinstance(value, MealKindType):
                 msg = f"[{type(self)} Invalid type for {value}: {type(value)}"
                 raise TypeError(msg)
+
+    def to_str_list(self) -> list[str]:
+        return [kind.value for kind in self.values]
