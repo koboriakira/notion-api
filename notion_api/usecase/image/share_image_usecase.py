@@ -4,7 +4,7 @@ from lotion import Lotion
 
 from common.domain.external_image import ExternalImage
 from common.service.image.external_image_service import ExternalImageService
-from daily_log.infrastructure.daily_log_repository_impl import DailyLogRepositoryImpl
+from daily_log.daily_log_repository_impl import DailyLogRepositoryImpl
 from util.datetime import jst_today
 
 

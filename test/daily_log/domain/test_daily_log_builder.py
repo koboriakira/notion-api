@@ -2,7 +2,7 @@ import sys
 from datetime import date
 from unittest import TestCase
 
-from notion_api.daily_log.domain.daily_log_builder import DailyLogBuilder
+from daily_log.daily_log_builder import DailyLogBuilder
 
 sys.path.append("notion_api")
 from lotion.page.page_id import PageId

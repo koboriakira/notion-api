@@ -5,8 +5,8 @@ from lotion.base_page import BasePage
 from lotion.properties import Date, Title
 
 from common.value.database_type import DatabaseType
-from daily_log.domain.daily_log_repository import DailyLogRepository, ExistedDailyLogError
-from daily_log.value.isoweek import Isoweek
+from daily_log.daily_log_repository import DailyLogRepository, ExistedDailyLogError
+from daily_log.isoweek import Isoweek
 
 
 class CreateDailyLogUsecase:

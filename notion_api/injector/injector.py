@@ -6,7 +6,7 @@ from slack_sdk.web import WebClient
 
 from common.service.tag_creator.tag_creator import TagCreator
 from custom_logger import get_logger
-from daily_log.infrastructure.daily_log_repository_impl import DailyLogRepositoryImpl
+from daily_log.daily_log_repository_impl import DailyLogRepositoryImpl
 from external_calendar.infrastructure.google_calendar_api import GoogleCalendarApi
 from external_calendar.service.external_calendar_service import ExternalCalendarService
 from infrastructure.book.google_book_api import GoogleBookApi

@@ -12,7 +12,7 @@ from common.service.image.external_image_service import ExternalImageService
 from common.value.database_type import DatabaseType
 from common.value.slack_channel_type import ChannelType
 from custom_logger import get_logger
-from daily_log.domain.daily_log_repository import DailyLogRepository
+from daily_log.daily_log_repository import DailyLogRepository
 from notion_databases.book import Book
 from notion_databases.song import Song
 from notion_databases.task_prop.task_kind import TaskKindType
@@ -359,7 +359,7 @@ tags: []
 
 if __name__ == "__main__":
     # python -m notion_api.usecase.collect_updated_pages_usecase
-    from daily_log.infrastructure.daily_log_repository_impl import DailyLogRepositoryImpl
+    from daily_log.daily_log_repository_impl import DailyLogRepositoryImpl
     from task.task_repository_impl import TaskRepositoryImpl
 
     client = Lotion.get_instance()

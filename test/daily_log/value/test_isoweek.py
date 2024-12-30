@@ -1,7 +1,7 @@
 from datetime import date
 from unittest import TestCase
 
-from notion_api.daily_log.value.isoweek import Isoweek
+from daily_log.isoweek import Isoweek
 
 
 class TestIsoweek(TestCase):
