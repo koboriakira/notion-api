@@ -3,7 +3,7 @@ from datetime import date
 from logging import Logger, getLogger
 
 from lotion import Lotion
-from lotion.filter import Builder, Cond, Prop
+from lotion.filter import Builder, Cond
 
 from common.service.page_creator import PageCreator
 from notion_databases.song import Song
@@ -53,7 +53,8 @@ class MusicCreator(PageCreator):
         info_message = f"{self.__class__} execute: url={url}, title={title}, cover={cover}"
         self._logger.info(info_message)
 
-        builder = Builder.create().add(Prop.RICH_TEXT, SpotifyUrl.PROP_NAME, Cond.EQUALS, url)
+        spotify_url = SpotifyUrl.from_url(url)
+        builder = Builder.create().add(spotify_url, Cond.EQUALS)
         searched_songs = self._lotion.retrieve_pages(
             cls=Song,
             filter_param=builder.build(),

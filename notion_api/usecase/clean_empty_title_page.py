@@ -1,7 +1,8 @@
 from logging import Logger
 
 from lotion import Lotion
-from lotion.filter import Builder, Cond, Prop
+from lotion.filter import Builder, Cond
+from lotion.properties import Title
 
 from common.value.database_type import DatabaseType
 from custom_logger import get_logger
@@ -42,7 +43,9 @@ class CleanEmptyTitlePageUsecase:
                 self._client.remove_page(page_id=page.id)
 
     def _create_filter_param(self) -> dict:
-        builder = Builder.create().add(Prop.RICH_TEXT, "名前", Cond.IS_EMPTY, True)
+        # FIXME: 各データベースの名前プロパティを取得したほうがよさそう
+        title_prop = Title.from_plain_text(name="名前", text="")
+        builder = Builder.create().add(title_prop, Cond.IS_EMPTY)
         return builder.build()
 
 

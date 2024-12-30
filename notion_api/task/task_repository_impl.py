@@ -2,7 +2,7 @@ from datetime import date, datetime, time, timedelta
 from typing import TYPE_CHECKING
 
 from lotion import Lotion
-from lotion.filter import Builder, Cond, Prop
+from lotion.filter import Builder, Cond
 
 from common.value.database_type import DatabaseType
 from notion_databases.goal import ProjectRelation
@@ -30,7 +30,8 @@ class TaskRepositoryImpl(TaskRepository):
         last_edited_at: datetime | None = None,
     ) -> list[Task]:
         builder = Builder.create()
-        builder = builder.add(Prop.SELECT, TaskKind.PROP_NAME, Cond.DOES_NOT_EQUAL, TaskKindType.TRASH.value)
+        trash_kind = TaskKind.trash()
+        builder = builder.add(trash_kind, Cond.DOES_NOT_EQUAL)
         start_datetime_start = None
         if start_datetime is not None:
             start_datetime_start = (
@@ -38,8 +39,9 @@ class TaskRepositoryImpl(TaskRepository):
                 if isinstance(start_datetime, datetime)
                 else datetime.combine(start_datetime, time.min, tzinfo=JST)
             )
-            builder = builder.add(
-                Prop.DATE,
+            # FIXME: add関数を使う
+            builder = builder._add(
+                "date",
                 TaskStartDate.PROP_NAME,
                 Cond.ON_OR_AFTER,
                 start_datetime_start.isoformat(),
@@ -51,19 +53,20 @@ class TaskRepositoryImpl(TaskRepository):
                 if isinstance(start_datetime_end, datetime)
                 else datetime.combine(start_datetime_end, time.max, tzinfo=JST)
             )
-            builder = builder.add(Prop.DATE, TaskStartDate.PROP_NAME, Cond.ON_OR_BEFORE, start_datetime_end.isoformat())
+            builder = builder._add("date", TaskStartDate.PROP_NAME, Cond.ON_OR_BEFORE, start_datetime_end.isoformat())
         elif start_datetime_start is not None:
             start_datetime_end = start_datetime_start + timedelta(days=1) - timedelta(seconds=1)
-            builder = builder.add(Prop.DATE, TaskStartDate.PROP_NAME, Cond.ON_OR_BEFORE, start_datetime_end.isoformat())
+            builder = builder._add("date", TaskStartDate.PROP_NAME, Cond.ON_OR_BEFORE, start_datetime_end.isoformat())
 
         if project_id is not None:
-            builder = builder.add(Prop.RELATION, ProjectRelation.PROP_NAME, Cond.CONTAINS, project_id)
+            project_relation = ProjectRelation.from_id(project_id)
+            builder = builder.add(project_relation, Cond.CONTAINS)
 
         if last_edited_at is not None:
             builder = builder.add_last_edited_at(Cond.ON_OR_AFTER, last_edited_at.isoformat())
 
         if kind_type_list is not None and len(kind_type_list) == 0:
-            builder = builder.add(Prop.SELECT, TaskKind.PROP_NAME, Cond.IS_EMPTY, True)  # noqa: FBT003
+            builder = builder.add(TaskKind, Cond.IS_EMPTY)
 
         # このあとor条件の追加をしていく
 
@@ -73,10 +76,7 @@ class TaskRepositoryImpl(TaskRepository):
                 conditions=[
                     *builder.conditions,
                     {
-                        "or": [
-                            Builder.create().add(Prop.SELECT, TaskKind.PROP_NAME, Cond.EQUALS, v).build()
-                            for v in values
-                        ],
+                        "or": [Builder.create().add(TaskKind.from_name(v), Cond.EQUALS).build() for v in values],
                     },
                 ],
             )
@@ -88,7 +88,7 @@ class TaskRepositoryImpl(TaskRepository):
                     *builder.conditions,
                     {
                         "or": [
-                            Builder.create().add(Prop.STATUS, TaskStatus.PROP_NAME, Cond.EQUALS, v).build()
+                            Builder.create().add(TaskStatus.from_status_name(v), Cond.EQUALS).build()
                             for v in status_type_list
                         ],
                     },

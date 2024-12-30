@@ -62,6 +62,10 @@ class TaskKind(Select):
     def to_enum(self) -> TaskKindType:
         return TaskKindType(self.selected_name)
 
+    @staticmethod
+    def trash() -> "TaskKind":
+        return TaskKind.from_name(TaskKindType.TRASH.value)
+
 
 @notion_prop("コンテクスト")
 class TaskContext(MultiSelect):

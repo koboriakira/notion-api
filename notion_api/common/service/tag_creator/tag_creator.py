@@ -1,5 +1,5 @@
 from lotion import Lotion
-from lotion.filter import Builder, Cond, Prop
+from lotion.filter import Builder, Cond
 from lotion.properties import Title
 
 from common.value.database_type import DatabaseType
@@ -21,7 +21,8 @@ class TagCreator:
 
     def __create(self, title: str) -> str:
         # すでに存在するか確認
-        builder = Builder.create().add(Prop.RICH_TEXT, "名前", Cond.EQUALS, title)
+        title_prop = Title.from_plain_text(title, "名前")
+        builder = Builder.create().add(title_prop, Cond.EQUALS)
         tags = self.client.retrieve_database(database_id=self.DATABASE_ID, filter_param=builder.build())
         if len(tags) > 0:
             return tags[0].id
