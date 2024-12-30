@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from notion_api.video.domain.video import Video
+from notion_databases.video import Video
 
 
 class TestVideo(TestCase):

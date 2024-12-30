@@ -5,7 +5,7 @@ from common.injector import CommonInjector
 from common.service.scrape_service.scrape_service import ScrapeService
 from custom_logger import get_logger
 from util.tag_analyzer import TagAnalyzer
-from video.service.video_creator import VideoCreator
+from video.video_creator import VideoCreator
 
 logger = get_logger(__name__)
 client = Lotion.get_instance()

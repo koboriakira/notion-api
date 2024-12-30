@@ -6,8 +6,8 @@ from common.infrastructure.default_scraper import DefaultScraper
 from common.service.page_creator import PageCreator
 from common.service.scrape_service.scrape_service import ScrapeService
 from common.service.tag_creator import TagCreator
+from notion_databases.video import Video, VideoName
 from util.tag_analyzer import TagAnalyzer
-from video.domain.video import Video, VideoName
 
 
 class VideoCreator(PageCreator):

@@ -2,7 +2,7 @@ from unittest import TestCase
 
 from notion_api.video.video_injector import VideoInjector
 
-from video.service.video_creator import VideoCreator
+from video.video_creator import VideoCreator
 
 
 class TestVideoInjector(TestCase):
