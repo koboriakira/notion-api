@@ -3,7 +3,6 @@ from datetime import date
 from logging import Logger, getLogger
 
 from lotion import Lotion
-from lotion.filter import Builder, Cond
 
 from common.service.page_creator import PageCreator
 from notion_databases.song import Song
@@ -47,33 +46,27 @@ class MusicCreator(PageCreator):
         params: dict | None = None,
     ) -> Song:
         if title is None:
-            msg = "title is required"
-            raise ValueError(msg)
+            raise ValueError("title is required")
 
         info_message = f"{self.__class__} execute: url={url}, title={title}, cover={cover}"
         self._logger.info(info_message)
 
-        spotify_url = SpotifyUrl.from_url(url)
-        builder = Builder.create().add(spotify_url, Cond.EQUALS)
-        searched_songs = self._lotion.retrieve_pages(
-            cls=Song,
-            filter_param=builder.build(),
-        )
+        searched_songs = self._lotion.search_pages(Song, SpotifyUrl.from_url(url))
         if len(searched_songs) > 0:
             song = searched_songs[0]
             info_message = f"The song is already registered: {song.get_title_text()}"
             self._logger.info(info_message)
             return searched_songs[0]
 
-        info_message = "Create a Music"
-        self._logger.info(info_message)
+        self._logger.info("Create a Music")
 
         request_params = _MusicRequestParam.from_params(params)
-        song = Song.generate(
-            title=title,
-            spotify_url=url,
-            cover=cover,
-            artist=request_params.artists,
-            release_date=request_params.release_date,
+        return self._lotion.update(
+            Song.generate(
+                title=title,
+                spotify_url=url,
+                cover=cover,
+                artist=request_params.artists,
+                release_date=request_params.release_date,
+            ),
         )
-        return self._lotion.update(song)
