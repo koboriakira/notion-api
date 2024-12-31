@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.0](https://github.com/koboriakira/notion-api/compare/v2.5.3...v2.6.0) (2024-12-31)
+
+
+### Features
+
+* Add TaskContext class as MultiSelect for task categorization ([8cc3737](https://github.com/koboriakira/notion-api/commit/8cc3737f91d6174730c1841c2bc1e2e64095cd5d))
+
 ## [2.5.3](https://github.com/koboriakira/notion-api/compare/v2.5.2...v2.5.3) (2024-12-29)
 
 
