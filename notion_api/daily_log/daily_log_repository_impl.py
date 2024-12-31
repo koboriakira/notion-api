@@ -6,7 +6,7 @@ from lotion import Lotion
 from common.value.database_type import DatabaseType
 from daily_log.daily_log_builder import DailyLogBuilder
 from daily_log.daily_log_repository import DailyLogRepository, ExistedDailyLogError, NotFoundDailyLogError
-from notion_databases.daily_log import DailyLog
+from notion_databases.daily_log import DailyLog, DailyLogTitle
 
 
 class DailyLogRepositoryImpl(DailyLogRepository):
@@ -42,9 +42,5 @@ class DailyLogRepositoryImpl(DailyLogRepository):
         return self.save(daily_log)
 
     def _find_daily_log(self, date_: date) -> DailyLog | None:
-        return self._client.find_page_by_title(
-            database_id=self.DATABASE_ID,
-            title=date_.isoformat(),
-            title_key_name="名前",
-            cls=DailyLog,
-        )
+        title = DailyLogTitle.from_date(date_)
+        return self._client.find_page(DailyLog, title)
