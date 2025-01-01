@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.1](https://github.com/koboriakira/notion-api/compare/v2.6.0...v2.6.1) (2025-01-01)
+
+
+### Bug Fixes
+
+* スケジュール開始の機能を修正 ([59b9e1a](https://github.com/koboriakira/notion-api/commit/59b9e1ae601e7c54e1904bb7f02274ab2a892ecc))
+
 ## [2.6.0](https://github.com/koboriakira/notion-api/compare/v2.5.3...v2.6.0) (2024-12-31)
 
 
