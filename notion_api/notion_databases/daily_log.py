@@ -5,6 +5,7 @@ from lotion.base_page import BasePage
 from lotion.properties import Date, Relation, Text, Title
 
 from common.domain.tag_relation import TagRelation
+from common.value.database_type import DatabaseType
 
 
 @notion_prop("名前")
@@ -39,7 +40,7 @@ class WeeklyLogRelation(Relation):
     pass
 
 
-@notion_database("Daily Log")
+@notion_database(DatabaseType.DAILY_LOG.value)
 class DailyLog(BasePage):
     title: DailyLogTitle
     date: DailyLogDate
