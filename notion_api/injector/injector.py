@@ -166,5 +166,4 @@ class Injector:
 
     @staticmethod
     def task_util_serivce() -> TaskUtilService:
-        task_repository = TaskRepositoryImpl()
-        return TaskUtilService(task_repository=task_repository)
+        return TaskUtilService()
