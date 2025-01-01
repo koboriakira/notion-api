@@ -38,7 +38,7 @@ class ShareImageUsecase:
 
             # デイリーログに追加
             self._client.append_block(
-                block_id=daily_log.page_id.value,  # type: ignore
+                block_id=daily_log.id,  # type: ignore
                 block=image.to_notion_image_block(use_thumbnail=True),
             )
 
