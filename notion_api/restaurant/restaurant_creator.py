@@ -1,5 +1,7 @@
 from logging import Logger, getLogger
 
+from lotion import Lotion
+
 from common.injector import CommonInjector
 from common.service.page_creator import PageCreator
 from notion_databases.restaurant import Restaurant, RestaurantName
