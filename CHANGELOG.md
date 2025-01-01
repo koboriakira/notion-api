@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.2](https://github.com/koboriakira/notion-api/compare/v2.6.1...v2.6.2) (2025-01-01)
+
+
+### Bug Fixes
+
+* Update block_id reference in ShareImageUsecase for correct daily log entry ([ad8332c](https://github.com/koboriakira/notion-api/commit/ad8332c5a2e89d206c6df3ba7143baa0dce70585))
+
 ## [2.6.1](https://github.com/koboriakira/notion-api/compare/v2.6.0...v2.6.1) (2025-01-01)
 
 
