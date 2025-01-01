@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.7.0](https://github.com/koboriakira/notion-api/compare/v2.6.2...v2.7.0) (2025-01-01)
+
+
+### Features
+
+* Add end-to-end tests for gif/jpeg page creation and update image handling ([e03dc46](https://github.com/koboriakira/notion-api/commit/e03dc4618dcaf38a59345175d54e0510c16801dd))
+
 ## [2.6.2](https://github.com/koboriakira/notion-api/compare/v2.6.1...v2.6.2) (2025-01-01)
 
 
