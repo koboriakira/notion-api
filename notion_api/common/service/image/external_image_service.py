@@ -12,10 +12,10 @@ class ExternalImageService:
     def __init__(self, client: Lotion | None = None) -> None:
         self._client = client or Lotion.get_instance()
 
-    def add_external_image(self, external_image: ExternalImage) -> str:
+    def add_external_image(self, external_image: ExternalImage) -> GifJpeg:
         """指定された画像をGIF/JPEGデータベースに追加する。画像ページのIDを返却する。"""
         gif_jpeg_page = external_image.to_gif_jpeg_page(use_thumbnail=True)
-        return self._client.update(gif_jpeg_page).id
+        return self._client.update(gif_jpeg_page)
 
     def append_image(self, block_id: str, external_image: ExternalImage) -> None:
         """指定された画像を指定されたブロックに追加する。"""

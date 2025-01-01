@@ -36,5 +36,5 @@ def share_images(
     valid_access_token(access_token)
     usecase = ShareImageUsecase()
 
-    usecase.execute(request=request.to_usecase_request())
-    return BaseResponse()
+    result = usecase.execute(request=request.to_usecase_request())
+    return BaseResponse(data=[r.get_id_and_url() for r in result])
