@@ -3,38 +3,20 @@ from datetime import date, datetime, timedelta
 from lotion import notion_database, notion_prop
 from lotion.base_page import BasePage
 from lotion.block.rich_text import RichTextBuilder
-from lotion.properties import Checkbox, Date, MultiSelect, Relation, Select, Status, Title
+from lotion.properties import Checkbox, MultiSelect, Select, Status
 
 from common.value.database_type import DatabaseType
+from notion_databases.goal import ProjectRelation
+from notion_databases.task_backup import TaskBackup, TaskName, TaskStartDate
 from notion_databases.task_prop.memo_genre import MemoGenreType
 from notion_databases.task_prop.task_kind import TaskKindType
 from notion_databases.task_prop.task_status import TaskStatusType
 from task.task_order_rule import TaskOrderRule
 from util.datetime import jst_now
 
-COLUMN_NAME_TITLE = "名前"
-COLUMN_NAME_STATUS = "ステータス"
-COLUMN_NAME_START_DATE = "実施日"
-COLUMN_NAME_KIND = "タスク種別"
-
-
-@notion_prop("名前")
-class TaskName(Title):
-    pass
-
 
 @notion_prop("重要")
 class ImportantFlag(Checkbox):
-    pass
-
-
-@notion_prop("プロジェクト")
-class ProjectRelation(Relation):
-    pass
-
-
-@notion_prop("実施日")
-class TaskStartDate(Date):
     pass
 
 
@@ -128,6 +110,14 @@ class Task(BasePage):
         rich_text = RichTextBuilder.create().add_text("✔️").add_rich_text(self.task_name.rich_text).build()
         self.set_prop(TaskName.from_rich_text(rich_text))
         return self
+
+    def to_backup_task(self) -> TaskBackup:
+        return TaskBackup.generate(
+            task_name=self.task_name,
+            project_relation=self.project_relation,
+            task_date=self.task_date,
+            block_children=self.block_children,
+        )
 
     @property
     def is_completed(self) -> bool:

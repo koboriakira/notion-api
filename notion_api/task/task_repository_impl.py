@@ -1,19 +1,14 @@
 from datetime import date, datetime, time, timedelta
-from typing import TYPE_CHECKING
 
 from lotion import Lotion
 from lotion.filter import Builder, Cond
 
-from common.value.database_type import DatabaseType
 from notion_databases.goal import ProjectRelation
 from notion_databases.task import Task, TaskKind, TaskStartDate, TaskStatus
 from notion_databases.task_prop.task_kind import TaskKindType
 from notion_databases.task_prop.task_status import TaskStatusType
 from task.task_repository import TaskRepository
 from util.datetime import JST
-
-if TYPE_CHECKING:
-    from lotion.properties import Property
 
 
 class TaskRepositoryImpl(TaskRepository):
@@ -106,21 +101,9 @@ class TaskRepositoryImpl(TaskRepository):
         if task.id is None:
             msg = "task.id が None です"
             raise ValueError(msg)
-        properties: list[Property] = [
-            task.get_title(),
-        ]
-        if task.get_date("実施日").start is not None:
-            properties.append(task.get_date("実施日"))
-        if task.get_relation("タグ") is not None:
-            properties.append(task.get_relation("タグ"))
-        if task.get_relation("プロジェクト") is not None:
-            properties.append(task.get_relation("プロジェクト"))
 
-        self.client.create_page_in_database(
-            database_id=DatabaseType.TASK_BK.value,
-            properties=properties,
-            blocks=task.block_children,
-        )
+        # バックアップ用のデータベースに新規作成
+        _ = self.client.create_page(task.to_backup_task())
 
         # タスクを削除
         self.client.remove_page(page_id=task.id)

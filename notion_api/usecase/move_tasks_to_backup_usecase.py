@@ -1,11 +1,10 @@
 from datetime import datetime, timedelta
 
 from lotion import Lotion
-from lotion.properties import Property
 
-from common.value.database_type import DatabaseType
 from custom_logger import get_logger
 from notion_databases.goal import Goal
+from notion_databases.goal_backup import GoalBackup
 from notion_databases.project import Project
 from notion_databases.task_prop.task_status import TaskStatusType
 from project.project_repository import ProjectRepository
@@ -101,18 +100,14 @@ class MoveTasksToBackupUsecase:
             print(project.title.text + "を削除しました。")
 
     def _archive_goal(self, goal: Goal) -> None:
-        properties: list[Property] = []
-        properties.append(goal.title)
-        properties.append(goal.vision_relation)
-
         blocks = self._lotion.retrieve_page(page_id=goal.id, cls=Goal).block_children
-
-        self._lotion.create_page_in_database(
-            database_id=DatabaseType.GOAL_BK.value,
-            properties=properties,
-            blocks=blocks,
+        goal_backup = GoalBackup.generate(
+            title=goal.title,
+            vision_relation=goal.vision_relation,
+            block_children=blocks,
+            cover=goal.cover,
         )
-
+        self._lotion.create_page(goal_backup)
         self._lotion.remove_page(goal.id)
 
 

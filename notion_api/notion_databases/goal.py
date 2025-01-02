@@ -4,9 +4,11 @@ from enum import Enum
 from lotion import notion_database, notion_prop
 from lotion.base_page import BasePage
 from lotion.block import Block
-from lotion.properties import Cover, Date, Relation, Status, Title
+from lotion.properties import Cover, Date, Relation, Status
 
 from common.value.database_type import DatabaseType
+from notion_databases.goal_prop.goal_name import GoalName
+from notion_databases.goal_prop.vision_relation import VisionRelation
 
 
 class GoalStatusType(Enum):
@@ -26,11 +28,6 @@ class GoalStatusType(Enum):
         return self == GoalStatusType.IN_PROGRESS
 
 
-@notion_prop("名前")
-class GoalName(Title):
-    pass
-
-
 @notion_prop("期限")
 class DueDate(Date):
     pass
@@ -45,11 +42,6 @@ class GoalStatus(Status):
 
 @notion_prop("プロジェクト")
 class ProjectRelation(Relation):
-    pass
-
-
-@notion_prop("ミッション・ビジョン")
-class VisionRelation(Relation):
     pass
 
 

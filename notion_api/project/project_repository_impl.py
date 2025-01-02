@@ -1,10 +1,10 @@
 from logging import Logger, getLogger
 
 from lotion import Lotion
-from lotion.properties import Date, Property
 
 from common.value.database_type import DatabaseType
 from notion_databases.project import Project
+from notion_databases.project_backup import CompletedAt, ProjectBackup
 from project.project_repository import ProjectRepository
 
 
@@ -22,19 +22,15 @@ class ProjectRepositoryImpl(ProjectRepository):
         if not project.is_created():
             raise ValueError("Project is not created")
 
-        properties: list[Property] = [
-            project.title,
-            Date.from_start_date(name="完了日", start_date=project.last_edited_time),
-            project.goal,
-            project.tags,
-        ]
-
-        _ = self._client.create_page_in_database(
-            database_id=DatabaseType.PROJECT_BK.value,
-            properties=properties,
-            blocks=project.block_children,
+        project_backup = ProjectBackup.generate(
+            title=project.title,
+            completed_at=CompletedAt.from_start_date(project.last_edited_time),
+            tags=project.tags,
+            goal=project.goal,
+            block_children=project.block_children,
         )
 
+        _ = self._client.create_page(project_backup)
         self.remove(project)
 
     def save(self, project: Project) -> "Project":

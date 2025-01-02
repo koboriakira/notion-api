@@ -3,25 +3,17 @@ from datetime import date, datetime
 from lotion import notion_database, notion_prop
 from lotion.base_page import BasePage
 from lotion.block import Block
-from lotion.properties import Cover, Date, Property, Relation, Select, Text, Title
+from lotion.properties import Cover, Date, Property, Select, Text
 
 from common.domain.tag_relation import TagRelation
 from common.value.database_type import DatabaseType
+from notion_databases.project_prop.goal_relation import GoalRelation
+from notion_databases.project_prop.project_name import ProjectName
 from notion_databases.project_prop.project_status import ProjectStatus, ProjectStatusType
-
-
-@notion_prop("名前")
-class ProjectName(Title):
-    pass
 
 
 @notion_prop("ゴール")
 class DefinitionOfDone(Text):
-    pass
-
-
-@notion_prop("目標")
-class GoalRelation(Relation):
     pass
 
 
