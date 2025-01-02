@@ -12,27 +12,28 @@ class NotFoundApiError(Exception):
 @dataclass(frozen=True)
 class BookApiResult:
     title: str
-    authors: list[str]
-    publisher: str | None
-    published_date: date | None
-    image_url: str | None
-    url: str | None
+    authors: list[str] | None = None
+    publisher: str | None = None
+    published_date: date | None = None
+    image_url: str | None = None
+    url: str | None = None
 
 
 class BookApiResultConverter:
-    @classmethod
-    def of(cls: "BookApiResultConverter", volume_info: dict) -> BookApiResult:
+    @staticmethod
+    def of(volume_info: dict) -> BookApiResult:
+        image_links: dict | None = volume_info.get("imageLinks")
         return BookApiResult(
-            title=volume_info.get("title"),
+            title=volume_info["title"],
             authors=volume_info.get("authors"),
             publisher=volume_info.get("publisher"),
-            published_date=cls.__get_published_date(volume_info),
-            image_url=volume_info.get("imageLinks").get("medium"),
+            published_date=BookApiResultConverter._get_published_date(volume_info),
+            image_url=image_links.get("medium") if image_links else None,
             url=volume_info.get("infoLink"),
         )
 
     @staticmethod
-    def __get_published_date(volume_info: dict) -> date | None:
+    def _get_published_date(volume_info: dict) -> date | None:
         published_date = volume_info.get("publishedDate")
         if published_date is None:
             return None

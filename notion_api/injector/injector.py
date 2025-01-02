@@ -4,12 +4,12 @@ from logging import Logger
 from lotion import Lotion
 from slack_sdk.web import WebClient
 
+from book.book_api import BookApi
 from common.service.tag_creator.tag_creator import TagCreator
 from custom_logger import get_logger
 from daily_log.daily_log_repository_impl import DailyLogRepositoryImpl
 from external_calendar.infrastructure.google_calendar_api import GoogleCalendarApi
 from external_calendar.service.external_calendar_service import ExternalCalendarService
-from infrastructure.book.google_book_api import GoogleBookApi
 from injector.page_creator_factory import PageCreatorFactory
 from project.project_repository_impl import ProjectRepositoryImpl
 from recipe.recipe_creator import RecipeCreator
@@ -138,8 +138,7 @@ class Injector:
         )
 
     @staticmethod
-    def add_book_usecase() -> AddBookUsecase:
-        book_api = GoogleBookApi()
+    def add_book_usecase(book_api: BookApi) -> AddBookUsecase:
         return AddBookUsecase(book_api=book_api)
 
     @staticmethod

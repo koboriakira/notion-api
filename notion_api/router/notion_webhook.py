@@ -5,6 +5,7 @@ from fastapi import APIRouter
 from lotion import BasePage
 from pydantic import BaseModel
 
+from book.book_openbd_api import BookOpenbdApi
 from infrastructure.slack_bot_client import SlackBotClient
 from injector.injector import Injector
 from router.response import BaseResponse
@@ -38,7 +39,7 @@ def post_path(path: str, request: NotionWebhookRequest) -> BaseResponse:  # noqa
         base_page = BasePage.from_data(request.data)
 
         if webhook_type == NotionWebhookType.SYNC_BOOK_INFO:
-            add_book_usecase = Injector.add_book_usecase()
+            add_book_usecase = Injector.add_book_usecase(book_api=BookOpenbdApi())
             isbn = base_page.get_text("ISBN").text
             _ = add_book_usecase.execute(
                 isbn=isbn,
