@@ -6,13 +6,12 @@ from lotion.block import Bookmark, Embed
 from lotion.properties import Title
 from slack_sdk.web import WebClient
 
-from common.value.database_type import DatabaseType
+from notion_databases.restaurant import Restaurant
 from notion_databases.song import Song
-from notion_databases.task import MemoGenre
+from notion_databases.task import MemoGenre, Task
 from notion_databases.task_prop.memo_genre import MemoGenreType
 from notion_databases.video import Video
 from notion_databases.webclip import Webclip
-from notion_databases.restaurant import Restaurant
 
 
 class InboxService:
@@ -43,10 +42,7 @@ class InboxService:
             properties.append(memo_genre_kind)
 
         # タスクを作成
-        inbox_task_page = self.client.create_page_in_database(
-            database_id=DatabaseType.TASK.value,
-            properties=properties,
-        )
+        inbox_task = self.client.update(Task.create(properties=properties))
 
         # URL情報があれば追加
         if original_url:
@@ -55,7 +51,7 @@ class InboxService:
                 if isinstance(page, Song | Video)
                 else Bookmark.from_url(url=original_url)
             )
-            self.client.append_block(block_id=inbox_task_page.id, block=block)
+            self.client.append_block(block_id=inbox_task.id, block=block)
 
         # Slackに通知
         if slack_channel is not None:
