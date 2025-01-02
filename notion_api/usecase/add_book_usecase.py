@@ -2,6 +2,7 @@ from lotion import Lotion
 
 from book.book_api import BookApi, BookApiResult
 from book.book_builder import BookBuilder
+from book.book_openbd_api import BookOpenbdApi
 from usecase.service.inbox_service import InboxService
 
 
@@ -62,5 +63,5 @@ if __name__ == "__main__":
     # python -m notion_api.usecase.add_book_usecase
     from injector.injector import Injector
 
-    add_book_usecase = Injector.add_book_usecase()
+    add_book_usecase = Injector.add_book_usecase(book_api=BookOpenbdApi())
     add_book_usecase.execute(page_id="15e6567a3bbf8060a1dad5a08f48f0b6", isbn="9784048916592")
