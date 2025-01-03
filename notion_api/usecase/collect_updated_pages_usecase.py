@@ -261,7 +261,7 @@ tags: []
         for video in videos:
             if not self.is_debug:
                 self._append_backlink(block_id=daily_log_id, page=video)
-            markdown_text += f"\n[{video.get_title_text()}]({video.url.url})\n"
+            markdown_text += f"\n[{video.get_title_text()}]({video.get_video_url()})\n"
             markdown_text += f"\n{video.embed_youtube_url}\n"
         return markdown_text
 

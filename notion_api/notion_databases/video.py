@@ -22,7 +22,7 @@ class VideoUrl(Url):
 @notion_database(DatabaseType.VIDEO.value)
 class Video(BasePage):
     title: VideoName
-    url: VideoUrl
+    video_url: VideoUrl
     tags: TagRelation
 
     @staticmethod
@@ -45,9 +45,11 @@ class Video(BasePage):
             return Video.create(properties, blocks)
         return Video.create(properties, blocks, cover=Cover.from_external_url(cover))
 
+    def get_video_url(self) -> str:
+        return self.video_url.url
+
     @property
     def embed_youtube_url(self) -> str:
         # https://www.youtube.com/watch?v=sVegt6PdQOw&amp%3Bsi=M7Z4IT0tpe__8ap9 から sVegt6PdQOw を取り出す
-        url = self.url.url
-        video_id = url.split("v=")[1].split("&")[0]
+        video_id = self.get_video_url().split("v=")[1].split("&")[0]
         return EMBED_YOUTUBE_URL_TEMPLATE % video_id
