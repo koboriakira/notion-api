@@ -10,7 +10,7 @@ class TaskContextType(Enum):
     @staticmethod
     def from_text(text: str) -> "TaskContextType":
         for kind in TaskContextType:
-            if kind.name == text:
+            if kind.value == text:
                 return kind
         raise ValueError(f"Invalid TaskContextType: {text}")
 
