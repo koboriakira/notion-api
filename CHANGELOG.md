@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.8.0](https://github.com/koboriakira/notion-api/compare/v2.7.0...v2.8.0) (2025-01-06)
+
+
+### Features
+
+* Implement BookOpenbdApi for fetching book details by ISBN ([#79](https://github.com/koboriakira/notion-api/issues/79)) ([cadd362](https://github.com/koboriakira/notion-api/commit/cadd362c6e65264c5920fb8ae531dddfa05cc97d))
+
+
+### Bug Fixes
+
+* Update task creation logic in InboxService to use Task model ([19141d6](https://github.com/koboriakira/notion-api/commit/19141d663bb677b1b135b2d46cb83308f3318edd))
+* Update TaskContextType comparison to use value instead of name ([b333fbf](https://github.com/koboriakira/notion-api/commit/b333fbf5bdf9339c8e3545fb3697534990c9233a))
+
 ## [2.7.0](https://github.com/koboriakira/notion-api/compare/v2.6.2...v2.7.0) (2025-01-01)
 
 
