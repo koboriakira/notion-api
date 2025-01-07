@@ -1,6 +1,7 @@
 from datetime import date
 
 import pytest
+
 from notion_databases.routine_task import RoutineType
 
 # 2024年3月20日(水)
@@ -21,6 +22,8 @@ BASIS_DATE_SUN = date(2024, 3, 24)
         pytest.param(BASIS_DATE_SUN, RoutineType.EVERY_SAT, date(2024, 3, 30), id="EVERY_SAT_2"),
         pytest.param(BASIS_DATE_SUN, RoutineType.EVERY_TUE_AND_FRI, date(2024, 3, 26), id="EVERY_TUE_AND_FRI_2"),
         pytest.param(BASIS_DATE_SUN, RoutineType.EVERY_WED, date(2024, 3, 27), id="EVERY_WED_2"),
+        pytest.param(BASIS_DATE_SUN, RoutineType.MONTHLY_1_3_FRI, date(2024, 4, 5), id="MONTHLY_1_3_FRI"),
+        pytest.param(BASIS_DATE_SUN, RoutineType.MONTHLY_25, date(2024, 3, 25), id="MONTHLY_1_3_FRI"),
     ],
 )
 def test_次のルーティン実行日を取得する(basis_date: date, suite: RoutineType, expected: date):
