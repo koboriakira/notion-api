@@ -6,17 +6,11 @@ from lotion.properties import Property, Select, Text, Title
 
 from common.value.database_type import DatabaseType
 from notion_databases.routine_prop.routine_type import RoutineType
-from notion_databases.task_prop.task_context import TaskContextType, TaskContextTypes
 from util.datetime import JST, jst_today
 
 
 @notion_prop("名前")
 class RoutineTitle(Title):
-    pass
-
-
-@notion_prop("オプション")
-class RoutineOption(Text):
     pass
 
 
@@ -34,7 +28,6 @@ class RoutineKind(Select):
 @notion_database(DatabaseType.TASK_ROUTINE.value)
 class RoutineTask(BasePage):
     title: RoutineTitle
-    option: RoutineOption
     routine_time: RoutineTime
     kind: RoutineKind
 
@@ -55,12 +48,6 @@ class RoutineTask(BasePage):
         start_datetime = datetime.combine(next_date, start_time, JST)
         end_datetime = datetime.combine(next_date, end_time, JST) if end_time is not None else None
         return start_datetime, end_datetime
-
-    def get_contexts(self) -> TaskContextTypes:
-        if self.option.text == "":
-            return TaskContextTypes(values=[])
-        task_context_type_list = [TaskContextType.from_text(text) for text in self.option.text.split(",")]
-        return TaskContextTypes(values=task_context_type_list)
 
     @staticmethod
     def generate(title: str) -> "RoutineTask":
