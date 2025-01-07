@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.8.1](https://github.com/koboriakira/notion-api/compare/v2.8.0...v2.8.1) (2025-01-07)
+
+
+### Bug Fixes
+
+* スケジュールタスクの自動実行機能の不具合を修正 ([#81](https://github.com/koboriakira/notion-api/issues/81)) ([8b261cf](https://github.com/koboriakira/notion-api/commit/8b261cfab1a020ee4d47df933fb857c5077f2e2f))
+* ルーチンタスク作成時にタスクを保存するロジックを修正 ([6e3321a](https://github.com/koboriakira/notion-api/commit/6e3321a2cbed64f030a8d5766dade037e3e39b28))
+
 ## [2.8.0](https://github.com/koboriakira/notion-api/compare/v2.7.0...v2.8.0) (2025-01-06)
 
 
