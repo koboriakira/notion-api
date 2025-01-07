@@ -43,7 +43,7 @@ class ItemName(Title):
 class BuyStatus(Status):
     @staticmethod
     def from_status_type(status_type: BuyStatusType) -> "BuyStatus":
-        return BuyStatus.from_status_name(status_type.name)
+        return BuyStatus.from_status_name(status_type.value)
 
 
 @notion_prop("最終購入日")
