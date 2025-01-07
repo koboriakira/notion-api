@@ -5,8 +5,8 @@ from lotion import Lotion
 from notion_databases.routine_task import RoutineTask
 from notion_databases.task_prop.task_kind import TaskKindType
 from notion_databases.task_prop.task_status import TaskStatusType
-from task.task_repository import TaskRepository
 from task.task_factory import TaskFactory
+from task.task_repository import TaskRepository
 from util.datetime import jst_tommorow
 
 
@@ -41,7 +41,7 @@ class CreateRoutineTaskUseCase:
                 blocks=routine_task.block_children if routine_task.get_title_text() != "買い物 & 料理" else [],
             )
             print(f"Create task: {routine_todo_task.get_title_text()}")
-            self.task_repository.save(task=routine_todo_task)
+            self._lotion.create_page(routine_todo_task)
 
 
 if __name__ == "__main__":
