@@ -4,8 +4,16 @@ from enum import Enum
 MONTHLY_OVERFLOW = 13
 
 
+def add_a_month(date: date) -> tuple[int, int]:
+    month = date.month + 1
+    if month == MONTHLY_OVERFLOW:
+        return date.year + 1, 1
+    return date.year, month
+
+
 class RoutineType(Enum):
     MONTHLY_1 = "毎月1日"
+    MONTHLY_25 = "毎月25日"
     DAILY = "毎日"
     EVERY_SAT = "毎週土"
     EVERY_TUE_AND_FRI = "毎週火・金"
@@ -20,10 +28,11 @@ class RoutineType(Enum):
         weekday = basis_date.weekday()
         match self:
             case RoutineType.MONTHLY_1:
-                month = basis_date.month + 1
-                if month == MONTHLY_OVERFLOW:
-                    return basis_date.replace(year=basis_date.year + 1, month=1, day=1)
-                return basis_date.replace(month=month, day=1)
+                year, month = add_a_month(basis_date)
+                return date(year=year, month=month, day=1)
+            case RoutineType.MONTHLY_25:
+                year, month = add_a_month(basis_date)
+                return date(year=year, month=month, day=25)
             case RoutineType.DAILY:
                 return basis_date
             case RoutineType.EVERY_SAT:
