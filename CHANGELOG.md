@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.8.2](https://github.com/koboriakira/notion-api/compare/v2.8.1...v2.8.2) (2025-01-07)
+
+
+### Bug Fixes
+
+* BuyStatusからのステータスタイプの変換ロジックを修正 ([4e6365a](https://github.com/koboriakira/notion-api/commit/4e6365af4b9c02143e996f82cd5f5ffc8d28a78e))
+
 ## [2.8.1](https://github.com/koboriakira/notion-api/compare/v2.8.0...v2.8.1) (2025-01-07)
 
 
