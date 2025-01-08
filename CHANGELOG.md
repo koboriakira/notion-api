@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.9.0](https://github.com/koboriakira/notion-api/compare/v2.8.2...v2.9.0) (2025-01-08)
+
+
+### Features
+
+* ルーチンタスクからオプションとコンテキスト取得ロジックを削除 ([09e1e2b](https://github.com/koboriakira/notion-api/commit/09e1e2b523ca16e9648bad8102bff6cad0feddfb))
+* ルーチンタスク作成時にタスク種別を設定するロジックを追加 ([2f39a04](https://github.com/koboriakira/notion-api/commit/2f39a04dda4465d987d4fc6b77d9a7968978e9f0))
+* 日付計算ロジックを追加 ([#84](https://github.com/koboriakira/notion-api/issues/84)) ([1e7f45f](https://github.com/koboriakira/notion-api/commit/1e7f45fd22676b8325cea6f9fe4e2273131b4959))
+
 ## [2.8.2](https://github.com/koboriakira/notion-api/compare/v2.8.1...v2.8.2) (2025-01-07)
 
 
