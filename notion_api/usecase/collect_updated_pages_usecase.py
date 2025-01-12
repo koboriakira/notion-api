@@ -8,8 +8,8 @@ from lotion.block.rich_text import RichTextBuilder
 from lotion.filter import Builder, Cond
 
 from common.infrastructure.twitter.lambda_twitter_api import LambdaTwitterApi
+from common.service.github.github_service import GitHubService
 from common.service.image.external_image_service import ExternalImageService
-from common.value.database_type import DatabaseType
 from common.value.slack_channel_type import ChannelType
 from custom_logger import get_logger
 from daily_log.daily_log_repository import DailyLogRepository
@@ -109,6 +109,10 @@ tags: []
         # 今日のTwitterを集める
         markdown_text += "\n"
         markdown_text += self._proc_twitter(date_range=date_range, daily_log_id=daily_log_id)
+
+        # 今日のGitHubの更新を集める
+        markdown_text += "\n"
+        markdown_text += self._proc_github(date_range=date_range, daily_log_id=daily_log_id)
 
         # 今日アップした画像を集める
         markdown_text += "\n"
@@ -247,7 +251,7 @@ tags: []
             if not self.is_debug:
                 self._append_backlink(block_id=daily_log_id, page=song)
             markdown_text += f"\n{song.artist} - {song.get_title_text()}\n"
-            markdown_text += f"\n{song.embed_html}\n"
+            markdown_text += f"\n{song.spotify_url.get_embed_html()}\n"
         return markdown_text
 
     def _proc_videos(self, date_range: DateRange, daily_log_id: str) -> str:
@@ -304,28 +308,24 @@ tags: []
             logger.error(e)
             return f"※ 今日のTwitterの取得に失敗しました {e}\n"
 
-    def _get_latest_items(self, date_range: DateRange, database_type: DatabaseType) -> list[BasePage]:
-        """指定されたカテゴリの、最近更新されたページIDを取得する"""
-        builder = (
-            Builder.create()
-            .add_last_edited_at(Cond.ON_OR_AFTER, date_range.start.value.isoformat())
-            .add_last_edited_at(Cond.ON_OR_BEFORE, date_range.end.value.isoformat())
-        )
-        filter_param = builder.build()
-        return self.client.retrieve_database(database_id=database_type.value, filter_param=filter_param)
-
-    def _append_relation_to_daily_log(self, daily_log_id: str, title: str, pages: list[BasePage]) -> None:
-        if len(pages) == 0:
-            return
-        # 見出しタグをつける
-        if not self.is_debug:
-            self._append_heading(block_id=daily_log_id, title=title)
-
-        # バックリンクを記録する
-        for page in pages:
+    def _proc_github(self, date_range: DateRange, daily_log_id: str) -> str:  # noqa: C901
+        # 今日のGitHubの更新を集める
+        try:
+            github_service = GitHubService()
+            latest_merged_prs = github_service.get_latest_merged_prs(target_datetime=date_range.end.value)
+            if len(latest_merged_prs) == 0:
+                return ""
             if not self.is_debug:
-                self._append_backlink(block_id=daily_log_id, page=page)
-            self._slack_client.chat_postMessage(text=page.title_for_slack())
+                self._append_heading(block_id=daily_log_id, title="今日のGitHub")
+            markdown_text = "## 今日のGitHub\n"
+            for repo_name, prs in latest_merged_prs.items():
+                markdown_text += f"\n{repo_name}\n"
+                for pr in prs:
+                    markdown_text += f"\n- [{pr['title']}]({pr['url']})\n"
+            return markdown_text
+        except Exception as e:
+            logger.error(e)
+            return f"※ 今日のGitHubの取得に失敗しました {e}\n"
 
     def _append_heading(self, block_id: str, title: str) -> None:
         heading = Heading.from_plain_text(heading_size=2, text=title)
@@ -355,6 +355,70 @@ tags: []
             cls=cls,
             filter_param=builder.build(),
         )
+
+
+class Processor:
+    LOG_FORMAT_APPEND_PAGE = "ページを追加しました: %s"
+
+    def __init__(self, daily_log_id: str, is_debug: bool | None = None, lotion: Lotion | None = None) -> None:
+        self._daily_log_id = daily_log_id
+        self._is_debug = is_debug or False
+        self._lotion = lotion or Lotion.get_instance()
+
+    def _search(self, date_range: DateRange, cls: type[T]) -> list[T]:
+        builder = (
+            Builder.create()
+            .add_last_edited_at(Cond.ON_OR_AFTER, date_range.start.value.isoformat())
+            .add_last_edited_at(
+                Cond.ON_OR_BEFORE,
+                date_range.end.value.isoformat(),
+            )
+        )
+        return self._lotion.retrieve_pages(
+            cls=cls,
+            filter_param=builder.build(),
+        )
+
+    def _append_heading(self, title: str) -> None:
+        if not self._is_debug:
+            heading = Heading.from_plain_text(heading_size=2, text=title)
+            self._lotion.append_block(block_id=self._daily_log_id, block=heading)
+
+    def _append_backlink(self, page: BasePage) -> None:
+        if not self._is_debug:
+            rich_text = RichTextBuilder.get_instance().add_page_mention(page_id=page.id).build()
+            paragraph = Paragraph.from_rich_text(rich_text=rich_text)
+            self._lotion.append_block(
+                block_id=self._daily_log_id,
+                block=paragraph,
+            )
+        logger.info(self.LOG_FORMAT_APPEND_PAGE, page.get_title().text)
+
+
+class TaskProcessor(Processor):
+    def __init__(self, daily_log_id: str, is_debug: bool | None = None, lotion: Lotion | None = None) -> None:
+        super().__init__(daily_log_id, is_debug, lotion)
+        self._task_repository = TaskRepositoryImpl(lotion)
+
+    def execute(self, date_range: DateRange) -> str:
+        done_tasks = self._task_repository.search(
+            status_list=[TaskStatusType.DONE],
+            kind_type_list=[
+                TaskKindType.DO_NOW,
+                TaskKindType.WAIT,
+                TaskKindType.NEXT_ACTION,
+                TaskKindType.SOMEDAY_MAYBE,
+                TaskKindType.SCHEDULE,
+            ],
+            start_datetime=date_range.start.value,
+            start_datetime_end=date_range.end.value,
+        )
+        self._append_heading("今日完了したタスク")
+        markdown_text = "\n## 今日完了したタスク\n"
+        for done_task in done_tasks:
+            self._append_backlink(done_task)
+            markdown_text += f"\n- {done_task.get_title_text()}"
+        return markdown_text
 
 
 if __name__ == "__main__":
