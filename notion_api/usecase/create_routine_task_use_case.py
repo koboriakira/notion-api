@@ -2,6 +2,7 @@ from datetime import date, timedelta
 
 from lotion import Lotion
 
+from notion_databases.habit import HabitTracker
 from notion_databases.routine_task import RoutineTask
 from notion_databases.task import TaskKind
 from notion_databases.task_prop.task_kind import TaskKindType
@@ -52,6 +53,18 @@ class CreateRoutineTaskUseCase:
             print(f"Create task: {routine_todo_task.get_title_text()}")
             self._lotion.create_page(routine_todo_task)
 
+    def _execute_habits(self, date: date) -> None:
+        habits = self._lotion.retrieve_pages(HabitTracker)
+        for habit in habits:
+            title = habit.get_title_text()
+            habit_todo_task = TaskFactory.create_todo_task(
+                title=title,
+                start_date=date,
+                blocks=habit.block_children,
+                habit_relation=habit.id,
+            )
+            self._lotion.create_page(habit_todo_task)
+
 
 if __name__ == "__main__":
     # python -m notion_api.usecase.create_routine_task_use_case
@@ -59,4 +72,5 @@ if __name__ == "__main__":
 
     task_repository = TaskRepositoryImpl()
     usecase = CreateRoutineTaskUseCase(task_repository=task_repository)
-    usecase.execute(date_=jst_tommorow().date())
+    # usecase.execute(date_=jst_tommorow().date())
+    usecase._execute_habits(date=jst_tommorow().date())

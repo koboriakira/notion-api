@@ -40,6 +40,11 @@ class WeeklyLogRelation(Relation):
     pass
 
 
+@notion_prop("習慣トラッカー")
+class HabitRelation(Relation):
+    pass
+
+
 @notion_database(DatabaseType.DAILY_LOG.value)
 class DailyLog(BasePage):
     title: DailyLogTitle
@@ -49,3 +54,7 @@ class DailyLog(BasePage):
     previous_day: PreviousRelation
     goal: DailyGoal
     weekly_log: WeeklyLogRelation
+    habit_relation: HabitRelation
+
+    def append_habit(self, habit_id: str) -> None:
+        self.habit_relation.append(habit_id)
