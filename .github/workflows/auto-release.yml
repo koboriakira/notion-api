@@ -10,6 +10,10 @@ on:
     types:
       - closed
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   stop_if_not_merged:
     runs-on: ubuntu-latest
@@ -71,3 +75,4 @@ jobs:
     uses: ./.github/workflows/deploy.yml
     with:
       branch: main
+    secrets: inherit
