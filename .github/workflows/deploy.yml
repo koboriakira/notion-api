@@ -1,73 +1,18 @@
 # @format
 
-name: Deploy Main
+name: Deploy
 
 on:
   workflow_dispatch:
-  pull_request:
-    branches:
-      - main
-    types:
-      - closed
+  workflow_call:
+    inputs:
+      branch:
+        description: "Branch name"
+        type: string
+        required: false
 
 jobs:
-  stop_if_not_merged:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check if PR is merged
-        id: check-merged
-        run: |
-          if [ "${{ github.event_name }}" == "pull_request" ] && [ "${{ github.event.action }}" != "closed" ]; then
-            echo "PR is not closed. Exiting..."
-            exit 1
-          fi
-          if [ "${{ github.event_name }}" == "pull_request" ] && [ "${{ github.event.pull_request.merged }}" != "true" ]; then
-            echo "PR is not merged. Exiting..."
-            exit 1
-          fi
-
-  # 直近のコミットについて、cdkもしくはnotion_apiディレクトリに変更があった場合にのみ実行する
-  check_changes:
-    runs-on: ubuntu-latest
-    outputs:
-      IS_CHANGED: ${{ steps.set-is-changed.outputs.IS_CHANGED }}
-    steps:
-      # fetch-depth の計算
-      - name: Calculate fetch-depth
-        id: calculate-fetch-depth
-        run: echo "FETCH_DEPTH=$(( commits + 1 ))" >> $GITHUB_OUTPUT
-        env:
-          commits: ${{ github.event.pull_request.commits }}
-
-      # 必要な履歴だけを fetch
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: ${{ steps.calculate-fetch-depth.outputs.FETCH_DEPTH }}
-
-      - name: Check cdk changes
-        id: check-cdk
-        run: |
-          git diff --quiet HEAD^ cdk || echo "CDK_CHANGED=true" >> $GITHUB_OUTPUT
-
-      - name: Check notion_api changes
-        id: check-src
-        run: |
-          git diff --quiet HEAD^ notion_api || echo "SRC_CHANGED=true" >> $GITHUB_OUTPUT
-
-      - name: Set IS_CHANGED
-        id: set-is-changed
-        run: |
-          echo ${{ steps.check-cdk.outputs.CDK_CHANGED }}
-          echo ${{ steps.check-src.outputs.SRC_CHANGED }}
-          if [ "${{ steps.check-cdk.outputs.CDK_CHANGED }}" == "true" ] || [ "${{ steps.check-src.outputs.SRC_CHANGED }}" == "true" ]; then
-            echo "IS_CHANGED=true" >> $GITHUB_OUTPUT
-          else
-            echo "IS_CHANGED=false" >> $GITHUB_OUTPUT
-          fi
-
   deploy:
-    needs: check_changes
-    if: ${{ needs.check_changes.outputs.IS_CHANGED == 'true' }}
     runs-on: ubuntu-latest
     environment: production
     permissions:
@@ -77,7 +22,7 @@ jobs:
       - name: Checkout branch
         uses: actions/checkout@v4
         with:
-          ref: main
+          ref: ${{ inputs.branch || github.head_ref }}
 
       - name: Generate Lambda Layer
         uses: koboriakira/gh-actions/aws/generate-lambda-layer@main
