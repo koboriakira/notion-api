@@ -60,7 +60,7 @@ class GoalHealthcheckUseCase:
         last_edited_time = goal.last_edited_time
         if last_edited_time is None:
             message_list.append("目標の更新日時が取得できませんでした")
-        elif last_edited_time < jst_today() - timedelta(days=14):
+        elif last_edited_time.date() < jst_today() - timedelta(days=14):
             message_list.append("目標の更新が2週間以上されていません")
 
         self._slack_client.chat_postMessage("\n".join(message_list))
