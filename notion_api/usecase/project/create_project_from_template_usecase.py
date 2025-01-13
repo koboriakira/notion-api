@@ -29,12 +29,21 @@ class CreateProjectFromTemplateUsecase:
     def execute(self, project_template_id: str) -> Project:
         base_page = self._client.retrieve_page(page_id=project_template_id)
         project_name = base_page.get_text(name="プロジェクト名").text
-        task_list: list[str] = []
-        for block in base_page.block_children:
-            if isinstance(block, BulletedListItem):
-                task_list.append(block.rich_text.to_plain_text())
+        task_text_list = [b.rich_text for b in base_page.block_children if isinstance(b, BulletedListItem)]
 
         return self._create_project_service.execute(
             project_name=project_name,
-            tasks_request=[{"title": task} for task in task_list],
+            tasks_request=[{"title_rich_text": t} for t in task_text_list],
         )
+
+
+if __name__ == "__main__":
+    # python -m notion_api.usecase.project.create_project_from_template_usecase
+    from notion_api.project.project_repository_impl import ProjectRepositoryImpl
+    from notion_api.task.task_repository_impl import TaskRepositoryImpl
+
+    client = Lotion.get_instance()
+    project_repository = ProjectRepositoryImpl(client)
+    task_repository = TaskRepositoryImpl(client)
+    usecase = CreateProjectFromTemplateUsecase(client, project_repository, task_repository)
+    usecase.execute("1706567a3bbf80caab25f447724b8dd1")

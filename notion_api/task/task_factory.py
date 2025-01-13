@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 
 from lotion import BasePage
 from lotion.block import Block
+from lotion.block.rich_text import RichText
 from lotion.properties import Properties, Title
 
 from notion_databases.task import ProjectRelation, Task, TaskContext, TaskKind, TaskStartDate, TaskStatus
@@ -18,7 +19,7 @@ class TaskFactory:
     @classmethod
     def create_todo_task(  # noqa: C901, PLR0913
         cls,
-        title: str | Title,
+        title: str | RichText,
         task_kind_type: TaskKindType | None = None,
         start_date: datetime | date | None = None,
         end_date: datetime | date | None = None,
@@ -29,7 +30,7 @@ class TaskFactory:
     ) -> Task:
         blocks = blocks or []
         properties: list[Property] = []
-        properties.append(title if isinstance(title, Title) else Title.from_plain_text(text=title))
+        properties.append(Title.from_plain_text(title) if isinstance(title, str) else Title.from_rich_text(title))
         if task_kind_type is not None:
             properties.append(TaskKind.from_name(task_kind_type.value))
         if start_date is not None:
