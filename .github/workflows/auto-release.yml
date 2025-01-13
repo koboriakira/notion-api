@@ -73,6 +73,7 @@ jobs:
     needs: check_changes
     if: ${{ needs.check_changes.outputs.IS_CHANGED == 'true' }}
     uses: ./.github/workflows/ci_gauge.yml
+    secrets: inherit
 
   deploy:
     needs: [check_changes, ci]
