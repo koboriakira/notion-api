@@ -9,6 +9,7 @@ class TaskKindType(Enum):
     SOMEDAY_MAYBE = "いつかやる・たぶんやる"
     SCHEDULE = "スケジュール"
     ROUTINE = "ルーティン"
+    HABIT = "習慣"
     NONE = ""
 
     @property
@@ -21,5 +22,6 @@ class TaskKindType(Enum):
             TaskKindType.SCHEDULE: 4,
             TaskKindType.NEXT_ACTION: 5,
             TaskKindType.DO_NOW: 6,
-            TaskKindType.NONE: 7,
+            TaskKindType.HABIT: 7,
+            TaskKindType.NONE: 8,
         }[self]
