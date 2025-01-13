@@ -33,7 +33,7 @@ class Webclip(BasePage):
     title: WebClipTitle
     status: WebClipStatus
     tags: TagRelation
-    url: WebClipUrl
+    clipped_url: WebClipUrl
     summary: Summary
 
     @staticmethod
@@ -58,7 +58,3 @@ class Webclip(BasePage):
         if cover is None:
             return Webclip.create(properties, blocks)
         return Webclip.create(properties, blocks, cover=Cover.from_external_url(cover))
-
-    @property
-    def cliped_url(self) -> str:
-        return self.url.url
