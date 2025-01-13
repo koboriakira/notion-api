@@ -1,9 +1,11 @@
 from logging import Logger, getLogger
 
 from lotion import Lotion
+from lotion.block.rich_text import RichTextBuilder
 
 from common.value.slack_channel_type import ChannelType
 from notion_databases.project import Project
+from notion_databases.project_prop.project_name import ProjectName
 from notion_databases.task import Task
 from notion_databases.task_prop.task_status import TaskStatusType
 from project import project_repository
@@ -21,6 +23,7 @@ class ProjectHealthcheckUseCase:
         slack_client: SlackClient,
         logger: Logger | None = None,
     ) -> None:
+        self._lotion = Lotion.get_instance()
         self._project_repository = project_repository
         self._task_repository = task_repository
         self._slack_client = slack_client
@@ -44,8 +47,12 @@ class ProjectHealthcheckUseCase:
         self._execute_inbox_project(inbox_projects)
 
     def _execute_project(self, project: Project, tasks: list[Task]) -> None:  # noqa: C901
-        project_title_link = project.title_for_slack()
         message_list = []
+
+        if not project.get_title_text().startswith("P:"):
+            rich_text = RichTextBuilder.create().add_text("P:").add_rich_text(project.title.rich_text).build()
+            project.set_prop(ProjectName.from_rich_text(rich_text))
+            self._lotion.update(project)
 
         # スケジュールのチェック
         schedule = project.schedule
@@ -72,7 +79,7 @@ class ProjectHealthcheckUseCase:
         elif len(next_action_tasks) > 3:
             message_list.append("次にとるべき行動は3つまでにしましょう")
 
-        text = f"{project_title_link}\n" + "\n".join(message_list)
+        text = f"{project.title_for_slack()}\n" + "\n".join(message_list)
         self._slack_client.chat_postMessage(text)
 
     def _execute_inbox_project(self, projects: list[Project]) -> None:
