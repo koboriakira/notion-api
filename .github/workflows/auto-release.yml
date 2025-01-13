@@ -69,8 +69,13 @@ jobs:
             echo "IS_CHANGED=false" >> $GITHUB_OUTPUT
           fi
 
-  deploy:
+  ci:
     needs: check_changes
+    if: ${{ needs.check_changes.outputs.IS_CHANGED == 'true' }}
+    uses: ./.github/workflows/ci_gauge.yml
+
+  deploy:
+    needs: [check_changes, ci]
     if: ${{ needs.check_changes.outputs.IS_CHANGED == 'true' }}
     uses: ./.github/workflows/deploy.yml
     with:
