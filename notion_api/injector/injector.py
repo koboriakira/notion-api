@@ -148,12 +148,7 @@ class Injector:
 
     @staticmethod
     def create_project_service() -> CreateProjectService:
-        project_repository = ProjectRepositoryImpl()
-        task_repository = TaskRepositoryImpl()
-        return CreateProjectService(
-            project_repository=project_repository,
-            task_repository=task_repository,
-        )
+        return CreateProjectService(lotion=client)
 
     @staticmethod
     def convert_to_project_usecase() -> ConvertToProjectUsecase:

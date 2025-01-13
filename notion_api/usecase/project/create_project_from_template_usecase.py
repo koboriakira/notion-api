@@ -6,7 +6,7 @@ from lotion.block import BulletedListItem
 from notion_databases.project import Project
 from project.project_repository import ProjectRepository
 from task.task_repository import TaskRepository
-from usecase.project.create_project_service import CreateProjectService
+from usecase.project.create_project_service import CreateProjectService, TaskRequest, TaskRequestTitle
 
 
 class CreateProjectFromTemplateUsecase:
@@ -20,10 +20,7 @@ class CreateProjectFromTemplateUsecase:
         self._client = client
         self._project_repository = project_repository
         self._task_repository = task_repository
-        self._create_project_service = CreateProjectService(
-            task_repository=task_repository,
-            project_repository=project_repository,
-        )
+        self._create_project_service = CreateProjectService()
         self._logger = logger or getLogger(__name__)
 
     def execute(self, project_template_id: str) -> Project:
@@ -33,7 +30,7 @@ class CreateProjectFromTemplateUsecase:
 
         return self._create_project_service.execute(
             project_name=project_name,
-            tasks_request=[{"title_rich_text": t} for t in task_text_list],
+            tasks_request=[TaskRequest(title=TaskRequestTitle(value=task_text)) for task_text in task_text_list],
         )
 
 
