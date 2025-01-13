@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.10.0](https://github.com/koboriakira/notion-api/compare/v2.9.0...v2.10.0) (2025-01-13)
+
+
+### Features
+
+* add GitHub updates processing to daily log ([b81f716](https://github.com/koboriakira/notion-api/commit/b81f716a8e995d48442b1a458cba05a39d27400b))
+* enhance project title handling in healthcheck use case with rich text formatting ([2e856f6](https://github.com/koboriakira/notion-api/commit/2e856f6049c2103c509a85390856e5f48a2ac978))
+
+
+### Bug Fixes
+
+* implement rich text title generation for new task creation ([996306c](https://github.com/koboriakira/notion-api/commit/996306c031e70db8c0b356588672e970eba4e584))
+* rename url attribute to clipped_url in Webclip class for clarity ([f8610e0](https://github.com/koboriakira/notion-api/commit/f8610e0f6d66b43b916cc85450574404efeeb8cf))
+* update project creation to use rich text for task titles ([f9cff69](https://github.com/koboriakira/notion-api/commit/f9cff69999d40f375c520b8fa041d1f4e5a89cc2))
+* タイポなどを修正 ([#86](https://github.com/koboriakira/notion-api/issues/86)) ([869c43a](https://github.com/koboriakira/notion-api/commit/869c43ae8a0c8b2e1c99a4dd61466e9d32ec1215))
+
 ## [2.9.0](https://github.com/koboriakira/notion-api/compare/v2.8.2...v2.9.0) (2025-01-08)
 
 
