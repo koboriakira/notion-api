@@ -30,10 +30,6 @@ class ProjectHealthcheckUseCase:
         projects = self._project_repository.fetch_all()
         self._slack_client.chat_postMessage("プロジェクトのヘルスチェックを開始します")
 
-        # Inboxステータスは一覧だけ通知する
-        inbox_projects = [project for project in projects if project.is_inbox()]
-        self._execute_inbox_project(inbox_projects)
-
         # 進行中のプロジェクトのみを分析対象とする
         inprogress_projects = [project for project in projects if project.is_inprogress()]
         for project in inprogress_projects:
@@ -42,6 +38,10 @@ class ProjectHealthcheckUseCase:
                 status_list=[TaskStatusType.TODO, TaskStatusType.IN_PROGRESS],
             )
             self._execute_project(project, undone_tasks)
+
+        # Inboxステータスは一覧だけ通知する
+        inbox_projects = [project for project in projects if project.is_inbox()]
+        self._execute_inbox_project(inbox_projects)
 
     def _execute_project(self, project: Project, tasks: list[Task]) -> None:  # noqa: C901
         project_title_link = project.title_for_slack()

@@ -26,13 +26,13 @@ class GoalHealthcheckUseCase:
         goals = self._lotion.retrieve_pages(Goal)
         self._slack_client.chat_postMessage("目標のヘルスチェックを開始します")
 
-        # Inboxステータスは一覧だけ通知する
-        inbox_goals = [goal for goal in goals if goal.is_inbox()]
-        self._execute_inbox_goal(inbox_goals)
-
         inprogress_goals = [goal for goal in goals if goal.is_in_progress()]
         for goal in inprogress_goals:
             self._execute_goal(goal)
+
+        # Inboxステータスは一覧だけ通知する
+        inbox_goals = [goal for goal in goals if goal.is_inbox()]
+        self._execute_inbox_goal(inbox_goals)
 
     def _execute_goal(self, goal: Goal) -> None:
         message_list = []
