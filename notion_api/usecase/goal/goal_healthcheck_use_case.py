@@ -1,9 +1,12 @@
+from datetime import timedelta
 from logging import Logger, getLogger
 
 from lotion import Lotion
+from lotion.block.rich_text import RichTextBuilder
 
 from common.value.slack_channel_type import ChannelType
 from notion_databases.goal import Goal
+from notion_databases.goal_prop.goal_name import GoalName
 from util.datetime import jst_today
 from util.slack.slack_client import SlackClient
 
@@ -35,11 +38,31 @@ class GoalHealthcheckUseCase:
         message_list = []
         message_list.append(goal.title_for_slack())
 
+        if not goal.get_title_text().startswith("G:"):
+            # タイトルがG:から始まっていない場合は修正
+            rich_text = RichTextBuilder.create().add_text("G:").add_rich_text(goal.title.rich_text).build()
+            goal.set_prop(GoalName.from_rich_text(rich_text))
+            self._lotion.update(goal)
+
         # スケジュールのチェック
-        if goal is None or goal.due_date is None:
+        due_date = goal.due_date.start_date
+        if due_date is None:
             message_list.append("期限を設定してください")
-        elif goal.due_date.date <= jst_today():
+        elif due_date <= jst_today():
             message_list.append("期限を過ぎているため、期限を再設定するか、目標の達成度合いを振り返ってください")
+
+        # ひもづくプロジェクトのチェック
+        project_relation = goal.project_relation.id_list
+        if project_relation is None or len(project_relation) == 0:
+            message_list.append("関連プロジェクトが設定されていません")
+
+        # 更新タイミングのチェック
+        last_edited_time = goal.last_edited_time
+        if last_edited_time is None:
+            message_list.append("目標の更新日時が取得できませんでした")
+        elif last_edited_time < jst_today() - timedelta(days=14):
+            message_list.append("目標の更新が2週間以上されていません")
+
         self._slack_client.chat_postMessage("\n".join(message_list))
 
     def _execute_inbox_goal(self, goals: list[Goal]) -> None:

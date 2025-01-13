@@ -7,8 +7,8 @@ from lotion import Lotion
 from common.service.gmail.gmail_service import GmailService
 from custom_logger import get_logger
 from infrastructure.slack_bot_client import SlackBotClient
+from notion_databases.task import Task
 from notion_databases.task_prop.task_status import TaskStatusType
-from task.domain import Task
 from task.task_repository import TaskRepository
 from util.datetime import jst_now
 from util.line.line_client import LineClient
@@ -67,7 +67,7 @@ class AiAdviceUsecase:
                 if task.start_datetime is not None:
                     time_ = (start_datetime - task.start_datetime).total_seconds() / 60
                     current_tasks_description.append(
-                        f"「{task.get_title_text()}」は開始してから{int(time_)}秒経過しています",
+                        f"「{task.get_title_text()}」は開始してから{int(time_)}分経過しています",
                     )
 
         if len(current_tasks_description) > 0:

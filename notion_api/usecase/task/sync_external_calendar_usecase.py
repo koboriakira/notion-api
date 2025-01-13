@@ -1,5 +1,7 @@
 from datetime import date, timedelta
 
+from lotion import Lotion
+
 from external_calendar.infrastructure.google_calendar_api import GoogleCalendarApi
 from external_calendar.service.external_calendar_service import ExternalCalendarService
 from notion_databases.task import Task
@@ -17,6 +19,7 @@ class SyncExternalCalendarUsecase:
         task_repository: TaskRepository,
         external_calendar_service: ExternalCalendarService,
     ) -> None:
+        self._lotion = Lotion.get_instance()
         self._task_repository = task_repository
         self._external_calendar_service = external_calendar_service
 
@@ -39,7 +42,7 @@ class SyncExternalCalendarUsecase:
                 continue
             if task.start_datetime.date() == date_:
                 print(f"Remove scheduled task: {task.get_title_text()}")
-                self._task_repository.delete(task)
+                self._lotion.remove_page(task.id)
 
     def _sub_execute(self, date_: date) -> list[Task]:
         events = self._external_calendar_service.get_events(
@@ -50,7 +53,7 @@ class SyncExternalCalendarUsecase:
         tasks: list[Task] = []
         for event in events.value:
             title = f"【{event.category.value}】{event.title}"
-            task = self._task_repository.save(
+            task = self._lotion.create_page(
                 TaskFactory.create_todo_task(
                     title=title,
                     task_kind_type=TaskKindType.SCHEDULE,
