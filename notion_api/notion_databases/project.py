@@ -3,6 +3,7 @@ from datetime import date, datetime
 from lotion import notion_database, notion_prop
 from lotion.base_page import BasePage
 from lotion.block import Block
+from lotion.block.rich_text import RichText
 from lotion.properties import Cover, Date, Property, Select, Text
 
 from common.domain.tag_relation import TagRelation
@@ -61,7 +62,7 @@ class Project(BasePage):
 
     @staticmethod
     def generate(  # noqa: C901, PLR0913
-        title: str,
+        title: str | RichText,
         project_status: ProjectStatusType | None,
         importance: Importance | None = None,
         definition_of_done: str | None = None,
@@ -75,7 +76,9 @@ class Project(BasePage):
     ) -> "Project":
         blocks = blocks or []
         properties: list[Property] = []
-        properties.append(ProjectName.from_plain_text(title))
+        properties.append(
+            ProjectName.from_plain_text(title) if isinstance(title, str) else ProjectName.from_rich_text(title),
+        )
         if project_status is not None:
             properties.append(ProjectStatus.from_status_type(project_status))
         if importance is not None:
