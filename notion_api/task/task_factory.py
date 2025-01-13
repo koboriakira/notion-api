@@ -6,8 +6,7 @@ from lotion.block import Block
 from lotion.block.rich_text import RichText
 from lotion.properties import Properties, Title
 
-from notion_databases.task import ProjectRelation, Task, TaskContext, TaskKind, TaskStartDate, TaskStatus
-from notion_databases.task_prop.task_context import TaskContextTypes
+from notion_databases.task import HabitRelation, ProjectRelation, Task, TaskKind, TaskStartDate, TaskStatus
 from notion_databases.task_prop.task_kind import TaskKindType
 from notion_databases.task_prop.task_status import TaskStatusType
 
@@ -23,8 +22,8 @@ class TaskFactory:
         task_kind_type: TaskKindType | None = None,
         start_date: datetime | date | None = None,
         end_date: datetime | date | None = None,
-        context_types: TaskContextTypes | None = None,
         project_id: str | None = None,
+        habit_relation: str | None = None,
         status: TaskStatusType | None = None,
         blocks: list[Block] | None = None,
     ) -> Task:
@@ -38,12 +37,12 @@ class TaskFactory:
                 properties.append(TaskStartDate.from_start_date(start_date))
             else:
                 properties.append(TaskStartDate.from_range(start_date, end_date))
-        if context_types is not None:
-            properties.append(TaskContext.from_name(context_types.to_str_list()))
         if status is not None:
             properties.append(TaskStatus.from_status_type(status))
         if project_id is not None:
             properties.append(ProjectRelation.from_id(project_id))
+        if habit_relation is not None:
+            properties.append(HabitRelation.from_id(habit_relation))
         return Task(properties=Properties(values=properties), block_children=blocks)
 
     @staticmethod

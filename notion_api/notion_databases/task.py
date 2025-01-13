@@ -3,7 +3,7 @@ from datetime import date, datetime, timedelta
 from lotion import notion_database, notion_prop
 from lotion.base_page import BasePage
 from lotion.block.rich_text import RichTextBuilder
-from lotion.properties import Checkbox, MultiSelect, Select, Status
+from lotion.properties import Checkbox, Relation, Select, Status
 
 from common.value.database_type import DatabaseType
 from notion_databases.goal import ProjectRelation
@@ -49,16 +49,16 @@ class TaskKind(Select):
         return TaskKind.from_name(TaskKindType.TRASH.value)
 
 
-@notion_prop("コンテクスト")
-class TaskContext(MultiSelect):
-    pass
-
-
 @notion_prop("メモジャンル")
 class MemoGenre(Select):
     @staticmethod
     def create(typ: MemoGenreType) -> "MemoGenre":
         return MemoGenre.from_name(typ.value)
+
+
+@notion_prop("習慣トラッカー")
+class HabitRelation(Relation):
+    pass
 
 
 @notion_database(DatabaseType.TASK.value)
@@ -70,6 +70,7 @@ class Task(BasePage):
     status: TaskStatus
     kind: TaskKind
     memo_genre: MemoGenre
+    habit_relation: HabitRelation
 
     def update_status(self, status: TaskStatusType) -> "Task":
         self.set_prop(TaskStatus.from_status_type(status))
