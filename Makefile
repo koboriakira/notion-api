@@ -1,5 +1,5 @@
 dev:
-	docker compose up -d
+	docker compose up --build -d
 	open http://localhost:10119/docs
 
 cdk-test:
