@@ -1,10 +1,5 @@
 # My Notion API
 
-## Usage
-
-ヘッダに`access-token`を指定して（NotionAPIのシークレット）、下記URLを呼び出す
-
-https://6yhkmd3lcl.execute-api.ap-northeast-1.amazonaws.com/v1/projects
 
 ## Deploy
 
