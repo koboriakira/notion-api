@@ -7,6 +7,7 @@ from lotion.properties import Status
 class ProjectStatusType(Enum):
     INBOX = "Inbox"
     IN_PROGRESS = "In progress"
+    ICEBOX = "Icebox"
     SUSPEND = "Suspend"
     TRASH = "Trash"
     DONE = "Done"
