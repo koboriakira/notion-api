@@ -1,5 +1,24 @@
 # Changelog
 
+## [2.11.0](https://github.com/koboriakira/notion-api/compare/v2.10.0...v2.11.0) (2025-01-15)
+
+
+### Features
+
+* add habit relation property to Task and TaskFactory ([29977a0](https://github.com/koboriakira/notion-api/commit/29977a00853226bb6e5178a832649d34e9f289d7))
+* add HABIT type to TaskKindType enum and update mapping ([c8a4be2](https://github.com/koboriakira/notion-api/commit/c8a4be2a93f24d784cc670550cf148af203e250f))
+* add HabitRelation to DailyLog and implement habit tracking in task management ([041d8ff](https://github.com/koboriakira/notion-api/commit/041d8ff9652531b6f65f37221d73e14c7c0cc729))
+* add HabitTracker database type and related properties ([d4ee49a](https://github.com/koboriakira/notion-api/commit/d4ee49adf58551d9472fb1fbfa0209f26a33d4d4))
+* add ICEBOX status to ProjectStatusType enum ([f0e4c72](https://github.com/koboriakira/notion-api/commit/f0e4c729a97e634ebd8ec56d04e5cfe1b82a78e5))
+* enhance CreateRoutineTaskUseCase to handle HABIT tasks alongside ROUTINE tasks ([09ba117](https://github.com/koboriakira/notion-api/commit/09ba117b7a338c2f33bf7cc612462664bb60a960))
+* 任意のページをタイトルにしたプロジェクトを作成するボタンを設置 ([#90](https://github.com/koboriakira/notion-api/issues/90)) ([31ea5c8](https://github.com/koboriakira/notion-api/commit/31ea5c8bd6d6570b5c6462c346a20194bd84dc3b))
+* 起床APIを作成 ([#92](https://github.com/koboriakira/notion-api/issues/92)) ([a2fc5ed](https://github.com/koboriakira/notion-api/commit/a2fc5ede1500592f8362cf47446c3bbd547e6733))
+
+
+### Bug Fixes
+
+* JSONレスポンスのコンテンツタイプを条件付きで設定 ([526faec](https://github.com/koboriakira/notion-api/commit/526faec5cdc961d7783aeea53b940a6f11108efc))
+
 ## [2.10.0](https://github.com/koboriakira/notion-api/compare/v2.9.0...v2.10.0) (2025-01-13)
 
 
