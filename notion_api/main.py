@@ -21,6 +21,7 @@ from router import (
     task,
     tasks,
     video,
+    wakeup,
     webclip,
 )
 from util.environment import Environment
@@ -63,6 +64,7 @@ app.include_router(image.router, prefix="/image", tags=["image"])
 app.include_router(food.router, prefix="/food", tags=["food"])
 app.include_router(batch.router, prefix="/batch", tags=["batch"])
 app.include_router(notion_webhook.router, prefix="/notion_webhook", tags=["notion_webhook"])
+app.include_router(wakeup.router, prefix="/wakeup", tags=["wakeup"])
 
 
 handler = Mangum(app, lifespan="off")
@@ -76,7 +78,9 @@ async def add_process_time_header(request: Request, call_next):  # noqa: ANN001,
         response = await call_next(request)
         process_time = int((time.time() - start_time) * 1000)  # 整数値のミリ秒
         response.headers["X-Process-Time"] = str(process_time)
-        response.headers["Content-Type"] = "application/json; charset=utf-8"
+        # コンテンツタイプがJSONの場合のみ設定
+        if response.headers.get("Content-Type") == "application/json":
+            response.headers["Content-Type"] = "application/json; charset=utf-8"
         return response
     except:
         ErrorReporter().execute()

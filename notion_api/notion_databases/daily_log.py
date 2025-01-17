@@ -2,7 +2,7 @@ from datetime import date
 
 from lotion import notion_database, notion_prop
 from lotion.base_page import BasePage
-from lotion.properties import Date, Relation, Text, Title
+from lotion.properties import Date, Number, Relation, Text, Title
 
 from common.domain.tag_relation import TagRelation
 from common.value.database_type import DatabaseType
@@ -45,6 +45,16 @@ class HabitRelation(Relation):
     pass
 
 
+@notion_prop("体調")
+class Condition(Number):
+    pass
+
+
+@notion_prop("体調メモ")
+class ConditionMemo(Text):
+    pass
+
+
 @notion_database(DatabaseType.DAILY_LOG.value)
 class DailyLog(BasePage):
     title: DailyLogTitle
@@ -55,6 +65,8 @@ class DailyLog(BasePage):
     goal: DailyGoal
     weekly_log: WeeklyLogRelation
     habit_relation: HabitRelation
+    condition: Condition
+    condition_memo: ConditionMemo
 
     def append_habit(self, habit_id: str) -> None:
         self.habit_relation.append(habit_id)
