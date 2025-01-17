@@ -236,7 +236,7 @@ tags: []
         for webclip in webclips:
             if not self.is_debug:
                 self._append_backlink(block_id=daily_log_id, page=webclip)
-            markdown_text += f"\n[{webclip.get_title_text()}]({webclip.cliped_url})\n"
+            markdown_text += f"\n[{webclip.get_title_text()}]({webclip.clipped_url.url})\n"
         return markdown_text
 
     def _proc_songs(self, date_range: DateRange, daily_log_id: str) -> str:
@@ -250,7 +250,7 @@ tags: []
         for song in songs:
             if not self.is_debug:
                 self._append_backlink(block_id=daily_log_id, page=song)
-            markdown_text += f"\n{song.artist} - {song.get_title_text()}\n"
+            markdown_text += f"\n{song.artist.text} - {song.get_title_text()}\n"
             markdown_text += f"\n{song.spotify_url.get_embed_html()}\n"
         return markdown_text
 
@@ -401,6 +401,7 @@ class TaskProcessor(Processor):
         self._task_repository = TaskRepositoryImpl(lotion)
 
     def execute(self, date_range: DateRange) -> str:
+        
         done_tasks = self._task_repository.search(
             status_list=[TaskStatusType.DONE],
             kind_type_list=[
@@ -436,8 +437,8 @@ if __name__ == "__main__":
         daily_log_repository=daily_log_repository,
     )
     date_range = DateRange.from_datetime(
-        start=datetime(2024, 12, 14, 0, 0, 0, tzinfo=JST),
-        end=datetime(2024, 12, 16, 0, 0, 0, tzinfo=JST),
+        start=datetime(2025, 1, 14, 21, 0, 0, tzinfo=JST),
+        end=datetime(2025, 1, 15, 18, 0, 0, tzinfo=JST),
     )
     # print(usecase.execute(date_range=date_range))
     # print(usecase._proc_daily_log(target_date=date_range.end.value.date()))
@@ -445,5 +446,6 @@ if __name__ == "__main__":
     # print(usecase._proc_images(date_range=date_range))
     # print(usecase._proc_projects(date_range=date_range, daily_log_id="dummy"))
     # print(usecase._proc_zettlekastens(date_range=date_range, daily_log_id="dummy"))
-    print(usecase._proc_books(date_range=date_range, daily_log_id="dummy"))
+    # print(usecase._proc_books(date_range=date_range, daily_log_id="dummy"))
+    print(usecase._proc_songs(date_range=date_range, daily_log_id="dummy"))
     # print(usecase._proc_tasks(date_range=date_range, daily_log_id="dummy"))

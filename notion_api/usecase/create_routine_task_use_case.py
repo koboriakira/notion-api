@@ -28,7 +28,7 @@ class CreateRoutineTaskUseCase:
         self._execute_habits(date_, next_tasks)
 
     def _execute_routines(self, date: date, next_tasks: list[Task]) -> None:
-        routine_tasks = self._lotion.retrieve_pages(RoutineTask)
+        routine_tasks = self._lotion.retrieve_pages(RoutineTask, include_children=True)
         next_tasks = self.task_repository.search(
             status_list=[TaskStatusType.TODO, TaskStatusType.IN_PROGRESS],
             kind_type_list=[TaskKindType.ROUTINE, TaskKindType.HABIT],
@@ -54,7 +54,7 @@ class CreateRoutineTaskUseCase:
             self._lotion.create_page(routine_todo_task)
 
     def _execute_habits(self, date: date, next_tasks: list[Task]) -> None:
-        habits = self._lotion.retrieve_pages(HabitTracker)
+        habits = self._lotion.retrieve_pages(HabitTracker, include_children=True)
         next_task_titles = [task.get_title().text for task in next_tasks if task.kind.to_enum() == TaskKindType.HABIT]
         for habit in habits:
             title = habit.get_title_text()
