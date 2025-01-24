@@ -26,11 +26,16 @@ class LineClient:
     def _post_message(self, message: dict) -> dict:
         payload = json.dumps({"to": self.talk_id, "messages": [message]})
         headers = {"Content-Type": "application/json", "Authorization": f"Bearer {self.channel_access_token}"}
-        response = requests.request("POST", self.MESSAGE_PUSH_API, headers=headers, data=payload)
+        response = requests.request("POST", self.MESSAGE_PUSH_API, headers=headers, data=payload, timeout=10)
+
+        if response.status_code == 429:  # 月の送信上限に達したとき
+            # FIXME: 一時的に例外でなくしている。2月になったら戻す
+            # raise Exception("LINE API Error: 月の送信上限に達しました")
+            return {}
+
         if response.status_code != 200:
-            print(f"LINE API Error, status_code: {response.status_code}")
-            print(response.json())
-            raise Exception("LINE API Error")
+            raise Exception("LINE API Error: " + response.json()["message"])
+
         return response.json()
 
 
