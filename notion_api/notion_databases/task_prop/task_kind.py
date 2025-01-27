@@ -10,6 +10,7 @@ class TaskKindType(Enum):
     SCHEDULE = "スケジュール"
     ROUTINE = "ルーティン"
     HABIT = "習慣"
+    THIS_WEEK = "今週の目標"
     NONE = ""
 
     @property
@@ -24,4 +25,5 @@ class TaskKindType(Enum):
             TaskKindType.DO_NOW: 6,
             TaskKindType.HABIT: 7,
             TaskKindType.NONE: 8,
+            TaskKindType.THIS_WEEK: 9,
         }[self]
