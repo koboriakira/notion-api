@@ -88,13 +88,13 @@ class AiAdviceUsecase:
         # print(result)
 
         if text:
-            self._line_client.push_message(text)
+            # self._line_client.push_message(text)
 
-        # self._slack_client.send_message(
-        #     channel="C05F6AASERZ",
-        #     text=text,
-        #     is_enabled_mention=True,
-        # )
+            self._slack_client.send_message(
+                channel="C05F6AASERZ",
+                text=text,
+                is_enabled_mention=True,
+            )
 
     def make_advice(
         self,
