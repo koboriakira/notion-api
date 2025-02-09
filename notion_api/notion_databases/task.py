@@ -48,6 +48,10 @@ class TaskKind(Select):
     def trash() -> "TaskKind":
         return TaskKind.from_name(TaskKindType.TRASH.value)
 
+    @staticmethod
+    def thisweek() -> "TaskKind":
+        return TaskKind.from_name(TaskKindType.THIS_WEEK.value)
+
 
 @notion_prop("メモジャンル")
 class MemoGenre(Select):
