@@ -38,10 +38,10 @@ class RoutineTask(BasePage):
         basis_date = jst_today() if basis_date is None else basis_date
         return self.get_routine_type().next_date(basis_date)
 
-    def get_next_schedule(self, basis_date: date | None = None) -> tuple[datetime, datetime | None]:
+    def get_next_schedule(self, basis_date: date | None = None) -> tuple[date | datetime, datetime | None]:
         next_date = self.get_next_date(basis_date=basis_date)
         if self.routine_time.text == "":
-            return datetime.combine(next_date, datetime.min.time(), JST), None
+            return next_date, None
         start_time_text, end_time_text = self.routine_time.text.split("-")
         start_time = time.fromisoformat(start_time_text)
         end_time = time.fromisoformat(end_time_text)
