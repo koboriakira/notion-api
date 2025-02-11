@@ -25,7 +25,7 @@ class CreateRoutineTaskUseCase:
             start_datetime_end=date_ + timedelta(days=90),
         )
         self._execute_routines(date_, next_tasks)
-        self._execute_habits(date_, next_tasks)
+        # self._execute_habits(date_, next_tasks)
 
     def _execute_routines(self, date: date, next_tasks: list[Task]) -> None:
         routine_tasks = self._lotion.retrieve_pages(RoutineTask, include_children=True)
