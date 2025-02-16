@@ -1,11 +1,12 @@
 import logging
+from datetime import timedelta
 
 from lotion import Lotion
 
 from daily_log.daily_log_repository_impl import DailyLogRepositoryImpl
 from daily_log.isoweek import Isoweek
 from usecase.create_daily_log_usecase import CreateDailyLogUsecase
-from util.datetime import jst_now
+from util.datetime import jst_today
 from util.environment import Environment
 from util.error_reporter import ErrorReporter
 
@@ -24,8 +25,12 @@ def handler(event: dict, context: dict) -> None:  # noqa: ARG001
             client=client,
             daily_log_repository=daily_log_repository,
         )
-        isoweek = Isoweek.of(date_=jst_now())
-        usecase.handle(isoweek=isoweek)
+
+        # 今週
+        usecase.handle(isoweek=Isoweek.of(date_=jst_today()))
+
+        # 来週
+        usecase.handle(isoweek=Isoweek.of(date_=jst_today() + timedelta(days=7)))
 
     except:
         ErrorReporter().execute()
