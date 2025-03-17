@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.12.0](https://github.com/koboriakira/notion-api/compare/v2.11.0...v2.12.0) (2025-03-17)
+
+
+### Features
+
+* 今週のメインタスクを確認・レビューできるユースケースを作成 ([16723c1](https://github.com/koboriakira/notion-api/commit/16723c1f2fb258a9fd4506c9b98a1f6e1f65ce87))
+* 翌週分のウィークリーログ、デイリーログもあわせてつくる ([6b1cd5a](https://github.com/koboriakira/notion-api/commit/6b1cd5ac53c4bf09ff4493b24c540ba8460c4d55))
+
+
+### Bug Fixes
+
+* ブログ用の情報集めロジックの不具合を修正 ([#93](https://github.com/koboriakira/notion-api/issues/93)) ([078f856](https://github.com/koboriakira/notion-api/commit/078f85663fa54e2a27e12543b9a82d8462e170a2))
+* ルーティンの時刻が決まってない場合の挙動を修正 ([bce35b1](https://github.com/koboriakira/notion-api/commit/bce35b1eb2b131dba0fe0b0319bdabef33cdeca0))
+
 ## [2.11.0](https://github.com/koboriakira/notion-api/compare/v2.10.0...v2.11.0) (2025-01-15)
 
 
