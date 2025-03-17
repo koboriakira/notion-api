@@ -45,7 +45,7 @@ class AddRecipeUseCase:
 
         # Slackに通知
         self._slack_client.chat_postMessage(
-            channel=slack_channel or ChannelType.DIARY.value,
+            channel=slack_channel or ChannelType.NOTIFICATION.value,
             text=f"レシピを登録しました!\n{recipe.title_for_slack()}",
             thread_ts=slack_thread_ts,
         )

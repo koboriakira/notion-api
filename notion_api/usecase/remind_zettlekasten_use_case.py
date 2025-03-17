@@ -4,8 +4,9 @@ from enum import Enum
 from lotion import Lotion
 from slack_sdk import WebClient
 
-from util.datetime import jst_today
+from common.value.slack_channel_type import ChannelType
 from notion_databases.zettlekasten import Zettlekasten
+from util.datetime import jst_today
 
 
 class PastDays(Enum):
@@ -23,7 +24,7 @@ class PastDays(Enum):
 
 
 class RemindZettlekastenUseCase:
-    SLACK_CHANNEL = "C05F6AASERZ"
+    SLACK_CHANNEL = ChannelType.NOTIFICATION.value
     BEFORE_3_DAYS = jst_today() - timedelta(days=3)
     BEFORE_7_DAYS = jst_today() - timedelta(days=7)
     BEFORE_30_DAYS = jst_today() - timedelta(days=30)

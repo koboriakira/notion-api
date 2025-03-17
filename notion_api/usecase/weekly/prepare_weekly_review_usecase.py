@@ -9,7 +9,6 @@ from custom_logger import get_logger
 from notion_databases.goal import Goal
 from notion_databases.project import Project
 from notion_databases.project_prop.project_status import ProjectStatusType
-from notion_databases.task import Task
 from notion_databases.task_prop.task_kind import TaskKindType
 from project.project_repository import ProjectRepository
 from task.task_factory import TaskFactory
@@ -69,7 +68,7 @@ class PrepareWeeklyReviewUsecase:
                 project_id=review_project.id,
                 task_kind_type=TaskKindType.NEXT_ACTION,
             )
-            self._create_task(task)
+            self._task_repository.save(task)
 
     def _create_tasks_as_goal_review(self, review_project: Project, goal_page_id_list: list[str]) -> None:
         for page_id in goal_page_id_list:
@@ -78,7 +77,7 @@ class PrepareWeeklyReviewUsecase:
                 project_id=review_project.id,
                 task_kind_type=TaskKindType.NEXT_ACTION,
             )
-            self._create_task(task)
+            self._task_repository.save(task)
 
     def _generate_projects_as_goal(self, projects: list[Project]) -> dict[str, list[Project]]:
         """目標ごとのプロジェクトを整理する"""
@@ -112,14 +111,11 @@ class PrepareWeeklyReviewUsecase:
                 project_id=review_project.id,
                 task_kind_type=TaskKindType.NEXT_ACTION,
             )
-            self._create_task(task)
-
-    def _create_task(
-        self,
-        task: Task,
-    ) -> None:
-        """タスクを保存する"""
-        self._task_repository.save(task)
+            try:
+                self._task_repository.save(task)
+            except:
+                goal = self._lotion.retrieve_page(goal_page_id, Goal)
+                print("タスクを作成できませんでした: " + goal.url)
 
 
 if __name__ == "__main__":

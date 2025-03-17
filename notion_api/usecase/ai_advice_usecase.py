@@ -5,6 +5,7 @@ from logging import Logger, getLogger
 from lotion import Lotion
 
 from common.service.gmail.gmail_service import GmailService
+from common.value.slack_channel_type import ChannelType
 from custom_logger import get_logger
 from infrastructure.slack_bot_client import SlackBotClient
 from notion_databases.task import Task
@@ -91,7 +92,7 @@ class AiAdviceUsecase:
             # self._line_client.push_message(text)
 
             self._slack_client.send_message(
-                channel="C05F6AASERZ",
+                channel=ChannelType.NOTIFICATION.value,
                 text=text,
                 is_enabled_mention=True,
             )
