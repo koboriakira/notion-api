@@ -7,6 +7,10 @@ from notion_databases.routine_task import RoutineType
 # 2024年3月20日(水)
 BASIS_DATE_WED = date(2024, 3, 20)
 BASIS_DATE_SUN = date(2024, 3, 24)
+# 2024年3月7日(木) - 第1木曜日
+BASIS_DATE_THU_1ST = date(2024, 3, 7)
+# 2024年3月21日(木) - 第3木曜日
+BASIS_DATE_THU_3RD = date(2024, 3, 21)
 
 
 @pytest.mark.parametrize(
@@ -23,7 +27,12 @@ BASIS_DATE_SUN = date(2024, 3, 24)
         pytest.param(BASIS_DATE_SUN, RoutineType.EVERY_TUE_AND_FRI, date(2024, 3, 26), id="EVERY_TUE_AND_FRI_2"),
         pytest.param(BASIS_DATE_SUN, RoutineType.EVERY_WED, date(2024, 3, 27), id="EVERY_WED_2"),
         pytest.param(BASIS_DATE_SUN, RoutineType.MONTHLY_1_3_FRI, date(2024, 4, 5), id="MONTHLY_1_3_FRI"),
-        pytest.param(BASIS_DATE_SUN, RoutineType.MONTHLY_25, date(2024, 3, 25), id="MONTHLY_1_3_FRI"),
+        pytest.param(BASIS_DATE_SUN, RoutineType.MONTHLY_1_3_THU, date(2024, 4, 4), id="MONTHLY_1_3_THU"),
+        pytest.param(BASIS_DATE_SUN, RoutineType.MONTHLY_25, date(2024, 3, 25), id="MONTHLY_25"),
+        # 第1・3木のテストケース
+        pytest.param(BASIS_DATE_THU_1ST, RoutineType.MONTHLY_1_3_THU, date(2024, 3, 7), id="MONTHLY_1_3_THU_ON_1ST"),
+        pytest.param(BASIS_DATE_THU_3RD, RoutineType.MONTHLY_1_3_THU, date(2024, 3, 21), id="MONTHLY_1_3_THU_ON_3RD"),
+        pytest.param(date(2024, 3, 22), RoutineType.MONTHLY_1_3_THU, date(2024, 4, 4), id="MONTHLY_1_3_THU_NEXT_MONTH"),
     ],
 )
 def test_次のルーティン実行日を取得する(basis_date: date, suite: RoutineType, expected: date):
