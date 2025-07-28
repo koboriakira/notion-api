@@ -24,7 +24,13 @@ class MaintainTasksUsecase:
 
     def execute(self) -> None:
         now = jst_now()
-        self._execute_scheduled(now)
+
+        # スケジュールされたタスクの開始
+        # 一時的に無効化する
+        # self._execute_scheduled(now)
+
+        # 最終編集されたタスクのチェックマークをつける
+        # および習慣トラッカーの更新
         self._execute_last_edited(now)
 
     def _execute_scheduled(self, now: datetime) -> None:
