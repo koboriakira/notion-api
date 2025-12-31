@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.13.0](https://github.com/koboriakira/notion-api/compare/v2.12.0...v2.13.0) (2025-12-31)
+
+
+### Features
+
+* add abort task endpoint with error handling ([3053aae](https://github.com/koboriakira/notion-api/commit/3053aaea146dd7f67bb4c505ac3a4e85f19e586e))
+
 ## [2.12.0](https://github.com/koboriakira/notion-api/compare/v2.11.0...v2.12.0) (2025-07-27)
 
 
