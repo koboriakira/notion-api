@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Header
 from lotion import Lotion
 
+from injector.injector import Injector
 from router.request.task_request import CreateNewTaskRequest, UpdateTaskRequest
 from router.response import BaseResponse, TaskResponse
 from router.response import Task as TaskDto
@@ -60,6 +61,19 @@ def complete_task(task_id: str, access_token: str | None = Header(None)) -> Task
         ErrorReporter().execute()
         raise
 
+@router.post("/{task_id}/abort/")
+def abort_task(task_id: str, access_token: str | None = Header(None)) -> TaskResponse:
+    try:
+        valid_access_token(access_token)
+        abort_task_usecase = Injector.abort_task_usecase()
+        abort_task_usecase.execute(page_id=task_id)
+
+        find_task_usecase = FindTaskUsecase(task_repository=task_repository)
+        task = find_task_usecase.execute(task_id=task_id)
+        return TaskResponse(data=TaskDto.from_model(task))
+    except:
+        ErrorReporter().execute()
+        raise
 
 @router.post("/{task_id}/start/")
 def start_task(task_id: str, access_token: str | None = Header(None)) -> TaskResponse:
