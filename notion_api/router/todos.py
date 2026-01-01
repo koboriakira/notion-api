@@ -36,15 +36,14 @@ def interrupt(
             TodoStatus.inprogress(),
         ],
     )
-    print(ip_todos)
-    # if ip_todos:
-    #     ip_todo = ip_todos[0]
 
-    #     # 完了扱いにして更新
-    #     client.update(ip_todo.complete())
+    if ip_todos:
+        for ip_todo in ip_todos:
+            # 完了扱いにして更新
+            client.update(ip_todo.complete())
 
-    #     # コピーして未実施状態にしたものを新規保存
-    #     client.create_page(ip_todo.copy().todo())
+            # コピーして未実施状態にしたものを新規保存
+            client.create_page(ip_todo.copy().todo())
 
 
     # あたらしい差し込みタスクを追加
