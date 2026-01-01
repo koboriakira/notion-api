@@ -105,7 +105,7 @@ class Todo(BasePage):
         """完了状態に変更して返す"""
         self.status = TodoStatus.from_status_type(TodoStatusEnum.DONE)
         self.log_date = TodoLogDate.from_range(
-            start=self.log_date.start_datetime,
+            start=self.log_date.start_datetime or jst_now(),
             end=jst_now(),
         )
         return self
