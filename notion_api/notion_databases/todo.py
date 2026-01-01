@@ -1,7 +1,6 @@
 from curses import intrflush
 from datetime import timedelta
 from enum import Enum
-from tkinter import SINGLE
 
 from lotion import notion_database, notion_prop
 from lotion.base_page import BasePage

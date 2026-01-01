@@ -23,6 +23,7 @@ from router import (
     video,
     wakeup,
     webclip,
+    todos,
 )
 from util.environment import Environment
 from util.error_reporter import ErrorReporter
@@ -65,6 +66,7 @@ app.include_router(food.router, prefix="/food", tags=["food"])
 app.include_router(batch.router, prefix="/batch", tags=["batch"])
 app.include_router(notion_webhook.router, prefix="/notion_webhook", tags=["notion_webhook"])
 app.include_router(wakeup.router, prefix="/wakeup", tags=["wakeup"])
+app.include_router(todos.router, prefix="/todos", tags=["todos"])
 
 
 handler = Mangum(app, lifespan="off")
