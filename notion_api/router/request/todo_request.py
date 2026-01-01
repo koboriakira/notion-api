@@ -4,5 +4,5 @@ from pydantic import BaseModel
 class InterruptTodoRequest(BaseModel):
     title: str
 
-class InsertSubTodoRequest(BaseModel):
+class InsertTodoRequest(BaseModel):
     title: str

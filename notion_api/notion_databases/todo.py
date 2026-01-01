@@ -1,6 +1,7 @@
 from curses import intrflush
 from datetime import timedelta
 from enum import Enum
+import stat
 
 from lotion import notion_database, notion_prop
 from lotion.base_page import BasePage
@@ -24,6 +25,7 @@ class TodoKindEnum(Enum):
     REPEAT = "リピート"
     INTERRUPTION = "差し込み"
     SINGLE = "単発"
+    SUBTASK = "サブタスク"
 
 
 class TodoSectionEnum(Enum):
@@ -55,6 +57,10 @@ class TodoKind(Select):
     @staticmethod
     def from_kind_type(kind_type: TodoKindEnum) -> "TodoKind":
         return TodoKind.from_name(kind_type.value)
+
+    @staticmethod
+    def from_enum(kind_enum: TodoKindEnum) -> "TodoKind":
+        return TodoKind.from_name(kind_enum.value)
 
 
 @notion_prop("セクション")

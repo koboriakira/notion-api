@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Header
 from lotion import Lotion
-from notion_databases.todo import Todo, TodoName, TodoParentTask, TodoStatus
-from router.request.todo_request import InsertSubTodoRequest, InterruptTodoRequest
+from notion_databases.todo import Todo, TodoKind, TodoKindEnum, TodoName, TodoParentTask, TodoStatus
+from router.request.todo_request import InsertSubTodoRequest, InsertTodoRequest, InterruptTodoRequest
 from router.response.todo_response import TodoPageModel, TodoResponse, TodosResponse
 from util.access_token import valid_access_token
 
@@ -58,7 +58,7 @@ def interrupt(
 
 @router.post("/sub/", response_model=TodoResponse)
 def create_subtodo(
-    request: InsertSubTodoRequest,
+    request: InsertTodoRequest,
     access_token: str | None = Header(None),
 ) -> TodoResponse:
     valid_access_token(access_token)
@@ -84,11 +84,32 @@ def create_subtodo(
     if not parent_todo:
         raise ValueError("進行中の親タスクが存在しません。")
 
+    # あたらしいサブタスクを追加
+    new_todo = client.create_page(
+        Todo.create(properties=[
+            TodoName.from_plain_text(request.title),
+            TodoKind.from_enum(TodoKindEnum.SUBTASK),
+            TodoParentTask.from_id(parent_todo.id)
+        ])
+        .inprogress()
+    )
+
+    return TodoResponse(data=TodoPageModel.from_entity(new_todo))
+
+
+@router.post("/", response_model=TodoResponse)
+def create(
+    request: InsertTodoRequest,
+    access_token: str | None = Header(None),
+) -> TodoResponse:
+    valid_access_token(access_token)
+    client = Lotion.get_instance()
+
     # あたらしい差し込みタスクを追加
     new_todo = client.create_page(
         Todo.create(properties=[
             TodoName.from_plain_text(request.title),
-            TodoParentTask.from_id(parent_todo.id)
+            TodoKind.from_enum(TodoKindEnum.INTERRUPTION)
         ])
         .inprogress()
     )
