@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Header
 from lotion import Lotion
 from notion_databases.todo import Todo, TodoKind, TodoKindEnum, TodoName, TodoParentTask, TodoStatus
-from router.request.todo_request import InsertSubTodoRequest, InsertTodoRequest, InterruptTodoRequest
+from router.request.todo_request import InsertTodoRequest, InterruptTodoRequest
 from router.response.todo_response import TodoPageModel, TodoResponse, TodosResponse
 from util.access_token import valid_access_token
 
