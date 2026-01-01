@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.14.0](https://github.com/koboriakira/notion-api/compare/v2.13.0...v2.14.0) (2026-01-01)
+
+
+### Features
+
+* add INTERRUPTION task kind with priority ([f5cf7c3](https://github.com/koboriakira/notion-api/commit/f5cf7c332a2c825125a41aade150e2c56d1844ae))
+
 ## [2.13.0](https://github.com/koboriakira/notion-api/compare/v2.12.0...v2.13.0) (2025-12-31)
 
 
