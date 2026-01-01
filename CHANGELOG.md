@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.15.0](https://github.com/koboriakira/notion-api/compare/v2.14.0...v2.15.0) (2026-01-01)
+
+
+### Features
+
+* add SOMEDAY database type ([713cf13](https://github.com/koboriakira/notion-api/commit/713cf13c2959a47e39916125013432808152a714))
+* add TODO_LIST database type and implement todo management endpoints ([e24f0a6](https://github.com/koboriakira/notion-api/commit/e24f0a6752019d4a30f707087c93e5d6987393bc))
+* add todos router and include in main application ([d4ef606](https://github.com/koboriakira/notion-api/commit/d4ef6063d2642bf3eacc3cbb8373d1dd43a62572))
+* update complete function to handle missing start_datetime ([49cd5b2](https://github.com/koboriakira/notion-api/commit/49cd5b2b1b7a3c01069d5038b9ad5b2d1d91ac3c))
+* update interrupt function to handle multiple in-progress todos ([0f74106](https://github.com/koboriakira/notion-api/commit/0f74106fbf2fc9144142fa0ff9dc78bf7c108f25))
+
 ## [2.14.0](https://github.com/koboriakira/notion-api/compare/v2.13.0...v2.14.0) (2026-01-01)
 
 
