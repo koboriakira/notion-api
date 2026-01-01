@@ -58,8 +58,9 @@ def post_path(path: str, request: NotionWebhookRequest) -> BaseResponse:  # noqa
             convert_to_project_usecase.execute(page_id=base_page.id, title=base_page.get_title())
             return BaseResponse()
         if webhook_type == NotionWebhookType.START_TASK:
-            task_util_service = Injector.task_util_serivce()
-            task_util_service.start(page_id=base_page.id)
+            client = Lotion.get_instance()
+            todo = client.retrieve_page(page_id=base_page.id, cls=Todo).inprogress()
+            client.update(todo)
             return BaseResponse()
         if webhook_type == NotionWebhookType.POSTPONE_TOMORROW:
             task_util_service = Injector.task_util_serivce()
