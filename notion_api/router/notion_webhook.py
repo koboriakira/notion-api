@@ -2,12 +2,13 @@ import logging
 from enum import StrEnum
 
 from fastapi import APIRouter
-from lotion import BasePage
+from lotion import BasePage, Lotion
 from pydantic import BaseModel
 
 from book.book_openbd_api import BookOpenbdApi
 from infrastructure.slack_bot_client import SlackBotClient
 from injector.injector import Injector
+from notion_databases.todo import Todo
 from router.response import BaseResponse
 from util.error_reporter import ErrorReporter
 
@@ -65,8 +66,9 @@ def post_path(path: str, request: NotionWebhookRequest) -> BaseResponse:  # noqa
             task_util_service.postpone(page_id=base_page.id, days=1)
             return BaseResponse()
         if webhook_type == NotionWebhookType.COMPLETE_TASK:
-            task_util_service = Injector.task_util_serivce()
-            task_util_service.complete(page_id=base_page.id)
+            client = Lotion.get_instance()
+            todo = client.retrieve_page(page_id=base_page.id, cls=Todo).complete()
+            client.update(todo)
             return BaseResponse()
         if webhook_type == NotionWebhookType.CREATE_PROJECT:
             create_project_service = Injector.create_project_service()

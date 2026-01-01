@@ -53,3 +53,4 @@ def interrupt(
     )
 
     return TodoResponse(data=TodoPageModel.from_entity(new_todo))
+

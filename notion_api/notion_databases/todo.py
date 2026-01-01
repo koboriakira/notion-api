@@ -4,7 +4,7 @@ from enum import Enum
 
 from lotion import notion_database, notion_prop
 from lotion.base_page import BasePage
-from lotion.properties import Checkbox, Date, MultiSelect, Number, Status, Title, Select, Relation
+from lotion.properties import Date, Status, Title, Select, Relation
 
 from common.value.database_type import DatabaseType
 from util.datetime import jst_now, jst_today
@@ -39,7 +39,6 @@ class TodoSectionEnum(Enum):
 @notion_prop("名前")
 class TodoName(Title):
     pass
-
 
 @notion_prop("ステータス")
 class TodoStatus(Status):
@@ -90,6 +89,7 @@ class Todo(BasePage):
     subtask: TodoSubtask
     parent_task: TodoParentTask
 
+
     def todo(self) -> "Todo":
         """未実施状態に変更して返す"""
         self.status = TodoStatus.from_status_type(TodoStatusEnum.TODO)
@@ -109,3 +109,7 @@ class Todo(BasePage):
             end=jst_now(),
         )
         return self
+
+    def is_sub_task(self) -> bool:
+        """サブタスクかどうか"""
+        return self.get_formula("サブタスク判定")._formula["boolean"]
