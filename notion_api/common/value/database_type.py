@@ -34,6 +34,7 @@ class DatabaseType(Enum):
     GIF_JPEG = "1156567a-3bbf-808f-ae6f-cf20cbba8f28"
     FOOD = "57513fd2-92d3-477d-8720-99667f992636"
     HABIT_TRACKER = "17a6567a-3bbf-8035-ba4a-ee17bdb00da8"
+    SOMEDAY = "2db6567a-3bbf-80a8-b3f3-e3560cfe380f"
 
     @staticmethod
     def from_id(id_: str) -> "DatabaseType":
