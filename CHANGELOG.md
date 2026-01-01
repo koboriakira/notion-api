@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.16.0](https://github.com/koboriakira/notion-api/compare/v2.15.0...v2.16.0) (2026-01-01)
+
+
+### Features
+
+* refactor todo management and enhance subtask handling ([3c7efe9](https://github.com/koboriakira/notion-api/commit/3c7efe9b748a20c07f170b5f5451de711a617138))
+
 ## [2.15.0](https://github.com/koboriakira/notion-api/compare/v2.14.0...v2.15.0) (2026-01-01)
 
 
