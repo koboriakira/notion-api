@@ -31,12 +31,29 @@ class TodoKindEnum(Enum):
 class TodoSectionEnum(Enum):
     A_07_10 = "A_07_10"
     B_10_13 = "B_10_13"
-    C_13_15 = "C_13_15"
-    D_15_17 = "D_15_17"
-    E_17_20 = "E_17_20"
-    F_20_22 = "F_20_22"
-    G_22_24 = "G_23_07"
+    C_13_17 = "C_13_17"
+    D_15_19 = "D_15_19"
+    E_19_22 = "E_19_22"
+    F_22_24 = "F_22_24"
+    G_24_07 = "G_24_07"
 
+    @staticmethod
+    def new() -> "TodoSectionEnum":
+        """新しいセクションを返す"""
+        current_hour = jst_now().hour
+        if 7 <= current_hour < 10:
+            return TodoSectionEnum.A_07_10
+        if 10 <= current_hour < 13:
+            return TodoSectionEnum.B_10_13
+        if 13 <= current_hour < 17:
+            return TodoSectionEnum.C_13_17
+        if 17 <= current_hour < 19:
+            return TodoSectionEnum.D_15_19
+        if 19 <= current_hour < 22:
+            return TodoSectionEnum.E_19_22
+        if 22 <= current_hour < 24:
+            return TodoSectionEnum.F_22_24
+        return TodoSectionEnum.G_24_07
 
 @notion_prop("名前")
 class TodoName(Title):
@@ -105,6 +122,7 @@ class Todo(BasePage):
         """進行中状態に変更して返す"""
         self.status = TodoStatus.from_status_type(TodoStatusEnum.IN_PROGRESS)
         self.log_date = TodoLogDate.from_start_date(jst_now())
+        self.section = TodoSection.from_section_type(TodoSectionEnum.new())
         return self
 
     def complete(self) -> "Todo":
