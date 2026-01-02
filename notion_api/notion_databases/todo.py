@@ -32,7 +32,7 @@ class TodoSectionEnum(Enum):
     A_07_10 = "A_07_10"
     B_10_13 = "B_10_13"
     C_13_17 = "C_13_17"
-    D_15_19 = "D_15_19"
+    D_17_19 = "D_17_19"
     E_19_22 = "E_19_22"
     F_22_24 = "F_22_24"
     G_24_07 = "G_24_07"
@@ -48,7 +48,7 @@ class TodoSectionEnum(Enum):
         if 13 <= current_hour < 17:
             return TodoSectionEnum.C_13_17
         if 17 <= current_hour < 19:
-            return TodoSectionEnum.D_15_19
+            return TodoSectionEnum.D_17_19
         if 19 <= current_hour < 22:
             return TodoSectionEnum.E_19_22
         if 22 <= current_hour < 24:
