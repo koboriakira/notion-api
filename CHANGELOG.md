@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.17.0](https://github.com/koboriakira/notion-api/compare/v2.16.0...v2.17.0) (2026-01-03)
+
+
+### Features
+
+* add create_subtodo endpoint to handle subtask creation ([776b2be](https://github.com/koboriakira/notion-api/commit/776b2beb825668c724f0a8f7443f550d504fc231))
+* enhance todo management by adding subtask support and refactoring request handling ([28f93a2](https://github.com/koboriakira/notion-api/commit/28f93a21944304ca541394c8302f9afed4d9642f))
+* update START_TASK handling to retrieve and update in-progress todos ([6d0ceb1](https://github.com/koboriakira/notion-api/commit/6d0ceb1bc86be4255b983d9e2cfb0d0cfa3bd3c7))
+* update TodoSectionEnum to dynamically return current section based on time ([e572400](https://github.com/koboriakira/notion-api/commit/e57240070b0c47cedfdcfde8c0e9069483a8cc6b))
+
+
+### Bug Fixes
+
+* correct section D time range in TodoSectionEnum ([4c09fd5](https://github.com/koboriakira/notion-api/commit/4c09fd5ef1650e4e776f84cdc232d91061909bdb))
+* remove unused import for InsertSubTodoRequest in todos.py ([ab7d8f8](https://github.com/koboriakira/notion-api/commit/ab7d8f84ceb21708530b2f5d129836c60f69585f))
+
 ## [2.16.0](https://github.com/koboriakira/notion-api/compare/v2.15.0...v2.16.0) (2026-01-01)
 
 
