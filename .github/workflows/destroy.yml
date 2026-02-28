@@ -13,39 +13,16 @@ jobs:
       id-token: write
       contents: read
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE }}
           aws-region: ap-northeast-1
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
-      - name: Install CDK dependencies
-        working-directory: cdk
-        run: npm ci
-
-      - name: CDK Destroy
-        working-directory: cdk
-        run: npx cdk destroy --force
-        env:
-          NOTION_SECRET: dummy
-          UNSPLASH_ACCESS_KEY: dummy
-          SLACK_BOT_TOKEN: dummy
-          SLACK_USER_TOKEN: dummy
-          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-          OPENAI_API_KEY: dummy
-          LAMBDA_SLACK_CONCIERGE_API_DOMAIN: dummy
-          LAMBDA_TWITTER_API_DOMAIN: dummy
-          LAMBDA_GOOGLE_CALENDAR_API_DOMAIN: dummy
-          LAMBDA_GOOGLE_CALENDAR_API_ACCESS_TOKEN: dummy
-          GAS_GMAIL_URL: dummy
-          GAS_GMAIL_SECRET: dummy
-          LINE_CHANNEL_ACCESS_TOKEN: dummy
-          LINE_TALK_ID: dummy
+      - name: Delete CloudFormation stack
+        run: |
+          echo "Deleting CloudFormation stack: NotionApi"
+          aws cloudformation delete-stack --stack-name NotionApi
+          echo "Waiting for stack deletion to complete..."
+          aws cloudformation wait stack-delete-complete --stack-name NotionApi
+          echo "Stack deleted successfully."
